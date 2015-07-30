@@ -7,6 +7,7 @@ Werkzeug==0.9.4
 arrow==0.4.4
 gunicorn==17.5
 itsdangerous==0.23
+lxml==2.3.4 
 psycopg2==2.4.6
 requests==2.4.3
 rq==0.5.1
