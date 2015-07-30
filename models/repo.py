@@ -17,13 +17,10 @@ from util import dict_from_dir
 logger = logging.getLogger("repo")
 
 def create_repo(username, reponame, github_data=None):
-    try:
-        if not github_data:
-            github_data = github.get_repo_data(username, reponame)
-        repo = Repo(username=username, reponame=reponame, github_data=github_data)
-        repo.collect_metrics()
-    except TypeError:
-        print "error making repo, skipping"
+    if not github_data:
+        github_data = github.get_repo_data(username, reponame)
+    repo = Repo(username=username, reponame=reponame, github_data=github_data)
+    repo.collect_metrics()
     return repo
 
 def get_provider_module(provider_name):
