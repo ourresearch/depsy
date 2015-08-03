@@ -70,7 +70,7 @@ def api_users(username):
     profile = None
 
     # commented out so makes every time for debugging    
-    # profile = Profile.query.get(username)
+    profile = Profile.query.get(username)
 
     if not profile:
         profile = create_profile(username)
@@ -87,7 +87,7 @@ def api_repo(username, reponame):
 
     if not repo:
         repo = create_repo(username, reponame)
-    return json_resp_from_thing(repo.display_dict())
+    return json_resp_from_thing( repo.display_dict())
 
 
 

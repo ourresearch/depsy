@@ -40,45 +40,73 @@ class Profile(db.Model):
         super(Profile, self).__init__(**kwargs)
         self.created = datetime.datetime.utcnow().isoformat()
 
-    @property
-    def name(self):
-        return self.github_data["name"]
-
     def __repr__(self):
         return u'<Profile {username}>'.format(
             username=self.username)
 
+    def _get_from_github_data(self, my_property):
+        try:
+            return self.github_data[my_property]
+        except KeyError:
+            return None
+
+    @property
+    def avatar_url(self):
+        return self._get_from_github_data("avatar_url")
+
+    @property
+    def bio(self):
+        return self._get_from_github_data("bio")
+
+    @property
+    def blog(self):
+        return self._get_from_github_data("blog")
+
+    @property
+    def company(self):
+        return self._get_from_github_data("company")
+
+    @property
+    def created_at(self):
+        return self._get_from_github_data("created_at")
+
+    @property
+    def email(self):
+        return self._get_from_github_data("email")
+
+    @property
+    def followers(self):
+        return self._get_from_github_data("followers")
+
+    @property
+    def following(self):
+        return self._get_from_github_data("following")
+
+    @property
+    def html_url(self):
+        return self._get_from_github_data("html_url")
+
+    @property
+    def location(self):
+        return self._get_from_github_data("location")
+
+    @property
+    def received_events_url(self):
+        return self._get_from_github_data("received_events_url")
+
+    @property
+    def updated_at(self):
+        return self._get_from_github_data("updated_at")
+
+
 
     def display_dict(self, keys_to_show="all"):
-        keys_to_return = [
-            "avatar_url",
-            "bio",
-            "blog",
-            "company",
-            "created_at",
-            "email",
-            "followers",
-            "following",
-            "gravatar_id",
-            "html_url",
-            "login",
-            "location",
-            "name",
-            "organizations_url",
-            "public_gists",
-            "public_repos",
-            "received_events_url",
-            "repos_url",
-            "updated_at"
-            ]
-        smaller_dict = dict([(k, self.github_data[k]) for k in keys_to_return if k in self.github_data])
-        smaller_dict["repos"] = [repo.display_dict() for repo in self.repos]
-        return smaller_dict
+        return self.to_dict(keys_to_show)
 
     def to_dict(self, keys_to_show="all"):
 
         if keys_to_show=="all":
-            attributes_to_ignore = ["repos"]
+            attributes_to_ignore = ["repos"]  # we'll add this in self.display_dict()
             ret = dict_from_dir(self, attributes_to_ignore)
         else:
             ret = dict_from_dir(self, keys_to_show=keys_to_show)

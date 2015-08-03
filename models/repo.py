@@ -41,17 +41,26 @@ class Repo(db.Model):
     github_data = db.Column(JSON)
     collected = db.Column(db.DateTime())
 
+    #snaps = db.relationship(
+    #    'Snap',
+    #    lazy='subquery',
+    #    cascade='all, delete-orphan',
+    #    collection_class=attribute_mapped_collection('provider'),
+    #    backref=db.backref("snap", lazy="subquery")
+    #)
+
     snaps = db.relationship(
         'Snap',
         lazy='subquery',
         cascade='all, delete-orphan',
-        collection_class=attribute_mapped_collection('provider'),
-        backref=db.backref("snap", lazy="subquery")
+        backref=db.backref("repo", lazy="subquery")
     )
 
     def __init__(self, **kwargs):   
         if not "repo_id" in kwargs:
-            self.repo_id = shortuuid.uuid()         
+            self.repo_id = shortuuid.uuid()
+
+        # i think that "collected" is really "created" here? -j
         self.collected = datetime.datetime.utcnow().isoformat()
         super(Repo, self).__init__(**kwargs)
 
@@ -69,47 +78,65 @@ class Repo(db.Model):
         return smaller_dict
 
     @property
+    def computed_snaps(self):
+        return []
+
+    @property
     def metrics(self):
+
+        # the github metrics are part of this Repo obj, no snaps needed
         metrics_dict = self.github_metrics
 
-        if 'github_subscribers' in self.snaps:
-            metrics_dict["subscribers_count"] = len(self.snaps["github_subscribers"].data)
-            metrics_dict["subscribers"] = self.snaps["github_subscribers"].data
-
-        if 'crantastic_daily_downloads' in self.snaps:
-            metrics_dict.update(self.snaps["crantastic_daily_downloads"].data)
-        if 'cran_reverse_dependencies' in self.snaps:
-            metrics_dict.update(self.snaps["cran_reverse_dependencies"].data)
+        #if 'github_subscribers' in self.snaps:
+        #    metrics_dict["subscribers_count"] = len(self.snaps["github_subscribers"].data)
+        #    metrics_dict["subscribers"] = self.snaps["github_subscribers"].data
+        #
+        #if 'crantastic_daily_downloads' in self.snaps:
+        #    metrics_dict.update(self.snaps["crantastic_daily_downloads"].data)
+        #if 'cran_reverse_dependencies' in self.snaps:
+        #    metrics_dict.update(self.snaps["cran_reverse_dependencies"].data)
 
         return metrics_dict
 
     def collect_metrics(self):
         data = github_subscribers.get_data(self.username, self.reponame)
         if data:
-            self.snaps["github_subscribers"] = Snap(provider="github_subscribers", data=data)
+            #self.snaps["github_subscribers"] = Snap(provider="github_subscribers", data=data)
+            self.snaps.append(Snap(provider="github_subscribers", data=data))
 
-        if self.language == "R":
-            r_providers = [
-                "crantastic_daily_downloads",
-                "cran_reverse_dependencies"
-            ]
-            for provider_name in r_providers:
-                provider = get_provider_module(provider_name)
-                data = provider.get_data(self.reponame)
-                if data:
-                    self.snaps[provider_name] = Snap(provider=provider_name, data=data)
+        #if self.language == "R":
+        #    r_providers = [
+        #        "crantastic_daily_downloads",
+        #        "cran_reverse_dependencies"
+        #    ]
+        #    for provider_name in r_providers:
+        #        provider = get_provider_module(provider_name)
+        #        data = provider.get_data(self.reponame)
+        #        if data:
+        #            self.snaps[provider_name] = Snap(provider=provider_name, data=data)
 
+
+    def _get_from_github_data(self, my_property):
+        try:
+            return self.github_data[my_property]
+        except KeyError:
+            return None
+
+
+    def created_at(self):
+        return self._get_from_github_data("created_at")
+
+    def description(self):
+        return self._get_from_github_data("description")
+
+    def language(self):
+        return self._get_from_github_data("language")
+
+    def name(self):
+        return self._get_from_github_data("name")
 
     def display_dict(self):
-        keys_to_return = [
-            "created_at",
-            "description",
-            "language",
-            "name"
-            ]
-        smaller_dict = dict([(k, self.github_data[k]) for k in keys_to_return if k in self.github_data])
-        smaller_dict.update(self.metrics)
-        return smaller_dict
+        return self.to_dict("all")
 
     def to_dict(self, keys_to_show="all"):
         if keys_to_show=="all":

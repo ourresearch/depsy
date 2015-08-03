@@ -17,6 +17,8 @@ class Snap(db.Model):
     collected = db.Column(db.DateTime())
 
     def __init__(self, **kwargs):
+        print "creating a snap with these keyword args", kwargs
+
         if not "snap_id" in kwargs:
             self.snap_id = shortuuid.uuid()                 
         self.collected = datetime.datetime.utcnow().isoformat()

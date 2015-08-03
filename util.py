@@ -1,3 +1,4 @@
+import time
 
 def dict_from_dir(obj, keys_to_ignore=None, keys_to_show="all"):
 
@@ -16,19 +17,23 @@ def dict_from_dir(obj, keys_to_ignore=None, keys_to_show="all"):
 
 
     for k in dir(obj):
-        pass
+        value = getattr(obj, k)
 
         if k.startswith("_"):
             pass
         elif k in keys_to_ignore:
             pass
-
         # hide sqlalchemy stuff
         elif k in ["query", "query_class", "metadata"]:
             pass
+        elif callable(value):
+            pass
         else:
-            value = getattr(obj, k)
-            if not callable(value):
+            try:
+                # convert datetime objects...generally this will fail becase
+                # most things aren't datetime object.
+                ret[k] = time.mktime(value.timetuple())
+            except AttributeError:
                 ret[k] = value
     return ret
 
