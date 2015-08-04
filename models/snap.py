@@ -5,8 +5,10 @@ import shortuuid
 import logging
 
 from util import dict_from_dir
+from util import underscore_to_camelcase
 
 logger = logging.getLogger("snap")
+
 
 
 class Snap(db.Model):
@@ -28,25 +30,61 @@ class Snap(db.Model):
         return u'<Snap {snap_id} {repo_id} {provider}>'.format(
             snap_id=self.snap_id, repo_id=self.repo_id, provider=self.provider)
 
-    def display_dict(self):
-        keys_to_return = [
-            "created_at",
-            "description",
-            "forks_count",
-            "language",
-            "name",
-            "stargazers_count",
-            "watchers_count"
-            ]
-        smaller_dict = dict([(k, self.github_data[k]) for k in keys_to_return if k in self.github_data])
-        return smaller_dict
 
-    def to_dict(self, keys_to_show="all"):
-        #return self.snap_id + " " + self.provider
-        keys_to_ignore = [
-            "repo"
-        ]
 
-        ret = dict_from_dir(self, keys_to_ignore)
-        print ret
-        return ret
+def make_working_snap(snap):
+    """
+    Instantiates one of the specific WorkingSnap classes from a generic db Snap
+    """
+    new_class_name = underscore_to_camelcase(snap.provider) + "Snap"
+    new_class = globals()[new_class_name](snap)
+    return new_class
+
+
+class WorkingSnap():
+    def __init__(self, snap):
+        print "making a new workingsnap!"
+        self.snap = snap
+
+    @property
+    def provider(self):
+        return self.snap.provider
+
+    def to_dict(self):
+        keys_to_ignore = ["snap"]
+        return dict_from_dir(self, keys_to_ignore)
+
+
+class GithubSubscribersSnap(WorkingSnap):
+
+    @property
+    def subscribers(self):
+        return self.snap.data
+
+    @property
+    def subscribers_count(self):
+        return len(self.snap.data)
+
+
+
+class CrantasticDailyDownloadsSnap(WorkingSnap):
+
+    @property
+    def subscribers(self):
+        return self.snap.data
+
+
+class CranReverseDependencies(WorkingSnap):
+
+    @property
+    def subscribers(self):
+        return self.snap.data
+
+
+
+
+
+
+
+
+

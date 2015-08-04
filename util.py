@@ -54,3 +54,15 @@ def median(my_list):
             return my_list[((len(my_list)+1)/2)-1]
     if len(my_list) %2 == 0:
             return float(sum(my_list[(len(my_list)/2)-1:(len(my_list)/2)+1]))/2.0
+
+
+def underscore_to_camelcase(value):
+    words = value.split("_")
+    capitalized_words = []
+    for word in words:
+        capitalized_words.append(word.capitalize())
+
+    return "".join(capitalized_words)
+
+
+

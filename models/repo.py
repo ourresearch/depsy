@@ -1,5 +1,6 @@
 from app import db
 from models.snap import Snap
+from models.snap import make_working_snap
 from providers import github_subscribers
 from providers import crantastic_daily_downloads
 from providers import github
@@ -40,25 +41,10 @@ class Repo(db.Model):
     reponame = db.Column(db.Text)
     github_data = db.Column(JSON)
     collected = db.Column(db.DateTime())
-
-    #snaps = db.relationship(
-    #    'Snap',
-    #    lazy='subquery',
-    #    cascade='all, delete-orphan',
-    #    collection_class=attribute_mapped_collection('provider'),
-    #    backref=db.backref("snap", lazy="subquery")
-    #)
-
     snaps = db.relationship(
         'Snap',
         lazy='subquery',
         cascade='all, delete-orphan'
-
-        # @heather
-        # i removed this line:
-        # backref=db.backref("snap", lazy="subquery")
-        # because it seemed to be making circular references on the snap obj
-
     )
 
     def __init__(self, **kwargs):   
@@ -66,7 +52,7 @@ class Repo(db.Model):
             self.repo_id = shortuuid.uuid()
 
         # @heather
-        # i think that "collected" is really "created" here? -j
+        # does "collected" mean "created" here? -j
         self.collected = datetime.datetime.utcnow().isoformat()
         super(Repo, self).__init__(**kwargs)
 
@@ -75,34 +61,22 @@ class Repo(db.Model):
         return self.github_data.get("language", None)
 
     @property
-    def github_metrics(self):
-        keys_to_return = [
-            "forks_count",
-            "stargazers_count"
-            ]
-        smaller_dict = dict([(k, self.github_data[k]) for k in keys_to_return if k in self.github_data])
-        return smaller_dict
+    def github_forks_count(self):
+        return self.github_data["forks_count"]
+
+    @property
+    def github_stargazers_count(self):
+        return self.github_data["stargazers_count"]
 
     @property
     def computed_snaps(self):
-        return self.snaps
+        ret = []
+        for snap in self.snaps:
+            ret.append(make_working_snap(snap))
 
-    @property
-    def metrics(self):
+        return ret
 
-        # the github metrics are part of this Repo obj, no snaps needed
-        metrics_dict = self.github_metrics
 
-        #if 'github_subscribers' in self.snaps:
-        #    metrics_dict["subscribers_count"] = len(self.snaps["github_subscribers"].data)
-        #    metrics_dict["subscribers"] = self.snaps["github_subscribers"].data
-        #
-        #if 'crantastic_daily_downloads' in self.snaps:
-        #    metrics_dict.update(self.snaps["crantastic_daily_downloads"].data)
-        #if 'cran_reverse_dependencies' in self.snaps:
-        #    metrics_dict.update(self.snaps["cran_reverse_dependencies"].data)
-
-        return metrics_dict
 
     def collect_metrics(self):
         data = github_subscribers.get_data(self.username, self.reponame)
