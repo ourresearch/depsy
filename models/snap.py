@@ -42,9 +42,12 @@ class Snap(db.Model):
         return smaller_dict
 
     def to_dict(self, keys_to_show="all"):
-        if keys_to_show=="all":
-            attributes_to_ignore = []
-            ret = dict_from_dir(self, attributes_to_ignore)
-        else:
-            ret = dict_from_dir(self, keys_to_show=keys_to_show)
-        return ret
+
+        return "i am a snap!"
+
+        #if keys_to_show=="all":
+        #    attributes_to_ignore = []
+        #    ret = dict_from_dir(self, attributes_to_ignore)
+        #else:
+        #    ret = dict_from_dir(self, keys_to_show=keys_to_show)
+        #return ret

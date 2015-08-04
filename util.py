@@ -1,6 +1,9 @@
 import time
 
+
 def dict_from_dir(obj, keys_to_ignore=None, keys_to_show="all"):
+
+    print "calling dict_from_dir() with this: ", obj
 
     if keys_to_ignore is None:
         keys_to_ignore = []

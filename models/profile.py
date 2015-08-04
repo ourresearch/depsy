@@ -98,17 +98,5 @@ class Profile(db.Model):
     def updated_at(self):
         return self._get_from_github_data("updated_at")
 
-
-
-    def display_dict(self, keys_to_show="all"):
-        return self.to_dict(keys_to_show)
-
-    def to_dict(self, keys_to_show="all"):
-
-        if keys_to_show=="all":
-            attributes_to_ignore = ["repos"]  # we'll add this in self.display_dict()
-            ret = dict_from_dir(self, attributes_to_ignore)
-        else:
-            ret = dict_from_dir(self, keys_to_show=keys_to_show)
-
-        return ret
+    def to_dict(self):
+        return dict_from_dir(self, keys_to_ignore=["github_data"])

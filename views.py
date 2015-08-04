@@ -19,6 +19,17 @@ import logging
 logger = logging.getLogger("views")
 
 
+def json_dumper(obj):
+    """
+    if the obj has a to_dict() function we've implemented, uses it to get dict.
+    from http://stackoverflow.com/a/28174796
+    """
+    try:
+        return obj.to_dict()
+    except AttributeError:
+        return obj.__dict__
+
+
 def json_resp_from_thing(thing):
     hide_keys = request.args.get("hide", "").split(",")
     if hide_keys is not None:
@@ -28,7 +39,7 @@ def json_resp_from_thing(thing):
             except KeyError:
                 pass
 
-    json_str = json.dumps(thing, sort_keys=True, indent=4)
+    json_str = json.dumps(thing, sort_keys=True, default=json_dumper, indent=4)
 
     if request.path.endswith(".json") and (os.getenv("FLASK_DEBUG", False) == "True"):
         logger.info(u"rendering output through debug_api.html template")
@@ -74,7 +85,7 @@ def api_users(username):
 
     if not profile:
         profile = create_profile(username)
-    return json_resp_from_thing(profile.display_dict())
+    return json_resp_from_thing(profile.to_dict())
 
 
 @app.route("/api/r/<username>/<reponame>")

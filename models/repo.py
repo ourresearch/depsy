@@ -49,12 +49,12 @@ class Repo(db.Model):
     #    backref=db.backref("snap", lazy="subquery")
     #)
 
-    snaps = db.relationship(
-        'Snap',
-        lazy='subquery',
-        cascade='all, delete-orphan',
-        backref=db.backref("repo", lazy="subquery")
-    )
+    #snaps = db.relationship(
+    #    'Snap',
+    #    lazy='subquery',
+    #    cascade='all, delete-orphan',
+    #    backref=db.backref("repo", lazy="subquery")
+    #)
 
     def __init__(self, **kwargs):   
         if not "repo_id" in kwargs:
@@ -135,15 +135,23 @@ class Repo(db.Model):
     def name(self):
         return self._get_from_github_data("name")
 
-    def display_dict(self):
-        return self.to_dict("all")
 
     def to_dict(self, keys_to_show="all"):
-        if keys_to_show=="all":
-            attributes_to_ignore = ["snaps"]
-            ret = dict_from_dir(self, attributes_to_ignore)
-        else:
-            ret = dict_from_dir(self, keys_to_show=keys_to_show)
+        print "\n\n\n in repo, calling repo.to_dict()\n"
+        keys_to_ignore = [
+            "snaps",
+            "github_data",
+
+            # @heather:
+            # i super do not understand this. seem sqlalchemy is putting
+            # a "repo" property on this object, which has as its contents
+            # the owning Profile object in its entirety. which is circular,
+            # and throws all kinds of circularity errors when you try to
+            # get this as a dict. no idea how to get rid of it. this is
+            # just a band-aid, just be actualy fixed i think. -j
+            "repo"
+        ]
+        ret = dict_from_dir(self, keys_to_ignore)
         return ret
 
     def __repr__(self):
