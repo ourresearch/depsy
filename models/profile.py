@@ -32,8 +32,12 @@ class Profile(db.Model):
     repos = db.relationship(
         'Repo',
         lazy='subquery',
-        cascade='all, delete-orphan',
-        backref=db.backref("repo", lazy="subquery")
+        cascade='all, delete-orphan'
+
+        # @heather
+        # i removed this line:
+        # backref=db.backref("repo", lazy="subquery")
+        # because it seemed to be making circular references on the repo obj
     )
 
     def __init__(self, **kwargs):
