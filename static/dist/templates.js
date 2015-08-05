@@ -84,13 +84,9 @@ angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", 
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
-    "<i class=\"devicon-{{ languageIconName }}-plain colored\"\n" +
-    "   ng-show=\"languageIconName\"\n" +
-    "   tooltip=\"{{ languageName }}\"></i>\n" +
-    "\n" +
     "<img class=\"language-icon-img\"\n" +
     "   ng-show=\"languageIconImg\"\n" +
-    "   ng-src=\"{{ languageIconImg }}\"\n" +
+    "   ng-src=\"img/{{ languageIconImg }}.png\"\n" +
     "   tooltip=\"{{ languageName }}\">");
 }]);
 

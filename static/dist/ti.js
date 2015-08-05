@@ -159,47 +159,43 @@ angular.module("directives.languageIcon", [])
 
 
     var languagesWithIconNames = [
+
+      /*
       "c",
       "coffeescript",
       "c++",
       "c#",
-      "css",
-      "docker",
       "erlang",
       "go",
+      "rails",
+      "ruby",
+      */
+
+      "css",
       "html",
       "java",
       "javascript",
-      "nodejs",
       "php",
       "python",
-      "rails",
-      "ruby"
+      "perl",
+      "r",
+      "shell"
     ]
 
+
+    // not using right now
     var languagesWithDifferentIconNames = {
       "C++": "cplusplus",
       "C#":"csharp"
     }
 
-    var languagesWithImages = {
-      "r": "img/r-logo-flat.png"
-    }
-
-    var getIconName = function(languageName){
-      if (languagesWithDifferentIconNames[languageName]) {
-        return languagesWithDifferentIconNames[languageName]
-      }
-      else if (languagesWithIconNames.indexOf(languageName.toLowerCase()) > -1){
+    var getIconImg = function(languageName){
+     if (languagesWithIconNames.indexOf(languageName.toLowerCase()) > -1){
         return languageName.toLowerCase()
       }
       else {
         return null
       }
-    }
-
-    var getIconImg = function(languageName){
-      return languagesWithImages[languageName]
     }
 
 
@@ -209,7 +205,6 @@ angular.module("directives.languageIcon", [])
       restrict: "EA",
       link: function(scope, elem, attrs) {
         console.log("LanguageIcon.link() ran!", scope, elem, attrs)
-        scope.languageIconName = getIconName(attrs.language)
         scope.languageIconImg = getIconImg(attrs.language)
 
         scope.languageName = attrs.language
@@ -493,13 +488,9 @@ angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", 
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
-    "<i class=\"devicon-{{ languageIconName }}-plain colored\"\n" +
-    "   ng-show=\"languageIconName\"\n" +
-    "   tooltip=\"{{ languageName }}\"></i>\n" +
-    "\n" +
     "<img class=\"language-icon-img\"\n" +
     "   ng-show=\"languageIconImg\"\n" +
-    "   ng-src=\"{{ languageIconImg }}\"\n" +
+    "   ng-src=\"img/{{ languageIconImg }}.png\"\n" +
     "   tooltip=\"{{ languageName }}\">");
 }]);
 
