@@ -435,8 +435,14 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
     "   <div class=\"repos\">\n" +
     "      <div class=\"repo\" ng-repeat=\"repo in profile.repos | orderBy: 'language'\">\n" +
     "         <div class=\"meta\">\n" +
-    "            <h3>{{ repo.name }}</h3>\n" +
-    "            <span class=\"language\" ng-show=\"repo.language\">({{ repo.language }})</span>\n" +
+    "            <h3>\n" +
+    "               <span class=\"repo-name\">\n" +
+    "                  {{ repo.name }}\n" +
+    "               </span>\n" +
+    "               <span class=\"language\" ng-show=\"repo.language\">\n" +
+    "                  {{ repo.language }}\n" +
+    "               </span>\n" +
+    "               </h3>\n" +
     "            <span class=\"description\">{{ repo.description }}</span>\n" +
     "            <a class=\"repo_url\" href=\"{{ profile.html_url }}/{{ repo.name }}\"><i class=\"fa fa-share\"></i></a>\n" +
     "         </div>\n" +

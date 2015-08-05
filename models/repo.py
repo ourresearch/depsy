@@ -77,23 +77,21 @@ class Repo(db.Model):
         return ret
 
 
-
     def collect_metrics(self):
         data = github_subscribers.get_data(self.username, self.reponame)
         if data:
-            #self.snaps["github_subscribers"] = Snap(provider="github_subscribers", data=data)
             self.snaps.append(Snap(provider="github_subscribers", data=data))
 
-        #if self.language == "R":
-        #    r_providers = [
-        #        "crantastic_daily_downloads",
-        #        "cran_reverse_dependencies"
-        #    ]
-        #    for provider_name in r_providers:
-        #        provider = get_provider_module(provider_name)
-        #        data = provider.get_data(self.reponame)
-        #        if data:
-        #            self.snaps[provider_name] = Snap(provider=provider_name, data=data)
+        if self.language == "R":
+            r_providers = [
+                "crantastic_daily_downloads",
+                "cran_reverse_dependencies"
+            ]
+            for provider_name in r_providers:
+                provider = get_provider_module(provider_name)
+                data = provider.get_data(self.reponame)
+                if data:
+                    self.snaps.append(Snap(provider=provider_name, data=data))
 
 
     def _get_from_github_data(self, my_property):
@@ -103,15 +101,19 @@ class Repo(db.Model):
             return None
 
 
+    @property
     def created_at(self):
         return self._get_from_github_data("created_at")
 
+    @property
     def description(self):
         return self._get_from_github_data("description")
 
+    @property
     def language(self):
         return self._get_from_github_data("language")
 
+    @property
     def name(self):
         return self._get_from_github_data("name")
 
