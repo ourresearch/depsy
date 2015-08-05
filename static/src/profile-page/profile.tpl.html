@@ -9,13 +9,13 @@
       <div class="repo" ng-repeat="repo in profile.repos | orderBy: 'language'">
          <div class="meta">
             <h3>
+               <language-icon language="{{ repo.language }}"></language-icon>
                <span class="repo-name">
                   {{ repo.name }}
                </span>
                <span class="language" ng-show="repo.language">
                   {{ repo.language }}
                </span>
-               <language-icon language="{{ repo.language }}"></language-icon>
                </h3>
             <span class="description">{{ repo.description }}</span>
             <a class="repo_url" href="{{ profile.html_url }}/{{ repo.name }}"><i class="fa fa-share"></i></a>

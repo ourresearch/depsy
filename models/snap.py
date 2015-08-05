@@ -43,7 +43,6 @@ def make_working_snap(snap):
 
 class WorkingSnap():
     def __init__(self, snap):
-        print "making a new workingsnap!"
         self.snap = snap
 
     @property
@@ -74,7 +73,7 @@ class CrantasticDailyDownloadsSnap(WorkingSnap):
         return self.snap.data
 
 
-class CranReverseDependencies(WorkingSnap):
+class CranReverseDependenciesSnap(WorkingSnap):
 
     @property
     def subscribers(self):
