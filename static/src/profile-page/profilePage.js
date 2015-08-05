@@ -1,6 +1,7 @@
 angular.module('profilePage', [
     'ngRoute',
-    'profileService'
+    'profileService',
+    "directives.languageIcon"
   ])
 
 
@@ -27,8 +28,10 @@ angular.module('profilePage', [
     console.log("here's the profile", $scope.profile)
 
 
+
+
+
+
   })
-
-
 
 

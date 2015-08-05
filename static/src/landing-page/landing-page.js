@@ -13,7 +13,6 @@ angular.module('landingPage', [
   })
 
 
-
   .controller("landingPageCtrl", function($scope, $http, ProfileService){
     console.log("loaded the landing page controller")
     $scope.newProfile = {}

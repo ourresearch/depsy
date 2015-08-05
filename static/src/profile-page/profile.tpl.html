@@ -15,21 +15,24 @@
                <span class="language" ng-show="repo.language">
                   {{ repo.language }}
                </span>
+               <language-icon language="{{ repo.language }}"></language-icon>
                </h3>
             <span class="description">{{ repo.description }}</span>
             <a class="repo_url" href="{{ profile.html_url }}/{{ repo.name }}"><i class="fa fa-share"></i></a>
          </div>
          <div class="impact">
-            <div class="stars" ng-show="repo.stargazers_count">
+            <div class="stars metric" ng-show="repo.github_stargazers_count">
                <i class="fa fa-star-o"></i>
-               <span class="val">{{ repo.stargazers_count }}</span>
+               <span class="val">{{ repo.github_stargazers_count }}</span>
                <span class="descr">stars</span>
             </div>
-            <div class="forks" ng-show="repo.forks_count">
+            <div class="forks metric" ng-show="repo.github_forks_count">
                <i class="fa fa-code-fork"></i>
-               <span class="val">{{ repo.forks_count }}</span>
+               <span class="val">{{ repo.github_forks_count }}</span>
                <span class="descr">forks</span>
             </div>
+
+
             <div class="subscribers" ng-show="repo.subscribers_count">
                <i class="fa fa-eye"></i>
                <span class="val">{{ repo.subscribers_count }}</span>

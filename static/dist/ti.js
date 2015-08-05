@@ -154,6 +154,86 @@ angular.module('articlePage', [
 
 
 
+angular.module("directives.languageIcon", [])
+.directive("languageIcon", function(){
+
+
+    var languagesWithIconNames = [
+      "c",
+      "coffeescript",
+      "c++",
+      "c#",
+      "css",
+      "docker",
+      "erlang",
+      "go",
+      "html",
+      "java",
+      "javascript",
+      "nodejs",
+      "php",
+      "python",
+      "rails",
+      "ruby"
+    ]
+
+    var languagesWithDifferentIconNames = {
+      "C++": "cplusplus",
+      "C#":"csharp"
+    }
+
+    var languagesWithImages = {
+      "r": "img/r-logo-flat.png"
+    }
+
+    var getIconName = function(languageName){
+      if (languagesWithDifferentIconNames[languageName]) {
+        return languagesWithDifferentIconNames[languageName]
+      }
+      else if (languagesWithIconNames.indexOf(languageName.toLowerCase()) > -1){
+        return languageName.toLowerCase()
+      }
+      else {
+        return null
+      }
+    }
+
+    var getIconImg = function(languageName){
+      return languagesWithImages[languageName]
+    }
+
+
+
+    return {
+      templateUrl: "directives/language-icon.tpl.html",
+      restrict: "EA",
+      link: function(scope, elem, attrs) {
+        console.log("LanguageIcon.link() ran!", scope, elem, attrs)
+        scope.languageIconName = getIconName(attrs.language)
+        scope.languageIconImg = getIconImg(attrs.language)
+
+        scope.languageName = attrs.language
+      }
+    }
+
+
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 angular.module('landingPage', [
     'ngRoute',
     'profileService'
@@ -167,7 +247,6 @@ angular.module('landingPage', [
       controller: 'landingPageCtrl'
     })
   })
-
 
 
   .controller("landingPageCtrl", function($scope, $http, ProfileService){
@@ -202,7 +281,8 @@ angular.module('landingPage', [
 
 angular.module('profilePage', [
     'ngRoute',
-    'profileService'
+    'profileService',
+    "directives.languageIcon"
   ])
 
 
@@ -229,9 +309,11 @@ angular.module('profilePage', [
     console.log("here's the profile", $scope.profile)
 
 
+
+
+
+
   })
-
-
 
 
 
@@ -325,7 +407,7 @@ angular.module('profileService', [
 
 
   })
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -409,6 +491,18 @@ angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", 
     "</div>");
 }]);
 
+angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/language-icon.tpl.html",
+    "<i class=\"devicon-{{ languageIconName }}-plain colored\"\n" +
+    "   ng-show=\"languageIconName\"\n" +
+    "   tooltip=\"{{ languageName }}\"></i>\n" +
+    "\n" +
+    "<img class=\"language-icon-img\"\n" +
+    "   ng-show=\"languageIconImg\"\n" +
+    "   ng-src=\"{{ languageIconImg }}\"\n" +
+    "   tooltip=\"{{ languageName }}\">");
+}]);
+
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
@@ -442,21 +536,24 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
     "               <span class=\"language\" ng-show=\"repo.language\">\n" +
     "                  {{ repo.language }}\n" +
     "               </span>\n" +
+    "               <language-icon language=\"{{ repo.language }}\"></language-icon>\n" +
     "               </h3>\n" +
     "            <span class=\"description\">{{ repo.description }}</span>\n" +
     "            <a class=\"repo_url\" href=\"{{ profile.html_url }}/{{ repo.name }}\"><i class=\"fa fa-share\"></i></a>\n" +
     "         </div>\n" +
     "         <div class=\"impact\">\n" +
-    "            <div class=\"stars\" ng-show=\"repo.stargazers_count\">\n" +
+    "            <div class=\"stars metric\" ng-show=\"repo.github_stargazers_count\">\n" +
     "               <i class=\"fa fa-star-o\"></i>\n" +
-    "               <span class=\"val\">{{ repo.stargazers_count }}</span>\n" +
+    "               <span class=\"val\">{{ repo.github_stargazers_count }}</span>\n" +
     "               <span class=\"descr\">stars</span>\n" +
     "            </div>\n" +
-    "            <div class=\"forks\" ng-show=\"repo.forks_count\">\n" +
+    "            <div class=\"forks metric\" ng-show=\"repo.github_forks_count\">\n" +
     "               <i class=\"fa fa-code-fork\"></i>\n" +
-    "               <span class=\"val\">{{ repo.forks_count }}</span>\n" +
+    "               <span class=\"val\">{{ repo.github_forks_count }}</span>\n" +
     "               <span class=\"descr\">forks</span>\n" +
     "            </div>\n" +
+    "\n" +
+    "\n" +
     "            <div class=\"subscribers\" ng-show=\"repo.subscribers_count\">\n" +
     "               <i class=\"fa fa-eye\"></i>\n" +
     "               <span class=\"val\">{{ repo.subscribers_count }}</span>\n" +
