@@ -1,4 +1,5 @@
-<img class="language-icon-img"
-   ng-show="languageIconImg"
-   ng-src="static/img/{{ languageIconImg }}.png"
-   tooltip="{{ languageName }}">
+<span class="language"
+      ng-class="{badge: languageName}"
+      style="background-color: hsl({{ languageHue }}, 80%, 30%)">
+   {{ languageName }}
+</span>

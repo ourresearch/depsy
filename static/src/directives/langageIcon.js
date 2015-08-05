@@ -2,56 +2,23 @@ angular.module("directives.languageIcon", [])
 .directive("languageIcon", function(){
 
 
-    var languagesWithIconNames = [
-
-      /*
-      "c",
-      "coffeescript",
-      "c++",
-      "c#",
-      "erlang",
-      "go",
-      "rails",
-      "ruby",
-      */
-
-      "css",
-      "html",
-      "java",
-      "javascript",
-      "php",
-      "python",
-      "perl",
-      "r",
-      "shell"
-    ]
-
-
-    // not using right now
-    var languagesWithDifferentIconNames = {
-      "C++": "cplusplus",
-      "C#":"csharp"
-    }
-
-    var getIconImg = function(languageName){
-     if (languagesWithIconNames.indexOf(languageName.toLowerCase()) > -1){
-        return languageName.toLowerCase()
+  var hueFromString = function(str) {
+      var hash = 0;
+      if (str.length == 0) return hash;
+      for (var i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+          hash = hash & hash; // Convert to 32bit integer
       }
-      else {
-        return null
-      }
-    }
-
-
+      return hash % 360;
+  };
 
     return {
       templateUrl: "directives/language-icon.tpl.html",
       restrict: "EA",
       link: function(scope, elem, attrs) {
-        console.log("LanguageIcon.link() ran!", scope, elem, attrs)
-        scope.languageIconImg = getIconImg(attrs.language)
 
         scope.languageName = attrs.language
+        scope.languageHue = hueFromString(attrs.language)
       }
     }
 

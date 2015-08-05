@@ -158,56 +158,23 @@ angular.module("directives.languageIcon", [])
 .directive("languageIcon", function(){
 
 
-    var languagesWithIconNames = [
-
-      /*
-      "c",
-      "coffeescript",
-      "c++",
-      "c#",
-      "erlang",
-      "go",
-      "rails",
-      "ruby",
-      */
-
-      "css",
-      "html",
-      "java",
-      "javascript",
-      "php",
-      "python",
-      "perl",
-      "r",
-      "shell"
-    ]
-
-
-    // not using right now
-    var languagesWithDifferentIconNames = {
-      "C++": "cplusplus",
-      "C#":"csharp"
-    }
-
-    var getIconImg = function(languageName){
-     if (languagesWithIconNames.indexOf(languageName.toLowerCase()) > -1){
-        return languageName.toLowerCase()
+  var hueFromString = function(str) {
+      var hash = 0;
+      if (str.length == 0) return hash;
+      for (var i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+          hash = hash & hash; // Convert to 32bit integer
       }
-      else {
-        return null
-      }
-    }
-
-
+      return hash % 360;
+  };
 
     return {
       templateUrl: "directives/language-icon.tpl.html",
       restrict: "EA",
       link: function(scope, elem, attrs) {
-        console.log("LanguageIcon.link() ran!", scope, elem, attrs)
-        scope.languageIconImg = getIconImg(attrs.language)
 
         scope.languageName = attrs.language
+        scope.languageHue = hueFromString(attrs.language)
       }
     }
 
@@ -488,10 +455,11 @@ angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", 
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
-    "<img class=\"language-icon-img\"\n" +
-    "   ng-show=\"languageIconImg\"\n" +
-    "   ng-src=\"static/img/{{ languageIconImg }}.png\"\n" +
-    "   tooltip=\"{{ languageName }}\">");
+    "<span class=\"language\"\n" +
+    "      ng-class=\"{badge: languageName}\"\n" +
+    "      style=\"background-color: hsl({{ languageHue }}, 80%, 30%)\">\n" +
+    "   {{ languageName }}\n" +
+    "</span>");
 }]);
 
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
@@ -521,13 +489,10 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
     "      <div class=\"repo\" ng-repeat=\"repo in profile.repos | orderBy: 'language'\">\n" +
     "         <div class=\"meta\">\n" +
     "            <h3>\n" +
-    "               <language-icon language=\"{{ repo.language }}\"></language-icon>\n" +
     "               <span class=\"repo-name\">\n" +
     "                  {{ repo.name }}\n" +
     "               </span>\n" +
-    "               <span class=\"language\" ng-show=\"repo.language\">\n" +
-    "                  {{ repo.language }}\n" +
-    "               </span>\n" +
+    "               <language-icon language=\"{{ repo.language }}\"></language-icon>\n" +
     "               </h3>\n" +
     "            <span class=\"description\">{{ repo.description }}</span>\n" +
     "            <a class=\"repo_url\" href=\"{{ profile.html_url }}/{{ repo.name }}\"><i class=\"fa fa-share\"></i></a>\n" +
