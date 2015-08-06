@@ -59,6 +59,10 @@ class Profile(db.Model):
         return self._get_from_github_data("avatar_url")
 
     @property
+    def name(self):
+        return self._get_from_github_data("name")
+
+    @property
     def bio(self):
         return self._get_from_github_data("bio")
 

@@ -94,8 +94,17 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
-    "\n" +
-    "   Hi! heather and jason have both been here!\n" +
+    "   <h1><img src=\"static/img/impactstory-software.png\" alt=\"\"/></h1>\n" +
+    "   <div class=\"tagline\">\n" +
+    "      Discover the full impact of your research software:\n" +
+    "      citations, forks, reverse dependencies and more.\n" +
+    "   </div>\n" +
+    "   <div class=\"big-action-button\">\n" +
+    "      <span class=\"btn btn-lg btn-primary\">\n" +
+    "         <i class=\"fa fa-github\"></i>\n" +
+    "         Sign in free with github\n" +
+    "      </span>\n" +
+    "   </div>\n" +
     "\n" +
     "</div>\n" +
     "\n" +

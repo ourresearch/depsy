@@ -15,31 +15,48 @@ body {
 li {
   list-style-type: none;
 }
+div.landing {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: url(img/servers.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-color: transparent;
+}
 div.landing h1 {
-  margin-top: 150px;
-  text-align: center;
+  margin: 20px;
 }
 div.landing h1 img {
-  width: 350px;
+  width: 200px;
 }
-div.landing form.create-profile {
-  margin: 60px auto;
-  width: 500px;
-}
-div.landing form.create-profile div.core-journals {
-  margin-top: 35px;
-}
-div.landing form.create-profile div.core-journals h3 {
-  font-weight: 300;
-  font-size: 20px;
-}
-div.landing form.create-profile div.core-journals .add-core-journal {
-  float: right;
-}
-div.landing form.create-profile div.submit-btn-container {
+div.landing div.tagline {
   text-align: center;
-  clear: both;
-  padding-top: 20px;
+  color: #fff;
+  font-size: 50px;
+  width: 1100px;
+  margin: 200px auto 0;
+  font-weight: 100;
+  text-shadow: 0 2px 10px #000;
+}
+div.landing div.big-action-button {
+  text-align: center;
+  margin-top: 80px;
+}
+div.landing div.big-action-button span.btn {
+  background: #ff3000;
+  -webkit-box-shadow: 0 1px 50px rgba(0, 0, 0, 0.7);
+  -moz-box-shadow: 0 1px 50px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 1px 50px rgba(0, 0, 0, 0.7);
+  border: none;
+  font-size: 35px;
+}
+div.landing div.big-action-button span.btn i {
+  margin-right: 5px;
 }
 div.profile-page {
   margin-left: 200px;
