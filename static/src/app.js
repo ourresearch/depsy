@@ -55,12 +55,15 @@ angular.module('app').run(function($route,
 });
 
 
-angular.module('app').controller('AppCtrl', function($scope){
+angular.module('app').controller('AppCtrl', function($scope, $auth){
 
   // put this in a service later
   $scope.colorClass = function(percentile){
     return Math.ceil(percentile / 10)
   }
+    $scope.isAuthenticated = function() {
+      return $auth.isAuthenticated();
+    };
 
   /*
   $scope.$on('$routeChangeError', function(event, current, previous, rejection){

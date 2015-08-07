@@ -15,6 +15,14 @@ body {
 li {
   list-style-type: none;
 }
+div.header h1 {
+  z-index: 100;
+  position: relative;
+  margin: 20px 30px;
+}
+div.header h1 img {
+  width: 150px;
+}
 div.landing {
   position: fixed;
   top: 0;
@@ -27,12 +35,6 @@ div.landing {
   -o-background-size: cover;
   background-size: cover;
   background-color: transparent;
-}
-div.landing h1 {
-  margin: 20px 30px;
-}
-div.landing h1 img {
-  width: 150px;
 }
 div.landing div.tagline {
   text-align: center;

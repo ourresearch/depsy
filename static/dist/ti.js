@@ -56,12 +56,15 @@ angular.module('app').run(function($route,
 });
 
 
-angular.module('app').controller('AppCtrl', function($scope){
+angular.module('app').controller('AppCtrl', function($scope, $auth){
 
   // put this in a service later
   $scope.colorClass = function(percentile){
     return Math.ceil(percentile / 10)
   }
+    $scope.isAuthenticated = function() {
+      return $auth.isAuthenticated();
+    };
 
   /*
   $scope.$on('$routeChangeError', function(event, current, previous, rejection){
@@ -486,7 +489,6 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
-    "   <h1><img src=\"static/img/impactstory-software.png\" alt=\"\"/></h1>\n" +
     "   <div class=\"tagline\">\n" +
     "      Discover the full impact of your research software:\n" +
     "      citations, forks, reverse dependencies and more.\n" +

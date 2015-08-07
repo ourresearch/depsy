@@ -94,7 +94,6 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
-    "   <h1><img src=\"static/img/impactstory-software.png\" alt=\"\"/></h1>\n" +
     "   <div class=\"tagline\">\n" +
     "      Discover the full impact of your research software:\n" +
     "      citations, forks, reverse dependencies and more.\n" +
