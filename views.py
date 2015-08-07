@@ -99,9 +99,9 @@ def index_view(path="index", page=""):
 # move to another file later
 ###########################################################################
 
-def create_token(user):
+def create_token(profile):
     payload = {
-        'sub': user.username,
+        'sub': profile.username,
         'iat': datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(days=14)
     }
