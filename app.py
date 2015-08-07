@@ -45,7 +45,7 @@ app.debug = True
 # database stuff
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_POOL_SIZE"] = 60
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+app.config['GITHUB_SECRET'] = os.getenv("GITHUB_SECRET")
 
 
 # database stuff

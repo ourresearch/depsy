@@ -21,7 +21,7 @@ angular.module('app').config(function ($routeProvider,
                                        $locationProvider) {
   $locationProvider.html5Mode(true);
   $authProvider.github({
-    clientId: '46b1f697afdd04e119fb'
+    clientId: '46b1f697afdd04e119fb' // hard-coded for now
   });
 
 
@@ -230,7 +230,7 @@ angular.module('landingPage', [
 
     $scope.authenticate = function() {
       $auth.authenticate("github").then(function(resp){
-        console.log("authenticated, i think", resp)
+        alert("authenticated, i think?")
       })
     };
 

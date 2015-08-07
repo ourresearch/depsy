@@ -20,7 +20,7 @@ angular.module('app').config(function ($routeProvider,
                                        $locationProvider) {
   $locationProvider.html5Mode(true);
   $authProvider.github({
-    clientId: '46b1f697afdd04e119fb'
+    clientId: '46b1f697afdd04e119fb' // hard-coded for now
   });
 
 

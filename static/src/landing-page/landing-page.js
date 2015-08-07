@@ -22,7 +22,7 @@ angular.module('landingPage', [
 
     $scope.authenticate = function() {
       $auth.authenticate("github").then(function(resp){
-        console.log("authenticated, i think", resp)
+        alert("authenticated, i think?")
       })
     };
 
