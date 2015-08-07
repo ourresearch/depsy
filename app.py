@@ -12,6 +12,7 @@ from rq import Queue
 import os
 import logging
 import sys
+from flask_jwt import JWT, jwt_required
 
 
 # set up logging
@@ -45,14 +46,20 @@ app.debug = True
 # database stuff
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_POOL_SIZE"] = 60
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 
+# database stuff
 db = SQLAlchemy(app)
 
+# these imports are needed so that tables will get auto-created.
 from models import profile
 from models import repo
+
 db.create_all()
 db.session.commit()
+
+
 
 
 # from http://docs.sqlalchemy.org/en/latest/core/pooling.html

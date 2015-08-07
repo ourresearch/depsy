@@ -1,19 +1,29 @@
 angular.module('app', [
-  'ngRoute', // loaded from external lib
-  'templates.app',  // this is how it accesses the cached templates in ti.js
+  // external libs
+  'ngRoute',
   'ui.bootstrap',
+  'satellizer',
+
+  'templates.app',  // this is how it accesses the cached templates in ti.js
 
   'landingPage',
   'profilePage',
   'articlePage'
+
 ]);
 
 
 
 
 angular.module('app').config(function ($routeProvider,
+                                       $authProvider, // from satellizer
                                        $locationProvider) {
   $locationProvider.html5Mode(true);
+  $authProvider.github({
+    clientId: '46b1f697afdd04e119fb'
+  });
+
+
 //  paginationTemplateProvider.setPath('directives/pagination.tpl.html')
 });
 

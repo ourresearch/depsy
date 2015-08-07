@@ -29,10 +29,10 @@ div.landing {
   background-color: transparent;
 }
 div.landing h1 {
-  margin: 20px;
+  margin: 20px 30px;
 }
 div.landing h1 img {
-  width: 200px;
+  width: 150px;
 }
 div.landing div.tagline {
   text-align: center;

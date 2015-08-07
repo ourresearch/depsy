@@ -8,15 +8,29 @@ from models.repo import Repo
 from flask import make_response
 from flask import request
 from flask import abort
+from flask import jsonify
+from flask import g
 from flask import render_template
+
+
 import os
 import json
-import sys
-from time import sleep
+from datetime import datetime
+from datetime import timedelta
+import jwt
+from jwt import DecodeError
+from jwt import ExpiredSignature
+from functools import wraps
+
+
+
+import requests
+from urlparse import parse_qsl
 
 import logging
 
 logger = logging.getLogger("views")
+
 
 
 def json_dumper(obj):
@@ -72,8 +86,66 @@ def index_view(path="index", page=""):
 
 
 
-######################################
-# api
+
+
+
+
+
+
+
+
+###########################################################################
+# from satellizer.
+# move to another file later
+###########################################################################
+
+def create_token(user):
+    payload = {
+        'sub': user.username,
+        'iat': datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(days=14)
+    }
+    token = jwt.encode(payload, app.config['SECRET_KEY'])
+    return token.decode('unicode_escape')
+
+
+def parse_token(req):
+    token = req.headers.get('Authorization').split()[1]
+    return jwt.decode(token, app.config['SECRET_KEY'])
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not request.headers.get('Authorization'):
+            response = jsonify(message='Missing authorization header')
+            response.status_code = 401
+            return response
+
+        try:
+            payload = parse_token(request)
+        except DecodeError:
+            response = jsonify(message='Token is invalid')
+            response.status_code = 401
+            return response
+        except ExpiredSignature:
+            response = jsonify(message='Token has expired')
+            response.status_code = 401
+            return response
+
+        g.user_id = payload['sub']
+
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+
+
+
+###########################################################################
+# API
+###########################################################################
 
 @app.route("/api/u/<username>")
 @app.route("/api/u/<username>.json")
@@ -87,14 +159,21 @@ def api_users(username):
         profile = create_profile(username)
     return json_resp_from_thing(profile.to_dict())
 
+@app.route('/api/me')
+@login_required
+def me():
+    user = Profile.query.filter_by(id=g.user_id).first()
+    return jsonify(user.to_json())
+
 
 @app.route("/api/r/<username>/<reponame>")
 @app.route("/api/r/<username>/<reponame>.json")
 def api_repo(username, reponame):
     repo = None
 
-    # commented out so makes every time for debugging    
-    # repo = Repo.query.filter(Repo.username==username, Repo.reponame==reponame).first()
+    # Comment this next line out for debugging,
+    # it makes a new profile every time.
+    repo = Repo.query.filter(Repo.username==username, Repo.reponame==reponame).first()
 
     if not repo:
         repo = create_repo(username, reponame)
@@ -102,149 +181,54 @@ def api_repo(username, reponame):
 
 
 
+@app.route('/auth/github', methods=['POST'])
+def github():
+    """
+    based on satellizer example here:
+    https://github.com/sahat/satellizer/blob/master/examples/server/python/app.py#L199
+    """
+
+    print "running /auth/github"
+
+    access_token_url = 'https://github.com/login/oauth/access_token'
+    users_api_url = 'https://api.github.com/user'
+
+    params = {
+        'client_id': request.json['clientId'],
+        'redirect_uri': request.json['redirectUri'],
+        'client_secret': app.config['GITHUB_SECRET'],
+        'code': request.json['code']
+    }
+
+    # Step 1. Exchange authorization code for access token.
+    r = requests.get(access_token_url, params=params)
+    access_token = dict(parse_qsl(r.text))
+    headers = {'User-Agent': 'Impactstory'}
+
+    # Step 2. Retrieve information about the current user.
+    r = requests.get(users_api_url, params=access_token, headers=headers)
+    github_profile = json.loads(r.text)
+    logger.info(u"we got a profile back from github." + ",".join(github_profile.keys()))
 
 
+    # Step 3. (optional) Link accounts. removed, we don't need this. since we're
+    # only using public stuff, this authentication doesnt' actually give us
+    # any new information if we have the profile
+
+    # Step 4. Create a new account or return an existing one.
+    profile = Profile.query.filter_by(username=github_profile['id']).first()
+    if profile:
+        # user exists. we are logging them in.
+        token = create_token(profile)
+        return jsonify(token=token)
+    else:
+        new_profile = create_profile(github_profile['id'])
+        db.session.add(new_profile)
+        db.session.commit()
+        token = create_token(new_profile)
+        return jsonify(token=token)
 
 
-
-
-
-# ######################################
-# # old
-
-
-# @app.route("/profile", methods=["POST"])
-# def create_profile():
-#     pmids = [str(pmid) for pmid in request.json["pmids"] ]
-#     name = request.json["name"]
-#     core_journals = request.json["core_journals"]
-#     medline_records = make_profile(name, pmids, core_journals)
-#     return json_resp_from_thing(medline_records)
-
-# @app.route("/make-profile/<name>/<pmids_str>/<core_journals_str>")
-# def profile_create_tester(name, pmids_str,core_journals_str):
-#     medline_records = make_profile(
-#             name, 
-#             pmids_str.split(","),
-#             core_journals_str.split(","),
-#             )
-#     return json_resp_from_thing(medline_records)
-
-
-
-# @app.route("/profile/<slug>")
-# def endpoint_to_get_profile(slug):
-#     profile = get_profile(slug)
-#     if profile is not None:
-#         return json_resp_from_thing(profile)
-#     else:
-#         abort_json(404, "this profile doesn't exist")
-
-
-# @app.route("/api/article/<pmid>")
-# def article_details(pmid):
-#     article = None
-
-#     try:
-#         article = get_article_set([pmid])[0]
-#     except (KeyError, TypeError):
-#         pass
-
-#     if article is not None:
-#         return json_resp_from_thing(article.to_dict())
-#     else:
-#         abort_json(404, "this article doesn't exist")
-
-
-
-# @app.route("/api/journals/<name_starts_with>")
-# def journals_route(name_starts_with):
-#     response = filter_journal_list(name_starts_with)
-#     return json_resp_from_thing(response)
-
-
-
-
-# ######################################
-# # for admin tasks
-
-# @app.route("/api/admin/journals/all")
-# def journal_admin_all():
-#     import journal 
-#     journals_list = journal.create_journals_lookup_from_medline_dump()
-
-#     return json_resp_from_thing(journals_list)
-
-
-
-
-# ######################################
-# # for experimenting
-
-# from pubmed import get_medline_records
-# from pubmed import get_filtered
-# from pubmed import get_related_pmids
-# import pubmed
-# from refset import build_refset
-# from biblio import Biblio
-# from collections import defaultdict
-# from refset import get_pmids_for_refset
-
-# @app.route("/api/refset/<date>/<core_journals_str>/<refset_size>")
-# def refset_experimenting(date, core_journals_str, refset_size):
-#     core_journals = core_journals_str.split(",")
-#     pmids = get_pmids_for_refset(date, core_journals, int(refset_size))
-#     # return json_resp_from_thing(pmids)
-#     # return json_resp_from_thing(",".join(pmids))
-
-#     print "HI HEATHER"
-#     print "len pmids", len(pmids)
-#     raw_refset_dict = dict((pmid, None) for pmid in pmids)
-#     refset = build_refset(raw_refset_dict)
-#     return json_resp_from_thing(refset.to_dict())
-
-
-# @app.route("/api/related/<pmid>")
-# def related_pmid(pmid):
-#     related_pmids = get_related_pmids([pmid])
-#     record = get_medline_records([pmid])
-#     year = Biblio(record[0]).year
-#     pmids = get_filtered(related_pmids, year=year)
-
-#     raw_refset_dict = dict((pmid, None) for pmid in pmids)
-#     refset_details = build_refset(raw_refset_dict)
-#     return json_resp_from_thing(refset_details.to_dict())
-
-
-# @app.route("/api/playing/<pmid>")
-# def refset(pmid):
-#     record = get_medline_records([pmid])
-#     owner_biblio = Biblio(record[0])
-
-
-#     related_pmids = get_related_pmids([pmid])
-
-#     related_records = get_medline_records(related_pmids)
-#     related_biblios = [Biblio(record) for record in related_records]
-
-#     top_10_mesh_hist = pubmed.mesh_histogram(related_biblios[0:50])
-#     sorted_top_10 = pubmed.mesh_hist_to_list(top_10_mesh_hist)
-
-#     all_mesh_hist = pubmed.mesh_histogram(related_biblios)
-#     sorted_all = pubmed.mesh_hist_to_list(all_mesh_hist)
-
-#     response = {
-#         "owner_mesh": owner_biblio.mesh_terms,
-#         "top_10_mesh_histogram": sorted_top_10,
-#         "all_mesh_histogram": sorted_all
-#     }
-
-#     return json_resp_from_thing(response)
-
-# @app.route("/api/author/<author_name>/pmids")
-# def author_pmids(author_name):
-#     pmids = get_pmids_from_author_name(author_name)
-#     return json_resp_from_thing(pmids)
 
 
 if __name__ == "__main__":

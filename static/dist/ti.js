@@ -1,20 +1,30 @@
 /* yay impactstory */
 angular.module('app', [
-  'ngRoute', // loaded from external lib
-  'templates.app',  // this is how it accesses the cached templates in ti.js
+  // external libs
+  'ngRoute',
   'ui.bootstrap',
+  'satellizer',
+
+  'templates.app',  // this is how it accesses the cached templates in ti.js
 
   'landingPage',
   'profilePage',
   'articlePage'
+
 ]);
 
 
 
 
 angular.module('app').config(function ($routeProvider,
+                                       $authProvider, // from satellizer
                                        $locationProvider) {
   $locationProvider.html5Mode(true);
+  $authProvider.github({
+    clientId: '46b1f697afdd04e119fb'
+  });
+
+
 //  paginationTemplateProvider.setPath('directives/pagination.tpl.html')
 });
 
@@ -211,8 +221,19 @@ angular.module('landingPage', [
   })
 
 
-  .controller("landingPageCtrl", function($scope, $http, ProfileService){
+  .controller("landingPageCtrl", function($scope,
+                                          $http,
+                                          $auth, // from satellizer
+                                          ProfileService){
+
     console.log("loaded the landing page controller")
+
+    $scope.authenticate = function() {
+      $auth.authenticate("github").then(function(resp){
+        console.log("authenticated, i think", resp)
+      })
+    };
+
     $scope.newProfile = {}
     $scope.newProfile.coreJournals = [{}]
 
@@ -471,7 +492,7 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
     "      citations, forks, reverse dependencies and more.\n" +
     "   </div>\n" +
     "   <div class=\"big-action-button\">\n" +
-    "      <span class=\"btn btn-lg btn-primary\">\n" +
+    "      <span class=\"btn btn-lg btn-primary\" ng-click=\"authenticate()\">\n" +
     "         <i class=\"fa fa-github\"></i>\n" +
     "         Sign in free with github\n" +
     "      </span>\n" +

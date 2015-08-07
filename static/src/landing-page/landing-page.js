@@ -13,8 +13,19 @@ angular.module('landingPage', [
   })
 
 
-  .controller("landingPageCtrl", function($scope, $http, ProfileService){
+  .controller("landingPageCtrl", function($scope,
+                                          $http,
+                                          $auth, // from satellizer
+                                          ProfileService){
+
     console.log("loaded the landing page controller")
+
+    $scope.authenticate = function() {
+      $auth.authenticate("github").then(function(resp){
+        console.log("authenticated, i think", resp)
+      })
+    };
+
     $scope.newProfile = {}
     $scope.newProfile.coreJournals = [{}]
 
