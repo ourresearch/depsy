@@ -105,7 +105,9 @@ def create_token(profile):
         'iat': datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(days=14)
     }
-    token = jwt.encode(payload, app.config['SECRET_KEY'])
+    key = app.config['SECRET_KEY']
+    logger.info('creating a token using this key: ' + key)
+    token = jwt.encode(payload, key)
     return token.decode('unicode_escape')
 
 
