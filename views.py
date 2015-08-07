@@ -220,7 +220,7 @@ def github():
 
     # Step 4. Create a new account or return an existing one.
     profile = Profile.query.get(github_profile['login'])
-    logger.info(u"tried to get a profile using: " + Profile.query.get(github_profile['login']))
+    logger.info(u"tried to get a profile using: " + github_profile['login'])
 
     if profile:
         # user exists. we are logging them in.

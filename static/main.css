@@ -15,13 +15,22 @@ body {
 li {
   list-style-type: none;
 }
-div.header h1 {
-  z-index: 100;
+div.header {
   position: relative;
+  z-index: 100;
+}
+div.header h1 {
   margin: 20px 30px;
 }
 div.header h1 img {
   width: 150px;
+}
+div.header div.login-controls {
+  color: #fff;
+  position: absolute;
+  right: 20px;
+  top: 0;
+  font-size: 25px;
 }
 div.landing {
   position: fixed;
