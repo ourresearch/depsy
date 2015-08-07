@@ -146,6 +146,9 @@ def login_required(f):
 ###########################################################################
 # API
 ###########################################################################
+@app.route("/api")
+def api_test():
+    return jsonify({"resp": "Hi, I'm Impactstory!"})
 
 @app.route("/api/u/<username>")
 @app.route("/api/u/<username>.json")
@@ -188,7 +191,7 @@ def github():
     https://github.com/sahat/satellizer/blob/master/examples/server/python/app.py#L199
     """
 
-    print "running /auth/github"
+    logger.info(u"in /auth/github")
 
     access_token_url = 'https://github.com/login/oauth/access_token'
     users_api_url = 'https://api.github.com/user'
