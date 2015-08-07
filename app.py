@@ -12,7 +12,6 @@ from rq import Queue
 import os
 import logging
 import sys
-from flask_jwt import JWT, jwt_required
 
 
 # set up logging
