@@ -219,13 +219,13 @@ def github():
     # any new information if we have the profile
 
     # Step 4. Create a new account or return an existing one.
-    profile = Profile.query.filter_by(username=github_profile['id']).first()
+    profile = Profile.query.filter_by(username=github_profile['login']).first()
     if profile:
         # user exists. we are logging them in.
         token = create_token(profile)
         return jsonify(token=token)
     else:
-        new_profile = create_profile(github_profile['id'])
+        new_profile = create_profile(github_profile['login'])
         db.session.add(new_profile)
         db.session.commit()
         token = create_token(new_profile)
