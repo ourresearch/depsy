@@ -101,7 +101,7 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
     "   <div class=\"big-action-button\">\n" +
     "      <span class=\"btn btn-lg btn-primary\" ng-click=\"authenticate()\">\n" +
     "         <i class=\"fa fa-github\"></i>\n" +
-    "         Sign in free with github\n" +
+    "         Sign in with GitHub\n" +
     "      </span>\n" +
     "   </div>\n" +
     "\n" +
