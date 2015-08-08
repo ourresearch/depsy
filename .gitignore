@@ -67,3 +67,6 @@ venv/
 
 # node modules used in Grunt
 static/node_modules
+
+# CodeKit
+codekit-config.json
