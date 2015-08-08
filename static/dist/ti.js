@@ -72,13 +72,18 @@ angular.module('app').controller('AppCtrl', function(
   CurrentUser,
   $auth){
 
-  // put this in a service later
-  $scope.colorClass = function(percentile){
-    return Math.ceil(percentile / 10)
-  }
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();
   };
+
+
+  $scope.authenticate = function() {
+    $auth.authenticate("github").then(function(resp){
+      alert("authenticated, i think?")
+      CurrentUser.get()
+    })
+  };
+
 
   $scope.page = PageService
   CurrentUser.get()
@@ -250,11 +255,11 @@ angular.module('landingPage', [
 
 
 
-    $scope.authenticate = function() {
-      $auth.authenticate("github").then(function(resp){
-        alert("authenticated, i think?")
-      })
-    };
+//    $scope.authenticate = function() {
+//      $auth.authenticate("github").then(function(resp){
+//        alert("authenticated, i think?")
+//      })
+//    };
 
     $scope.newProfile = {}
     $scope.newProfile.coreJournals = [{}]

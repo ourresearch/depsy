@@ -25,11 +25,11 @@ angular.module('landingPage', [
 
 
 
-    $scope.authenticate = function() {
-      $auth.authenticate("github").then(function(resp){
-        alert("authenticated, i think?")
-      })
-    };
+//    $scope.authenticate = function() {
+//      $auth.authenticate("github").then(function(resp){
+//        alert("authenticated, i think?")
+//      })
+//    };
 
     $scope.newProfile = {}
     $scope.newProfile.coreJournals = [{}]
