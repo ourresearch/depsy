@@ -63,7 +63,7 @@
 <body>
 
    <div snap-drawer="right">
-      <ul class="our-nav is-signed-in" ng-show="isAuthenticated()">
+      <ul class="our-nav not-signed-in" ng-show="!isAuthenticated()">
          <li>
             <a href="/">
                <i class="fa fa-sign-in"></i>
@@ -71,7 +71,7 @@
             </a>
          </li>
       </ul>
-      <ul class="our-nav not-signed-in" ng-show="!isAuthenticated()">
+      <ul class="our-nav signed-in" ng-show="isAuthenticated()">
          <li>
             <a href="/u/jasonpriem">
                You're signed in.
