@@ -77,21 +77,22 @@ angular.module('app').controller('AppCtrl', function(
     return $auth.isAuthenticated();
   };
   $scope.logout = function(){
-    $auth.logout()
+    $auth.logout("/")
   }
 
 
   $scope.authenticate = function() {
     $auth.authenticate("github").then(function(resp){
       console.log("authenticated. loading current user.")
-      CurrentUser.get().$promise
-        .success(function(resp){
+      CurrentUser.get().$promise.then(
+        function(resp){
           console.log("got current user", resp)
           $location.path("/u/" + resp["username"])
-        })
-        .error(function(resp){
+        },
+        function(resp){
           console.log("there was an error getting the current user.", resp)
-        })
+        }
+      )
     })
   };
 
@@ -383,7 +384,6 @@ angular.module('currentUserService', [
     return {
       d: data,
       get: function(){
-        console.log("getting the current user...")
         return UserResource.get(
           function(data){
             console.log("got the current user data", data)
@@ -404,7 +404,6 @@ angular.module('pageService', [
 
   .factory("PageService", function(){
 
-    console.log("loaded the page service")
     var data = {}
     var defaultData = {
       hasDarkBg: false
@@ -415,7 +414,6 @@ angular.module('pageService', [
       _.each(defaultData, function(v, k){
         data[k] = v
       })
-      console.log("here's the new data", data)
     }
 
     return {

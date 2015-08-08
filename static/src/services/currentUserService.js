@@ -12,7 +12,6 @@ angular.module('currentUserService', [
     return {
       d: data,
       get: function(){
-        console.log("getting the current user...")
         return UserResource.get(
           function(data){
             console.log("got the current user data", data)
