@@ -65,7 +65,7 @@
    <div snap-drawer="right">
       <ul class="our-nav not-signed-in" ng-show="!isAuthenticated()">
          <li>
-            <a href="/">
+            <a href="/" ng-click="login()">
                <i class="fa fa-sign-in"></i>
                Sign in
             </a>
@@ -85,7 +85,7 @@
 
 
          <li>
-            <a href="/">
+            <a href="/" ng-click="logout()">
                <i class="fa fa-sign-out"></i>Log out
             </a>
          </li>

@@ -76,13 +76,22 @@ angular.module('app').controller('AppCtrl', function(
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();
   };
+  $scope.logout = function(){
+    $auth.logout()
+  }
 
 
   $scope.authenticate = function() {
     $auth.authenticate("github").then(function(resp){
-      console.log("authenticated!", resp)
-      $location.path("/u/" + resp["username"])
-      CurrentUser.get()
+      console.log("authenticated. loading current user.")
+      CurrentUser.get().$promise
+        .success(function(resp){
+          console.log("got current user", resp)
+          $location.path("/u/" + resp["username"])
+        })
+        .error(function(resp){
+          console.log("there was an error getting the current user.", resp)
+        })
     })
   };
 
