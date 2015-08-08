@@ -135,7 +135,7 @@ def login_required(f):
             response.status_code = 401
             return response
 
-        g.user_id = payload['sub']
+        g.current_user_username = payload['sub']
 
         return f(*args, **kwargs)
 
@@ -167,8 +167,8 @@ def api_users(username):
 @app.route('/api/me')
 @login_required
 def me():
-    user = Profile.query.filter_by(id=g.user_id).first()
-    return jsonify(user.to_json())
+    profile = Profile.query.get(g.current_user_username)
+    return json_resp_from_thing(profile.to_dict())
 
 
 @app.route("/api/r/<username>/<reponame>")
