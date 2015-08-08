@@ -66,6 +66,7 @@ angular.module('app').run(function($route,
 angular.module('app').controller('AppCtrl', function(
   $rootScope,
   $scope,
+  $location,
   snapRemote,
   PageService,
   CurrentUser,
@@ -78,7 +79,8 @@ angular.module('app').controller('AppCtrl', function(
 
   $scope.authenticate = function() {
     $auth.authenticate("github").then(function(resp){
-      alert("authenticated, i think?")
+      console.log("authenticated!", resp)
+      $location.path("/u/" + resp["username"])
       CurrentUser.get()
     })
   };
