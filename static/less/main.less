@@ -1,10 +1,16 @@
 @import url("//fonts.googleapis.com/css?family=Lato:300,400,700,400italic");
 @import "elements"; // from http://lesselements.com/
 
+
+
+
+
+
 @linkColor: #ff3000;
 
 body {
    font-family: lato, helvetica, arial, sans-serif;
+   background: #333;
 }
 
 
@@ -17,21 +23,80 @@ li {
    list-style-type: none;
 }
 
+.snap-content {
+   background: #fff;
+   border: none;
+}
+
+.snap-drawer {
+   background: #333;
+   padding-top: 15px;
+   font-weight: 300;
+
+   ul.our-nav {
+      li {
+         i.fa {
+            margin-right: 5px;
+         }
+         a {
+            width: 100%;
+            padding: 10px 20px;
+            font-size: 20px;
+            color: #fff;
+            text-decoration: none;
+            display:inline-block;
+
+            &:hover {
+               background: #000;
+               cursor: pointer;
+            }
+
+         }
+      }
+   }
+
+
+   div.bottom-menu {
+      position: absolute;
+      bottom: 0;
+      left:0;
+      right: 0;
+      a.home-link {
+         width: 100%;
+         img {
+            padding: 13px 20px;
+            width: 200px;
+         }
+      }
+   }
+}
+
+
+
+
+
 div.header {
-      position: relative;
-      z-index: 100;
+   position: relative;
+   width: 100%;
+   z-index: 100;
    h1 {
       margin: 20px 30px;
       img {
          width: 150px;
       }
    }
-   div.login-controls {
-      color: #fff;
+   div.controls {
       position: absolute;
       right: 20px;
       top: 0;
-      font-size: 25px;
+      .menu-button {
+         font-size: 30px;
+         color: #555;
+         cursor: pointer;
+         &.on-dark-bg {
+            color: #fff;
+         }
+      }
    }
 }
 

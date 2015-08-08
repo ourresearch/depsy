@@ -16,9 +16,14 @@ angular.module('landingPage', [
   .controller("landingPageCtrl", function($scope,
                                           $http,
                                           $auth, // from satellizer
+                                          $rootScope,
+                                          PageService,
                                           ProfileService){
 
-    console.log("loaded the landing page controller")
+
+    PageService.d.hasDarkBg = true
+
+
 
     $scope.authenticate = function() {
       $auth.authenticate("github").then(function(resp){

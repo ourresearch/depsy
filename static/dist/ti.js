@@ -2,14 +2,18 @@
 angular.module('app', [
   // external libs
   'ngRoute',
+  'ngResource',
   'ui.bootstrap',
   'satellizer',
+  'snap', // hosted locally
 
   'templates.app',  // this is how it accesses the cached templates in ti.js
 
   'landingPage',
   'profilePage',
-  'articlePage'
+  'articlePage',
+
+  'pageService'
 
 ]);
 
@@ -18,11 +22,13 @@ angular.module('app', [
 
 angular.module('app').config(function ($routeProvider,
                                        $authProvider, // from satellizer
+                                       snapRemoteProvider,
                                        $locationProvider) {
   $locationProvider.html5Mode(true);
   $authProvider.github({
     clientId: '46b1f697afdd04e119fb' // hard-coded for now
   });
+  snapRemoteProvider.globalOptions.disable = 'left';
 
 
 //  paginationTemplateProvider.setPath('directives/pagination.tpl.html')
@@ -32,7 +38,7 @@ angular.module('app').config(function ($routeProvider,
 angular.module('app').run(function($route,
                                    $rootScope,
                                    $timeout,
-                                   $location) {
+                                   $location ) {
 
   /*
   this lets you change the args of the URL without reloading the whole view. from
@@ -56,34 +62,38 @@ angular.module('app').run(function($route,
 });
 
 
-angular.module('app').controller('AppCtrl', function($scope, $auth){
+angular.module('app').controller('AppCtrl', function(
+  $rootScope,
+  $scope,
+  snapRemote,
+  PageService,
+  $auth){
 
   // put this in a service later
   $scope.colorClass = function(percentile){
     return Math.ceil(percentile / 10)
   }
-    $scope.isAuthenticated = function() {
-      return $auth.isAuthenticated();
-    };
+  $scope.isAuthenticated = function() {
+    return $auth.isAuthenticated();
+  };
+
+  $scope.page = PageService
+
 
   /*
   $scope.$on('$routeChangeError', function(event, current, previous, rejection){
     RouteChangeErrorHandler.handle(event, current, previous, rejection)
   });
+  */
 
   $scope.$on('$routeChangeSuccess', function(next, current){
-    security.requestCurrentUser().then(function(currentUser){
-      Page.sendPageloadToSegmentio()
-    })
+    snapRemote.close()
+    PageService.reset()
   })
 
   $scope.$on('$locationChangeStart', function(event, next, current){
-    ProductPage.loadingBar(next, current)
-    Page.setProfileUrl(false)
-    Loading.clear()
   })
 
-  */
 
 });
 
@@ -227,9 +237,14 @@ angular.module('landingPage', [
   .controller("landingPageCtrl", function($scope,
                                           $http,
                                           $auth, // from satellizer
+                                          $rootScope,
+                                          PageService,
                                           ProfileService){
 
-    console.log("loaded the landing page controller")
+
+    PageService.d.hasDarkBg = true
+
+
 
     $scope.authenticate = function() {
       $auth.authenticate("github").then(function(resp){
@@ -327,6 +342,34 @@ angular.module('articleService', [
     return {
       data: data,
       getArticle: getArticle
+    }
+
+
+  })
+angular.module('pageService', [
+  ])
+
+
+
+  .factory("PageService", function(){
+
+    console.log("loaded the page service")
+    var data = {}
+    var defaultData = {
+      hasDarkBg: false
+    }
+
+    function reset(){
+      console.log("resetting the page service data")
+      _.each(defaultData, function(v, k){
+        data[k] = v
+      })
+      console.log("here's the new data", data)
+    }
+
+    return {
+      d: data,
+      reset: reset
     }
 
 

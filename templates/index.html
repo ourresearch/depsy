@@ -14,9 +14,12 @@
    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
    <link rel="stylesheet" href="https://cdn.rawgit.com/konpa/devicon/89f2f44ba07ea3fff7e561c2142813b278c2d6c6/devicon.min.css">
    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+   <!-- bower stylesheets -->
+   <link href="/static/bower_components/angular-snap/angular-snap.css" rel="stylesheet">
+
+   <!-- our stylesheet -->
    <link href="/static/main.css" rel="stylesheet">
-
-
 
 
 
@@ -39,8 +42,12 @@
    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-sanitize.min.js"></script>
    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-animate.min.js"></script>
    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular-cookies.min.js"></script>
+   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
 
+   <!-- local angular libs -->
+   <script src="{{ url_for('static', filename='bower_components/snapjs/snap.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/angular-snap/angular-snap.js') }}"></script>
 
    <!-- test -->
    <script src="//cdn.jsdelivr.net/satellizer/0.11.3/satellizer.min.js"></script>
@@ -48,26 +55,73 @@
 
 
 
+   <!-- all of our javascript -->
    <script type="text/javascript" src="{{ url_for('static', filename='dist/ti.js') }}"></script>
 
 
 </head>
 <body>
-   <div class="header">
-      <h1><img src="static/img/impactstory-software.png" alt=""/></h1>
-      <div class="controls">
-         <div class="login-controls">
-            <span class="logged-in" ng-show="isAuthenticated()">
-               <i class="fa fa-user"></i>
-            </span>
-            <span class="not-logged-in" ng-show="!isAuthenticated()">
+
+   <div snap-drawer="right">
+      <ul class="our-nav is-signed-in" ng-show="isAuthenticated()">
+         <li>
+            <a href="/">
                <i class="fa fa-sign-in"></i>
+               Sign in
+            </a>
+         </li>
+      </ul>
+      <ul class="our-nav not-signed-in" ng-show="!isAuthenticated()">
+         <li>
+            <a href="/u/jasonpriem">
+               You're signed in.
+            </a>
+         </li>
+         <li>
+            <a href="/settings">
+               <i class="fa fa-cog"></i>Settings
+            </a>
+         </li>
+
+
+         <li>
+            <a href="/">
+               <i class="fa fa-sign-out"></i>Log out
+            </a>
+         </li>
+      </ul>
+
+      <div class="bottom-menu">
+         <ul class="our-nav">
+            <li>
+               <a href="/about">
+                  About us
+               </a>
+            </li>
+         </ul>
+         <a class="home-link" href="/">
+            <img src="static/img/impactstory-logo.png" alt=""/>
+         </a>
+      </div>
+   </div>
+
+   <div snap-content>
+      <div class="header">
+         <h1>
+            <a href="/">
+               <img src="static/img/impactstory-software.png" alt="Impactstory software"/>
+            </a>
+         </h1>
+         <div class="controls">
+            <span class="menu-button"
+                  ng-class="{'on-dark-bg': page.d.hasDarkBg}"
+                  snap-toggle="right">
+               <i class="fa fa-bars"></i>
             </span>
          </div>
       </div>
-
+      <div ng-view class="main-view container-fluid"></div>
    </div>
-   <div ng-view class="main-view container-fluid"></div>
 
 </body>
 </html>

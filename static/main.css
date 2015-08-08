@@ -7,6 +7,7 @@
   ---------------------------------------------------*/
 body {
   font-family: lato, helvetica, arial, sans-serif;
+  background: #333;
 }
 .tooltip {
   font-weight: 300;
@@ -15,8 +16,46 @@ body {
 li {
   list-style-type: none;
 }
+.snap-content {
+  background: #fff;
+  border: none;
+}
+.snap-drawer {
+  background: #333;
+  padding-top: 15px;
+  font-weight: 300;
+}
+.snap-drawer ul.our-nav li i.fa {
+  margin-right: 5px;
+}
+.snap-drawer ul.our-nav li a {
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+}
+.snap-drawer ul.our-nav li a:hover {
+  background: #000;
+  cursor: pointer;
+}
+.snap-drawer div.bottom-menu {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.snap-drawer div.bottom-menu a.home-link {
+  width: 100%;
+}
+.snap-drawer div.bottom-menu a.home-link img {
+  padding: 13px 20px;
+  width: 200px;
+}
 div.header {
   position: relative;
+  width: 100%;
   z-index: 100;
 }
 div.header h1 {
@@ -25,12 +64,18 @@ div.header h1 {
 div.header h1 img {
   width: 150px;
 }
-div.header div.login-controls {
-  color: #fff;
+div.header div.controls {
   position: absolute;
   right: 20px;
   top: 0;
-  font-size: 25px;
+}
+div.header div.controls .menu-button {
+  font-size: 30px;
+  color: #555;
+  cursor: pointer;
+}
+div.header div.controls .menu-button.on-dark-bg {
+  color: #fff;
 }
 div.landing {
   position: fixed;
