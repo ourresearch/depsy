@@ -13,6 +13,8 @@ angular.module('app', [
   'profilePage',
   'articlePage',
 
+  'resourcesModule',
+  'currentUserService',
   'pageService'
 
 ]);
@@ -67,6 +69,7 @@ angular.module('app').controller('AppCtrl', function(
   $scope,
   snapRemote,
   PageService,
+  CurrentUser,
   $auth){
 
   // put this in a service later
@@ -78,6 +81,7 @@ angular.module('app').controller('AppCtrl', function(
   };
 
   $scope.page = PageService
+  CurrentUser.get()
 
 
   /*
@@ -318,7 +322,10 @@ angular.module('profilePage', [
 
 
 
-// coming soon...
+angular.module('resourcesModule', [])
+  .factory('UserResource', function($resource) {
+    return $resource('/api/me')
+  });
 angular.module('articleService', [
   ])
 
@@ -342,6 +349,34 @@ angular.module('articleService', [
     return {
       data: data,
       getArticle: getArticle
+    }
+
+
+  })
+angular.module('currentUserService', [
+    'resourcesModule'
+  ])
+
+
+
+  .factory("CurrentUser", function(UserResource){
+
+    var data = {}
+
+
+    return {
+      d: data,
+      get: function(){
+        console.log("getting the current user...")
+        return UserResource.get(
+          function(data){
+            console.log("got the current user data", data)
+          },
+          function(data){
+            console.log("error getting current user data", data)
+          }
+        )
+      }
     }
 
 

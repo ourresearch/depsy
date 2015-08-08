@@ -12,6 +12,8 @@ angular.module('app', [
   'profilePage',
   'articlePage',
 
+  'resourcesModule',
+  'currentUserService',
   'pageService'
 
 ]);
@@ -66,6 +68,7 @@ angular.module('app').controller('AppCtrl', function(
   $scope,
   snapRemote,
   PageService,
+  CurrentUser,
   $auth){
 
   // put this in a service later
@@ -77,6 +80,7 @@ angular.module('app').controller('AppCtrl', function(
   };
 
   $scope.page = PageService
+  CurrentUser.get()
 
 
   /*
