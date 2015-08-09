@@ -699,8 +699,8 @@ angular.module("side-menu.tpl.html", []).run(["$templateCache", function($templa
     "</ul>\n" +
     "\n" +
     "<ul class=\"our-nav signed-in\" ng-show=\"isAuthenticated()\">\n" +
-    "   <li class=\"user-name-and-pic\">\n" +
-    "      <a href=\"/u/{{ currentUser.d.username }}\">\n" +
+    "   <li>\n" +
+    "      <a href=\"/u/{{ currentUser.d.username }}\" class=\"user-name-and-pic\">\n" +
     "         <img src=\"{{ currentUser.d.avatar_url }}\"/>\n" +
     "         <span class=\"name\">\n" +
     "            {{ currentUser.d.name }}\n" +

@@ -25,23 +25,26 @@ li {
   padding-top: 15px;
   font-weight: 300;
 }
-.snap-drawer ul.our-nav li.user-name-and-pic img {
-  -webkit-border-radius: 30px;
-  -moz-border-radius: 30px;
-  border-radius: 30px;
-  height: 30px;
-  margin-right: 8px;
-}
 .snap-drawer ul.our-nav li i.fa {
   margin-right: 5px;
 }
 .snap-drawer ul.our-nav li a {
   width: 100%;
-  padding: 10px 20px;
+  padding: 10px 30px;
   font-size: 20px;
   color: #fff;
   text-decoration: none;
   display: inline-block;
+}
+.snap-drawer ul.our-nav li a.user-name-and-pic {
+  padding-left: 20px;
+}
+.snap-drawer ul.our-nav li a.user-name-and-pic img {
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  height: 30px;
+  margin-right: 8px;
 }
 .snap-drawer ul.our-nav li a:hover {
   background: #000;

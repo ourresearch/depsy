@@ -8,8 +8,8 @@
 </ul>
 
 <ul class="our-nav signed-in" ng-show="isAuthenticated()">
-   <li class="user-name-and-pic">
-      <a href="/u/{{ currentUser.d.username }}">
+   <li>
+      <a href="/u/{{ currentUser.d.username }}" class="user-name-and-pic">
          <img src="{{ currentUser.d.avatar_url }}"/>
          <span class="name">
             {{ currentUser.d.name }}
