@@ -109,7 +109,7 @@ def create_token_from_username(username):  # j added this one.
         'exp': datetime.utcnow() + timedelta(days=14)
     }
     key = app.config['SECRET_KEY']
-    logger.info('creating a token using this key: ' + key)
+    logger.info('creating a token using this payload: ' + payload)
     token = jwt.encode(payload, key)
     return token.decode('unicode_escape')
 
@@ -159,8 +159,6 @@ def api_test():
 @app.route("/api/u/<username>.json")
 def api_users(username):
     profile = None
-
-    # commented out so makes every time for debugging    
     profile = Profile.query.get(username)
 
     if not profile:
@@ -232,6 +230,7 @@ def github():
     # return the token. used to be part of their Step 4, but j extracted it.
     github_username = github_profile['login']
     token = create_token_from_username(github_username)
+    logger.info("trying to jsonify this token", token)
     return jsonify(token)
 
 

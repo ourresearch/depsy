@@ -69,4 +69,4 @@ venv/
 static/node_modules
 
 # CodeKit
-static/codekit-config.json
+*codekit*
