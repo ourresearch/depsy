@@ -109,7 +109,7 @@ def create_token_from_username(username):  # j added this one.
         'exp': datetime.utcnow() + timedelta(days=14)
     }
     key = app.config['SECRET_KEY']
-    logger.info('creating a token using this payload: ' + payload)
+    logger.info('creating a token using this payload: ' + json.dumps(payload))
     token = jwt.encode(payload, key)
     return token.decode('unicode_escape')
 
