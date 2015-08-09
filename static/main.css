@@ -30,21 +30,22 @@ li {
 }
 .snap-drawer ul.our-nav li a {
   width: 100%;
-  padding: 10px 30px;
+  padding: 10px 35px;
   font-size: 20px;
   color: #fff;
   text-decoration: none;
   display: inline-block;
 }
 .snap-drawer ul.our-nav li a.user-name-and-pic {
-  padding-left: 20px;
+  padding-left: 25px;
+  margin-top: -7px;
 }
 .snap-drawer ul.our-nav li a.user-name-and-pic img {
   -webkit-border-radius: 30px;
   -moz-border-radius: 30px;
   border-radius: 30px;
-  height: 30px;
-  margin-right: 8px;
+  height: 35px;
+  margin-right: 5px;
 }
 .snap-drawer ul.our-nav li a:hover {
   background: #000;
