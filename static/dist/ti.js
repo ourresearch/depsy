@@ -98,6 +98,7 @@ angular.module('app').controller('AppCtrl', function(
 
 
   $scope.page = PageService
+  $scope.currentUser = CurrentUser
   CurrentUser.get()
 
 

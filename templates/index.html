@@ -73,20 +73,25 @@
       </ul>
       <ul class="our-nav signed-in" ng-show="isAuthenticated()">
          <li>
-            <a href="/u/jasonpriem">
-               You're signed in.
+            <a href="/u/{{ currentUser.d.username }}">
+               <img src="{{ currentUser.d.avatar_url }}"/>
+               <span class="name">
+                  {{ currentUser.d.name }}
+               </span>
             </a>
          </li>
          <li>
             <a href="/settings">
-               <i class="fa fa-cog"></i>Settings
+               <i class="fa fa-cog"></i>
+               Settings
             </a>
          </li>
 
 
          <li>
             <a href="/" ng-click="logout()">
-               <i class="fa fa-sign-out"></i>Log out
+               <i class="fa fa-sign-out"></i>
+               Log out
             </a>
          </li>
       </ul>
