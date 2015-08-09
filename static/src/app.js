@@ -81,17 +81,28 @@ angular.module('app').controller('AppCtrl', function(
 
 
   $scope.authenticate = function() {
+
+    // 1. drop the modal. say: "signing in"
+
     $auth.authenticate("github").then(function(resp){
-      console.log("authenticated. loading current user.")
-      CurrentUser.get().$promise.then(
-        function(resp){
-          console.log("got current user", resp)
-          $location.path("/u/" + resp["username"])
-        },
-        function(resp){
-          console.log("there was an error getting the current user.", resp)
-        }
-      )
+      console.log("authenticated. resp:", resp)
+
+      // actually, all this stuff below is wrong.
+      // we need to redirect FIRST, because we ain't got no
+      // user yet, we have to hit the /u/:username route for that.
+
+      // 2. modal: "loading your profile."
+
+      $location.path("/u/" + resp.username)
+
+//      CurrentUser.get().$promise.then(
+//        function(resp){
+//          console.log("got current user", resp)
+//        },
+//        function(resp){
+//          console.log("there was an error getting the current user.", resp)
+//        }
+//      )
     })
   };
 
