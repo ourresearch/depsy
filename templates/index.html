@@ -63,70 +63,11 @@
 <body>
 
    <div snap-drawer="right">
-      <ul class="our-nav not-signed-in" ng-show="!isAuthenticated()">
-         <li>
-            <a href="/" ng-click="login()">
-               <i class="fa fa-sign-in"></i>
-               Sign in
-            </a>
-         </li>
-      </ul>
-      <ul class="our-nav signed-in" ng-show="isAuthenticated()">
-         <li>
-            <a href="/u/{{ currentUser.d.username }}">
-               <img src="{{ currentUser.d.avatar_url }}"/>
-               <span class="name">
-                  {{ currentUser.d.name }}
-               </span>
-            </a>
-         </li>
-         <li>
-            <a href="/settings">
-               <i class="fa fa-cog"></i>
-               Settings
-            </a>
-         </li>
-
-
-         <li>
-            <a href="/" ng-click="logout()">
-               <i class="fa fa-sign-out"></i>
-               Log out
-            </a>
-         </li>
-      </ul>
-
-      <div class="bottom-menu">
-         <ul class="our-nav">
-            <!--
-            <li>
-               <a href="/about">
-                  About
-               </a>
-            </li>
-            -->
-         </ul>
-         <a class="home-link" href="/">
-            <img src="static/img/impactstory-logo.png" alt=""/>
-         </a>
-      </div>
+      <div ng-include="'side-menu.tpl.html'"></div>
    </div>
 
    <div snap-content>
-      <div class="header">
-         <h1>
-            <a href="/">
-               <img src="static/img/impactstory-software.png" alt="Impactstory software"/>
-            </a>
-         </h1>
-         <div class="controls">
-            <span class="menu-button"
-                  ng-class="{'on-dark-bg': page.d.hasDarkBg}"
-                  snap-toggle="right">
-               <i class="fa fa-bars"></i>
-            </span>
-         </div>
-      </div>
+      <div ng-include="'header.tpl.html'"></div>
       <div ng-view class="main-view container-fluid"></div>
    </div>
 

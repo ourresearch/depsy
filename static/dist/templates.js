@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'side-menu.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -91,6 +91,24 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
     "</span>");
 }]);
 
+angular.module("header.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("header.tpl.html",
+    "<div class=\"header\">\n" +
+    "   <h1>\n" +
+    "      <a href=\"/\">\n" +
+    "         <img src=\"static/img/impactstory-software.png\" alt=\"Impactstory software\"/>\n" +
+    "      </a>\n" +
+    "   </h1>\n" +
+    "   <div class=\"controls\">\n" +
+    "      <span class=\"menu-button\"\n" +
+    "            ng-class=\"{'on-dark-bg': page.d.hasDarkBg}\"\n" +
+    "            snap-toggle=\"right\">\n" +
+    "         <i class=\"fa fa-bars\"></i>\n" +
+    "      </span>\n" +
+    "   </div>\n" +
+    "</div>");
+}]);
+
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
@@ -181,4 +199,56 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
     "\n" +
     "</div>\n" +
     "");
+}]);
+
+angular.module("side-menu.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("side-menu.tpl.html",
+    "<ul class=\"our-nav not-signed-in\">\n" +
+    "   <li>\n" +
+    "      <a href=\"/\" ng-click=\"login()\">\n" +
+    "         <i class=\"fa fa-sign-in\"></i>\n" +
+    "         Sign in\n" +
+    "      </a>\n" +
+    "   </li>\n" +
+    "</ul>\n" +
+    "\n" +
+    "<ul class=\"our-nav signed-in\" ng-show=\"isAuthenticated()\">\n" +
+    "   <li>\n" +
+    "      <a href=\"/u/{{ currentUser.d.username }}\">\n" +
+    "         <img src=\"{{ currentUser.d.avatar_url }}\"/>\n" +
+    "         <span class=\"name\">\n" +
+    "            {{ currentUser.d.name }}\n" +
+    "         </span>\n" +
+    "      </a>\n" +
+    "   </li>\n" +
+    "   <li>\n" +
+    "      <a href=\"/settings\">\n" +
+    "         <i class=\"fa fa-cog\"></i>\n" +
+    "         Settings\n" +
+    "      </a>\n" +
+    "   </li>\n" +
+    "\n" +
+    "\n" +
+    "   <li>\n" +
+    "      <a href=\"/\" ng-click=\"logout()\">\n" +
+    "         <i class=\"fa fa-sign-out\"></i>\n" +
+    "         Log out\n" +
+    "      </a>\n" +
+    "   </li>\n" +
+    "</ul>\n" +
+    "\n" +
+    "<div class=\"bottom-menu\">\n" +
+    "   <ul class=\"our-nav\">\n" +
+    "      <!--\n" +
+    "      <li>\n" +
+    "         <a href=\"/about\">\n" +
+    "            About\n" +
+    "         </a>\n" +
+    "      </li>\n" +
+    "      -->\n" +
+    "   </ul>\n" +
+    "   <a class=\"home-link\" href=\"/\">\n" +
+    "      <img src=\"static/img/impactstory-logo.png\" alt=\"\"/>\n" +
+    "   </a>\n" +
+    "</div>");
 }]);

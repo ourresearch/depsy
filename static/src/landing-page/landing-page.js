@@ -23,14 +23,6 @@ angular.module('landingPage', [
 
     PageService.d.hasDarkBg = true
 
-
-
-//    $scope.authenticate = function() {
-//      $auth.authenticate("github").then(function(resp){
-//        alert("authenticated, i think?")
-//      })
-//    };
-
     $scope.newProfile = {}
     $scope.newProfile.coreJournals = [{}]
 
