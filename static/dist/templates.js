@@ -203,9 +203,9 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
 
 angular.module("side-menu.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("side-menu.tpl.html",
-    "<ul class=\"our-nav not-signed-in\">\n" +
+    "<ul class=\"our-nav not-signed-in\" ng-show=\"!isAuthenticated()\">\n" +
     "   <li>\n" +
-    "      <a href=\"/\" ng-click=\"login()\">\n" +
+    "      <a href=\"/\" ng-click=\"authenticate()\">\n" +
     "         <i class=\"fa fa-sign-in\"></i>\n" +
     "         Sign in\n" +
     "      </a>\n" +
@@ -213,7 +213,7 @@ angular.module("side-menu.tpl.html", []).run(["$templateCache", function($templa
     "</ul>\n" +
     "\n" +
     "<ul class=\"our-nav signed-in\" ng-show=\"isAuthenticated()\">\n" +
-    "   <li>\n" +
+    "   <li class=\"user-name-and-pic\">\n" +
     "      <a href=\"/u/{{ currentUser.d.username }}\">\n" +
     "         <img src=\"{{ currentUser.d.avatar_url }}\"/>\n" +
     "         <span class=\"name\">\n" +

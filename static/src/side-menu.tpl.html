@@ -1,4 +1,4 @@
-<ul class="our-nav not-signed-in">
+<ul class="our-nav not-signed-in" ng-show="!isAuthenticated()">
    <li>
       <a href="/" ng-click="authenticate()">
          <i class="fa fa-sign-in"></i>
@@ -8,7 +8,7 @@
 </ul>
 
 <ul class="our-nav signed-in" ng-show="isAuthenticated()">
-   <li>
+   <li class="user-name-and-pic">
       <a href="/u/{{ currentUser.d.username }}">
          <img src="{{ currentUser.d.avatar_url }}"/>
          <span class="name">

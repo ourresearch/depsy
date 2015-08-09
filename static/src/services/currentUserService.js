@@ -8,16 +8,22 @@ angular.module('currentUserService', [
 
     var data = {}
 
+    function overWriteData(newData){
+      _.each(newData, function(v, k){
+        data[k] = v
+      })
+    }
 
     return {
       d: data,
       get: function(){
         return UserResource.get(
-          function(data){
-            console.log("got the current user data", data)
+          function(newData){
+            overWriteData(newData)
+            console.log("overwrote the CurrentUser data. now it's this:", data)
           },
-          function(data){
-            console.log("error getting current user data", data)
+          function(resp){
+            console.log("error getting current user data", resp)
           }
         )
       }

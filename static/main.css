@@ -25,6 +25,13 @@ li {
   padding-top: 15px;
   font-weight: 300;
 }
+.snap-drawer ul.our-nav li.user-name-and-pic img {
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
 .snap-drawer ul.our-nav li i.fa {
   margin-right: 5px;
 }
