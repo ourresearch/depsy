@@ -100,8 +100,11 @@ def index_view(path="index", page=""):
 ###########################################################################
 
 def create_token(profile):
+    return create_token_from_username(profile.username)
+
+def create_token_from_username(username):  # j added this one.
     payload = {
-        'sub': profile.username,
+        'sub': username,
         'iat': datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(days=14)
     }
@@ -216,24 +219,21 @@ def github():
     logger.info(u"we got a profile back from github." + ",".join(github_profile.keys()))
 
 
-    # Step 3. (optional) Link accounts. removed, we don't need this. since we're
+    # Step 3. (optional) Link accounts. REMOVED, we don't need this. since we're
     # only using public stuff, this authentication doesnt' actually give us
     # any new information if we have the profile
 
-    # Step 4. Create a new account or return an existing one.
-    profile = Profile.query.get(github_profile['login'])
-    logger.info(u"tried to get a profile using: " + github_profile['login'])
+    # Step 4. Create a new account or return an existing one. REMOVED, because
+    # simply hitting /api/u/:username creates the profile, this is just for
+    # logging in.
+    # that means just hitting this endpoint WON'T create a profile, someone
+    # (the client) needs you to hit /api/u/:username for that to happen.
 
-    if profile:
-        # user exists. we are logging them in.
-        token = create_token(profile)
-        return jsonify(token=token)
-    else:
-        new_profile = create_profile(github_profile['login'])
-        db.session.add(new_profile)
-        db.session.commit()
-        token = create_token(new_profile)
-        return jsonify(token=token)
+    # return the token. used to be part of their Step 4, but j extracted it.
+    github_username = github_profile['login']
+    token = create_token_from_username(github_username)
+    return jsonify(token)
+
 
 
 
