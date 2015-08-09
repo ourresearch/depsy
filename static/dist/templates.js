@@ -205,7 +205,7 @@ angular.module("side-menu.tpl.html", []).run(["$templateCache", function($templa
   $templateCache.put("side-menu.tpl.html",
     "<ul class=\"our-nav not-signed-in\" ng-show=\"!isAuthenticated()\">\n" +
     "   <li>\n" +
-    "      <a href=\"/\" ng-click=\"authenticate()\">\n" +
+    "      <a ng-click=\"authenticate()\">\n" +
     "         <i class=\"fa fa-sign-in\"></i>\n" +
     "         Sign in\n" +
     "      </a>\n" +
