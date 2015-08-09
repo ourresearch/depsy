@@ -230,7 +230,7 @@ def github():
     # return the token. used to be part of their Step 4, but j extracted it.
     github_username = github_profile['login']
     token = create_token_from_username(github_username)
-    logger.info("trying to jsonify this token", token)
+    logger.info("trying to jsonify this token: " + token)
     return jsonify(token)
 
 
