@@ -23,9 +23,23 @@ angular.module('profilePage', [
 
   .controller("profilePageCtrl", function($scope,
                                           $routeParams,
+                                          CurrentUser,
+                                          GlobalModal,
                                           profileResp){
     $scope.profile = profileResp.data
-    console.log("here's the profile", $scope.profile)
+    console.log("retrieved the profile", $scope.profile)
+
+    GlobalModal.close()
+
+    // i think we actually need to do this on *every* route. fix. -j
+    CurrentUser.get().$promise.then(
+      function(resp){
+        console.log("loaded current user", resp)
+      },
+      function(resp){
+        console.log("there was an error getting the current user.", resp)
+      }
+    )
 
 
 
