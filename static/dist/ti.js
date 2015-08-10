@@ -87,15 +87,15 @@ angular.module('app').controller('AppCtrl', function(
   $scope.authenticate = function() {
 
     // they'll see this when they get back from github
-    GlobalModal.open("Signing in 42")
+    GlobalModal.open("Signing in")
 
     $auth.authenticate("github").then(function(resp){
-      console.log("authenticated. resp:", resp)
+      console.log("authenticated. resp:", resp, resp.data, resp.data.username)
 
       // they'll see this over their empty profile
       GlobalModal.setMsg("Loading your profile", "(this may take a minute)")
 
-      $location.path("/u/" + resp.username)
+      $location.path("/u/" + resp.data.username)
     })
   };
 
