@@ -15,7 +15,8 @@ angular.module('app', [
 
   'resourcesModule',
   'currentUserService',
-  'pageService'
+  'pageService',
+  'globalModal'
 
 ]);
 
@@ -71,7 +72,10 @@ angular.module('app').controller('AppCtrl', function(
   snapRemote,
   PageService,
   CurrentUser,
+  GlobalModal,
   $auth){
+
+  GlobalModal.open()
 
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();
@@ -82,17 +86,28 @@ angular.module('app').controller('AppCtrl', function(
 
 
   $scope.authenticate = function() {
+
+    // 1. drop the modal. say: "signing in"
+
     $auth.authenticate("github").then(function(resp){
-      console.log("authenticated. loading current user.")
-      CurrentUser.get().$promise.then(
-        function(resp){
-          console.log("got current user", resp)
-          $location.path("/u/" + resp["username"])
-        },
-        function(resp){
-          console.log("there was an error getting the current user.", resp)
-        }
-      )
+      console.log("authenticated. resp:", resp)
+
+      // actually, all this stuff below is wrong.
+      // we need to redirect FIRST, because we ain't got no
+      // user yet, we have to hit the /u/:username route for that.
+
+      // 2. modal: "loading your profile."
+
+      $location.path("/u/" + resp.username)
+
+//      CurrentUser.get().$promise.then(
+//        function(resp){
+//          console.log("got current user", resp)
+//        },
+//        function(resp){
+//          console.log("there was an error getting the current user.", resp)
+//        }
+//      )
     })
   };
 
@@ -396,6 +411,56 @@ angular.module('currentUserService', [
 
 
   })
+angular.module('globalModal', [
+  ])
+
+  .factory("GlobalModal", function($modal){
+
+    var instance // this is the global modal instance everyone will use
+    var modalOpts = {
+      animation: true,
+      backdrop: "static",
+      templateUrl: 'services/global-modal.tpl.html',
+      controller: 'GlobalModalCtrl'
+    }
+
+    function getInstance(){
+      console.log("checking to see if there's a modal instance", instance)
+      if (instance){
+        return instance
+      }
+      else {
+        instance = $modal.open(modalOpts)
+
+      }
+    }
+
+    function open(){
+      return getInstance()
+    }
+
+    function close(){
+      if (!instance){
+        return null
+      }
+      else {
+        return instance.close()
+      }
+    }
+
+    return {
+      foo: function(){return 42},
+      getInstance: getInstance,
+      open: open,
+      close: close
+    }
+
+
+  })
+
+  .controller("GlobalModalCtrl", function(){
+    console.log("GlobalModalCtrl loaded")
+  })
 angular.module('pageService', [
   ])
 
@@ -484,7 +549,7 @@ angular.module('profileService', [
 
 
   })
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'side-menu.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html', 'side-menu.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -683,6 +748,19 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
     "   </div>\n" +
     "\n" +
     "\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("services/global-modal.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("services/global-modal.tpl.html",
+    "<div class=\"global-modal\">\n" +
+    "   <div class=\"modal-body\">\n" +
+    "      <h2>\n" +
+    "         <i class=\"fa fa-circle-o-notch fa-spin\"></i>\n" +
+    "         Signing you in\n" +
+    "      </h2>\n" +
+    "   </div>\n" +
     "</div>\n" +
     "");
 }]);

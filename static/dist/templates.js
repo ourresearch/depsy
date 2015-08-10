@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'side-menu.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html', 'side-menu.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -197,6 +197,19 @@ angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", funct
     "   </div>\n" +
     "\n" +
     "\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("services/global-modal.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("services/global-modal.tpl.html",
+    "<div class=\"global-modal\">\n" +
+    "   <div class=\"modal-body\">\n" +
+    "      <h2>\n" +
+    "         <i class=\"fa fa-circle-o-notch fa-spin\"></i>\n" +
+    "         Signing you in\n" +
+    "      </h2>\n" +
+    "   </div>\n" +
     "</div>\n" +
     "");
 }]);

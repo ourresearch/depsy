@@ -14,7 +14,8 @@ angular.module('app', [
 
   'resourcesModule',
   'currentUserService',
-  'pageService'
+  'pageService',
+  'globalModal'
 
 ]);
 
@@ -70,7 +71,10 @@ angular.module('app').controller('AppCtrl', function(
   snapRemote,
   PageService,
   CurrentUser,
+  GlobalModal,
   $auth){
+
+  GlobalModal.open()
 
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();
