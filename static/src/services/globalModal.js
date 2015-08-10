@@ -4,29 +4,32 @@ angular.module('globalModal', [
   .factory("GlobalModal", function($modal){
 
     var instance // this is the global modal instance everyone will use
+    var msg
+
     var modalOpts = {
       animation: true,
       backdrop: "static",
+      keyboard: false,
       templateUrl: 'services/global-modal.tpl.html',
       controller: 'GlobalModalCtrl'
     }
 
     function getInstance(){
-      console.log("checking to see if there's a modal instance", instance)
-      if (instance){
-        return instance
-      }
-      else {
+      if (!instance){
         instance = $modal.open(modalOpts)
-
       }
+      return instance
     }
 
-    function open(){
+    function open(newMsg){
+      if (newMsg){
+        msg = newMsg
+      }
       return getInstance()
     }
 
     function close(){
+      msg = null
       if (!instance){
         return null
       }
@@ -39,12 +42,19 @@ angular.module('globalModal', [
       foo: function(){return 42},
       getInstance: getInstance,
       open: open,
-      close: close
+      close: close,
+      getMsg: function(){
+        return msg
+      },
+      setMsg: function(newMsg){
+        msg = newMsg
+      }
     }
 
 
   })
 
-  .controller("GlobalModalCtrl", function(){
+  .controller("GlobalModalCtrl", function($scope, GlobalModal){
     console.log("GlobalModalCtrl loaded")
+    $scope.GlobalModal = GlobalModal
   })

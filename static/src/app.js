@@ -74,7 +74,6 @@ angular.module('app').controller('AppCtrl', function(
   GlobalModal,
   $auth){
 
-  GlobalModal.open()
 
   $scope.isAuthenticated = function() {
     return $auth.isAuthenticated();

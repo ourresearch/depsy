@@ -207,7 +207,7 @@ angular.module("services/global-modal.tpl.html", []).run(["$templateCache", func
     "   <div class=\"modal-body\">\n" +
     "      <h2>\n" +
     "         <i class=\"fa fa-circle-o-notch fa-spin\"></i>\n" +
-    "         Signing you in\n" +
+    "         {{ GlobalModal.getMsg() }}\n" +
     "      </h2>\n" +
     "   </div>\n" +
     "</div>\n" +
