@@ -1,8 +1,13 @@
 <div class="global-modal">
    <div class="modal-body">
-      <h2>
+      <h2 class="msg">
          <i class="fa fa-circle-o-notch fa-spin"></i>
-         {{ GlobalModal.getMsg() }}
+         <span>
+            {{ GlobalModal.getMsg() }}
+         </span>
       </h2>
+      <div class="sub-msg">
+         {{ GlobalModal.getSubMsg() }}
+      </div>
    </div>
 </div>

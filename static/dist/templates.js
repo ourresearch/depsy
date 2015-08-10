@@ -205,10 +205,15 @@ angular.module("services/global-modal.tpl.html", []).run(["$templateCache", func
   $templateCache.put("services/global-modal.tpl.html",
     "<div class=\"global-modal\">\n" +
     "   <div class=\"modal-body\">\n" +
-    "      <h2>\n" +
+    "      <h2 class=\"msg\">\n" +
     "         <i class=\"fa fa-circle-o-notch fa-spin\"></i>\n" +
-    "         {{ GlobalModal.getMsg() }}\n" +
+    "         <span>\n" +
+    "            {{ GlobalModal.getMsg() }}\n" +
+    "         </span>\n" +
     "      </h2>\n" +
+    "      <div class=\"sub-msg\">\n" +
+    "         {{ GlobalModal.getSubMsg() }}\n" +
+    "      </div>\n" +
     "   </div>\n" +
     "</div>\n" +
     "");

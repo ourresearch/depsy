@@ -86,27 +86,16 @@ angular.module('app').controller('AppCtrl', function(
 
   $scope.authenticate = function() {
 
-    // 1. drop the modal. say: "signing in"
+    // they'll see this when they get back from github
+    GlobalModal.open("Signing in 42")
 
     $auth.authenticate("github").then(function(resp){
       console.log("authenticated. resp:", resp)
 
-      // actually, all this stuff below is wrong.
-      // we need to redirect FIRST, because we ain't got no
-      // user yet, we have to hit the /u/:username route for that.
-
-      // 2. modal: "loading your profile."
+      // they'll see this over their empty profile
+      GlobalModal.setMsg("Loading your profile", "(this may take a minute)")
 
       $location.path("/u/" + resp.username)
-
-//      CurrentUser.get().$promise.then(
-//        function(resp){
-//          console.log("got current user", resp)
-//        },
-//        function(resp){
-//          console.log("there was an error getting the current user.", resp)
-//        }
-//      )
     })
   };
 
@@ -417,6 +406,7 @@ angular.module('globalModal', [
 
     var instance // this is the global modal instance everyone will use
     var msg
+    var subMsg
 
     var modalOpts = {
       animation: true,
@@ -433,9 +423,12 @@ angular.module('globalModal', [
       return instance
     }
 
-    function open(newMsg){
+    function open(newMsg, newSubMsg){
       if (newMsg){
         msg = newMsg
+      }
+      if (newSubMsg){
+        subMsg = newSubMsg
       }
       return getInstance()
     }
@@ -458,8 +451,12 @@ angular.module('globalModal', [
       getMsg: function(){
         return msg
       },
-      setMsg: function(newMsg){
+      getSubMsg: function(){
+        return subMsg
+      },
+      setMsg: function(newMsg, newSubMsg){
         msg = newMsg
+        subMsg = newSubMsg
       }
     }
 
@@ -765,10 +762,15 @@ angular.module("services/global-modal.tpl.html", []).run(["$templateCache", func
   $templateCache.put("services/global-modal.tpl.html",
     "<div class=\"global-modal\">\n" +
     "   <div class=\"modal-body\">\n" +
-    "      <h2>\n" +
+    "      <h2 class=\"msg\">\n" +
     "         <i class=\"fa fa-circle-o-notch fa-spin\"></i>\n" +
-    "         {{ GlobalModal.getMsg() }}\n" +
+    "         <span>\n" +
+    "            {{ GlobalModal.getMsg() }}\n" +
+    "         </span>\n" +
     "      </h2>\n" +
+    "      <div class=\"sub-msg\">\n" +
+    "         {{ GlobalModal.getSubMsg() }}\n" +
+    "      </div>\n" +
     "   </div>\n" +
     "</div>\n" +
     "");

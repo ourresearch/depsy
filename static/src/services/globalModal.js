@@ -5,6 +5,7 @@ angular.module('globalModal', [
 
     var instance // this is the global modal instance everyone will use
     var msg
+    var subMsg
 
     var modalOpts = {
       animation: true,
@@ -21,9 +22,12 @@ angular.module('globalModal', [
       return instance
     }
 
-    function open(newMsg){
+    function open(newMsg, newSubMsg){
       if (newMsg){
         msg = newMsg
+      }
+      if (newSubMsg){
+        subMsg = newSubMsg
       }
       return getInstance()
     }
@@ -46,8 +50,12 @@ angular.module('globalModal', [
       getMsg: function(){
         return msg
       },
-      setMsg: function(newMsg){
+      getSubMsg: function(){
+        return subMsg
+      },
+      setMsg: function(newMsg, newSubMsg){
         msg = newMsg
+        subMsg = newSubMsg
       }
     }
 

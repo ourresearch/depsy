@@ -72,6 +72,10 @@ div.global-modal .modal-body h2 i {
   margin-right: 10px;
   color: #555;
 }
+div.global-modal .modal-body div.sub-msg {
+  font-size: 18px;
+  color: #555;
+}
 div.header {
   position: relative;
   width: 100%;
