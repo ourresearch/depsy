@@ -94,7 +94,7 @@ angular.module('app').controller('AppCtrl', function(
       // they'll see this over their empty profile
       GlobalModal.setMsg("Loading your profile", "(this may take a minute)")
 
-      $location.path("/u/" + resp.username)
+      $location.path("/u/" + resp.data.username)
     })
   };
 
