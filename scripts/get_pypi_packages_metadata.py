@@ -55,23 +55,32 @@ def fetch_main(data_file_path):
     print('Fetching index ...')
     project_names_set = sorted(fetch_index())
     project_data = []
+    errors = []
 
     print('Fetching {} projects ...').format(len(project_names_set))
 
     project_index = 1
-    for project_name in project_names_set[0:10]:
+    for project_name in project_names_set[1:100]:
         print "   {name} (#{index})".format(
             name=project_name,
             index=project_index
         )
-        project = fetch_project(project_name)
-        project["_name"] = project_name
-        project_data.append(project)
+        try:
+            project = fetch_project(project_name)
+            project["_name"] = project_name
+            project_data.append(project)
+        except ValueError:
+            errors.append("failed on '{}'".format(project_name))
+
         project_index += 1
 
     print "saving projects file to {}".format(data_file_path)
     with open(str(data_file_path), "w") as file:
         json.dump(project_data, file, indent=3, sort_keys=True)
+
+    print "got these errors:"
+    for msg in errors:
+        print "  " + msg
 
 
 
