@@ -60,7 +60,7 @@ def fetch_main(data_file_path):
     print('Fetching {} projects ...').format(len(project_names_set))
 
     project_index = 1
-    for project_name in project_names_set[1:100]:
+    for project_name in project_names_set:
         print "   {name} (#{index})".format(
             name=project_name,
             index=project_index
