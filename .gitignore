@@ -14,6 +14,7 @@ develop-eggs/
 # jason commented this one out because breaks static/dist
 # dist/
 
+data/
 downloads/
 eggs/
 .eggs/
@@ -68,5 +69,9 @@ venv/
 # node modules used in Grunt
 static/node_modules
 
-# CodeKit
+# CodeKit. Cannot seem to make this work :(
 *codekit*
+codekit*
+codekit-config.json
+static/codekit-config.json
+

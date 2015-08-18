@@ -85,6 +85,7 @@ angular.module('app').controller('AppCtrl', function(
 
 
   $scope.authenticate = function() {
+    console.log("user fired authenticate() function")
 
     // they'll see this when they get back from github
     GlobalModal.open("Signing in")
