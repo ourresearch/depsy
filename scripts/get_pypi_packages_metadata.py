@@ -6,13 +6,17 @@ You must run this file from
 """
 
 import json
-import os
-import pickle
+from concurrent import futures
 from xml import sax
 from xml.sax import handler
 from pathlib import Path
 import requests
+import time
 
+
+
+class PyPiException(Exception):
+    pass
 
 
 class PyPIIndexHandler(handler.ContentHandler):
@@ -46,12 +50,19 @@ def fetch_project(name):
     """Return the loaded JSON data from PyPI for a project."""
     url = 'https://pypi.python.org/pypi/{}/json'.format(name)
     r = requests.get(url)
-    return r.json()
+    try:
+        return r.json()
+    except ValueError:
+        # has to *return* an error instead of raising one,
+        # cos there seems to be no way to handle errors from here in
+        # ThreadPoolExecutor.map()
+        return PyPiException("error on package'{}'".format(name))
 
 
 
 
 def fetch_main(data_file_path):
+    start_time = time.time()
     print('Fetching index ...')
     project_names_set = sorted(fetch_index())
     project_data = []
@@ -59,21 +70,21 @@ def fetch_main(data_file_path):
 
     print('Fetching {} projects ...').format(len(project_names_set))
 
-    project_index = 1
-    for project_name in project_names_set:
-        print "   {name} (#{index})".format(
-            name=project_name,
-            index=project_index
-        )
-        try:
-            project = fetch_project(project_name)
-            project["_name"] = project_name
-            project_data.append(project)
-        except ValueError:
-            errors.append("failed on '{}'".format(project_name))
 
-        project_index += 1
+    with futures.ThreadPoolExecutor(10) as executor:
+        for data in executor.map(fetch_project, project_names_set):
+            if isinstance(data, PyPiException):
+                print "   *** ERROR: {} ***".format(data)
+                errors.append(str(data))
 
+            else:
+                project_data.append(data)
+                print "   {} ".format(data["info"]["name"])
+
+
+    print "finished getting data in {} seconds".format(
+        round(time.time() - start_time, 2)
+    )
     print "saving projects file to {}".format(data_file_path)
     with open(str(data_file_path), "w") as file:
         json.dump(project_data, file, indent=3, sort_keys=True)
