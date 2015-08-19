@@ -12,7 +12,6 @@ data_dir = Path(__file__, "../../data").resolve()
 
 
 
-def fetch_main():
 
 
 
