@@ -1,7 +1,8 @@
+from app import db
+
 from urlparse import urlparse
 import json
 
-from app import db
 
 
 def get_github_homepage(url):
@@ -27,7 +28,7 @@ def make_pypi_repo(pypi_dict):
     return PyPiRepo(
         name=name,
         github_repo=github_repo,
-        raw_json=json.dumps(indent=3, sort_key=True)
+        raw_json=json.dumps(pypi_dict, indent=3, sort_keys=True)
     )
 
 def save_pypi_repo(pypi_dict):
@@ -37,6 +38,7 @@ def save_pypi_repo(pypi_dict):
     
 
 class PyPiRepo(db.Model):
+    __tablename__ = 'pypi_repo'
     name = db.Column(db.Text, primary_key=True)
     github_repo = db.Column(db.Text)
     raw_json = db.Column(db.Text)
