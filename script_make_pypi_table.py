@@ -1,4 +1,4 @@
-from models.pypi_repo import save_pypi_repo
+from models.pypi_repo import make_pypi_repo
 
 from app import db
 from pathlib import Path
@@ -24,15 +24,20 @@ def main():
         projects = json.load(f)
 
     num_projects = len(projects)
-    index = 0
+    index = 1
     for project in projects:
-        print "saving '{name}' ({index} of {num_projects})".format(
+        print "creating '{name}' ({index} of {num_projects})".format(
             name=project["info"]["name"],
             index=index,
             num_projects=num_projects
         )
-        save_pypi_repo(project)
+        project_obj = make_pypi_repo(project)
+        db.session.merge(project_obj)
+
         index += 1
+        if index % 100 == 0:
+            print "sending 100 new records up to the server..."
+            db.session.commit()
 
     print "there are {} projects".format(len(projects))
 

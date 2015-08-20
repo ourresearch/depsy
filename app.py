@@ -55,7 +55,11 @@ db = SQLAlchemy(app)
 # these imports are needed so that tables will get auto-created.
 from models import profile
 from models import repo
-from models import pypi_repo
+
+# commented out because it seems to kill the app when you run as a script.
+# but you must UNCOMMENT it at some point to make the new pypi_repo table.
+# yuck.
+# from models import pypi_repo
 
 
 db.create_all()

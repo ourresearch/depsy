@@ -31,11 +31,7 @@ def make_pypi_repo(pypi_dict):
         raw_json=json.dumps(pypi_dict, indent=3, sort_keys=True)
     )
 
-def save_pypi_repo(pypi_dict):
-    repo_obj = make_pypi_repo(pypi_dict)
-    db.session.merge(repo_obj)
-    db.session.commit()    
-    
+
 
 class PyPiRepo(db.Model):
     __tablename__ = 'pypi_repo'
