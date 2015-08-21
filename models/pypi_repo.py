@@ -109,7 +109,7 @@ class PyPiRepo(db.Model):
         return True
 
 
-def save_all_repo_owners():
+def save_all_repo_owners_and_key_committers():
     start = time()
     q = db.session.query(PyPiRepo.repo_owner)\
         .filter(PyPiRepo.repo_owner.isnot(None))\
@@ -118,6 +118,19 @@ def save_all_repo_owners():
     logins = set()
     for repo_owner in q.all():
         logins.add(repo_owner)
+
+    print "got {} logins from repo owners".format(len(logins))
+
+    q2 = db.session.query(PyPiRepo.key_committers)\
+        .filter(PyPiRepo.key_committers.isnot(None))\
+        .filter(PyPiRepo.is_404.isnot(True))
+
+    for res in q2.all():
+        for login, is_key in res[0].iteritems():
+            if is_key:
+                logins.add(login)
+
+    print "got {} logins including key committers".format(len(logins))
 
     index = 0
     for login in logins:
@@ -131,6 +144,7 @@ def save_all_repo_owners():
 
     db.session.commit()
     return True
+
 
 
 def set_all_repo_commits():
