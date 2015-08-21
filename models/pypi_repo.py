@@ -116,7 +116,8 @@ def set_all_repo_commits():
         .filter(PyPiRepo.repo_name.isnot(None))\
         .filter(PyPiRepo.repo_owner.isnot(None))\
         .filter(PyPiRepo.is_404.isnot(True))\
-        .filter(PyPiRepo.commit_counts.is_(None))
+        .filter(PyPiRepo.commit_counts.is_(None))\
+        .limit(5000)
 
     for repo in q.yield_per(100):
         try:
