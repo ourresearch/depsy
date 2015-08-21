@@ -80,7 +80,7 @@ def elapsed(since):
     return round(time.time() - since, 2)
 
 def update_sqla_objects(sqla_objects, fn):
-    flush_size = 10
+    flush_size = 100
     index = 1
     start = time.time()
     print "updating {} sqla_objects...".format(len(sqla_objects))
@@ -89,7 +89,7 @@ def update_sqla_objects(sqla_objects, fn):
         #db.session.merge(sqla_object)
         index += 1
         if index % flush_size == 0:
-            db.session.commit()
+            db.session.flush()
             print "committed {index} objects in {sec} sec".format(
                 index=index,
                 sec=elapsed(start)
