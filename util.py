@@ -86,11 +86,10 @@ def update_sqla_objects(sqla_objects, fn):
     print "updating {} sqla_objects...".format(len(sqla_objects))
     for sqla_object in sqla_objects:
         fn(sqla_object)
-        #db.session.merge(sqla_object)
         index += 1
         if index % flush_size == 0:
             db.session.flush()
-            print "committed {index} objects in {sec} sec".format(
+            print "flushed {index} objects in {sec} sec".format(
                 index=index,
                 sec=elapsed(start)
             )

@@ -1,7 +1,14 @@
+from __future__ import division
 from app import db
-
+from models.github_api import make_call
+from models.github_api import GithubRateLimitException
+from util import elapsed
 from urlparse import urlparse
 import json
+from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.sql.expression import func
+from sqlalchemy.exc import OperationalError
+from time import time
 
 
 
@@ -22,6 +29,7 @@ def get_github_homepage(url):
 
 
 def make_pypi_repo(pypi_dict):
+    # this is out of date and no longer will work...
     name = pypi_dict["info"]["name"]
     github_url = get_github_homepage(pypi_dict["info"]["home_page"])
 
@@ -30,11 +38,13 @@ def make_pypi_repo(pypi_dict):
 
     return PyPiRepo(
         pypi_name=name,
-        github_repo_owner=path[1],
-        github_repo_name=path[2],
+        repo_owner=path[1],
+        repo_name=path[2],
         github_url=github_url,
-        pypi_json=json.dumps(pypi_dict, indent=3, sort_keys=True)
+        pypi_about=json.dumps(pypi_dict, indent=3, sort_keys=True)
     )
+
+
 
 
 
@@ -42,9 +52,16 @@ class PyPiRepo(db.Model):
     __tablename__ = 'pypi_repo'
     pypi_name = db.Column(db.Text, primary_key=True)
     github_url = db.Column(db.Text)
-    github_repo_name = db.Column(db.Text)
-    github_repo_owner = db.Column(db.Text)
-    pypi_json = db.deferred(db.Column(db.Text))
+    repo_name = db.Column(db.Text)
+    repo_owner = db.Column(db.Text)
+
+    commit_counts = db.Column(JSON)
+    commit_percents = db.Column(JSON)
+    key_committers = db.Column(JSON)
+
+    is_404 = db.Column(db.Boolean)
+    pypi_about = db.deferred(db.Column(db.Text))
+    github_about = db.deferred(db.Column(JSON))
 
     #collected = db.Column(db.DateTime())
     #downloads_last_month = db.Column(db.Integer)
@@ -53,4 +70,101 @@ class PyPiRepo(db.Model):
 
     @property
     def name_tuple(self):
-        return (self.github_repo_owner, self.github_repo_name)
+        return (self.repo_owner, self.repo_name)
+
+    def set_repo_commits(self):
+        url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
+            username=self.repo_owner,
+            repo_name=self.repo_name
+        )
+        resp = make_call(url)
+        if resp is None:
+            self.is_404 = True
+            return False
+
+        # set the commit_lines property
+        self.commit_counts = {}
+        for contrib_dict in resp:
+            contrib_login = contrib_dict["login"]
+            self.commit_counts[contrib_login] = contrib_dict["contributions"]
+
+        # set the commit_percents property
+        total_commits = sum(self.commit_counts.values())
+        self.commit_percents = {}
+        for username, count in self.commit_counts.iteritems():
+            self.commit_percents[username] = int(round(count / total_commits * 100))
+
+        # set the key_committer property
+        # do later.
+        self.key_committers = {}
+        for username, count in self.commit_counts.iteritems():
+            percent = self.commit_percents[username]
+            if percent >= 25 or count >= 100:
+                self.key_committers[username] = True
+            else:
+                self.key_committers[username] = False
+
+        return True
+
+
+
+
+def set_all_repo_commits():
+    start = time()
+    index = 0
+    q = db.session.query(PyPiRepo)\
+        .filter(PyPiRepo.repo_name.isnot(None))\
+        .filter(PyPiRepo.repo_owner.isnot(None))\
+        .filter(PyPiRepo.is_404.isnot(True))\
+        .filter(PyPiRepo.commit_counts.is_(None))\
+        .limit(1000)
+
+    for repo in q.yield_per(100):
+        try:
+            repo.set_repo_commits()
+            index += 1
+
+            print "#{index} ({sec}sec): ran set_repo_commits() for {owner}/{name}".format(
+                index=index,
+                sec=elapsed(start),
+                owner=repo.repo_owner,
+                name=repo.repo_name
+            )
+
+        except GithubRateLimitException:
+            print "ran out of api keys. committing...\n\n".format(
+                num=index,
+                sec=elapsed(start)
+            )
+            db.session.commit()
+            return False
+
+        if index % 100 == 0:
+            try:
+                db.session.flush()
+            except OperationalError:
+                print "problem with flushing the session. rolling back."
+                db.session.rollback()
+                continue
+
+
+
+    print "finished updating repos! committing...".format(
+        num=index,
+        sec=elapsed(start)
+    )
+    db.session.commit()
+    return True
+
+
+
+
+
+
+
+
+
+
+
+
+

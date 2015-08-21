@@ -2,67 +2,85 @@ import os
 import logging
 import requests
 from urlparse import urlparse
+from random import shuffle
+from app import db
 
 
 logger = logging.getLogger("github_api")
 
+class GithubApiKeys():
+    def __init__(self):
+        self.keys = self._get_api_keys()
+        self.current = 0
 
-def get_api_keys():
-    tokens_str = os.environ["GITHUB_TOKENS"]
-    token_pairs = [t.split(":") for t in tokens_str.split(",")]
-    return token_pairs
+    def get(self):
+        try:
+            return self.keys[self.current]
+        except IndexError:
+            return None
 
+    def reset(self):
+        self.current = 0
+
+    def next(self):
+        self.current += 1
+        return self.get()
+
+    def _get_api_keys(self):
+        tokens_str = os.environ["GITHUB_TOKENS"]
+        token_pairs = [t.split(":") for t in tokens_str.split(",")]
+
+        # the shuffle means different threads will start w different keys.
+        shuffle(token_pairs)
+        return token_pairs
+
+
+global_keys = GithubApiKeys()
 
 class GithubRateLimitException(Exception):
     pass
 
 
-class GithubApi():
-    def __init__(self, token_pair):
-        self.auth_username = token_pair[0]
-        self.auth_password = token_pair[1]
+def make_call(url):
 
-    def make_call(self, url):
-        r = requests.get(url, auth=(self.auth_username, self.auth_password))
+    try:
+        key_owner, key_token = global_keys.get()
+    except TypeError:  # there are no more keys.
+        raise GithubRateLimitException
 
-        logger.info(
-            "{status_code}: {url}.  {rate_limit} calls remain for {username}".format(
-                status_code=r.status_code,
-                url=url,
-                rate_limit=r.headers["X-RateLimit-Remaining"],
-                username=self.auth_username
-            )
+
+    r = requests.get(url, auth=(key_owner, key_token))
+
+    logger.info(
+        "{status_code}: {url}.  {rate_limit} calls remain for {username}".format(
+            status_code=r.status_code,
+            url=url,
+            rate_limit=r.headers["X-RateLimit-Remaining"],
+            username=key_owner
         )
+    )
 
-        # all errors will fail silently except for rate-limiting
-        if r.status_code >= 400:
-            if r.status_code == 403:
-                raise GithubRateLimitException
-            else:
-                return None
+    # all errors will fail silently except for rate-limiting
+    if r.status_code >= 400:
+        if r.status_code == 403:
+            global_keys.next()
+            make_call(url)
+        else:
+            return None
 
+    try:
         return r.json()
+    except ValueError:
+        return None
 
 
-    def get_profile(self, username):
-        url = "https://api.github.com/users/{username}".format(
-            username=username
-        )
-        return self.make_call(url)
+def get_profile(username, api_key_tuple):
+    url = "https://api.github.com/users/{username}".format(
+        username=username
+    )
+    return make_call(url, api_key_tuple)
 
-    def get_repo_contribs(self, username, repo_name):
-        url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
-            username=username,
-            repo_name=repo_name
-        )
-        return self.make_call(url)
 
-    def get_repo_contribs_dict(self, username, repo_name):
-        contribs_list = self.get_repo_contribs(username, repo_name)
-        ret = {}
-        for contrib_dict in contribs_list:
-            ret[contrib_dict["login"]] = contrib_dict["contributions"]
-        return ret
 
 
 
