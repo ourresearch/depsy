@@ -1,39 +1,41 @@
 from app import db
 from models.pypi_repo import PyPiRepo
-
-def page_query(q, page_size=1000):
-    offset = 0
-    while True:
-        r = False
-        for elem in q.limit(page_size).offset(offset):
-            r = True
-            yield elem
-        offset += page_size
-        if not r:
-            break
+from models.github_api import username_and_repo_name_from_github_url
+from util import update_sqla_objects
+from util import get_sqla_objects
+from time import time
 
 
 
-def get_github_repo_urls():
-    print "getting github repo urls..."
-    q = db.session.query(PyPiRepo.github_repo)\
-        .filter(PyPiRepo.github_repo.isnot(None))
 
-    ret = [url for url in page_query(q)]
-    return ret
+
+def add_github_repo_name_info(repo):
+    username, repo_name = username_and_repo_name_from_github_url(repo.github_url)
+    repo.github_repo_owner = username
+    repo.github_repo_name = repo_name
+    return repo
+
+def get_repo_meta(owner_name, repo_name):
+    pass
+
+def get_repo_contribs(owner_name, repo_name):
+    pass
+
 
 
 
 def main():
-    github_repos = get_github_repo_urls()
-    print "got {} github repos".format(len(github_repos))
+    q = db.session.query(PyPiRepo).filter(PyPiRepo.github_url.isnot(None))
+    repos = q.all()
+    update_sqla_objects(repos, add_github_repo_name_info)
+
+
 
 
 if __name__ == '__main__':
-
-
+    overall_start = time()
     main()
-    print "script done, exiting."
+    print "script done in {} sec.".format(round(time() - overall_start, 2))
 
 
 

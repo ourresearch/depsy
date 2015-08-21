@@ -1,5 +1,5 @@
 import time
-
+from app import db
 
 def dict_from_dir(obj, keys_to_ignore=None, keys_to_show="all"):
 
@@ -61,6 +61,63 @@ def underscore_to_camelcase(value):
         capitalized_words.append(word.capitalize())
 
     return "".join(capitalized_words)
+
+
+
+def page_query(q, page_size=1000):
+    offset = 0
+    while True:
+        r = False
+        print "util.page_query() retrieved {} things".format(page_query())
+        for elem in q.limit(page_size).offset(offset):
+            r = True
+            yield elem
+        offset += page_size
+        if not r:
+            break
+
+def elapsed(since):
+    return round(time.time() - since, 2)
+
+def update_sqla_objects(sqla_objects, fn):
+    flush_size = 10
+    index = 1
+    start = time.time()
+    print "updating {} sqla_objects...".format(len(sqla_objects))
+    for sqla_object in sqla_objects:
+        fn(sqla_object)
+        #db.session.merge(sqla_object)
+        index += 1
+        if index % flush_size == 0:
+            db.session.commit()
+            print "committed {index} objects in {sec} sec".format(
+                index=index,
+                sec=elapsed(start)
+            )
+
+    print "commiting objects..."
+    db.session.commit()
+    print "finished update in {} sec.".format(elapsed(start))
+
+
+def get_sqla_objects(q):
+    start = time.time()
+    index = 1
+
+    print "getting sqla objects..."
+    ret = []
+    for sqla_obj in page_query(q):
+        ret.append(sqla_obj)
+        if index % 1000 == 0:
+            print "got {num} objects down in {secs}.".format(
+                num=index,
+                secs=elapsed(start)
+            )
+
+    return ret
+
+
+
 
 
 

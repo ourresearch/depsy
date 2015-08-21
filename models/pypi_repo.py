@@ -23,23 +23,34 @@ def get_github_homepage(url):
 
 def make_pypi_repo(pypi_dict):
     name = pypi_dict["info"]["name"]
-    github_repo = get_github_homepage(pypi_dict["info"]["home_page"])
+    github_url = get_github_homepage(pypi_dict["info"]["home_page"])
+
+    # i'm pretty sure this will break when you give it None, fix later.
+    path = urlparse(github_url).path
 
     return PyPiRepo(
-        name=name,
-        github_repo=github_repo,
-        raw_json=json.dumps(pypi_dict, indent=3, sort_keys=True)
+        pypi_name=name,
+        github_repo_owner=path[1],
+        github_repo_name=path[2],
+        github_url=github_url,
+        pypi_json=json.dumps(pypi_dict, indent=3, sort_keys=True)
     )
 
 
 
 class PyPiRepo(db.Model):
     __tablename__ = 'pypi_repo'
-    name = db.Column(db.Text, primary_key=True)
-    github_repo = db.Column(db.Text)
-    raw_json = db.Column(db.Text)
+    pypi_name = db.Column(db.Text, primary_key=True)
+    github_url = db.Column(db.Text)
+    github_repo_name = db.Column(db.Text)
+    github_repo_owner = db.Column(db.Text)
+    pypi_json = db.deferred(db.Column(db.Text))
 
     #collected = db.Column(db.DateTime())
     #downloads_last_month = db.Column(db.Integer)
     #downloads_ever = db.Column(db.Integer)
     #requires = db.Column(JSON)
+
+    @property
+    def name_tuple(self):
+        return (self.github_repo_owner, self.github_repo_name)
