@@ -37,16 +37,4 @@ class Repo2(db.Model):
 
 class GithubUser(db.Model):
     login = db.Column(db.Text, primary_key=True)
-    github_data = db.Column(JSON)
-    collected = db.Column(db.DateTime())
-
-    repos = db.relationship(
-        'Repo',
-        lazy='subquery',
-        cascade='all, delete-orphan'
-
-        # @heather
-        # i removed this line:
-        # backref=db.backref("repo", lazy="subquery")
-        # because it seemed to be making circular references on the repo obj
-    )
+    github_data = db.deferred(db.Column(JSON))

@@ -2,11 +2,13 @@ from __future__ import division
 from app import db
 from models.github_api import make_call
 from models.github_api import GithubRateLimitException
+from models.github_user import GithubUser
 from util import elapsed
 from urlparse import urlparse
 import json
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.sql.expression import func
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import OperationalError
 from time import time
 
@@ -107,6 +109,28 @@ class PyPiRepo(db.Model):
         return True
 
 
+def save_all_repo_owners():
+    start = time()
+    q = db.session.query(PyPiRepo.repo_owner)\
+        .filter(PyPiRepo.repo_owner.isnot(None))\
+        .filter(PyPiRepo.is_404.isnot(True))
+
+    logins = set()
+    for repo_owner in q.all():
+        logins.add(repo_owner)
+
+    index = 0
+    for login in logins:
+        user = GithubUser(login=login)
+        db.session.add(user)
+        print "{}: {}".format(index, login)
+        index += 1
+        if index % 100 == 0:
+            print "flushing to db...\n\n"
+            db.session.flush()
+
+    db.session.commit()
+    return True
 
 
 def set_all_repo_commits():
