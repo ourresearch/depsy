@@ -61,10 +61,9 @@ def make_call(url):
         )
     )
 
-    if calls_remaining == 0:
+    if int(calls_remaining) == 0:
         global_keys.next()
-        make_call(url)
-
+        return make_call(url)
 
     # all errors will fail silently except for rate-limiting (caught above)
     if r.status_code >= 400:
