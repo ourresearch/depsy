@@ -50,23 +50,25 @@ def make_call(url):
 
 
     r = requests.get(url, auth=(key_owner, key_token))
+    calls_remaining = r.headers["X-RateLimit-Remaining"]
 
     logger.info(
         "{status_code}: {url}.  {rate_limit} calls remain for {username}".format(
             status_code=r.status_code,
             url=url,
-            rate_limit=r.headers["X-RateLimit-Remaining"],
+            rate_limit=calls_remaining,
             username=key_owner
         )
     )
 
-    # all errors will fail silently except for rate-limiting
+    if calls_remaining == 0:
+        global_keys.next()
+        make_call(url)
+
+
+    # all errors will fail silently except for rate-limiting (caught above)
     if r.status_code >= 400:
-        if r.status_code == 403:
-            global_keys.next()
-            make_call(url)
-        else:
-            return None
+        return None
 
     try:
         return r.json()
