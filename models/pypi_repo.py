@@ -116,8 +116,8 @@ def save_all_repo_owners_and_key_committers():
         .filter(PyPiRepo.is_404.isnot(True))
 
     logins = set()
-    for repo_owner in q.all():
-        logins.add(repo_owner)
+    for res in q.all():
+        logins.add(res[0])
 
     print "got {} logins from repo owners".format(len(logins))
 
