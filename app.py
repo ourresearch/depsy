@@ -46,16 +46,17 @@ app.debug = True
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_POOL_SIZE"] = 60
 app.config['GITHUB_SECRET'] = os.getenv("GITHUB_SECRET")
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 
 
 # database stuff
 db = SQLAlchemy(app)
 
+
 # these imports are needed so that tables will get auto-created.
 from models import profile
 from models import repo
 from models import github_user
+from models import github_repo
 
 # commented out because it seems to kill the app when you run as a script.
 # but you must UNCOMMENT it at some point to make the new pypi_repo table.
@@ -65,7 +66,6 @@ from models import github_user
 
 db.create_all()
 db.session.commit()
-
 
 
 

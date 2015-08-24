@@ -4,6 +4,7 @@ from app import db
 import argparse
 import logging
 
+from models.github_repo import add_python_repos_from_google_bucket
 
 def test_no_args():
     print "test_no_args function ran"
@@ -42,8 +43,8 @@ if __name__ == "__main__":
     function = args["function"]
     optional_args = args["optional_args"]
 
-    print u"main.py {function} with {optional_args}".format(
-        function=function.upper(), optional_args=optional_args)
+    print u"running main.py {function} with these args:{optional_args}\n".format(
+        function=function, optional_args=optional_args)
 
     global logger
     logger = logging.getLogger("ti.main.{function}".format(
