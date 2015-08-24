@@ -19,11 +19,19 @@ class GithubRepo(db.Model):
 
 
 
+# call python main.py add_python_repos_from_google_bucket to run
 def add_python_repos_from_google_bucket():
-    # call python main.py add_python_repos_from_google_bucket to run
 
     url = "https://storage.googleapis.com/impactstory/github_python_repo_names.csv"
     add_repos_from_remote_csv(url, "python")
+
+
+# call python main.py add_r_repos_from_google_bucket to run
+def add_r_repos_from_google_bucket():
+
+    url = "https://storage.googleapis.com/impactstory/github_r_repo_names.csv"
+    add_repos_from_remote_csv(url, "r")
+
 
 
 def add_repos_from_remote_csv(csv_url, language):
