@@ -8,7 +8,7 @@ class GithubUser(db.Model):
 
     github_about = db.deferred(db.Column(JSON))
 
-
-
+    def set_github_about(self):
+        pass
 
 
