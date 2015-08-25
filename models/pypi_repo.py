@@ -1,6 +1,6 @@
 from __future__ import division
 from app import db
-from models.github_api import make_call
+from models.github_api import make_ratelimited_call
 from models.github_api import GithubRateLimitException
 from models.github_user import GithubUser
 from util import elapsed
@@ -79,7 +79,7 @@ class PyPiRepo(db.Model):
             username=self.repo_owner,
             repo_name=self.repo_name
         )
-        resp = make_call(url)
+        resp = make_ratelimited_call(url)
         if resp is None:
             self.is_404 = True
             return False

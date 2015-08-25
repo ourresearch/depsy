@@ -10,6 +10,7 @@ from models.github_repo import add_python_repos_from_google_bucket
 from models.github_repo import add_r_repos_from_google_bucket
 from models.github_repo import add_github_about
 from models.github_repo import add_all_github_about
+from models.github_repo import add_github_dependency_lines
 
 def test_no_args():
     print "test_no_args function ran"

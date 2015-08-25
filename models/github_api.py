@@ -5,7 +5,8 @@ from urlparse import urlparse
 import random
 from app import db
 from time import sleep
-
+import subprocess
+import shutil
 
 logger = logging.getLogger("github_api")
 
@@ -47,7 +48,7 @@ class GithubKeyring():
         return ret_key
 
     def expire_key(self, login, token):
-        print "expiring key {}:{}".format(login, token)
+        print "expiring key:", login
         self.expired_keys.append([login, token])
 
 
@@ -56,7 +57,7 @@ class GithubKeyring():
         previously_expired_keys = self.expired_keys
         self.expired_keys = []
         for login, token in previously_expired_keys:
-            print "calling rate limit check on {}:{}".format(login, token)
+            print "calling rate limit check on ", loginy
             r = requests.get(rate_limit_check_url, auth=(login, token))
             remaining = r.json()["rate"]["remaining"]
             if remaining == 0:
@@ -69,7 +70,7 @@ keyring = GithubKeyring()
 
 
 
-def make_call(url):
+def make_ratelimited_call(url):
 
     try:
         login, token = keyring.get()
@@ -79,11 +80,12 @@ def make_call(url):
             url
         )
         sleep(5 * 60)
-        print "make_call({}) trying again, mabye api keys refreshed?".format(url)
-        return make_call(url)
+        print "make_ratelimited_call({}) trying again, mabye api keys refreshed?".format(url)
+        return make_ratelimited_call(url)
 
-    # @todo handle a timeout from requests
+    # assuming rate limited calls will never time out
     r = requests.get(url, auth=(login, token))
+
     calls_remaining = r.headers["X-RateLimit-Remaining"]
 
     print "{status_code}: {url}.  {rate_limit} calls remain for {login}".format(
@@ -103,7 +105,7 @@ def make_call(url):
 
         elif r.status_code == 403 or r.status_code == 401:
             # key is dead, and also we got no data. try again.
-            return make_call(url)
+            return make_ratelimited_call(url)
 
 
     # return what we got
@@ -122,11 +124,33 @@ def make_call(url):
             }
 
 
+def make_zip_call(url):
+    r = requests.get(url, stream=True)
+
+    # return what we got
+    if r.status_code >= 400:
+        return {
+            "error_code": r.status_code,
+            "msg": r.text
+        }
+    else:
+        try:
+            return r
+        except ValueError:
+            return {
+                "error_code": r.status_code,
+                "msg": "no json in response"
+            }
+
+
+
+
+
 def get_profile(username, api_key_tuple):
     url = "https://api.github.com/users/{username}".format(
         username=username
     )
-    return make_call(url, api_key_tuple)
+    return make_ratelimited_call(url, api_key_tuple)
 
 
 
@@ -143,7 +167,7 @@ def get_repo_data(login, repo_name, trim=True):
         login=login,
         repo_name=repo_name
     )
-    resp_dict = make_call(url)
+    resp_dict = make_ratelimited_call(url)
     if trim:
         ret = {}
         for k, v in resp_dict.iteritems():
@@ -155,6 +179,48 @@ def get_repo_data(login, repo_name, trim=True):
         ret = resp_dict
 
     return ret
+
+
+
+def load_enough_content(resp):
+    """Load no more than 16KB of a response, in 1K chunks.
+       Allow this process to take no more than 5 seconds in total.
+       These numbers are arbitrarily chosen to defend against
+       teergrubes (intentional or not) while still allowing us a
+       useful amount of data for anomaly post-mortem."""
+    body = b""
+    start = time.time()
+    for chunk in resp.iter_content(chunk_size=1024):
+        body += chunk
+        if len(body) > 16*1024 or time.time() - start > 5:
+            resp.close()
+            break
+    return body
+
+
+
+def get_repo_dependency_lines(login, repo_name, language):
+
+    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
+        login=login,
+        repo_name=repo_name
+    )
+    r = make_zip_call(url)
+
+
+    temp_filename = "temp.zip"
+    with open(temp_filename, 'wb') as out_file:
+        r.raw.decode_content = False
+        shutil.copyfileobj(r.raw, out_file)
+
+    if language=="r":
+        lines = subprocess.check_output(['zipgrep', "library", temp_filename])
+        print "libraries:", lines
+    elif language=="python":
+        lines = subprocess.check_output(['zipgrep', "import", temp_filename])
+        print "imports:", lines
+
+    return lines
 
 
 
