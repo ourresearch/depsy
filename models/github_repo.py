@@ -20,8 +20,6 @@ class GithubRepo(db.Model):
     def set_github_about(self):
         self.api_raw = github_api.get_repo_data(self.login, self.repo_name)
 
-        print self.api_raw
-
 
 
 # call python main.py add_python_repos_from_google_bucket to run

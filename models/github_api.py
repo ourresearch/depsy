@@ -27,6 +27,7 @@ class GithubKeyring():
         try:
             return self._get_good_key()
         except ValueError:
+            print "no good key found so double-checking expired keys"
             self.update_expired_keys()
             # try same thing again, once more...hopefully a key has un-expired.
             try:
@@ -46,17 +47,18 @@ class GithubKeyring():
         return ret_key
 
     def expire_key(self, login, token):
+        print "expiring key {}:{}".format(login, token)
         self.expired_keys.append([login, token])
-        print "expired keys:", self.expired_keys
 
 
     def update_expired_keys(self):
         rate_limit_check_url = "https://api.github.com/rate_limit"
+        previously_expired_keys = self.expired_keys
         self.expired_keys = []
-        for login, token in self.expired_keys:
+        for login, token in previously_expired_keys:
+            print "calling rate limit check on {}:{}".format(login, token)
             r = requests.get(rate_limit_check_url, auth=(login, token))
             remaining = r.json()["rate"]["remaining"]
-            print "remaining comes back as", remaining
             if remaining == 0:
                 self.expired_keys.append([login, token])
 
