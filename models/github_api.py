@@ -38,6 +38,7 @@ class GithubKeyring():
     def _get_good_key(self):
         tokens_str = os.environ["GITHUB_TOKENS"]
         keys = [t.split(":") for t in tokens_str.split(",")]
+
         good_keys = [k for k in keys if k not in self.expired_keys]
 
         # this throws a value error if no good keys
@@ -46,6 +47,7 @@ class GithubKeyring():
 
     def expire_key(self, login, token):
         self.expired_keys.append([login, token])
+        print "expired keys:", self.expired_keys
 
 
     def update_expired_keys(self):
@@ -54,6 +56,7 @@ class GithubKeyring():
         for login, token in self.expired_keys:
             r = requests.get(rate_limit_check_url, auth=(login, token))
             remaining = r.json()["rate"]["remaining"]
+            print "remaining comes back as", remaining
             if remaining == 0:
                 self.expired_keys.append([login, token])
 
