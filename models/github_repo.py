@@ -2,10 +2,13 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 
 from models.github_api import username_and_repo_name_from_github_url
+from models.github_api import get_repo_zip_response
 from models import github_api
 import requests
 from util import elapsed
 from time import time
+import subprocess
+
 
 class GithubRepo(db.Model):
     login = db.Column(db.Text, primary_key=True)
@@ -13,7 +16,7 @@ class GithubRepo(db.Model):
     language = db.Column(db.Text)
     api_raw = db.Column(JSONB)
     dependency_lines = db.Column(db.Text)
-    zip_download_elapsed = db.Column(db.Integer)
+    zip_download_elapsed = db.Column(db.Float)
     zip_download_size = db.Column(db.Integer)
 
     def __repr__(self):
@@ -22,14 +25,49 @@ class GithubRepo(db.Model):
 
     def set_github_about(self):
         self.api_raw = github_api.get_repo_data(self.login, self.repo_name)
+        return self.api_raw
 
     def set_github_dependency_lines(self):
-        self.dependency_lines = github_api.get_repo_dependency_lines(
-            self.login, 
-            self.repo_name, 
-            self.language
-            )
+        r = get_repo_zip_response(self.login, self.repo_name)
 
+        start_time = time()
+        self.zip_download_elapsed = 0
+        self.zip_download_size = 0
+
+        temp_filename = "temp.zip"
+
+        with open(temp_filename, 'wb') as out_file:
+            r.raw.decode_content = False
+
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk: # filter out keep-alive new chunks
+                    out_file.write(chunk)
+                    out_file.flush()
+                    self.zip_download_size += 1
+                    self.zip_download_elapsed = elapsed(start_time)
+                    if self.zip_download_size > 256*1024:
+                        print "{}: file too big".format(self.full_name)
+                        return None
+                    if self.zip_download_elapsed > 60:
+                        print "{}: taking too long".format(self.full_name)
+                        return None
+
+
+
+        if self.language == "r":
+            self.dependency_lines = subprocess.check_output(['zipgrep', "library", temp_filename])
+            print "libraries:", self.dependency_lines
+        elif self.language == "python":
+            self.dependency_lines = subprocess.check_output(['zipgrep', "import", temp_filename])
+            print "imports:", self.dependency_lines
+        else:
+            self.dependency_lines = None
+
+        return self.dependency_lines
+
+    @property
+    def full_name(self):
+        return self.login + "/" + self.repo_name
 
 
 # call python main.py add_python_repos_from_google_bucket to run

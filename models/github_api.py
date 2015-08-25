@@ -125,7 +125,12 @@ def make_ratelimited_call(url):
             }
 
 
-def make_zip_call(url):
+def get_repo_zip_response(login, repo_name):
+
+    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
+        login=login,
+        repo_name=repo_name
+    )
     r = requests.get(url, stream=True)
 
     # return what we got
@@ -142,6 +147,7 @@ def make_zip_call(url):
                 "error_code": r.status_code,
                 "msg": "no json in response"
             }
+    return r
 
 
 
@@ -199,14 +205,11 @@ def load_enough_content(resp):
     return body
 
 
+def get_repo_zip(login, repo_name):
+    pass
 
 def get_repo_dependency_lines(login, repo_name, language):
-
-    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
-        login=login,
-        repo_name=repo_name
-    )
-    r = make_zip_call(url)
+    r = get_repo_zip(login, repo_name)
 
 
     start_time = time()
