@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 
 from models.github_api import username_and_repo_name_from_github_url
+from models import github_api
 import requests
 from util import elapsed
 from time import time
@@ -16,6 +17,10 @@ class GithubRepo(db.Model):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
             language=self.language, login=self.login, repo_name=self.repo_name)
 
+    def set_github_about(self):
+        self.api_raw = github_api.get_repo_data(self.login, self.repo_name)
+
+        print self.api_raw
 
 
 
@@ -61,12 +66,19 @@ def add_repos_from_remote_csv(csv_url, language):
     db.session.commit()
 
 
+def add_all_github_about():
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.api_raw == 'null')
+    q = q.order_by(GithubRepo.login)
 
+    for row in q.all():
+        print "setting this row", row
+        add_github_about(row[0], row[1])
 
+def add_github_about(login, repo_name):
+    repo = db.session.query(GithubRepo).get((login, repo_name))
+    repo.set_github_about()
+    db.session.commit()
 
+    print repo
 
-
-
-
-
-    pass

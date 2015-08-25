@@ -41,7 +41,7 @@ class GithubKeyring():
         good_keys = [k for k in keys if k not in self.expired_keys]
 
         # this throws a value error if no good keys
-        ret_key = random.sample(good_keys, 1)
+        ret_key = random.sample(good_keys, 1)[0]
         return ret_key
 
     def expire_key(self, login, token):
@@ -124,6 +124,31 @@ def get_profile(username, api_key_tuple):
 
 
 
+
+def get_repo_data(login, repo_name, trim=True):
+    trim_these_keys = [
+        "owner",
+        "organization",
+        "parent",
+        "source"
+    ]
+
+    url = "https://api.github.com/repos/{login}/{repo_name}".format(
+        login=login,
+        repo_name=repo_name
+    )
+    resp_dict = make_call(url)
+    if trim:
+        ret = {}
+        for k, v in resp_dict.iteritems():
+            if k in trim_these_keys or k.endswith("url"):
+                pass  # this key not returned
+            else:
+                ret[k] = v
+    else:
+        ret = resp_dict
+
+    return ret
 
 
 
