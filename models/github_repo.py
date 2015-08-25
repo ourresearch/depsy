@@ -112,6 +112,17 @@ def add_repos_from_remote_csv(csv_url, language):
     db.session.commit()
 
 
+
+"""
+add github about api call
+"""
+def add_github_about(login, repo_name):
+    repo = db.session.query(GithubRepo).get((login, repo_name))
+    repo.set_github_about()
+    db.session.commit()
+
+    print repo
+
 def add_all_github_about():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(GithubRepo.api_raw == 'null')
@@ -121,20 +132,27 @@ def add_all_github_about():
         #print "setting this row", row
         add_github_about(row[0], row[1])
 
-def add_github_about(login, repo_name):
-    repo = db.session.query(GithubRepo).get((login, repo_name))
-    repo.set_github_about()
-    db.session.commit()
-
-    print repo
 
 
+"""
+add github dependency lines
+"""
 def add_github_dependency_lines(login, repo_name):
     repo = db.session.query(GithubRepo).get((login, repo_name))
     repo.set_github_dependency_lines()
     db.session.commit()
 
     print repo
+
+def add_all_github_dependency_lines():
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
+    q = q.order_by(GithubRepo.login)
+    for row in q.all():
+        #print "setting this row", row
+        add_github_dependency_lines(row[0], row[1])
+
+
 
 
 
