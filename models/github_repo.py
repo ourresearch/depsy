@@ -22,7 +22,6 @@ class GithubRepo(db.Model):
 
 
 
-
 # call python main.py add_python_repos_from_google_bucket to run
 def add_python_repos_from_google_bucket():
 

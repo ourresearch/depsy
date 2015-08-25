@@ -27,6 +27,7 @@ class GithubKeyring():
         try:
             return self._get_good_key()
         except ValueError:
+            print "no good key found so double-checking expired keys"
             self.update_expired_keys()
             # try same thing again, once more...hopefully a key has un-expired.
             try:
@@ -38,6 +39,7 @@ class GithubKeyring():
     def _get_good_key(self):
         tokens_str = os.environ["GITHUB_TOKENS"]
         keys = [t.split(":") for t in tokens_str.split(",")]
+
         good_keys = [k for k in keys if k not in self.expired_keys]
 
         # this throws a value error if no good keys
@@ -45,13 +47,16 @@ class GithubKeyring():
         return ret_key
 
     def expire_key(self, login, token):
+        print "expiring key {}:{}".format(login, token)
         self.expired_keys.append([login, token])
 
 
     def update_expired_keys(self):
         rate_limit_check_url = "https://api.github.com/rate_limit"
+        previously_expired_keys = self.expired_keys
         self.expired_keys = []
-        for login, token in self.expired_keys:
+        for login, token in previously_expired_keys:
+            print "calling rate limit check on {}:{}".format(login, token)
             r = requests.get(rate_limit_check_url, auth=(login, token))
             remaining = r.json()["rate"]["remaining"]
             if remaining == 0:
@@ -77,6 +82,7 @@ def make_call(url):
         print "make_call({}) trying again, mabye api keys refreshed?".format(url)
         return make_call(url)
 
+    # @todo handle a timeout from requests
     r = requests.get(url, auth=(login, token))
     calls_remaining = r.headers["X-RateLimit-Remaining"]
 
@@ -91,7 +97,7 @@ def make_call(url):
     if int(calls_remaining) == 0:
         # this key is expired.
 
-        keyring.expire_key([login, token])
+        keyring.expire_key(login, token)
         if r.status_code < 400:
             pass  # key just expired, but we got good data this call
 
