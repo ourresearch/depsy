@@ -32,6 +32,7 @@ if __name__ == "__main__":
 
     db.create_all()
 
+
     # get args from the command line:
     parser = argparse.ArgumentParser(description="Run stuff.")
     parser.add_argument('function', type=str, help="what function you want to run")
