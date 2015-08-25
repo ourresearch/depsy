@@ -77,6 +77,7 @@ def make_call(url):
         print "make_call({}) trying again, mabye api keys refreshed?".format(url)
         return make_call(url)
 
+    # @todo handle a timeout from requests
     r = requests.get(url, auth=(login, token))
     calls_remaining = r.headers["X-RateLimit-Remaining"]
 
@@ -91,7 +92,7 @@ def make_call(url):
     if int(calls_remaining) == 0:
         # this key is expired.
 
-        keyring.expire_key([login, token])
+        keyring.expire_key(login, token)
         if r.status_code < 400:
             pass  # key just expired, but we got good data this call
 
