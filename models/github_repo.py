@@ -13,6 +13,8 @@ class GithubRepo(db.Model):
     language = db.Column(db.Text)
     api_raw = db.Column(JSONB)
     dependency_lines = db.Column(db.Text)
+    zip_download_elapsed = db.Column(db.Integer)
+    zip_download_size = db.Column(db.Integer)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -27,6 +29,7 @@ class GithubRepo(db.Model):
             self.repo_name, 
             self.language
             )
+
 
 
 # call python main.py add_python_repos_from_google_bucket to run
@@ -94,4 +97,7 @@ def add_github_dependency_lines(login, repo_name):
     db.session.commit()
 
     print repo
+
+
+
 

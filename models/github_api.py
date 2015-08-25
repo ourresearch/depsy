@@ -5,8 +5,9 @@ from urlparse import urlparse
 import random
 from app import db
 from time import sleep
+from time import time
+from util import elapsed
 import subprocess
-import shutil
 
 logger = logging.getLogger("github_api")
 
@@ -208,10 +209,24 @@ def get_repo_dependency_lines(login, repo_name, language):
     r = make_zip_call(url)
 
 
+    start_time = time()
+    kb_downloaded = 0
+
     temp_filename = "temp.zip"
+
     with open(temp_filename, 'wb') as out_file:
         r.raw.decode_content = False
-        shutil.copyfileobj(r.raw, out_file)
+
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk: # filter out keep-alive new chunks
+                out_file.write(chunk)
+                out_file.flush()
+                kb_downloaded += 1
+                elapsed_time = elapsed(start_time)
+                if kb_downloaded > 256*1024 or elapsed_time > 60:
+                    break
+
+    
 
     if language=="r":
         lines = subprocess.check_output(['zipgrep', "library", temp_filename])
@@ -219,6 +234,8 @@ def get_repo_dependency_lines(login, repo_name, language):
     elif language=="python":
         lines = subprocess.check_output(['zipgrep', "import", temp_filename])
         print "imports:", lines
+    else:
+        lines = None
 
     return lines
 
