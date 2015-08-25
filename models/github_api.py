@@ -2,43 +2,66 @@ import os
 import logging
 import requests
 from urlparse import urlparse
-from random import shuffle
+import random
 from app import db
 
 
 logger = logging.getLogger("github_api")
 
-class GithubApiKeys():
-    def __init__(self):
-        self.keys = self._get_api_keys()
-        self.current = 0
-
-    def get(self):
-        try:
-            return self.keys[self.current]
-        except IndexError:
-            return None
-
-    def reset(self):
-        self.current = 0
-
-    def next(self):
-        self.current += 1
-        return self.get()
-
-    def _get_api_keys(self):
-        tokens_str = os.environ["GITHUB_TOKENS"]
-        token_pairs = [t.split(":") for t in tokens_str.split(",")]
-
-        # the shuffle means different threads will start w different keys.
-        shuffle(token_pairs)
-        return token_pairs
-
-
-global_keys = GithubApiKeys()
-
 class GithubRateLimitException(Exception):
     pass
+
+class GithubKeyring():
+    def __init__(self):
+        self.expired_keys = []
+
+    def get(self):
+        """
+        get a key. if there is no key, try to see if one is un-expired
+
+        if this raises the GithubRateLimitException,
+        you should a lil while before re-calling this, it will hit the
+         network a lot if none of the keys are un-expired
+        """
+        try:
+            return self._get_good_key()
+        except ValueError:
+            self.update_expired_keys()
+            # try same thing again, once more...hopefully a key has un-expired.
+            try:
+                return self._get_good_key()
+            except ValueError:  # no more tries for you.
+                raise GithubRateLimitException
+
+
+    def _get_good_key(self):
+        tokens_str = os.environ["GITHUB_TOKENS"]
+        keys  = [t.split(":") for t in tokens_str.split(",")]
+        good_keys = [k for k in keys if k not in self.expired_keys]
+
+        # this throws a value error if no good keys
+        ret_key = random.sample(good_keys, 1)
+        return ret_key
+
+    def expire_key(self, login, token):
+        self.expired_keys.append([login, token])
+
+
+    def update_expired_keys(self):
+        rate_limit_check_url = "https://api.github.com/rate_limit"
+        self.expired_keys = []
+        for login, token in self.expired_keys:
+            r = requests.get(rate_limit_check_url, auth=(login, token))
+            remaining = r.json()["rate"]["remaining"]
+            if remaining == 0:
+                self.expired_keys.append([login, token])
+
+        return True
+
+
+# this needs to be a global that the whole application imports and uses
+keyring = GithubKeyring()
+
 
 
 def make_call(url):
