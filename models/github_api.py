@@ -4,6 +4,7 @@ import requests
 from urlparse import urlparse
 import random
 from app import db
+from time import sleep
 
 
 logger = logging.getLogger("github_api")
@@ -36,7 +37,7 @@ class GithubKeyring():
 
     def _get_good_key(self):
         tokens_str = os.environ["GITHUB_TOKENS"]
-        keys  = [t.split(":") for t in tokens_str.split(",")]
+        keys = [t.split(":") for t in tokens_str.split(",")]
         good_keys = [k for k in keys if k not in self.expired_keys]
 
         # this throws a value error if no good keys
@@ -56,7 +57,6 @@ class GithubKeyring():
             if remaining == 0:
                 self.expired_keys.append([login, token])
 
-        return True
 
 
 # this needs to be a global that the whole application imports and uses
@@ -67,35 +67,53 @@ keyring = GithubKeyring()
 def make_call(url):
 
     try:
-        key_owner, key_token = global_keys.get()
-    except TypeError:  # there are no more keys.
-        raise GithubRateLimitException
-
-
-    r = requests.get(url, auth=(key_owner, key_token))
-    calls_remaining = r.headers["X-RateLimit-Remaining"]
-
-    logger.info(
-        "{status_code}: {url}.  {rate_limit} calls remain for {username}".format(
-            status_code=r.status_code,
-            url=url,
-            rate_limit=calls_remaining,
-            username=key_owner
+        login, token = keyring.get()
+    except GithubRateLimitException:
+        # wait a bit and try again, forever
+        print "{}: our github keys have all reached their rate limits. sleeping....".format(
+            url
         )
-    )
-
-    if int(calls_remaining) == 0:
-        global_keys.next()
+        sleep(5 * 60)
+        print "make_call({}) trying again, mabye api keys refreshed?".format(url)
         return make_call(url)
 
-    # all errors will fail silently except for rate-limiting (caught above)
-    if r.status_code >= 400:
-        return None
+    r = requests.get(url, auth=(login, token))
+    calls_remaining = r.headers["X-RateLimit-Remaining"]
 
-    try:
-        return r.json()
-    except ValueError:
-        return None
+    print "{status_code}: {url}.  {rate_limit} calls remain for {login}".format(
+        status_code=r.status_code,
+        url=url,
+        rate_limit=calls_remaining,
+        login=login
+    )
+
+    # deal w expired keys
+    if int(calls_remaining) == 0:
+        # this key is expired.
+
+        keyring.expire_key([login, token])
+        if r.status_code < 400:
+            pass  # key just expired, but we got good data this call
+
+        elif r.status_code == 403 or r.status_code == 401:
+            # key is dead, and also we got no data. try again.
+            return make_call(url)
+
+
+    # return what we got
+    if r.status_code >= 400:
+        return {
+            "error_code": r.status_code,
+            "msg": r.text
+        }
+    else:
+        try:
+            return r.json()
+        except ValueError:
+            return {
+                "error_code": r.status_code,
+                "msg": "no json in response"
+            }
 
 
 def get_profile(username, api_key_tuple):
