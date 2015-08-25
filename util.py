@@ -76,8 +76,8 @@ def page_query(q, page_size=1000):
         if not r:
             break
 
-def elapsed(since):
-    return round(time.time() - since, 2)
+def elapsed(since, round_places=2):
+    return round(time.time() - since, round_places)
 
 def update_sqla_objects(sqla_objects, fn):
     flush_size = 100

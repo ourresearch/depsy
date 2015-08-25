@@ -44,7 +44,7 @@ class GithubRepo(db.Model):
                     out_file.write(chunk)
                     out_file.flush()
                     self.zip_download_size += 1
-                    self.zip_download_elapsed = elapsed(start_time)
+                    self.zip_download_elapsed = elapsed(start_time, 4)
                     if self.zip_download_size > 256*1024:
                         print "{}: file too big".format(self.full_name)
                         return None
