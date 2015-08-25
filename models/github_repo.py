@@ -20,7 +20,6 @@ class GithubRepo(db.Model):
     def set_github_about(self):
         self.api_raw = github_api.get_repo_data(self.login, self.repo_name)
 
-        print self.api_raw
 
 
 
@@ -72,7 +71,7 @@ def add_all_github_about():
     q = q.order_by(GithubRepo.login)
 
     for row in q.all():
-        print "setting this row", row
+        #print "setting this row", row
         add_github_about(row[0], row[1])
 
 def add_github_about(login, repo_name):
