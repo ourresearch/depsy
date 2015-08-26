@@ -64,7 +64,7 @@ class GithubRepo(db.Model):
         print "finished downloading zip for {}".format(self.full_name)
 
         if self.language == "r":
-            query_str = "library"
+            query_str = "library|require"
         elif self.language == "python":
             query_str = "import"
 
