@@ -189,62 +189,6 @@ def get_repo_data(login, repo_name, trim=True):
 
 
 
-def load_enough_content(resp):
-    """Load no more than 16KB of a response, in 1K chunks.
-       Allow this process to take no more than 5 seconds in total.
-       These numbers are arbitrarily chosen to defend against
-       teergrubes (intentional or not) while still allowing us a
-       useful amount of data for anomaly post-mortem."""
-    body = b""
-    start = time.time()
-    for chunk in resp.iter_content(chunk_size=1024):
-        body += chunk
-        if len(body) > 16*1024 or time.time() - start > 5:
-            resp.close()
-            break
-    return body
-
-
-def get_repo_zip(login, repo_name):
-    pass
-
-def get_repo_dependency_lines(login, repo_name, language):
-    r = get_repo_zip(login, repo_name)
-
-
-    start_time = time()
-    kb_downloaded = 0
-
-    temp_filename = "temp.zip"
-
-    with open(temp_filename, 'wb') as out_file:
-        r.raw.decode_content = False
-
-        for chunk in r.iter_content(chunk_size=1024):
-            if chunk: # filter out keep-alive new chunks
-                out_file.write(chunk)
-                out_file.flush()
-                kb_downloaded += 1
-                elapsed_time = elapsed(start_time)
-                if kb_downloaded > 256*1024 or elapsed_time > 60:
-                    break
-
-    
-
-    if language=="r":
-        lines = subprocess.check_output(['zipgrep', "library", temp_filename])
-        print "libraries:", lines
-    elif language=="python":
-        lines = subprocess.check_output(['zipgrep', "import", temp_filename])
-        print "imports:", lines
-    else:
-        lines = None
-
-    return lines
-
-
-
-
 def username_and_repo_name_from_github_url(url):
     try:
         path = urlparse(url).path

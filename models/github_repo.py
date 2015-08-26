@@ -18,6 +18,7 @@ class GithubRepo(db.Model):
     dependency_lines = db.Column(db.Text)
     zip_download_elapsed = db.Column(db.Float)
     zip_download_size = db.Column(db.Integer)
+    zip_download_error = db.Column(db.Text)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -31,13 +32,18 @@ class GithubRepo(db.Model):
         print "getting dependency lines for {}".format(self.full_name)
         r = get_repo_zip_response(self.login, self.repo_name)
 
+        if r.status_code != 200:
+            self.zip_download_elapsed = None
+            self.zip_download_size = None
+            self.zip_download_error = "error {status_code}:{text}".format(
+                status_code=r.status_code, text=r.text)
+            return None
+
+
         start_time = time()
         self.zip_download_elapsed = 0
         self.zip_download_size = 0
-
         temp_filename = "temp.zip"
-
-        
 
         with open(temp_filename, 'wb') as out_file:
             r.raw.decode_content = False
@@ -55,7 +61,7 @@ class GithubRepo(db.Model):
                         print "{}: taking too long".format(self.full_name)
                         return None
 
-
+        print "finished downloading zip for {}".format(self.full_name)
 
         if self.language == "r":
             query_str = "library"
@@ -69,6 +75,8 @@ class GithubRepo(db.Model):
             print "zipgrep process died. error: {}".format(e)
             print "************************************************************"
             return None
+
+        print "finished grepping for dependencies for {}".format(self.full_name)
 
         return self.dependency_lines
 
