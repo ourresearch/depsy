@@ -28,6 +28,7 @@ class GithubRepo(db.Model):
         return self.api_raw
 
     def set_github_dependency_lines(self):
+        print "getting dependency lines for {}".format(self.full_name)
         r = get_repo_zip_response(self.login, self.repo_name)
 
         start_time = time()
@@ -35,6 +36,8 @@ class GithubRepo(db.Model):
         self.zip_download_size = 0
 
         temp_filename = "temp.zip"
+
+        
 
         with open(temp_filename, 'wb') as out_file:
             r.raw.decode_content = False
@@ -153,6 +156,7 @@ def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
     q = q.order_by(GithubRepo.login)
+    q = q.limit(100)
     for row in q.all():
         #print "setting this row", row
         add_github_dependency_lines(row[0], row[1])
