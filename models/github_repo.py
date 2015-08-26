@@ -55,15 +55,20 @@ class GithubRepo(db.Model):
 
 
         if self.language == "r":
-            self.dependency_lines = subprocess.check_output(['zipgrep', "library", temp_filename])
-            print "libraries:", self.dependency_lines
+            query_str = "library"
         elif self.language == "python":
-            self.dependency_lines = subprocess.check_output(['zipgrep', "import", temp_filename])
-            print "imports:", self.dependency_lines
-        else:
-            self.dependency_lines = None
+            query_str = "import"
+
+        try:
+            self.dependency_lines = subprocess.check_output(['zipgrep', query_str, temp_filename])
+        except subprocess.CalledProcessError as e:
+            print "************************************************************"
+            print "zipgrep process died. error: {}".format(e)
+            print "************************************************************"
+            return None
 
         return self.dependency_lines
+
 
     @property
     def full_name(self):
@@ -142,7 +147,7 @@ def add_github_dependency_lines(login, repo_name):
     repo.set_github_dependency_lines()
     db.session.commit()
 
-    print repo
+    print "dependency lines found: ", repo.dependency_lines
 
 def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
