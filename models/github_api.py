@@ -131,23 +131,8 @@ def get_repo_zip_response(login, repo_name):
         login=login,
         repo_name=repo_name
     )
-    r = requests.get(url, stream=True)
+    return requests.get(url, stream=True)
 
-    # return what we got
-    if r.status_code >= 400:
-        return {
-            "error_code": r.status_code,
-            "msg": r.text
-        }
-    else:
-        try:
-            return r
-        except ValueError:
-            return {
-                "error_code": r.status_code,
-                "msg": "no json in response"
-            }
-    return r
 
 
 
