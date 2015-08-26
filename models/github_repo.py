@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import or_
 
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import get_repo_zip_response
@@ -178,11 +179,12 @@ def add_github_dependency_lines(login, repo_name):
     repo.set_github_dependency_lines()
     db.session.commit()
 
-    print "dependency lines found: ", repo.dependency_lines
+    print u"dependency lines found: {}".format(repo.dependency_lines)
 
 def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
+    q = q.filter(or_(GithubRepo.zip_download_error != None, GithubRepo.zip_download_elapsed != None))
     q = q.order_by(GithubRepo.login)
 
     for row in q.all():
