@@ -34,6 +34,7 @@ class GithubRepo(db.Model):
         r = get_repo_zip_response(self.login, self.repo_name)
 
         if r.status_code != 200:
+            print "got an error"
             self.zip_download_elapsed = None
             self.zip_download_size = None
             self.zip_download_error = "error {status_code}:{text}".format(
