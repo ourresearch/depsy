@@ -33,14 +33,13 @@ class GithubRepo(db.Model):
         print "getting dependency lines for {}".format(self.full_name)
         r = get_repo_zip_response(self.login, self.repo_name)
 
-        if r.status_code != 200:
+        if "error_code" in r:
             print "got an error"
             self.zip_download_elapsed = None
             self.zip_download_size = None
-            self.zip_download_error = "error {status_code}:{text}".format(
-                status_code=r.status_code, text=r.text)
+            self.zip_download_error = "error {error_code}:{msg}".format(
+                error_code=r["error_code"], msg=r["msg"])
             return None
-
 
         start_time = time()
         self.zip_download_elapsed = 0
