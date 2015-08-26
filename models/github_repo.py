@@ -89,7 +89,7 @@ class GithubRepo(db.Model):
             self.dependency_lines = subprocess.check_output(arg_list)
         except subprocess.CalledProcessError as e:
             print "************************************************************"
-            print "zipgrep process died. error: {}".format(e)
+            print "zipgrep process died. error: {}".format(e.output)
             print "************************************************************"
             return None
 
