@@ -184,7 +184,9 @@ def add_github_dependency_lines(login, repo_name):
 def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
-    q = q.filter(or_(GithubRepo.zip_download_error != None, GithubRepo.zip_download_elapsed != None))
+    q = q.filter(GithubRepo.dependency_lines == None, 
+        GithubRepo.zip_download_error == None, 
+        GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
 
     for row in q.all():
