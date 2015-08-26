@@ -63,12 +63,13 @@ class GithubRepo(db.Model):
 
         print "finished downloading zip for {}".format(self.full_name)
 
+        include_globs = []
         if self.language == "r":
             query_str = "library|require"
-            include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
-            for glob in include_globs:
-                include_globs.append(glob.upper())
-                include_globs.append(glob.lower())
+            r_include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
+            for r_include_glob in r_include_globs:
+                include_globs.append(r_include_glob.upper())
+                include_globs.append(r_include_glob.lower())
 
             exclude_globs = ["*.foo"]  # hack, because some value is expected
 
@@ -82,7 +83,9 @@ class GithubRepo(db.Model):
         arg_list.append("-x")
         arg_list += exclude_globs
 
+
         try:
+            print "Running zipgrep with args: ", arg_list
             self.dependency_lines = subprocess.check_output(arg_list)
         except subprocess.CalledProcessError as e:
             print "************************************************************"

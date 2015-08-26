@@ -32,10 +32,16 @@ def main(fn, optional_args=None):
 
     # call function by its name in this module, with all args :)
     # http://stackoverflow.com/a/4605/596939
-    if optional_args:
-        globals()[fn](*optional_args)
-    else:
-        globals()[fn]()
+    try:
+        if optional_args:
+            globals()[fn](*optional_args)
+        else:
+            globals()[fn]()
+    except KeyError:
+        print "can't find function '{}'...quitting. ".format(fn)
+    except TypeError as e:
+        print "wrong number of arguments for '{}'...quitting".format(fn)
+        raise e
 
     print "total time to run:", elapsed(start)
 
