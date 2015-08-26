@@ -65,11 +65,25 @@ class GithubRepo(db.Model):
 
         if self.language == "r":
             query_str = "library|require"
+            include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
+            for glob in include_globs:
+                include_globs.append(glob.upper())
+                include_globs.append(glob.lower())
+
+            exclude_globs = ["*.foo"]  # hack, because some value is expected
+
         elif self.language == "python":
             query_str = "import"
+            include_globs = ["*.py", "*.ipynb"]
+            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/library/*"]
+
+        arg_list =['zipgrep', query_str, temp_filename]
+        arg_list += include_globs
+        arg_list.append("-x")
+        arg_list += exclude_globs
 
         try:
-            self.dependency_lines = subprocess.check_output(['zipgrep', query_str, temp_filename])
+            self.dependency_lines = subprocess.check_output(arg_list)
         except subprocess.CalledProcessError as e:
             print "************************************************************"
             print "zipgrep process died. error: {}".format(e)
@@ -164,7 +178,7 @@ def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
     q = q.order_by(GithubRepo.login)
-    q = q.limit(100)
+
     for row in q.all():
         #print "setting this row", row
         add_github_dependency_lines(row[0], row[1])
