@@ -87,10 +87,13 @@ class GithubRepo(db.Model):
         try:
             print "Running zipgrep with args: ", arg_list
             self.dependency_lines = subprocess.check_output(arg_list)
+
         except subprocess.CalledProcessError as e:
             print "************************************************************"
             print "zipgrep process died. error: {}".format(e.output)
             print "************************************************************"
+            self.zip_download_error = "grep_error"
+
             return None
 
         print "finished grepping for dependencies for {}".format(self.full_name)
