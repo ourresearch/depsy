@@ -1,4 +1,5 @@
 from app import db
+from app import github_zip_queue
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import or_
 
@@ -119,6 +120,10 @@ def add_all_github_about():
 add github dependency lines
 """
 def add_github_dependency_lines(login, repo_name):
+    print "i ran a job for {}/{}".format(login, repo_name)
+    return None
+
+
     repo = db.session.query(GithubRepo).get((login, repo_name))
     if repo is None:
         print "there's no repo called {}/{}".format(login, repo_name)
@@ -126,6 +131,7 @@ def add_github_dependency_lines(login, repo_name):
 
     repo.set_github_dependency_lines()
     db.session.commit()
+    return None  # important that it returns None for RQ
 
 
 def add_all_github_dependency_lines():
@@ -136,12 +142,19 @@ def add_all_github_dependency_lines():
         GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
 
+    q = q.limit(25)
+
+
     for row in q.all():
-        #print "setting this row", row
-        add_github_dependency_lines(row[0], row[1])
+        print "putting this row on the queue", row
 
-
-
+        job = github_zip_queue.enqueue_call(
+            func=add_github_dependency_lines,
+            args=(row[0], row[1]),
+            result_ttl=0  # number of seconds
+        )
+        job.meta["full_repo_name"] = row[0] + "/" + row[1]
+        job.save()
 
 
 

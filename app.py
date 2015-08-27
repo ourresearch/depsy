@@ -19,7 +19,7 @@ import sys
 logging.basicConfig(
     stream=sys.stdout,
     level=logging.DEBUG,
-    format='[%(process)3d] %(levelname)8s %(threadName)30s %(name)s - %(message)s'
+    format='%(name)s - %(message)s'
 )
 logger = logging.getLogger("software")
 
@@ -47,9 +47,13 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_POOL_SIZE"] = 60
 app.config['GITHUB_SECRET'] = os.getenv("GITHUB_SECRET")
 
-
+redis_rq_conn = redis.from_url(
+    os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
+    db=0
+)
 # database stuff
 db = SQLAlchemy(app)
+github_zip_queue = Queue("github_zip", connection=redis_rq_conn)
 
 
 # these imports are needed so that tables will get auto-created.
@@ -91,12 +95,5 @@ my_redis = redis.from_url(
     db=10
 )
 
-redis_rq_conn = redis.from_url(
-    os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
-    db=14
-)
 
 
-
-scopus_queue = Queue("scopus", connection=redis_rq_conn)
-refset_queue = Queue("refset", connection=redis_rq_conn)
