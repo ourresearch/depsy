@@ -85,6 +85,9 @@ class ZipGetter():
         self.dep_lines = None
 
     def download(self):
+
+        # @todo erase the temp file when something goes wrong...
+
         print "Downloading zip for {}...".format(self.url)
         start = time()
         r = requests.get(self.url, stream=True)
@@ -177,7 +180,7 @@ def github_zip_getter_factory(login, repo_name):
     #    repo_name=repo_name
     #)
 
-    url = "https://api.github.com/repos/{login}/{repo_name}/zipballs/master".format(
+    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
         login=login,
         repo_name=repo_name
     )
