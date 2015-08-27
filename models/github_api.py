@@ -166,7 +166,7 @@ class ZipGetter():
 
         finally:
             self.grep_elapsed = elapsed(start, 4)
-            print "found these dep lines: {}".format(self.dep_lines)
+            #print "found these dep lines: {}".format(self.dep_lines)
             print "finished dep lines search in {} sec".format(self.grep_elapsed)
 
 
