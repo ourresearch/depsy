@@ -73,20 +73,49 @@ class GithubRepoZip():
         self.repo_name = repo_name
 
         self.download_elapsed = 0
-        self.download_size = 0
+        self.download_kb = 0
         self.error = None
         self.r = None
+        self.temp_file_name = "GithubRepoZip.temp.zip"
 
     def download(self):
         url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
             login=self.login,
             repo_name=self.repo_name
         )
-        print "Getting zip for {}/{}...".format(self.login, self.repo_name)
+        print "Getting zip for {}...".format(self.full_repo_name)
         start = time()
-        self.r = requests.get(url)
+        r = requests.get(url, stream=True)
+
+        with open(self.temp_file_name, 'wb') as out_file:
+            r.raw.decode_content = False
+
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk: # filter out keep-alive new chunks
+                    out_file.write(chunk)
+                    out_file.flush()
+                    self.download_kb += 1
+                    self.download_elapsed = elapsed(start, 4)
+                    if self.download_kb > 256*1024:
+                        print "DOWNLOAD ERROR for {}: file too big".format(self.full_repo_name)
+                        self.error = "file_too_big"
+                        return None
+
+                    if self.download_elapsed > 60:
+                        print "DOWNLOAD ERROR for {}: taking too long".format(self.full_repo_name)
+                        self.error = "file_too_slow"
+                        return None
+
         self.download_elapsed = elapsed(start, 4)
-        print "{} for {}/{}".format(self.download_elapsed, self.login, self.repo_name)
+        print "downloaded {} ({}kb) in {} sec".format(
+            self.full_repo_name,
+            self.download_kb,
+            self.download_elapsed
+        )
+
+    @property
+    def full_repo_name(self):
+        return self.login + "/" + self.repo_name
         
     
 
@@ -249,9 +278,10 @@ def get_github_homepage(url):
 def test_zip_download_url():
     
     repo_zip = GithubRepoZip("jasonpriem", "zotero-report-cleaner")
+    repo_zip = GithubRepoZip("jasonpriem", "FeedVis")
     repo_zip.download()
     print repo_zip.r
-    print repo_zip.download_elapsed
+    print repo_zip.download_kb
     
     #url = "https://codeload.github.com/jasonpriem/zotero-report-cleaner/legacy.zip/master"
     #for i in range(100):
