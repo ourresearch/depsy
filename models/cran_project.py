@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 
 class CranProject(db.Model):
-    name = db.Column(db.Text, primary_key=True)
+    project_name = db.Column(db.Text, primary_key=True)
     owner_name = db.Column(db.Text)
 
     github_owner = db.Column(db.Text)

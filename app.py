@@ -60,12 +60,6 @@ from models import github_repo
 from models import pypi_project
 from models import cran_project
 
-# commented out because it seems to kill the app when you run as a script.
-# but you must UNCOMMENT it at some point to make the new pypi_repo table.
-# yuck.
-# from models import pypi_repo
-
-
 db.create_all()
 db.session.commit()
 

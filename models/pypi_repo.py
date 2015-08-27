@@ -50,63 +50,63 @@ def make_pypi_repo(pypi_dict):
 
 
 
-class PyPiRepo(db.Model):
-    __tablename__ = 'pypi_repo'
-    pypi_name = db.Column(db.Text, primary_key=True)
-    github_url = db.Column(db.Text)
-    repo_name = db.Column(db.Text)
-    repo_owner = db.Column(db.Text)
+# class PyPiRepo(db.Model):
+#     __tablename__ = 'pypi_repo'
+#     pypi_name = db.Column(db.Text, primary_key=True)
+#     github_url = db.Column(db.Text)
+#     repo_name = db.Column(db.Text)
+#     repo_owner = db.Column(db.Text)
 
-    commit_counts = db.Column(JSON)
-    commit_percents = db.Column(JSON)
-    key_committers = db.Column(JSON)
+#     commit_counts = db.Column(JSON)
+#     commit_percents = db.Column(JSON)
+#     key_committers = db.Column(JSON)
 
-    is_404 = db.Column(db.Boolean)
-    pypi_about = db.deferred(db.Column(db.Text))
-    github_about = db.deferred(db.Column(JSON))
+#     is_404 = db.Column(db.Boolean)
+#     pypi_about = db.deferred(db.Column(db.Text))
+#     github_about = db.deferred(db.Column(JSON))
 
-    #collected = db.Column(db.DateTime())
-    #downloads_last_month = db.Column(db.Integer)
-    #downloads_ever = db.Column(db.Integer)
-    #requires = db.Column(JSON)
+#     #collected = db.Column(db.DateTime())
+#     #downloads_last_month = db.Column(db.Integer)
+#     #downloads_ever = db.Column(db.Integer)
+#     #requires = db.Column(JSON)
 
-    @property
-    def name_tuple(self):
-        return (self.repo_owner, self.repo_name)
+#     @property
+#     def name_tuple(self):
+#         return (self.repo_owner, self.repo_name)
 
-    def set_repo_commits(self):
-        url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
-            username=self.repo_owner,
-            repo_name=self.repo_name
-        )
-        resp = make_ratelimited_call(url)
-        if resp is None:
-            self.is_404 = True
-            return False
+#     def set_repo_commits(self):
+#         url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
+#             username=self.repo_owner,
+#             repo_name=self.repo_name
+#         )
+#         resp = make_ratelimited_call(url)
+#         if resp is None:
+#             self.is_404 = True
+#             return False
 
-        # set the commit_lines property
-        self.commit_counts = {}
-        for contrib_dict in resp:
-            contrib_login = contrib_dict["login"]
-            self.commit_counts[contrib_login] = contrib_dict["contributions"]
+#         # set the commit_lines property
+#         self.commit_counts = {}
+#         for contrib_dict in resp:
+#             contrib_login = contrib_dict["login"]
+#             self.commit_counts[contrib_login] = contrib_dict["contributions"]
 
-        # set the commit_percents property
-        total_commits = sum(self.commit_counts.values())
-        self.commit_percents = {}
-        for username, count in self.commit_counts.iteritems():
-            self.commit_percents[username] = int(round(count / total_commits * 100))
+#         # set the commit_percents property
+#         total_commits = sum(self.commit_counts.values())
+#         self.commit_percents = {}
+#         for username, count in self.commit_counts.iteritems():
+#             self.commit_percents[username] = int(round(count / total_commits * 100))
 
-        # set the key_committer property
-        # do later.
-        self.key_committers = {}
-        for username, count in self.commit_counts.iteritems():
-            percent = self.commit_percents[username]
-            if percent >= 25 or count >= 100:
-                self.key_committers[username] = True
-            else:
-                self.key_committers[username] = False
+#         # set the key_committer property
+#         # do later.
+#         self.key_committers = {}
+#         for username, count in self.commit_counts.iteritems():
+#             percent = self.commit_percents[username]
+#             if percent >= 25 or count >= 100:
+#                 self.key_committers[username] = True
+#             else:
+#                 self.key_committers[username] = False
 
-        return True
+#         return True
 
 
 def save_all_repo_owners_and_key_committers():
