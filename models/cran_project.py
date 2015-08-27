@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 import requests
 from lxml import html
+import re
 
 
 
@@ -193,16 +194,15 @@ def add_cran_proxy_papers(project_name):
     if project.proxy_papers:
         print "got proxy_papers!"
     db.session.commit()
-    print u"data found: {}".format(project.proxy_papers)
 
 
 def add_all_cran_proxy_papers():
     q = db.session.query(CranProject.project_name)
-    q = q.filter(CranProject.proxy_papers == "null")
+    q = q.filter(CranProject.proxy_papers == None)
     q = q.order_by(CranProject.project_name)
 
     for row in q.all():
-        add_all_cran_proxy_papers(row[0])
+        add_cran_proxy_papers(row[0])
 
 
 
