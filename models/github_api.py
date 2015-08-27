@@ -66,12 +66,111 @@ class GithubKeyring():
 
 
 
+class GithubRepoZip():
+
+    def __init__(self, login, repo_name):
+        self.login = login
+        self.repo_name = repo_name
+
+        self.download_elapsed = 0
+        self.grep_elapsed = 0
+        self.download_kb = 0
+        self.error = None
+        self.r = None
+        self.temp_file_name = "GithubRepoZip.temp.zip"
+        self.dep_lines = None
+
+    def download(self):
+        url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
+            login=self.login,
+            repo_name=self.repo_name
+        )
+        print "Getting zip for {}...".format(self.full_repo_name)
+        start = time()
+        r = requests.get(url, stream=True)
+
+        with open(self.temp_file_name, 'wb') as out_file:
+            r.raw.decode_content = False
+
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk: # filter out keep-alive new chunks
+                    out_file.write(chunk)
+                    out_file.flush()
+                    self.download_kb += 1
+                    self.download_elapsed = elapsed(start, 4)
+                    if self.download_kb > 256*1024:
+                        print "DOWNLOAD ERROR for {}: file too big".format(self.full_repo_name)
+                        self.error = "file_too_big"
+                        return None
+
+                    if self.download_elapsed > 60:
+                        print "DOWNLOAD ERROR for {}: taking too long".format(self.full_repo_name)
+                        self.error = "file_too_slow"
+                        return None
+
+        self.download_elapsed = elapsed(start, 4)
+        print "downloaded {} ({}kb) in {} sec".format(
+            self.full_repo_name,
+            self.download_kb,
+            self.download_elapsed
+        )
+
+    @property
+    def full_repo_name(self):
+        return self.login + "/" + self.repo_name
+
+    def _grep_for_dep_lines(self, query_str, include_globs, exclude_globs):
+        arg_list =['zipgrep', query_str, self.temp_file_name]
+        arg_list += include_globs
+        arg_list.append("-x")
+        arg_list += exclude_globs
+        start = time()
+        try:
+            print "Running zipgrep: '{}'".format(" ".join(arg_list))
+            self.dep_lines = subprocess.check_output(arg_list)
+            print "found these dep lines: {}".format(self.dep_lines)
+
+        except subprocess.CalledProcessError as e:
+            print "zipgrep process died. error: {}".format(e)
+            self.error = "grep_error"
+
+        finally:
+            self.grep_elapsed = elapsed(start)
+            print "finished dep lines search in {} sec".format(self.grep_elapsed)
+
+
+    def get_dep_lines(self, language):
+        self.download()
+        if language == "r":
+            print "getting dep lines in r"
+            include_globs = []
+            query_str = "library|require"
+            r_include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
+            for r_include_glob in r_include_globs:
+                include_globs.append(r_include_glob.upper())
+                include_globs.append(r_include_glob.lower())
+
+            exclude_globs = ["*.foo"]  # hack, because some value is expected
+            self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
+
+        elif language == "python":
+            print "getting dep lines in python"
+            query_str = "import"
+            include_globs = ["*.py", "*.ipynb"]
+            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/library/*"]
+            self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
+
+
+
+
+
+
 # this needs to be a global that the whole application imports and uses
 keyring = GithubKeyring()
 
 
 
-def make_ratelimited_call(url, return_json=True, stream=False):
+def make_ratelimited_call(url):
 
     try:
         login, token = keyring.get()
@@ -85,12 +184,9 @@ def make_ratelimited_call(url, return_json=True, stream=False):
         return make_ratelimited_call(url)
 
     # assuming rate limited calls will never time out
-    r = requests.get(url, auth=(login, token), stream=stream)
+    r = requests.get(url, auth=(login, token))
 
-    try:
-        calls_remaining = r.headers["X-RateLimit-Remaining"]
-    except KeyError:
-        calls_remaining = 9999999
+    calls_remaining = r.headers["X-RateLimit-Remaining"]
 
     print "{status_code}: {url}.  {rate_limit} calls remain for {login}".format(
         status_code=r.status_code,
@@ -121,26 +217,12 @@ def make_ratelimited_call(url, return_json=True, stream=False):
         }
     else:
         try:
-            if return_json:
-                return r.json()
-            else:
-                return r
+            return r.json()
         except ValueError:
             return {
                 "error_code": r.status_code,
                 "msg": "no json in response"
             }
-
-
-def get_repo_zip_response(login, repo_name):
-
-    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
-        login=login,
-        repo_name=repo_name
-    )
-    return make_ratelimited_call(url, return_json=False, stream=True)
-
-
 
 
 
@@ -222,16 +304,11 @@ def get_github_homepage(url):
 
 
 def test_zip_download_url():
-    url = "https://codeload.github.com/jasonpriem/zotero-report-cleaner/legacy.zip/master"
-    for i in range(1):
-        print "{}: getting url...".format(i)
-        r = requests.get(url)
-        print "{} headers from {}: {}".format(
-            r.history[0].status_code,
-            r.history[0].url,
-            r.history[0].headers
-        )
-        print "got this url: {}".format(r.url)
+    
+    repo_zip = PythonGithubRepoZip("total-impact", "total-impact-webapp")
+    repo_zip.get_dep_lines()
+
+    print "dep lines found: "
 
 
 
