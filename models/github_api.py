@@ -101,6 +101,7 @@ class ZipGetter():
 
         # @todo erase the temp file when something goes wrong...
 
+        start = time()
         if self.login and self.token:
             print "Downloading zip from {} with HTTP basic auth {}:{}...".format(
                 self.url,
@@ -112,7 +113,6 @@ class ZipGetter():
             print "Downloading zip from {}...".format(self.url)
             r = requests.get(self.url, stream=True)
 
-        start = time()
         if r.status_code == 400:
             print "DOWNLOAD ERROR for {}: file not found".format(r.url)
             self.error = "request_error_400"
