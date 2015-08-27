@@ -73,10 +73,12 @@ class GithubRepoZip():
         self.repo_name = repo_name
 
         self.download_elapsed = 0
+        self.grep_elapsed = 0
         self.download_kb = 0
         self.error = None
         self.r = None
         self.temp_file_name = "GithubRepoZip.temp.zip"
+        self.dep_lines = None
 
     def download(self):
         url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
@@ -116,8 +118,51 @@ class GithubRepoZip():
     @property
     def full_repo_name(self):
         return self.login + "/" + self.repo_name
-        
-    
+
+    def _grep_for_dep_lines(self, query_str, include_globs, exclude_globs):
+        arg_list =['zipgrep', query_str, self.temp_file_name]
+        arg_list += include_globs
+        arg_list.append("-x")
+        arg_list += exclude_globs
+        start = time()
+        try:
+            print "Running zipgrep: '{}'".format(" ".join(arg_list))
+            self.dep_lines = subprocess.check_output(arg_list)
+            print "found these dep lines: {}".format(self.dep_lines)
+
+        except subprocess.CalledProcessError as e:
+            print "zipgrep process died. error: {}".format(e)
+            self.error = "grep_error"
+
+        finally:
+            self.grep_elapsed = elapsed(start)
+            print "finished dep lines search in {} sec".format(self.grep_elapsed)
+
+
+    def get_dep_lines(self, language):
+        self.download()
+        if language == "r":
+            print "getting dep lines in r"
+            include_globs = []
+            query_str = "library|require"
+            r_include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
+            for r_include_glob in r_include_globs:
+                include_globs.append(r_include_glob.upper())
+                include_globs.append(r_include_glob.lower())
+
+            exclude_globs = ["*.foo"]  # hack, because some value is expected
+            self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
+
+        elif language == "python":
+            print "getting dep lines in python"
+            query_str = "import"
+            include_globs = ["*.py", "*.ipynb"]
+            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/library/*"]
+            self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
+
+
+
+
 
 
 # this needs to be a global that the whole application imports and uses
@@ -277,20 +322,12 @@ def get_github_homepage(url):
 
 def test_zip_download_url():
     
-    repo_zip = GithubRepoZip("jasonpriem", "zotero-report-cleaner")
-    repo_zip = GithubRepoZip("jasonpriem", "FeedVis")
-    repo_zip.download()
-    print repo_zip.r
-    print repo_zip.download_kb
-    
-    #url = "https://codeload.github.com/jasonpriem/zotero-report-cleaner/legacy.zip/master"
-    #for i in range(100):
-    #    print "{}: getting url...".format(i)
-    #    r = requests.get(url)
-    #    print "got this url: {}".format(r.url)
-    #    print "got these headers: {}".format(r.headers)
-    #
-    #
+    repo_zip = PythonGithubRepoZip("total-impact", "total-impact-webapp")
+    repo_zip.get_dep_lines()
+
+    print "dep lines found: "
+
+
 
 
 

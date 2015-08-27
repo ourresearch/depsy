@@ -2,8 +2,10 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import or_
 
+from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
-from models.github_api import get_repo_zip_response
+from models.github_api import GithubRepoZip
+
 from models import github_api
 import requests
 from util import elapsed
@@ -30,74 +32,14 @@ class GithubRepo(db.Model):
         return self.api_raw
 
     def set_github_dependency_lines(self):
-        print "getting dependency lines for {}".format(self.full_name)
-        r = get_repo_zip_response(self.login, self.repo_name)
 
-        if "error_code" in r:
-            print "got an error"
-            self.zip_download_elapsed = None
-            self.zip_download_size = None
-            self.zip_download_error = "error {error_code}:{msg}".format(
-                error_code=r["error_code"], msg=r["msg"])
-            return None
+        getter = GithubRepoZip(self.login, self.repo_name)
+        getter.get_dep_lines(self.language)
 
-        start_time = time()
-        self.zip_download_elapsed = 0
-        self.zip_download_size = 0
-        temp_filename = "temp.zip"
-
-        with open(temp_filename, 'wb') as out_file:
-            r.raw.decode_content = False
-
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk: # filter out keep-alive new chunks
-                    out_file.write(chunk)
-                    out_file.flush()
-                    self.zip_download_size += 1
-                    self.zip_download_elapsed = elapsed(start_time, 4)
-                    if self.zip_download_size > 256*1024:
-                        print "{}: file too big".format(self.full_name)
-                        return None
-                    if self.zip_download_elapsed > 60:
-                        print "{}: taking too long".format(self.full_name)
-                        return None
-
-        print "finished downloading zip for {}".format(self.full_name)
-
-        include_globs = []
-        if self.language == "r":
-            query_str = "library|require"
-            r_include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
-            for r_include_glob in r_include_globs:
-                include_globs.append(r_include_glob.upper())
-                include_globs.append(r_include_glob.lower())
-
-            exclude_globs = ["*.foo"]  # hack, because some value is expected
-
-        elif self.language == "python":
-            query_str = "import"
-            include_globs = ["*.py", "*.ipynb"]
-            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/library/*"]
-
-        arg_list =['zipgrep', query_str, temp_filename]
-        arg_list += include_globs
-        arg_list.append("-x")
-        arg_list += exclude_globs
-
-
-        try:
-            print "Running zipgrep with args: ", arg_list
-            self.dependency_lines = subprocess.check_output(arg_list)
-
-        except subprocess.CalledProcessError as e:
-            print "************************************************************"
-            print "zipgrep process died. error: {}".format(e.output)
-            print "************************************************************"
-            self.zip_download_error = "grep_error"
-
-            return None
-
-        print "finished grepping for dependencies for {}".format(self.full_name)
+        self.dependency_lines = getter.dep_lines
+        self.zip_download_elapsed = getter.download_elapsed
+        self.zip_download_size = getter.download_kb
+        self.zip_download_error = getter.error
 
         return self.dependency_lines
 
@@ -176,10 +118,13 @@ add github dependency lines
 """
 def add_github_dependency_lines(login, repo_name):
     repo = db.session.query(GithubRepo).get((login, repo_name))
+    if repo is None:
+        print "there's no repo called {}/{}".format(login, repo_name)
+        return False
+
     repo.set_github_dependency_lines()
     db.session.commit()
 
-    print u"dependency lines found: {}".format(repo.dependency_lines)
 
 def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
