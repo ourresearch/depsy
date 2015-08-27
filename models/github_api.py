@@ -170,7 +170,7 @@ keyring = GithubKeyring()
 
 
 
-def make_ratelimited_call(url, return_json=True, stream=False):
+def make_ratelimited_call(url):
 
     try:
         login, token = keyring.get()
@@ -184,12 +184,9 @@ def make_ratelimited_call(url, return_json=True, stream=False):
         return make_ratelimited_call(url)
 
     # assuming rate limited calls will never time out
-    r = requests.get(url, auth=(login, token), stream=stream)
+    r = requests.get(url, auth=(login, token))
 
-    try:
-        calls_remaining = r.headers["X-RateLimit-Remaining"]
-    except KeyError:
-        calls_remaining = 9999999
+    calls_remaining = r.headers["X-RateLimit-Remaining"]
 
     print "{status_code}: {url}.  {rate_limit} calls remain for {login}".format(
         status_code=r.status_code,
@@ -220,26 +217,12 @@ def make_ratelimited_call(url, return_json=True, stream=False):
         }
     else:
         try:
-            if return_json:
-                return r.json()
-            else:
-                return r
+            return r.json()
         except ValueError:
             return {
                 "error_code": r.status_code,
                 "msg": "no json in response"
             }
-
-
-def get_repo_zip_response(login, repo_name):
-
-    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
-        login=login,
-        repo_name=repo_name
-    )
-    return make_ratelimited_call(url, return_json=False, stream=True)
-
-
 
 
 
