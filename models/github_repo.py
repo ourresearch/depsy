@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import or_
 
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import get_repo_zip_response
@@ -32,13 +33,13 @@ class GithubRepo(db.Model):
         print "getting dependency lines for {}".format(self.full_name)
         r = get_repo_zip_response(self.login, self.repo_name)
 
-        if r.status_code != 200:
+        if "error_code" in r:
+            print "got an error"
             self.zip_download_elapsed = None
             self.zip_download_size = None
-            self.zip_download_error = "error {status_code}:{text}".format(
-                status_code=r.status_code, text=r.text)
+            self.zip_download_error = "error {error_code}:{msg}".format(
+                error_code=r["error_code"], msg=r["msg"])
             return None
-
 
         start_time = time()
         self.zip_download_elapsed = 0
@@ -178,11 +179,14 @@ def add_github_dependency_lines(login, repo_name):
     repo.set_github_dependency_lines()
     db.session.commit()
 
-    print "dependency lines found: ", repo.dependency_lines
+    print u"dependency lines found: {}".format(repo.dependency_lines)
 
 def add_all_github_dependency_lines():
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
+    q = q.filter(GithubRepo.dependency_lines == None, 
+        GithubRepo.zip_download_error == None, 
+        GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
 
     for row in q.all():
