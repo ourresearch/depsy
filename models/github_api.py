@@ -196,19 +196,21 @@ class ZipGetter():
 
 
 def github_zip_getter_factory(login, repo_name):
-    #url = "https://codeload.github.com/{login}/{repo_name}/legacy.zip/master".format(
-    #    login=login,
-    #    repo_name=repo_name
-    #)
-
-    url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
+    url = "https://codeload.github.com/{login}/{repo_name}/legacy.zip/master".format(
         login=login,
         repo_name=repo_name
     )
-
-    login, token = keyring.get()
-    getter = ZipGetter(url, login, token)
+    getter = ZipGetter(url)
     return getter
+
+    #url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
+    #    login=login,
+    #    repo_name=repo_name
+    #)
+    #
+    #login, token = keyring.get()
+    #getter = ZipGetter(url, login, token)
+    #return getter
 
 
 
