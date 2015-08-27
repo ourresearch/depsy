@@ -53,7 +53,12 @@ db = SQLAlchemy(app)
 
 
 # these imports are needed so that tables will get auto-created.
-from models import *
+from models import profile
+from models import repo
+from models import github_user
+from models import github_repo
+from models import pypi_project
+from models import cran_project
 
 db.create_all()
 db.session.commit()
