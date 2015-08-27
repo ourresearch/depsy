@@ -73,12 +73,14 @@ keyring = GithubKeyring()
 
 
 class ZipGetterException(Exception):
-    pass
+    db_str = None
 
 class ZipGetter():
 
     def __init__(self, url, login=None, token=None):
         self.url = url
+        self.login = login
+        self.token = token
         self.download_elapsed = 0
         self.grep_elapsed = 0
         self.download_kb = 0
@@ -86,9 +88,20 @@ class ZipGetter():
         self.temp_file_name = "GithubRepoZip.temp.zip"
         self.dep_lines = None
 
+
     def download(self):
+        try:
+            return self.download()
+        except ZipGetterException:
+            # do more stuff here
+            print "zip getter exception"
+
+    def _download(self):
 
         # @todo erase the temp file when something goes wrong...
+
+        if self.login and self.token:
+            print "downloading zip for {} with HTTP basic auth".format(self.url)
 
         print "Downloading zip for {}...".format(self.url)
         start = time()
