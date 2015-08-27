@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 import requests
 from lxml import html
+import re
 
 
 
@@ -16,6 +17,7 @@ class CranProject(db.Model):
     downloads = db.Column(JSONB)
     reverse_deps = db.Column(JSONB)
     deps = db.Column(JSONB)
+    proxy_papers = db.Column(db.Text)
 
     def __repr__(self):
         return u'<CranProject {project_name}>'.format(
@@ -75,6 +77,32 @@ class CranProject(db.Model):
         else:
             data = {"all_reverse_deps": []}
         self.reverse_deps = data
+
+
+    def set_proxy_papers(self):
+        url_template = "https://cran.r-project.org/web/packages/%s/citation.html"
+        data_url = url_template % self.project_name
+        print data_url
+
+        # this call keeps timing out for some reason.  quick workaround:
+        response = None
+        while not response:
+            try:
+                response = requests.get(data_url)
+            except requests.exceptions.ConnectionError:
+                # try again
+                print "connection timed out, trying again"
+                pass
+
+        if response.status_code==200 and "<pre>" in response.text:
+            page = response.text
+            tree = html.fromstring(page)
+            proxy_papers = str(tree.xpath('//pre/text()'))
+            print proxy_papers
+        else:
+            print "no proxy paper found"
+            proxy_papers = "No proxy paper"
+        self.proxy_papers = proxy_papers
 
 
 #useful info: http://www.r-pkg.org/services
@@ -156,6 +184,25 @@ def add_all_cran_about():
     for row in q.all():
         add_cran_about(row[0])
 
+
+"""
+add cran proxy papers
+"""
+def add_cran_proxy_papers(project_name):
+    project = db.session.query(CranProject).get(project_name)
+    project.set_proxy_papers()
+    if project.proxy_papers:
+        print "got proxy_papers!"
+    db.session.commit()
+
+
+def add_all_cran_proxy_papers():
+    q = db.session.query(CranProject.project_name)
+    q = q.filter(CranProject.proxy_papers == None)
+    q = q.order_by(CranProject.project_name)
+
+    for row in q.all():
+        add_cran_proxy_papers(row[0])
 
 
 
