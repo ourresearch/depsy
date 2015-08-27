@@ -17,10 +17,6 @@ class CranProject(db.Model):
     reverse_deps = db.Column(JSONB)
     deps = db.Column(JSONB)
 
-    zip_download_elapsed = db.Column(db.Float)
-    zip_download_size = db.Column(db.Integer)
-    zip_download_error = db.Column(db.Text)
-
     def __repr__(self):
         return u'<CranProject {project_name}>'.format(
             project_name=self.project_name)
