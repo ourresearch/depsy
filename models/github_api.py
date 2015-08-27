@@ -66,6 +66,31 @@ class GithubKeyring():
 
 
 
+class GithubRepoZip():
+
+    def __init__(self, login, repo_name):
+        self.login = login
+        self.repo_name = repo_name
+
+        self.download_elapsed = 0
+        self.download_size = 0
+        self.error = None
+        self.r = None
+
+    def download(self):
+        url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
+            login=self.login,
+            repo_name=self.repo_name
+        )
+        print "Getting zip for {}/{}...".format(self.login, self.repo_name)
+        start = time()
+        self.r = requests.get(url)
+        self.download_elapsed = elapsed(start, 4)
+        print "{} for {}/{}".format(self.download_elapsed, self.login, self.repo_name)
+        
+    
+
+
 # this needs to be a global that the whole application imports and uses
 keyring = GithubKeyring()
 
@@ -222,18 +247,20 @@ def get_github_homepage(url):
 
 
 def test_zip_download_url():
-    url = "https://codeload.github.com/jasonpriem/zotero-report-cleaner/legacy.zip/master"
-    for i in range(1):
-        print "{}: getting url...".format(i)
-        r = requests.get(url)
-        print "{} headers from {}: {}".format(
-            r.history[0].status_code,
-            r.history[0].url,
-            r.history[0].headers
-        )
-        print "got this url: {}".format(r.url)
-
-
+    
+    repo_zip = GithubRepoZip("jasonpriem", "zotero-report-cleaner")
+    repo_zip.download()
+    print repo_zip.r
+    print repo_zip.download_elapsed
+    
+    #url = "https://codeload.github.com/jasonpriem/zotero-report-cleaner/legacy.zip/master"
+    #for i in range(100):
+    #    print "{}: getting url...".format(i)
+    #    r = requests.get(url)
+    #    print "got this url: {}".format(r.url)
+    #    print "got these headers: {}".format(r.headers)
+    #
+    #
 
 
 
