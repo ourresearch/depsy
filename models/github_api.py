@@ -217,3 +217,26 @@ def get_github_homepage(url):
         return url
     else:
         return None
+
+
+
+
+def test_zip_download_url():
+    url = "https://codeload.github.com/jasonpriem/zotero-report-cleaner/legacy.zip/master"
+    for i in range(1):
+        print "{}: getting url...".format(i)
+        r = requests.get(url)
+        print "{} headers from {}: {}".format(
+            r.history[0].status_code,
+            r.history[0].url,
+            r.history[0].headers
+        )
+        print "got this url: {}".format(r.url)
+
+
+
+
+
+
+
+
