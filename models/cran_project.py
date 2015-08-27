@@ -57,8 +57,9 @@ class CranProject(db.Model):
                 response = requests.get(data_url)
             except requests.exceptions.ConnectionError:
                 # try again
+                print "connection timed out, trying again"
                 pass
-                
+
         if "Reverse" in response.text:
             page = response.text
             page = page.replace("&nbsp;", " ")  # otherwise starts-with for lxml doesn't work
