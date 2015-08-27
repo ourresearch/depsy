@@ -158,14 +158,15 @@ class ZipGetter():
         try:
             print "Running zipgrep: '{}'".format(" ".join(arg_list))
             self.dep_lines = subprocess.check_output(arg_list)
-            print "found these dep lines: {}".format(self.dep_lines)
 
-        except subprocess.CalledProcessError as e:
-            print "zipgrep process died. error: {}".format(e)
-            self.error = "grep_error"
+        except subprocess.CalledProcessError:
+            # heroku throws an error here when there are no dep lines to find.
+            # but it's fine. there just aren't no lines.
+            pass
 
         finally:
             self.grep_elapsed = elapsed(start, 4)
+            print "found these dep lines: {}".format(self.dep_lines)
             print "finished dep lines search in {} sec".format(self.grep_elapsed)
 
 
