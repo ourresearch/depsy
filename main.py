@@ -13,6 +13,8 @@ from models.github_repo import add_all_github_about
 from models.github_repo import add_github_dependency_lines
 from models.github_repo import add_all_github_dependency_lines
 
+from models.pypi_project import *
+
 def test_no_args():
     print "test_no_args function ran"
 

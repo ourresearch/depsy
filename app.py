@@ -57,6 +57,8 @@ from models import profile
 from models import repo
 from models import github_user
 from models import github_repo
+from models import pypi_project
+from models import cran_project
 
 # commented out because it seems to kill the app when you run as a script.
 # but you must UNCOMMENT it at some point to make the new pypi_repo table.
