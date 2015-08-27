@@ -72,6 +72,8 @@ class GithubKeyring():
 keyring = GithubKeyring()
 
 
+class ZipGetterException(Exception):
+    pass
 
 class ZipGetter():
 
@@ -92,11 +94,11 @@ class ZipGetter():
         start = time()
         r = requests.get(self.url, stream=True)
         if r.status_code == 400:
-            print "DOWNLOAD ERROR for {}: file not found".format(self.url)
+            print "DOWNLOAD ERROR for {}: file not found".format(r.url)
             self.error = "request_error_400"
             return None
         elif r.status_code > 400:
-            print "DOWNLOAD ERROR for {}: {} ({})".format(self.url, r.status_code, r.reason)
+            print "DOWNLOAD ERROR for {}: {} ({})".format(r.url, r.status_code, r.reason)
             self.error = "request_error"
             return None
 
