@@ -199,3 +199,21 @@ def username_and_repo_name_from_github_url(url):
         repo_name = None
 
     return [username, repo_name]
+
+
+
+
+def get_github_homepage(url):
+    try:
+        parsed = urlparse(url)
+    except AttributeError:
+        return None  # no url was given
+
+    # we are getting rid of things that
+    # 1. aren't on github (duh)
+    # 2. are just "github.com"
+    # this leaves some things that have multiple pypi project in one github repo
+    if parsed.netloc == "github.com" and len(parsed.path.split("/")) > 1:
+        return url
+    else:
+        return None
