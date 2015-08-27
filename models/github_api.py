@@ -90,6 +90,7 @@ class ZipGetter():
 
 
     def download(self):
+        # this is a cleaner way to handle errors, but not done yet...
         try:
             return self._download()
         except ZipGetterException:
@@ -164,7 +165,7 @@ class ZipGetter():
             self.error = "grep_error"
 
         finally:
-            self.grep_elapsed = elapsed(start)
+            self.grep_elapsed = elapsed(start, 4)
             print "finished dep lines search in {} sec".format(self.grep_elapsed)
 
 
@@ -207,7 +208,6 @@ def github_zip_getter_factory(login, repo_name):
     #    login=login,
     #    repo_name=repo_name
     #)
-    #
     #login, token = keyring.get()
     #getter = ZipGetter(url, login, token)
     #return getter

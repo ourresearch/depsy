@@ -22,6 +22,7 @@ class GithubRepo(db.Model):
     zip_download_elapsed = db.Column(db.Float)
     zip_download_size = db.Column(db.Integer)
     zip_download_error = db.Column(db.Text)
+    zip_grep_elapsed = db.Column(db.Float)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -40,6 +41,7 @@ class GithubRepo(db.Model):
         self.zip_download_elapsed = getter.download_elapsed
         self.zip_download_size = getter.download_kb
         self.zip_download_error = getter.error
+        self.zip_grep_elapsed = getter.grep_elapsed
 
         return self.dependency_lines
 
