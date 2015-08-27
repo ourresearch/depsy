@@ -14,6 +14,7 @@ from models.github_repo import add_github_dependency_lines
 from models.github_repo import add_all_github_dependency_lines
 
 from models.pypi_project import *
+from models.github_api import *
 
 def test_no_args():
     print "test_no_args function ran"
@@ -34,23 +35,16 @@ def main(fn, optional_args=None):
 
     # call function by its name in this module, with all args :)
     # http://stackoverflow.com/a/4605/596939
-    try:
-        if optional_args:
-            globals()[fn](*optional_args)
-        else:
-            globals()[fn]()
-    except KeyError:
-        print "can't find function '{}'...quitting. ".format(fn)
-    except TypeError as e:
-        print "wrong number of arguments for '{}'...quitting".format(fn)
-        raise e
+    if optional_args:
+        globals()[fn](*optional_args)
+    else:
+        globals()[fn]()
 
     print "total time to run:", elapsed(start)
 
 
 if __name__ == "__main__":
 
-    db.create_all()
 
 
     # get args from the command line:
