@@ -49,7 +49,16 @@ class CranProject(db.Model):
         url_template = "https://cran.r-project.org/web/packages/%s/"
         data_url = url_template % self.project_name
         print data_url
-        response = requests.get(data_url)
+
+        # this call keeps timing out for some reason.  quick workaround:
+        response = None
+        while not response:
+            try:
+                response = requests.get(data_url)
+            except requests.exceptions.ConnectionError:
+                # try again
+                pass
+                
         if "Reverse" in response.text:
             page = response.text
             page = page.replace("&nbsp;", " ")  # otherwise starts-with for lxml doesn't work
