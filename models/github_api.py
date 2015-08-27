@@ -58,7 +58,7 @@ class GithubKeyring():
         previously_expired_keys = self.expired_keys
         self.expired_keys = []
         for login, token in previously_expired_keys:
-            print "calling rate limit check on ", loginy
+            print "calling rate limit check on ", login
             r = requests.get(rate_limit_check_url, auth=(login, token))
             remaining = r.json()["rate"]["remaining"]
             if remaining == 0:
@@ -66,28 +66,36 @@ class GithubKeyring():
 
 
 
-class GithubRepoZip():
 
-    def __init__(self, login, repo_name):
-        self.login = login
-        self.repo_name = repo_name
 
+# this needs to be a global that the whole application imports and uses
+keyring = GithubKeyring()
+
+
+
+class ZipGetter():
+
+    def __init__(self, url, login=None, token=None):
+        self.url = url
         self.download_elapsed = 0
         self.grep_elapsed = 0
         self.download_kb = 0
         self.error = None
-        self.r = None
         self.temp_file_name = "GithubRepoZip.temp.zip"
         self.dep_lines = None
 
     def download(self):
-        url = "https://api.github.com/repos/{login}/{repo_name}/zipball/master".format(
-            login=self.login,
-            repo_name=self.repo_name
-        )
-        print "Getting zip for {}...".format(self.full_repo_name)
+        print "Downloading zip for {}...".format(self.url)
         start = time()
-        r = requests.get(url, stream=True)
+        r = requests.get(self.url, stream=True)
+        if r.status_code == 400:
+            print "DOWNLOAD ERROR for {}: file not found".format(self.url)
+            self.error = "request_error_400"
+            return None
+        elif r.status_code > 400:
+            print "DOWNLOAD ERROR for {}: {} ({})".format(self.url, r.status_code, r.reason)
+            self.error = "request_error"
+            return None
 
         with open(self.temp_file_name, 'wb') as out_file:
             r.raw.decode_content = False
@@ -99,25 +107,22 @@ class GithubRepoZip():
                     self.download_kb += 1
                     self.download_elapsed = elapsed(start, 4)
                     if self.download_kb > 256*1024:
-                        print "DOWNLOAD ERROR for {}: file too big".format(self.full_repo_name)
+                        print "DOWNLOAD ERROR for {}: file too big".format(self.url)
                         self.error = "file_too_big"
                         return None
 
                     if self.download_elapsed > 60:
-                        print "DOWNLOAD ERROR for {}: taking too long".format(self.full_repo_name)
+                        print "DOWNLOAD ERROR for {}: taking too long".format(self.url)
                         self.error = "file_too_slow"
                         return None
 
         self.download_elapsed = elapsed(start, 4)
         print "downloaded {} ({}kb) in {} sec".format(
-            self.full_repo_name,
+            self.url,
             self.download_kb,
             self.download_elapsed
         )
 
-    @property
-    def full_repo_name(self):
-        return self.login + "/" + self.repo_name
 
     def _grep_for_dep_lines(self, query_str, include_globs, exclude_globs):
         arg_list =['zipgrep', query_str, self.temp_file_name]
@@ -141,6 +146,10 @@ class GithubRepoZip():
 
     def get_dep_lines(self, language):
         self.download()
+        if self.error:
+            print "There are problems with the downloaded zip, quitting without getting deps."
+            return None
+
         if language == "r":
             print "getting dep lines in r"
             include_globs = []
@@ -162,11 +171,21 @@ class GithubRepoZip():
 
 
 
+def github_zip_getter_factory(login, repo_name):
+    #url = "https://codeload.github.com/{login}/{repo_name}/legacy.zip/master".format(
+    #    login=login,
+    #    repo_name=repo_name
+    #)
 
+    url = "https://api.github.com/repos/{login}/{repo_name}/zipballs/master".format(
+        login=login,
+        repo_name=repo_name
+    )
 
+    login, token = keyring.get()
+    getter = ZipGetter(url, login, token)
+    return getter
 
-# this needs to be a global that the whole application imports and uses
-keyring = GithubKeyring()
 
 
 
@@ -301,14 +320,6 @@ def get_github_homepage(url):
         return None
 
 
-
-
-def test_zip_download_url():
-    
-    repo_zip = PythonGithubRepoZip("total-impact", "total-impact-webapp")
-    repo_zip.get_dep_lines()
-
-    print "dep lines found: "
 
 
 

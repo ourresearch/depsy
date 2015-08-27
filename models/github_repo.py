@@ -4,7 +4,7 @@ from sqlalchemy import or_
 
 from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
-from models.github_api import GithubRepoZip
+from models.github_api import github_zip_getter_factory
 
 from models import github_api
 import requests
@@ -33,7 +33,7 @@ class GithubRepo(db.Model):
 
     def set_github_dependency_lines(self):
 
-        getter = GithubRepoZip(self.login, self.repo_name)
+        getter = github_zip_getter_factory(self.login, self.repo_name)
         getter.get_dep_lines(self.language)
 
         self.dependency_lines = getter.dep_lines
