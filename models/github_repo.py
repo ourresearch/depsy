@@ -181,6 +181,89 @@ def add_all_github_dependency_lines():
     return True
 
 
+"""
+process github dependency lines for python projects
+"""
+def process_github_dependency_lines_for_python(login, repo_name):
+    repo = db.session.query(GithubRepo).get((login, repo_name))
+    if repo is None:
+        print "there's no repo called {}/{}".format(login, repo_name)
+        return False
+
+
+    lines = repo.dependency_lines.split("\n")
+    import_lines = [line.split(":")[1] for line in lines if ":" in line]
+    clean_lines = []
+
+    longest_line = ""
+    for line in import_lines:
+        line = line.strip()
+        if line.startswith("#"):
+            pass
+        else:
+            clean_lines.append(line)
+            if len(line) > len(longest_line):
+                longest_line = line
+
+    # print "\n".join(sorted(clean_lines))
+    filenames = [line.split(":")[0].split("/")[-1] for line in lines]
+    extensions = [filename.split(".")[1] for filename in filenames if "." in filename]
+    unique_extensions = list(set(extensions))
+    non_py_extensions = [extension for extension in extensions if extension != "py"]
+
+    print "number lines", len(clean_lines)
+    print "longest_line:", longest_line
+    print "non-py file types:", non_py_extensions
+
+    # try:
+    #     db.session.commit()
+    # except DataError:
+    #     db.session.rollback()
+    #     repo.set_save_error()
+    #     db.session.commit()
+
+    return None  # important that it returns None for RQ
+
+
+def process_all_github_dependency_lines_for_python():
+
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.dependency_lines != None)
+    q = q.filter(GithubRepo.language == "python")
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(1000)
+
+    for row in q.all():
+        #print "setting this row", row
+        process_github_dependency_lines_for_python(row[0], row[1])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def monitor_github_zip_queue(start_time, num_jobs):
     current_count = github_zip_queue.count
     time_per_job = 1
@@ -213,3 +296,6 @@ def empty_github_zip_queue():
     print "emptying {} jobs on the github zip queue....".format(github_zip_queue.count)
     github_zip_queue.empty()
     print "done. there's {} jobs on the github zip queue now.".format(github_zip_queue.count)
+
+
+
