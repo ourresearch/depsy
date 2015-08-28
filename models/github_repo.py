@@ -146,14 +146,14 @@ def add_all_github_dependency_lines():
     q = q.limit(num_jobs)
 
     start_time = time()
-    for row in q.all():
-        job = github_zip_queue.enqueue_call(
-            func=add_github_dependency_lines,
-            args=(row[0], row[1]),
-            result_ttl=0  # number of seconds
-        )
-        job.meta["full_repo_name"] = row[0] + "/" + row[1]
-        job.save()
+    #for row in q.all():
+    #    job = github_zip_queue.enqueue_call(
+    #        func=add_github_dependency_lines,
+    #        args=(row[0], row[1]),
+    #        result_ttl=0  # number of seconds
+    #    )
+    #    job.meta["full_repo_name"] = row[0] + "/" + row[1]
+    #    job.save()
 
     monitor_github_zip_queue(start_time, num_jobs)
     return True

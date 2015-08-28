@@ -155,9 +155,16 @@ class ZipGetter():
         arg_list.append("-x")
         arg_list += exclude_globs
         start = time()
+
+        FNULL = open(os.devnull, 'w')
         try:
             print "Running zipgrep: '{}'".format(" ".join(arg_list))
-            self.dep_lines = subprocess.check_output(arg_list)
+            self.dep_lines = subprocess.check_output(
+                arg_list,
+                stdout=FNULL,
+                stderr=subprocess.STDOUT,
+                close_fds=True
+            )
 
         except subprocess.CalledProcessError:
             # heroku throws an error here when there are no dep lines to find.
