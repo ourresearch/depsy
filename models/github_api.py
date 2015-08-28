@@ -185,6 +185,8 @@ class ZipGetter():
                 include_globs.append(r_include_glob.upper())
                 include_globs.append(r_include_glob.lower())
 
+            include_globs += r_include_globs
+
             exclude_globs = ["*.foo"]  # hack, because some value is expected
             self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
 
