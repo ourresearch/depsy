@@ -147,8 +147,6 @@ def add_all_github_dependency_lines():
 
     start_time = time()
     for row in q.all():
-        print "putting this row on the queue", row
-
         job = github_zip_queue.enqueue_call(
             func=add_github_dependency_lines,
             args=(row[0], row[1]),
