@@ -84,17 +84,9 @@ class CranProject(db.Model):
         data_url = url_template % self.project_name
         print data_url
 
-        # this call keeps timing out for some reason.  quick workaround:
-        response = None
-        while not response:
-            try:
-                response = requests.get(data_url, timeout=10)
-            except requests.exceptions.ConnectionError:
-                # try again
-                print "connection timed out, trying again"
-                pass
+        response = requests.get(data_url, timeout=30)
 
-        if response.status_code==200 and "<pre>" in response.text:
+        if response and response.status_code==200 and "<pre>" in response.text:
             page = response.text
             tree = html.fromstring(page)
             proxy_papers = str(tree.xpath('//pre/text()'))
@@ -102,6 +94,7 @@ class CranProject(db.Model):
         else:
             print "no proxy paper found"
             proxy_papers = "No proxy paper"
+
         self.proxy_papers = proxy_papers
 
 
@@ -191,8 +184,6 @@ add cran proxy papers
 def add_cran_proxy_papers(project_name):
     project = db.session.query(CranProject).get(project_name)
     project.set_proxy_papers()
-    if project.proxy_papers:
-        print "got proxy_papers!"
     db.session.commit()
 
 
