@@ -135,17 +135,21 @@ def add_all_github_dependency_lines():
     empty_github_zip_queue()
     num_jobs = 100*1000
 
+    print "querying the db for {} repos...".format(num_jobs)
+    query_start = time()
+
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
     q = q.filter(GithubRepo.dependency_lines == None, 
         GithubRepo.zip_download_error == None, 
         GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
-
-
     q = q.limit(num_jobs)
 
+    print "query complete in {}sec".format(elapsed(query_start))
+
     start_time = time()
+    index = 0
     for row in q.all():
         job = github_zip_queue.enqueue_call(
             func=add_github_dependency_lines,
@@ -154,6 +158,11 @@ def add_all_github_dependency_lines():
         )
         job.meta["full_repo_name"] = row[0] + "/" + row[1]
         job.save()
+        if index % 1000 == 0:
+            print "added {} jobs to queue in {}sec".format(
+                index,
+                elapsed(start_time)
+            )
 
     monitor_github_zip_queue(start_time, num_jobs)
     return True
