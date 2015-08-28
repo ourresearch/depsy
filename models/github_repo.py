@@ -133,6 +133,7 @@ def add_github_dependency_lines(login, repo_name):
 
 def add_all_github_dependency_lines():
     empty_github_zip_queue()
+    num_jobs = 10000
 
 
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
@@ -142,8 +143,10 @@ def add_all_github_dependency_lines():
         GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
 
-    q = q.limit(1000)
 
+    q = q.limit(num_jobs)
+
+    start_time = time()
     for row in q.all():
         print "putting this row on the queue", row
 
@@ -155,26 +158,32 @@ def add_all_github_dependency_lines():
         job.meta["full_repo_name"] = row[0] + "/" + row[1]
         job.save()
 
-    monitor_github_zip_queue()
+    monitor_github_zip_queue(start_time, num_jobs)
+    return True
 
 
-def monitor_github_zip_queue():
-    start_count = github_zip_queue.count
-    start = time()
-    while True:
+def monitor_github_zip_queue(start_time, num_jobs):
+    current_count = github_zip_queue.count
+    while current_count:
         sleep(1)
         current_count = github_zip_queue.count
-        done = start_count - current_count
+        done = num_jobs - current_count
         try:
-            time_per_job = round(done / elapsed(start), 4)
+            time_per_job = round(done / elapsed(start_time), 4)
         except ZeroDivisionError:
             time_per_job = "unknown"
         print "finished {done} jobs done in {elapsed} sec (avg {per} sec/job). {left} left".format(
             done=done,
-            elapsed=elapsed(start),
-            per=time(),
+            elapsed=elapsed(start_time),
+            per=time_per_job,
             left=current_count
         )
+    print "Done! {} jobs took {} seconds (avg {} secs/job)".format(
+        num_jobs,
+        elapsed(start_time),
+        time_per_job
+    )
+    return True
 
 
 def empty_github_zip_queue():
