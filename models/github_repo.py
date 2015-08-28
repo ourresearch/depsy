@@ -155,6 +155,8 @@ def add_all_github_dependency_lines():
         job.meta["full_repo_name"] = row[0] + "/" + row[1]
         job.save()
 
+    monitor_github_zip_queue()
+
 
 def monitor_github_zip_queue():
     start_count = github_zip_queue.count
