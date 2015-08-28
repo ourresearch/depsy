@@ -8,6 +8,7 @@ from time import sleep
 from time import time
 from util import elapsed
 import subprocess
+import subprocess32
 
 logger = logging.getLogger("github_api")
 
@@ -155,13 +156,22 @@ class ZipGetter():
         arg_list.append("-x")
         arg_list += exclude_globs
         start = time()
+
         try:
             print "Running zipgrep: '{}'".format(" ".join(arg_list))
-            self.dep_lines = subprocess.check_output(arg_list)
+            self.dep_lines = subprocess32.check_output(
+                arg_list,
+                timeout=90
+            )
 
-        except subprocess.CalledProcessError:
+        except subprocess32.CalledProcessError:
             # heroku throws an error here when there are no dep lines to find.
             # but it's fine. there just aren't no lines.
+            pass
+
+        except subprocess32.TimeoutExpired:
+            # too many files, we'll skip it and move on.
+            self.error = "grep_timeout"
             pass
 
         finally:
@@ -185,6 +195,8 @@ class ZipGetter():
                 include_globs.append(r_include_glob.upper())
                 include_globs.append(r_include_glob.lower())
 
+            include_globs += r_include_globs
+
             exclude_globs = ["*.foo"]  # hack, because some value is expected
             self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
 
@@ -192,7 +204,7 @@ class ZipGetter():
             print "getting dep lines in python"
             query_str = "import"
             include_globs = ["*.py", "*.ipynb"]
-            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/library/*"]
+            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/Lib/*", "*/library/*", "*/vendor/*"]
             self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
 
 

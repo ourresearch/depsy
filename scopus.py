@@ -17,13 +17,6 @@ url_template_no_doi = "https://api.elsevier.com/content/search/index:SCOPUS?quer
 scopus_insttoken = os.environ["SCOPUS_INSTTOKEN"]
 scopus_key = os.environ["SCOPUS_KEY"]
 
-# set up logging
-# see http://wiki.pylonshq.com/display/pylonscookbook/Alternative+logging+configuration
-logging.basicConfig(
-    stream=sys.stdout,
-    level=logging.DEBUG,
-    format='[%(process)3d] %(levelname)8s %(threadName)30s %(name)s - %(message)s'
-)
 logger = logging.getLogger("scopus")
 
 

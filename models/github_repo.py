@@ -1,5 +1,7 @@
 from app import db
+from app import github_zip_queue
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.exc import DataError
 from sqlalchemy import or_
 
 from models import github_api
@@ -10,6 +12,7 @@ from models import github_api
 import requests
 from util import elapsed
 from time import time
+from time import sleep
 import subprocess
 
 
@@ -49,6 +52,11 @@ class GithubRepo(db.Model):
     @property
     def full_name(self):
         return self.login + "/" + self.repo_name
+
+    def set_save_error(self):
+        # the db threw an error when we tried to save this.
+        # likely a 'invalid byte sequence for encoding "UTF8"'
+        self.zip_download_error = "save_error"
 
 
 # call python main.py add_python_repos_from_google_bucket to run
@@ -125,23 +133,83 @@ def add_github_dependency_lines(login, repo_name):
         return False
 
     repo.set_github_dependency_lines()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except DataError:
+        db.session.rollback()
+        repo.set_save_error()
+        db.session.commit()
+
+    return None  # important that it returns None for RQ
 
 
 def add_all_github_dependency_lines():
+    empty_github_zip_queue()
+    num_jobs = 100*1000
+
+    print "querying the db for {} repos...".format(num_jobs)
+    query_start = time()
+
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
     q = q.filter(GithubRepo.dependency_lines == None, 
         GithubRepo.zip_download_error == None, 
         GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
+    q = q.limit(num_jobs)
 
+    print "query complete in {}sec".format(elapsed(query_start))
+
+    start_time = time()
+    index = 0
     for row in q.all():
-        #print "setting this row", row
-        add_github_dependency_lines(row[0], row[1])
+        job = github_zip_queue.enqueue_call(
+            func=add_github_dependency_lines,
+            args=(row[0], row[1]),
+            result_ttl=0  # number of seconds
+        )
+        job.meta["full_repo_name"] = row[0] + "/" + row[1]
+        job.save()
+        if index % 1000 == 0:
+            print "added {} jobs to queue in {}sec".format(
+                index,
+                elapsed(start_time)
+            )
+        index += 1
+
+    monitor_github_zip_queue(start_time, num_jobs)
+    return True
 
 
+def monitor_github_zip_queue(start_time, num_jobs):
+    current_count = github_zip_queue.count
+    time_per_job = 1
+    while current_count:
+        sleep(1)
+        current_count = github_zip_queue.count
+        done = num_jobs - current_count
+        try:
+            time_per_job = elapsed(start_time) / done
+        except ZeroDivisionError:
+            pass
+
+        mins_left = int(current_count * time_per_job / 60)
+
+        print "finished {done} jobs in {elapsed} min. {left} left (est {mins_left}min)".format(
+            done=done,
+            elapsed=int(elapsed(start_time) / 60),
+            mins_left=mins_left,
+            left=current_count
+        )
+    print "Done! {} jobs took {} seconds (avg {} secs/job)".format(
+        num_jobs,
+        elapsed(start_time),
+        time_per_job
+    )
+    return True
 
 
-
-
+def empty_github_zip_queue():
+    print "emptying {} jobs on the github zip queue....".format(github_zip_queue.count)
+    github_zip_queue.empty()
+    print "done. there's {} jobs on the github zip queue now.".format(github_zip_queue.count)
