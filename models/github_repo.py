@@ -166,7 +166,7 @@ def monitor_github_zip_queue():
         print "finished {done} jobs done in {elapsed} sec ({per} sec/job). {left} left".format(
             done=done,
             elapsed=elapsed(start),
-            per=round(done/elapsed(start), 2),
+            per=round(elapsed(start) / done, 2),
             left=current_count
         )
 
