@@ -1,6 +1,7 @@
 from app import db
 from app import github_zip_queue
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.exc import DataError
 from sqlalchemy import or_
 
 from models import github_api
@@ -51,6 +52,11 @@ class GithubRepo(db.Model):
     @property
     def full_name(self):
         return self.login + "/" + self.repo_name
+
+    def set_save_error(self):
+        # the db threw an error when we tried to save this.
+        # likely a 'invalid byte sequence for encoding "UTF8"'
+        self.zip_download_error = "save_error"
 
 
 # call python main.py add_python_repos_from_google_bucket to run
@@ -127,13 +133,19 @@ def add_github_dependency_lines(login, repo_name):
         return False
 
     repo.set_github_dependency_lines()
-    db.session.commit()
+    try:
+        db.session.commit()
+    except DataError:
+        db.session.rollback()
+        repo.set_save_error()
+        db.session.commit()
+
     return None  # important that it returns None for RQ
 
 
 def add_all_github_dependency_lines():
     empty_github_zip_queue()
-    num_jobs = 100
+    num_jobs = 100*1000
 
     print "querying the db for {} repos...".format(num_jobs)
     query_start = time()
