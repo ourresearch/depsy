@@ -133,7 +133,7 @@ def add_github_dependency_lines(login, repo_name):
 
 def add_all_github_dependency_lines():
     empty_github_zip_queue()
-    num_jobs = 100*1000
+    num_jobs = 100
 
     print "querying the db for {} repos...".format(num_jobs)
     query_start = time()

@@ -8,6 +8,7 @@ from time import sleep
 from time import time
 from util import elapsed
 import subprocess
+import subprocess32
 
 logger = logging.getLogger("github_api")
 
@@ -158,13 +159,19 @@ class ZipGetter():
 
         try:
             print "Running zipgrep: '{}'".format(" ".join(arg_list))
-            self.dep_lines = subprocess.check_output(
-                arg_list
+            self.dep_lines = subprocess32.check_output(
+                arg_list,
+                timeout=90
             )
 
-        except subprocess.CalledProcessError:
+        except subprocess32.CalledProcessError:
             # heroku throws an error here when there are no dep lines to find.
             # but it's fine. there just aren't no lines.
+            pass
+
+        except subprocess32.TimeoutExpired:
+            # too many files, we'll skip it and move on.
+            self.error = "grep_timeout"
             pass
 
         finally:
