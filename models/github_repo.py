@@ -163,6 +163,7 @@ def add_all_github_dependency_lines():
                 index,
                 elapsed(start_time)
             )
+        index += 1
 
     monitor_github_zip_queue(start_time, num_jobs)
     return True
