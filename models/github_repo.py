@@ -11,6 +11,7 @@ from models import github_api
 import requests
 from util import elapsed
 from time import time
+from time import sleep
 import subprocess
 
 
@@ -120,10 +121,6 @@ def add_all_github_about():
 add github dependency lines
 """
 def add_github_dependency_lines(login, repo_name):
-    print "i ran a job for {}/{}".format(login, repo_name)
-    return None
-
-
     repo = db.session.query(GithubRepo).get((login, repo_name))
     if repo is None:
         print "there's no repo called {}/{}".format(login, repo_name)
@@ -135,6 +132,9 @@ def add_github_dependency_lines(login, repo_name):
 
 
 def add_all_github_dependency_lines():
+    empty_github_zip_queue()
+
+
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
     q = q.filter(GithubRepo.dependency_lines == None, 
@@ -142,8 +142,7 @@ def add_all_github_dependency_lines():
         GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
 
-    q = q.limit(25)
-
+    q = q.limit(1000)
 
     for row in q.all():
         print "putting this row on the queue", row
@@ -157,4 +156,22 @@ def add_all_github_dependency_lines():
         job.save()
 
 
+def monitor_github_zip_queue():
+    start_count = github_zip_queue.count
+    start = time()
+    while True:
+        sleep(1)
+        current_count = github_zip_queue.count
+        done = start_count - current_count
+        print "finished {done} jobs done in {elapsed} sec ({per} sec/job). {left} left".format(
+            done=done,
+            elapsed=elapsed(start),
+            per=round(done/elapsed(start), 2),
+            left=current_count
+        )
 
+
+def empty_github_zip_queue():
+    print "emptying {} jobs on the github zip queue....".format(github_zip_queue.count)
+    github_zip_queue.empty()
+    print "done. there's {} jobs on the github zip queue now.".format(github_zip_queue.count)

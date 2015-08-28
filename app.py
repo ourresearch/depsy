@@ -47,6 +47,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_POOL_SIZE"] = 60
 app.config['GITHUB_SECRET'] = os.getenv("GITHUB_SECRET")
 
+my_redis = redis.from_url(
+    os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
+    db=10
+)
+
 redis_rq_conn = redis.from_url(
     os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
     db=0
@@ -90,10 +95,6 @@ def ping_connection(dbapi_connection, connection_record, connection_proxy):
 
 
 
-my_redis = redis.from_url(
-    os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
-    db=10
-)
 
 
 
