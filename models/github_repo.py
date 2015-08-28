@@ -159,7 +159,6 @@ def add_all_github_dependency_lines(q_limit=100):
 def retry_github_dep_lines_for_request_error_repos(q_limit=100):
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(GithubRepo.zip_download_error == 'request_error')
-    q = q.filter(GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
@@ -171,10 +170,10 @@ def add_github_dep_lines_from_q(q):
     start_time = time()
     index = 0
 
-    row_list = q.all()
-    print "running this query: '{}'".format(
+    print "running this query: \n{}\n".format(
         q.statement.compile(dialect=postgresql.dialect())
     )
+    row_list = q.all()
     num_jobs = len(row_list)
     print "finished query in {}sec".format(elapsed(start_time))
     print "adding {} jobs to queue...".format(num_jobs)
