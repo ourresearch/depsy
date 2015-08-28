@@ -135,7 +135,6 @@ def add_all_github_dependency_lines():
     empty_github_zip_queue()
     num_jobs = 10000
 
-
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
     q = q.filter(GithubRepo.dependency_lines == None, 
@@ -169,7 +168,7 @@ def monitor_github_zip_queue(start_time, num_jobs):
         current_count = github_zip_queue.count
         done = num_jobs - current_count
         try:
-            time_per_job = round(done * 60 / elapsed(start_time), 4)
+            time_per_job = round(done * 60 / elapsed(start_time))
         except ZeroDivisionError:
             time_per_job = "unknown"
         print "finished {done} jobs done in {elapsed} sec (avg {per} jobs per minute). {left} left".format(
