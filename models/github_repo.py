@@ -1,6 +1,7 @@
 from app import db
 from app import github_zip_queue
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.exc import DataError
 from sqlalchemy import or_
 
@@ -143,26 +144,42 @@ def add_github_dependency_lines(login, repo_name):
     return None  # important that it returns None for RQ
 
 
-def add_all_github_dependency_lines():
-    empty_github_zip_queue()
-    num_jobs = 100*1000
-
-    print "querying the db for {} repos...".format(num_jobs)
-    query_start = time()
-
+def add_all_github_dependency_lines(q_limit=100):
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
-    q = q.filter(GithubRepo.dependency_lines == None, 
-        GithubRepo.zip_download_error == None, 
-        GithubRepo.zip_download_elapsed == None)
+    q = q.filter(GithubRepo.zip_download_error == None)
+    q = q.filter(GithubRepo.zip_download_elapsed == None)
     q = q.order_by(GithubRepo.login)
-    q = q.limit(num_jobs)
+    q = q.limit(q_limit)
 
-    print "query complete in {}sec".format(elapsed(query_start))
+    return add_github_dep_lines_from_q(q)
+
+
+
+def retry_github_dep_lines_for_request_error_repos(q_limit=100):
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.zip_download_error == 'request_error')
+    q = q.filter(GithubRepo.zip_download_elapsed == None)
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    return add_github_dep_lines_from_q(q)
+
+def add_github_dep_lines_from_q(q):
+    empty_github_zip_queue()
 
     start_time = time()
     index = 0
-    for row in q.all():
+
+    row_list = q.all()
+    print "running this query: '{}'".format(
+        q.statement.compile(dialect=postgresql.dialect())
+    )
+    num_jobs = len(row_list)
+    print "finished query in {}sec".format(elapsed(start_time))
+    print "adding {} jobs to queue...".format(num_jobs)
+
+    for row in row_list:
         job = github_zip_queue.enqueue_call(
             func=add_github_dependency_lines,
             args=(row[0], row[1]),
@@ -176,6 +193,7 @@ def add_all_github_dependency_lines():
                 elapsed(start_time)
             )
         index += 1
+    print "last repo added to the queue was {}".format(row[0] + "/" + row[1])
 
     monitor_github_zip_queue(start_time, num_jobs)
     return True
