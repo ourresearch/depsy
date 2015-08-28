@@ -197,7 +197,7 @@ class ZipGetter():
             print "getting dep lines in python"
             query_str = "import"
             include_globs = ["*.py", "*.ipynb"]
-            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/library/*"]
+            exclude_globs = ["*/venv/*", "*/virtualenv/*", "*/bin/*", "*/lib/*", "*/Lib/*", "*/library/*", "*/vendor/*"]
             self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
 
 
