@@ -349,6 +349,28 @@ def get_github_homepage(url):
 
 
 
+"""useful sql for checking speed of things going into the database"""
+# update github_repo set dependency_lines=null where dependency_lines is not null;
+# update github_repo set zip_download_elapsed=null where zip_download_elapsed is not null;
+# update github_repo set zip_grep_elapsed=null where zip_grep_elapsed is not null;
+# update github_repo set zip_download_size=null where zip_download_size is not null;
+# update github_repo set zip_download_error=null where zip_download_error is not null;
+
+# select count(*) as count_rows,
+#     sum(zip_download_elapsed) as download, 
+#     sum(zip_grep_elapsed) as grep, 
+#     sum(zip_download_elapsed) + sum(zip_grep_elapsed) as total,
+#     (sum(zip_download_elapsed) + sum(zip_grep_elapsed)) / count(*) as seconds_per_row
+#     from github_repo
+#     where zip_download_elapsed is not null
+    
+# select login, repo_name, zip_download_elapsed, zip_grep_elapsed, zip_download_elapsed+zip_grep_elapsed as total, zip_download_size
+# from github_repo
+# where zip_download_elapsed is not null
+# order by login, repo_name
+
+
+
 
 
 

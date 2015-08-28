@@ -88,7 +88,7 @@ class CranProject(db.Model):
         response = None
         while not response:
             try:
-                response = requests.get(data_url)
+                response = requests.get(data_url, timeout=10)
             except requests.exceptions.ConnectionError:
                 # try again
                 print "connection timed out, trying again"
