@@ -161,6 +161,7 @@ def add_all_github_dependency_lines():
 
 def monitor_github_zip_queue(start_time, num_jobs):
     current_count = github_zip_queue.count
+    time_per_job = 1
     while current_count:
         sleep(1)
         current_count = github_zip_queue.count
@@ -168,7 +169,7 @@ def monitor_github_zip_queue(start_time, num_jobs):
         try:
             time_per_job = elapsed(start_time) / done
         except ZeroDivisionError:
-            time_per_job = 1
+            pass
 
         mins_left = int(current_count * time_per_job / 60)
 
