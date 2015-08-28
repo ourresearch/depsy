@@ -133,7 +133,7 @@ def add_github_dependency_lines(login, repo_name):
 
 def add_all_github_dependency_lines():
     empty_github_zip_queue()
-    num_jobs = 10000
+    num_jobs = 100 * 1000
 
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
