@@ -163,10 +163,14 @@ def monitor_github_zip_queue():
         sleep(1)
         current_count = github_zip_queue.count
         done = start_count - current_count
-        print "finished {done} jobs done in {elapsed} sec ({per} sec/job). {left} left".format(
+        try:
+            time_per_job = round(elapsed(start) / done, 4)
+        except ZeroDivisionError:
+            time_per_job = "unknown"
+        print "finished {done} jobs done in {elapsed} sec (avg {per} sec/job). {left} left".format(
             done=done,
             elapsed=elapsed(start),
-            per=round(elapsed(start) / done, 2),
+            per=time(),
             left=current_count
         )
 
