@@ -14,7 +14,7 @@ develop-eggs/
 # jason commented this one out because breaks static/dist
 # dist/
 
-data/
+local_data/
 downloads/
 eggs/
 .eggs/
@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+*.temp*
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
