@@ -16,6 +16,7 @@ import requests
 from util import elapsed
 from time import time
 from time import sleep
+import ast
 import subprocess
 
 
@@ -82,47 +83,37 @@ class GithubRepo(db.Model):
         start_time = time()
         lines = self.dependency_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
-        libs_imported = set()
+        modules_imported = set()
         for line in import_lines:
             print "checking this line: {}".format(line)
-
-            # @todo: before splitting, use regex to make sure this line has
-            # no characters disallowed by python var names. will cut down
-            # on false positives from comments
-
-            words = line.split()  # split on all whitespace
-
-            # import foo
-            # import foo, bar, baz
-            # import foo , bar , baz
-            # import foo ,bar
-            # import numpy as N
-            if len(words) > 1 and words[0] == "import":
-                for my_word in words[1:]:  # the first word is 'import', ignore it
-                    if my_word == "as":
-                        # everything in this line after 'as' is useless.
-                        break
-                    commaless_word = my_word.replace(",", "")
-                    if commaless_word:
-                        libs_imported.add(commaless_word)
+            try:
+                nodes = ast.parse(line.strip()).body
+            except SyntaxError:
+                # not well-formed python...prolly part of a comment str
                 continue
 
-            # from foo.bar import baz, mylib  # (gets 'foo')
-            # from foo import baz, mylib
-            # from foo import bar
-            # from foo import *
-            if len(words) >= 4 and words[0] == "from" and words[2] == "import":
-                import_from = words[1]
-                lib = import_from.split(".")[0]
-                libs_imported.add(lib)
+            try:
+                node = nodes[0]
+            except IndexError:
+                continue
 
-        print "found these libs: {}".format(libs_imported)
-        imported_libs_in_pypi = libs_imported.intersection(pypi_lib_names)
-        imported_libs_in_pypi_and_not_standard = imported_libs_in_pypi.difference(
-            PythonStandardLibs.get()
-        )
+            # from foo import bar # finds foo
+            if isinstance(node, ast.ImportFrom):
+                if node.level > 0:
+                    # relative imports unlikely to be from PyPi
+                    continue
+                modules_imported.add(node.name)
 
-        self.pypi_dependencies = list(imported_libs_in_pypi_and_not_standard)
+            # import foo, bar  # finds foo, bar
+            elif isinstance(node, ast.Import):
+                for my_name in node.names:
+                    modules_imported.add(my_name.name)
+
+
+        for module_name in modules_imported:
+            pypi_package = self._get_pypi_package(module_name, pypi_lib_names)
+            if pypi_package is not None:
+                self.pypi_dependencies.append(pypi_package)
 
         print "done finding pypi deps for {}: {} (took {}sec)".format(
             self.full_name,
@@ -130,6 +121,28 @@ class GithubRepo(db.Model):
             elapsed(start_time, 4)
         )
         return self.pypi_dependencies
+
+    def _get_pypi_package(self, module_name, pypi_lib_names):
+
+        # if it's in the standard lib it doesn't count--even if in might be in pypi
+        if module_name in PythonStandardLibs.get():
+            return None
+
+        # great, we found one!
+        if module_name in pypi_lib_names:
+            return module_name
+
+        # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
+        elif '.' in module_name:
+            shortened_name = module_name.split('.')[-1]
+            return self._get_pypi_package(shortened_name, pypi_lib_names)
+
+        # if there's no dot in your name, there are no more options, you're done
+        else:
+            return None
+
+
+
 
 
 
