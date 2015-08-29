@@ -69,6 +69,9 @@ class GithubRepo(db.Model):
         * ignores imports from importlib.import_module
         * ignores dynamic importing techniques like map(__import__, moduleNames)
         * thinks imports inside multi-line quoted comments are real
+        * can't tell if a given pypi lib has graduated to be part of the
+          python standard library. For example since python 2.7,  argparse
+          has been part of the standard lib, but is still on pypi for older versions.
         """
         lines = self.dependency_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
@@ -168,19 +171,23 @@ def add_all_github_dependency_lines(q_limit=100):
 """
 find and save list of pypi dependencies for each repo
 """
-def set_pypi_dependencies(login, repo_name, pypi_lib_names):
+def set_pypi_dependencies(login, repo_name):
     repo = get_repo(login, repo_name)
-    if repo:
-        repo.set_pypi_dependencies(pypi_lib_names)
-        commit_repo(repo)
+    if repo is None:
+        return None
+
+    print "getting PyPi project names..."
+    pypi_q = db.session.query(PypiProject.project_name)
+    pypi_lib_names = [r[0] for r in pypi_q.all()]
+    num_pypi_lib_names = len(pypi_lib_names)
+    print "got {} PyPi project names.".format(num_pypi_lib_names)
+
+    repo.set_pypi_dependencies(pypi_lib_names)
+    commit_repo(repo)
     return None  # important that it returns None for RQ
 
 
 def set_all_pypi_dependencies(q_limit=100):
-
-    pypi_q = db.session.query(PypiProject.project_name)
-    pypi_lib_names = [r[0] for r in pypi_q.all()]
-
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(GithubRepo.dependency_lines != None)
     q = q.filter(GithubRepo.pypi_dependencies == None)
@@ -188,7 +195,7 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_pypi_dependencies, pypi_lib_names)
+    return enque_repos(q, set_pypi_dependencies)
 
 
 
