@@ -1,8 +1,10 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from models.github_api import ZipGetter
-
-
+import requests
+import re
+import pickle
+from pathlib import Path
 
 class PypiProject(db.Model):
     project_name = db.Column(db.Text, primary_key=True)
@@ -31,28 +33,28 @@ class PypiProject(db.Model):
         return "python"
 
 
-    def set_dependency_lines(self):
-        getter = github_zip_getter_factory(self.login, self.repo_name)
-        getter.get_dep_lines(self.language)
-
-        self.dependency_lines = getter.dep_lines
-        self.zip_download_elapsed = getter.download_elapsed
-        self.zip_download_size = getter.download_kb
-        self.zip_download_error = getter.error
-        self.zip_grep_elapsed = getter.grep_elapsed
-
-        return self.dependency_lines
-
-
-    def zip_getter(self):
-        if not self.api_raw:
-            return None
-        if not "url" in self.api_raw:
-            return None
-
-        url = self.api_raw["url"]
-        getter = ZipGetter(url)
-        return getter
+    #def set_dependency_lines(self):
+    #    getter = github_zip_getter_factory(self.login, self.repo_name)
+    #    getter.get_dep_lines(self.language)
+    #
+    #    self.dependency_lines = getter.dep_lines
+    #    self.zip_download_elapsed = getter.download_elapsed
+    #    self.zip_download_size = getter.download_kb
+    #    self.zip_download_error = getter.error
+    #    self.zip_grep_elapsed = getter.grep_elapsed
+    #
+    #    return self.dependency_lines
+    #
+    #
+    #def zip_getter(self):
+    #    if not self.api_raw:
+    #        return None
+    #    if not "url" in self.api_raw:
+    #        return None
+    #
+    #    url = self.api_raw["url"]
+    #    getter = ZipGetter(url)
+    #    return getter
 
 
 """
@@ -87,17 +89,35 @@ def add_all_pypi_dependency_lines():
 
 
 
+class PythonStandardLibs():
+    url = "https://docs.python.org/2.7/py-modindex.html"
+    data_dir = Path(__file__, "../../data").resolve()
+    pickle_path = Path(data_dir, "python_standard_libs.pickle")
+
+    @classmethod
+    def save_from_web(cls):  # only needs to be used once ever, here for tidiness
+        html = requests.get(cls.url).text
+        exp = r'<tt class="xref">([^<]+)'
+        matches = re.findall(exp, html)
+        libs = [m for m in matches if '.' not in m]
+
+        with open(str(cls.pickle_path), "w") as f:
+            pickle.dump(libs, f)
+
+        print "saved these to file: {}".format(libs)
+
+    @classmethod
+    def get(cls):
+        with open(str(cls.pickle_path), "r") as f:
+            return pickle.load(f)
+
+
+def save_python_standard_libs():
+    PythonStandardLibs.save_from_web()
+
+    # to show the thing works
+    print "got these from pickled file: {}".format(PythonStandardLibs.get())
 
 
 
 
-
-
-
-
-
-
-
-
-def test_pypi_project():
-    print "testing pypi project!"

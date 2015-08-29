@@ -9,6 +9,7 @@ from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import github_zip_getter_factory
 from models.pypi_project import PypiProject
+from models.pypi_project import PythonStandardLibs
 
 from models import github_api
 import requests
@@ -65,17 +66,17 @@ class GithubRepo(db.Model):
         """
         using self.dependency_lines, finds all pypi libs imported by repo.
 
+        ignores libs that are part of the python 2.7 standard library, even
+        if they are on pypi
+
         known issues:
         * ignores imports from importlib.import_module
         * ignores dynamic importing techniques like map(__import__, moduleNames)
         * thinks imports inside multi-line quoted comments are real
-        * can't tell if a given pypi lib has graduated to be part of the
-          python standard library. For example since python 2.7,  argparse
-          has been part of the standard lib, but is still on pypi for older versions.
         """
         lines = self.dependency_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
-        imported = set()
+        libs_imported = set()
         for line in import_lines:
             print "checking this line: {}".format(line)
             words = line.split()  # split on all whitespace
@@ -92,7 +93,7 @@ class GithubRepo(db.Model):
                         break
                     commaless_word = my_word.replace(",", "")
                     if commaless_word:
-                        imported.add(commaless_word)
+                        libs_imported.add(commaless_word)
                 continue
 
             # from foo.bar import baz, mylib  # (gets 'foo')
@@ -102,11 +103,16 @@ class GithubRepo(db.Model):
             if len(words) >= 4 and words[0] == "from" and words[2] == "import":
                 import_from = words[1]
                 lib = import_from.split(".")[0]
-                imported.add(lib)
+                libs_imported.add(lib)
 
-        print "found these libs: {}".format(imported)
-        pypi_deps_set = imported.intersection(pypi_lib_names)
-        self.pypi_dependencies = list(pypi_deps_set)
+        print "found these libs: {}".format(libs_imported)
+        imported_libs_in_pypi = libs_imported.intersection(pypi_lib_names)
+        imported_libs_in_pypi_and_not_standard = imported_libs_in_pypi.difference(
+            PythonStandardLibs.get()
+        )
+
+        self.pypi_dependencies = list(imported_libs_in_pypi_and_not_standard)
+
         print "pypi deps for {}: {}".format(self.full_name, self.pypi_dependencies)
         return self.pypi_dependencies
 
