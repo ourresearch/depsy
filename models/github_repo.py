@@ -27,6 +27,7 @@ class GithubRepo(db.Model):
     zip_download_size = db.Column(db.Integer)
     zip_download_error = db.Column(db.Text)
     zip_grep_elapsed = db.Column(db.Float)
+    pypi_dependencies = db.Column(JSONB)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -58,6 +59,52 @@ class GithubRepo(db.Model):
         # the db threw an error when we tried to save this.
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
+
+    def set_pypi_dependencies(self, pypi_lib_names):
+        """
+        using self.dependency_lines, finds all pypi libs imported by repo.
+
+        known issues:
+        * ignores imports from importlib.import_module
+        * ignores dynamic importing techniques like map(__import__, moduleNames)
+        * thinks imports inside multi-line quoted comments are real
+        """
+        lines = self.dependency_lines.split("\n")
+        import_lines = [l.split(":")[1] for l in lines if ":" in l]
+        imported = set()
+        for line in import_lines:
+            print "checking this line: {}".format(line)
+            words = line.split()  # split on all whitespace
+
+            # import foo
+            # import foo, bar, baz
+            # import foo , bar , baz
+            # import foo ,bar
+            if len(words) > 1 and words[0] == "import":
+                for my_word in words[1:]:  # the first word is 'import', ignore it
+                    commaless_word = my_word.replace(",", "")
+                    if commaless_word:
+                        imported.add(commaless_word)
+                continue
+
+            # from foo.bar import baz, mylib  # (gets 'foo')
+            # from foo import baz, mylib
+            # from foo import bar
+            # from foo import *
+            if len(words) >= 4 and words[0] == "from" and words[2] == "import":
+                import_from = words[1]
+                lib = import_from.split(".")[0]
+                imported.add(lib)
+
+        if not len(set):  # save time before the intersection
+            return False
+        else:
+            print "found these libs: {}".format(imported)
+            self.pypi_dependencies = imported.intersection(pypi_lib_names)
+            print "pypi deps for {}: {}".format(self.full_name, imported)
+            return self.pypi_dependencies
+
+
 
 
 # call python main.py add_python_repos_from_google_bucket to run
