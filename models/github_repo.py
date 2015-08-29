@@ -8,6 +8,7 @@ from sqlalchemy import or_
 from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import github_zip_getter_factory
+from models.pypi_project import PypiProject
 
 from models import github_api
 import requests
@@ -80,8 +81,12 @@ class GithubRepo(db.Model):
             # import foo, bar, baz
             # import foo , bar , baz
             # import foo ,bar
+            # import numpy as N
             if len(words) > 1 and words[0] == "import":
                 for my_word in words[1:]:  # the first word is 'import', ignore it
+                    if my_word == "as":
+                        # everything in this line after 'as' is useless.
+                        break
                     commaless_word = my_word.replace(",", "")
                     if commaless_word:
                         imported.add(commaless_word)
@@ -96,62 +101,21 @@ class GithubRepo(db.Model):
                 lib = import_from.split(".")[0]
                 imported.add(lib)
 
-        if not len(set):  # save time before the intersection
-            return False
-        else:
-            print "found these libs: {}".format(imported)
-            self.pypi_dependencies = imported.intersection(pypi_lib_names)
-            print "pypi deps for {}: {}".format(self.full_name, imported)
-            return self.pypi_dependencies
+        print "found these libs: {}".format(imported)
+        pypi_deps_set = imported.intersection(pypi_lib_names)
+        self.pypi_dependencies = list(pypi_deps_set)
+        print "pypi deps for {}: {}".format(self.full_name, self.pypi_dependencies)
+        return self.pypi_dependencies
 
 
 
 
-# call python main.py add_python_repos_from_google_bucket to run
-def add_python_repos_from_google_bucket():
 
-    url = "https://storage.googleapis.com/impactstory/github_python_repo_names.csv"
-    add_repos_from_remote_csv(url, "python")
-
-
-# call python main.py add_r_repos_from_google_bucket to run
-def add_r_repos_from_google_bucket():
-
-    url = "https://storage.googleapis.com/impactstory/github_r_repo_names.csv"
-    add_repos_from_remote_csv(url, "r")
-
-
-
-def add_repos_from_remote_csv(csv_url, language):
-    start = time()
-
-    print "going to go get file"
-    response = requests.get(csv_url, stream=True)
-    index = 0
-
-    for github_url in response.iter_lines(chunk_size=1000):
-        login, repo_name = username_and_repo_name_from_github_url(github_url)
-        if login and repo_name:
-            repo = GithubRepo(
-                login=login,
-                repo_name=repo_name, 
-                language=language
-            )
-            print repo
-            db.session.merge(repo)
-            index += 1
-            if index % 1000 == 0:
-                db.session.commit()
-                print "flushing on index {index}, elapsed: {elapsed}".format(
-                    index=index, 
-                    elapsed=elapsed(start))
-
-    db.session.commit()
 
 
 
 """
-add github about api call
+add the github repo-about api info
 """
 def add_github_about(login, repo_name):
     repo = db.session.query(GithubRepo).get((login, repo_name))
@@ -171,23 +135,17 @@ def add_all_github_about():
 
 
 
+
+
+
 """
 add github dependency lines
 """
 def add_github_dependency_lines(login, repo_name):
-    repo = db.session.query(GithubRepo).get((login, repo_name))
-    if repo is None:
-        print "there's no repo called {}/{}".format(login, repo_name)
-        return False
-
-    repo.set_github_dependency_lines()
-    try:
-        db.session.commit()
-    except DataError:
-        db.session.rollback()
-        repo.set_save_error()
-        db.session.commit()
-
+    repo = get_repo(login, repo_name)
+    if repo:
+        repo.set_github_dependency_lines()
+        commit_repo(repo)
     return None  # important that it returns None for RQ
 
 
@@ -199,19 +157,52 @@ def add_all_github_dependency_lines(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return add_github_dep_lines_from_q(q)
+    return enque_repos(q, add_github_dependency_lines)
 
 
 
-def retry_github_dep_lines_for_request_error_repos(q_limit=100):
+
+
+
+
+"""
+find and save list of pypi dependencies for each repo
+"""
+def set_pypi_dependencies(login, repo_name, pypi_lib_names):
+    repo = get_repo(login, repo_name)
+    if repo:
+        repo.set_pypi_dependencies(pypi_lib_names)
+        commit_repo(repo)
+    return None  # important that it returns None for RQ
+
+
+def set_all_pypi_dependencies(q_limit=100):
+
+    pypi_q = db.session.query(PypiProject.project_name)
+    pypi_lib_names = [r[0] for r in pypi_q.all()]
+
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.zip_download_error == 'request_error')
+    q = q.filter(GithubRepo.dependency_lines != None)
+    q = q.filter(GithubRepo.pypi_dependencies == None)
+    q = q.filter(GithubRepo.language == "python")
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return add_github_dep_lines_from_q(q)
+    return enque_repos(q, set_pypi_dependencies, pypi_lib_names)
 
-def add_github_dep_lines_from_q(q):
+
+
+
+
+
+"""
+utility functions
+"""
+
+def enque_repos(q, fn, *args):
+    """
+    Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
+    """
     empty_github_zip_queue()
 
     start_time = time()
@@ -226,9 +217,12 @@ def add_github_dep_lines_from_q(q):
     print "adding {} jobs to queue...".format(num_jobs)
 
     for row in row_list:
+        row_args = (row[0], row[1])
+        row_args += args  # pass incoming option args to the enqueued function
+
         job = github_zip_queue.enqueue_call(
-            func=add_github_dependency_lines,
-            args=(row[0], row[1]),
+            func=fn,
+            args=row_args,
             result_ttl=0  # number of seconds
         )
         job.meta["full_repo_name"] = row[0] + "/" + row[1]
@@ -245,87 +239,20 @@ def add_github_dep_lines_from_q(q):
     return True
 
 
-"""
-process github dependency lines for python projects
-"""
-def process_github_dependency_lines_for_python(login, repo_name):
+def get_repo(login, repo_name):
     repo = db.session.query(GithubRepo).get((login, repo_name))
     if repo is None:
         print "there's no repo called {}/{}".format(login, repo_name)
-        return False
+    return repo
 
 
-    lines = repo.dependency_lines.split("\n")
-    import_lines = [line.split(":")[1] for line in lines if ":" in line]
-    clean_lines = []
-
-    longest_line = ""
-    for line in import_lines:
-        line = line.strip()
-        if line.startswith("#"):
-            pass
-        else:
-            clean_lines.append(line)
-            if len(line) > len(longest_line):
-                longest_line = line
-
-    # print "\n".join(sorted(clean_lines))
-    filenames = [line.split(":")[0].split("/")[-1] for line in lines]
-    extensions = [filename.split(".")[1] for filename in filenames if "." in filename]
-    unique_extensions = list(set(extensions))
-    non_py_extensions = [extension for extension in extensions if extension != "py"]
-
-    print "number lines", len(clean_lines)
-    print "longest_line:", longest_line
-    print "non-py file types:", non_py_extensions
-
-    # try:
-    #     db.session.commit()
-    # except DataError:
-    #     db.session.rollback()
-    #     repo.set_save_error()
-    #     db.session.commit()
-
-    return None  # important that it returns None for RQ
-
-
-def process_all_github_dependency_lines_for_python():
-
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.dependency_lines != None)
-    q = q.filter(GithubRepo.language == "python")
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(1000)
-
-    for row in q.all():
-        #print "setting this row", row
-        process_github_dependency_lines_for_python(row[0], row[1])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def commit_repo(repo):
+    try:
+        db.session.commit()
+    except DataError:
+        db.session.rollback()
+        repo.set_save_error()
+        db.session.commit()
 
 
 def monitor_github_zip_queue(start_time, num_jobs):
@@ -360,6 +287,76 @@ def empty_github_zip_queue():
     print "emptying {} jobs on the github zip queue....".format(github_zip_queue.count)
     github_zip_queue.empty()
     print "done. there's {} jobs on the github zip queue now.".format(github_zip_queue.count)
+
+
+
+
+
+
+
+
+
+
+"""
+populate the github_repo table from a remote CSV with repo names
+"""
+# call python main.py add_python_repos_from_google_bucket to run
+def add_python_repos_from_google_bucket():
+    url = "https://storage.googleapis.com/impactstory/github_python_repo_names.csv"
+    add_repos_from_remote_csv(url, "python")
+
+# call python main.py add_r_repos_from_google_bucket to run
+def add_r_repos_from_google_bucket():
+    url = "https://storage.googleapis.com/impactstory/github_r_repo_names.csv"
+    add_repos_from_remote_csv(url, "r")
+
+def add_repos_from_remote_csv(csv_url, language):
+    start = time()
+
+    print "going to go get file"
+    response = requests.get(csv_url, stream=True)
+    index = 0
+
+    for github_url in response.iter_lines(chunk_size=1000):
+        login, repo_name = username_and_repo_name_from_github_url(github_url)
+        if login and repo_name:
+            repo = GithubRepo(
+                login=login,
+                repo_name=repo_name,
+                language=language
+            )
+            print repo
+            db.session.merge(repo)
+            index += 1
+            if index % 1000 == 0:
+                db.session.commit()
+                print "flushing on index {index}, elapsed: {elapsed}".format(
+                    index=index,
+                    elapsed=elapsed(start))
+
+    db.session.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
