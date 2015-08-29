@@ -206,7 +206,7 @@ def set_pypi_dependencies(login, repo_name):
         elapsed(start_time)
     )
 
-    repo.set_pypi_dependencies()
+    repo.set_pypi_dependencies(pypi_lib_names)
     commit_repo(repo)
     print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
     return None  # important that it returns None for RQ
