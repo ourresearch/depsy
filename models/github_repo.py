@@ -81,11 +81,12 @@ class GithubRepo(db.Model):
         * ignores dynamic importing techniques like map(__import__, moduleNames)
         """
         start_time = time()
+        self.pypi_dependencies = []
         lines = self.dependency_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
         for line in import_lines:
-            print "checking this line: {}".format(line)
+            print u"checking this line: {}".format(line)
             try:
                 nodes = ast.parse(line.strip()).body
             except SyntaxError:
@@ -102,7 +103,7 @@ class GithubRepo(db.Model):
                 if node.level > 0:
                     # relative imports unlikely to be from PyPi
                     continue
-                modules_imported.add(node.name)
+                modules_imported.add(node.module)
 
             # import foo, bar  # finds foo, bar
             elif isinstance(node, ast.Import):
