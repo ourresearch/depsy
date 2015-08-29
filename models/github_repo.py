@@ -62,23 +62,34 @@ class GithubRepo(db.Model):
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
 
-    def set_pypi_dependencies(self, pypi_lib_names):
+    def set_pypi_dependencies(self):
         """
         using self.dependency_lines, finds all pypi libs imported by repo.
 
         ignores libs that are part of the python 2.7 standard library, even
         if they are on pypi
 
-        known issues:
-        * ignores imports from importlib.import_module
+        known false-positive issues:
+        * counts imports of local libs that have the same name as pypi libs.
+          this is a serious problem for common local-library names like
+          'models', 'utils', 'config', etc
+        * counts imports within multi-line quote comments.
+
+        known false-negative issues:
+        * ignores imports done with importlib.import_module
         * ignores dynamic importing techniques like map(__import__, moduleNames)
-        * thinks imports inside multi-line quoted comments are real
         """
+        start_time = time()
         lines = self.dependency_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         libs_imported = set()
         for line in import_lines:
             print "checking this line: {}".format(line)
+
+            # @todo: before splitting, use regex to make sure this line has
+            # no characters disallowed by python var names. will cut down
+            # on false positives from comments
+
             words = line.split()  # split on all whitespace
 
             # import foo
@@ -113,7 +124,11 @@ class GithubRepo(db.Model):
 
         self.pypi_dependencies = list(imported_libs_in_pypi_and_not_standard)
 
-        print "pypi deps for {}: {}".format(self.full_name, self.pypi_dependencies)
+        print "done finding pypi deps for {}: {} (took {}sec)".format(
+            self.full_name,
+            self.pypi_dependencies,
+            elapsed(start_time, 4)
+        )
         return self.pypi_dependencies
 
 
@@ -178,18 +193,14 @@ def add_all_github_dependency_lines(q_limit=100):
 find and save list of pypi dependencies for each repo
 """
 def set_pypi_dependencies(login, repo_name):
+    start_time = time()
     repo = get_repo(login, repo_name)
     if repo is None:
         return None
 
-    print "getting PyPi project names..."
-    pypi_q = db.session.query(PypiProject.project_name)
-    pypi_lib_names = [r[0] for r in pypi_q.all()]
-    num_pypi_lib_names = len(pypi_lib_names)
-    print "got {} PyPi project names.".format(num_pypi_lib_names)
-
-    repo.set_pypi_dependencies(pypi_lib_names)
+    repo.set_pypi_dependencies()
     commit_repo(repo)
+    print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
     return None  # important that it returns None for RQ
 
 
