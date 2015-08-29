@@ -62,7 +62,7 @@ class GithubRepo(db.Model):
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
 
-    def set_pypi_dependencies(self):
+    def set_pypi_dependencies(self, pypi_lib_names):
         """
         using self.dependency_lines, finds all pypi libs imported by repo.
 
@@ -197,6 +197,14 @@ def set_pypi_dependencies(login, repo_name):
     repo = get_repo(login, repo_name)
     if repo is None:
         return None
+
+    pypi_q = db.session.query(PypiProject.project_name)
+    pypi_lib_names = [r[0] for r in pypi_q.all()]
+    num_pypi_lib_names = len(pypi_lib_names)
+    print "got {} PyPi project names in {}sec.".format(
+        num_pypi_lib_names,
+        elapsed(start_time)
+    )
 
     repo.set_pypi_dependencies()
     commit_repo(repo)
