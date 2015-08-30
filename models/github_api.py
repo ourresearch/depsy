@@ -312,7 +312,7 @@ def get_python_requirements(login, repo_name):
             login,
             repo_name
         )
-    return ret
+    return sorted(ret)
 
 
 
