@@ -122,8 +122,9 @@ class PythonStandardLibs():
 
     @classmethod
     def load_cache(cls):
+        global python_standard_libs_cache
         with open(str(cls.pickle_path), "r") as f:
-            return pickle.load(f)
+            python_standard_libs_cache = pickle.load(f)
 
     @classmethod
     def get(cls):
@@ -152,12 +153,13 @@ class PypiPackageNames():
     @classmethod
     def load_cache(cls):
         start_time = time()
+        global pypi_package_names_cache
+
         pypi_q = db.session.query(PypiProject.project_name)
-        pypi_lib_names = [r[0] for r in pypi_q.all()]
-        num_pypi_lib_names = len(pypi_lib_names)
+        pypi_package_names_cache = [r[0] for r in pypi_q.all()]
 
         print "got {} PyPi project names in {}sec.".format(
-            num_pypi_lib_names,
+            len(pypi_package_names_cache),
             elapsed(start_time)
         )
 
