@@ -1,7 +1,7 @@
--- counts unique libs listed in the pypi_dependencies column
-select jsonb_array_elements(pypi_dependencies), count(jsonb_array_elements(pypi_dependencies)) 
+-- counts unique libs listed in the pypi_dependencies column. takes a while.
+select jsonb_array_elements(pypi_dependencies) as deps, count(jsonb_array_elements(pypi_dependencies)) as count 
 	from github_repo where pypi_dependencies is not NULL 
-	group by jsonb_array_elements(pypi_dependencies);
-
-
+	group by deps
+	order by count desc
+	limit 100;
 

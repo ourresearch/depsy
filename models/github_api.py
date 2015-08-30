@@ -40,32 +40,44 @@ class GithubKeyring():
             except ValueError:  # no more tries for you.
                 raise GithubRateLimitException
 
-
-    def _get_good_key(self):
-        tokens_str = os.environ["GITHUB_TOKENS"]
-        keys = [t.split(":") for t in tokens_str.split(",")]
-
-        good_keys = [k for k in keys if k not in self.expired_keys]
-
-        # this throws a value error if no good keys
-        ret_key = random.sample(good_keys, 1)[0]
-        return ret_key
+    def update_expired_keys(self):
+        previously_expired_keys = self.expired_keys
+        self.expired_keys = []
+        for login, token in previously_expired_keys:
+            remaining = self._check_remaining_for_key(login, token)
+            if remaining == 0:
+                self.expired_keys.append([login, token])
 
     def expire_key(self, login, token):
         print "expiring key:", login
         self.expired_keys.append([login, token])
 
+    def report(self):
+        print "remaining calls by key: "
+        for login, token in self._keys_from_env():
+            remaining = self._check_remaining_for_key(login, token)
+            print "{login:>16}: {remaining}".format(
+                login=login,
+                remaining=remaining
+            )
+        print "\n"
 
-    def update_expired_keys(self):
-        rate_limit_check_url = "https://api.github.com/rate_limit"
-        previously_expired_keys = self.expired_keys
-        self.expired_keys = []
-        for login, token in previously_expired_keys:
-            print "calling rate limit check on ", login
-            r = requests.get(rate_limit_check_url, auth=(login, token))
-            remaining = r.json()["rate"]["remaining"]
-            if remaining == 0:
-                self.expired_keys.append([login, token])
+    def _get_good_key(self):
+        good_keys = [k for k in self._keys_from_env() if k not in self.expired_keys]
+
+        # this throws a value error if no good keys
+        ret_key = random.sample(good_keys, 1)[0]
+        return ret_key
+
+
+    def _check_remaining_for_key(self, login, token):
+        url = "https://api.github.com/rate_limit"
+        r = requests.get(url, auth=(login, token))
+        return r.json()["rate"]["remaining"]
+
+    def _keys_from_env(self):
+        tokens_str = os.environ["GITHUB_TOKENS"]
+        return [t.split(":") for t in tokens_str.split(",")]
 
 
 
@@ -432,6 +444,10 @@ def get_github_homepage(url):
         return url
     else:
         return None
+
+
+def check_keys():
+    keyring.report()
 
 
 
