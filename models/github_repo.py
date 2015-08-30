@@ -8,11 +8,12 @@ from sqlalchemy import or_
 from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import github_zip_getter_factory
-from models.github_api import get_python_requirements
 from models.pypi_project import PypiProject
 
 from models.pypi_project import PythonStandardLibs
 from models.pypi_project import get_pypi_package_names
+
+from models import python
 
 
 from models import github_api
@@ -37,6 +38,8 @@ class GithubRepo(db.Model):
     zip_grep_elapsed = db.Column(db.Float)
     pypi_dependencies = db.Column(JSONB)
     requirements = db.Column(JSONB)
+    reqs_file = db.Column(db.Text)
+    reqs_file_tried = db.Column(db.Boolean)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -60,19 +63,44 @@ class GithubRepo(db.Model):
         return self.dependency_lines
 
     def set_requirements(self):
-        # goes to github api, gets requirements.txt. if it can't find that,
-        # gets setup.py. parses them and gets requirements, saves em.
+        return self.set_reqs_file()
+
+
+    def set_reqs_file(self):
         try:
-            self.requirements = github_api.get_python_requirements(
+            # requirements.txt is better, let's try that first.
+            self.reqs_file = github_api.get_requirements_txt_contents(
                 self.login,
                 self.repo_name
+            )
+            print "found a requirements.txt for {}".format(self.full_name)
+            self.requirements = python.reqs_from_file(
+                self.reqs_file,
+                "requirements.txt"
             )
         except github_api.NotFoundException:
-            print "no python requirements found for {}/{}".format(
-                self.login,
-                self.repo_name
+            # darn, no requirements.txt...maybe setup.py tho?
+            try:
+                self.reqs_file = github_api.get_setup_py_contents(
+                    self.login,
+                    self.repo_name
+                )
+                print "found a setup.py for {}".format(self.full_name)
+                self.requirements = python.reqs_from_file(
+                    self.reqs_file,
+                    "setup.py"
+                )
+            except github_api.NotFoundException:
+                # nope, no setup.py either. oh well we tried. quit now.
+                self.reqs_file = None
+                self.requirements = []
+        finally:
+            # no matter what, record that we did go out and look.
+            self.reqs_file_tried = True
+            print "found {} requirements for {}".format(
+                len(self.requirements),
+                self.full_name
             )
-            self.requirements = []
 
 
     @property
@@ -274,10 +302,12 @@ def set_requirements(login, repo_name):
     return None  # important that it returns None for RQ
 
 
+
+
 def set_all_requirements(q_limit=9500):
     # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.requirements == None)
+    q = q.filter(GithubRepo.reqs_file_tried == None)
     q = q.filter(GithubRepo.language == "python")
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)

@@ -316,103 +316,33 @@ def get_profile(username, api_key_tuple):
     return make_ratelimited_call(url, api_key_tuple)
 
 
-def get_python_requirements(login, repo_name):
-    try:
-        ret = get_requirements_txt_requirements(login, repo_name)
-        print "got {} requirements.txt requirements for {}/{}".format(
-            len(ret),
-            login,
-            repo_name
-        )
-    except NotFoundException:
-        ret = get_setup_py_requirements(login, repo_name)
-        print "got {} setup.py requirements for {}/{}".format(
-            len(ret),
-            login,
-            repo_name
-        )
-    return sorted(ret)
 
 
-def _clean_setup_req(req):
-    """
-    get rid of cruft in setup.py req format params.
 
-    gets "Markdown" out of:
-    "Markdown==5.5",
-    "Markdown>=5",
-    "Markdown == 5"
-    """
-    return re.compile("(=|>)").split(req)[0].strip()
-
-def get_setup_py_requirements(login, repo_name):
-    url = 'https://api.github.com/repos/{login}/{repo_name}/contents/setup.py'.format(
-        login=login,
-        repo_name=repo_name
-    )
-    resp = make_ratelimited_call(url)
-    try:
-        file_contents = resp["content"]
-    except KeyError:
-        raise NotFoundException
-
-    decoded_file_contents = base64.decodestring(file_contents)
-    parsed = ast.parse(decoded_file_contents)
-    ret = []
-    # see ast docs: https://greentreesnakes.readthedocs.org/en/latest/index.html
-    for node in ast.walk(parsed):
-        try:
-            if node.func.id == "setup":
-                for keyword in node.keywords:
-                    if keyword.arg=="install_requires":
-                        for elt in keyword.value.elts:
-                            ret.append(_clean_setup_req(elt.s))
-                    if keyword.arg == "extras_require":
-                        for my_list in keyword.value.values:
-                            for elt in my_list.elts:
-                                ret.append(_clean_setup_req(elt.s))
-
-        except AttributeError:
-            continue
-
-    return ret
-
-
-def get_requirements_txt_requirements(login, repo_name):
+def get_requirements_txt_contents(login, repo_name):
     url = 'https://api.github.com/repos/{login}/{repo_name}/contents/requirements.txt'.format(
         login=login,
         repo_name=repo_name
     )
     resp = make_ratelimited_call(url)
     try:
-        file_contents = resp["content"]
+        return base64.decodestring(resp["content"])
     except KeyError:
         raise NotFoundException
 
-    # see here for spec used in parsing the file:
-    # https://pip.readthedocs.org/en/1.1/requirements.html#the-requirements-file-format
-    # it doesn't mention the '#' comment but found it often in examples.
-    # not using this test str in  the function, just a handy place to keep it.
-    test_str = """# my comment
-file://blahblah
-foo==10.2
-baz>=3.6
-foo.bar>=3.33
-foo-bar==2.2
-foo_bar==1.1
-foo == 5.5
-.for some reason there is a dot sometimes
---index-url blahblah
--e http://blah
-  foo_with_space_in_front = 1.1"""
 
-    decoded_file_contents = base64.decodestring(file_contents)
-    reqs = re.findall(
-        r'^(?!#|file|-|\.)\s*([\w\.-]+)',
-        decoded_file_contents,
-        re.MULTILINE | re.IGNORECASE
+def get_setup_py_contents(login, repo_name):
+    url = 'https://api.github.com/repos/{login}/{repo_name}/contents/setup.py'.format(
+        login=login,
+        repo_name=repo_name
     )
-    return reqs
+    resp = make_ratelimited_call(url)
+    try:
+        return base64.decodestring(resp["content"])
+    except KeyError:
+        raise NotFoundException
+
+
 
 
 
