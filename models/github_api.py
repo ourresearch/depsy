@@ -395,19 +395,20 @@ def get_requirements_txt_requirements(login, repo_name):
     # not using this test str in  the function, just a handy place to keep it.
     test_str = """# my comment
 file://blahblah
--e http:blahblah
 foo==10.2
 baz>=3.6
 foo.bar>=3.33
 foo-bar==2.2
 foo_bar==1.1
 foo == 5.5
+.for some reason there is a dot sometimes
+--index-url blahblah
 -e http://blah
   foo_with_space_in_front = 1.1"""
 
     decoded_file_contents = base64.decodestring(file_contents)
     reqs = re.findall(
-        r'^(?!#|file|-e)\s*([\w\.-]+)',
+        r'^(?!#|file|-|\.)\s*([\w\.-]+)',
         decoded_file_contents,
         re.MULTILINE | re.IGNORECASE
     )
