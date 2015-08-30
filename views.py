@@ -186,6 +186,10 @@ def api_repo(username, reponame):
     return json_resp_from_thing( repo.display_dict())
 
 
+@app.route("/search/<search_str>")
+def search(search_str):
+    return json_resp_from_thing({"msg": "searching for something?"})
+
 
 @app.route('/auth/github', methods=['POST'])
 def github():
