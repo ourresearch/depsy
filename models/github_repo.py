@@ -8,6 +8,7 @@ from sqlalchemy import or_
 from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import github_zip_getter_factory
+from models.github_api import get_python_requirements
 from models.pypi_project import PypiProject
 
 from models.pypi_project import PythonStandardLibs
@@ -23,6 +24,9 @@ import ast
 import subprocess
 
 # this is set in module because it takes a long time to get from db.
+# we must move it tho because it makes testing excruciatingly slow.
+# plan is to put these in a text file in the /data directory, like for
+# the standard library names.
 pypi_package_names = get_pypi_package_names()
 
 
@@ -37,6 +41,7 @@ class GithubRepo(db.Model):
     zip_download_error = db.Column(db.Text)
     zip_grep_elapsed = db.Column(db.Float)
     pypi_dependencies = db.Column(JSONB)
+    requirements = db.Column(JSONB)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -59,6 +64,21 @@ class GithubRepo(db.Model):
 
         return self.dependency_lines
 
+    def set_requirements(self):
+        # goes to github api, gets requirements.txt. if it can't find that,
+        # gets setup.py. parses them and gets requirements, saves em.
+        try:
+            self.requirements = github_api.get_python_requirements(
+                self.login,
+                self.repo_name
+            )
+        except github_api.NotFoundException:
+            print "no python requirements found for {}/{}".format(
+                self.login,
+                self.repo_name
+            )
+            self.requirements = []
+
 
     @property
     def full_name(self):
@@ -68,6 +88,7 @@ class GithubRepo(db.Model):
         # the db threw an error when we tried to save this.
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
+
 
     def set_pypi_dependencies(self):
         """
@@ -234,6 +255,33 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.limit(q_limit)
 
     return enque_repos(q, set_pypi_dependencies)
+
+
+
+"""
+save python requirements from requirements.txt and setup.py
+"""
+def set_requirements(login, repo_name):
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_requirements()
+    commit_repo(repo)
+    print "sought requirements, committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
+
+
+def set_all_requirements(q_limit=9500):
+    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.requirements == None)
+    q = q.filter(GithubRepo.language == "python")
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    return enque_repos(q, set_requirements)
 
 
 

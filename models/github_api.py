@@ -3,12 +3,14 @@ import logging
 import requests
 from urlparse import urlparse
 import random
-from app import db
 from time import sleep
 from time import time
 from util import elapsed
-import subprocess
+import json
 import subprocess32
+import base64
+import re
+import ast
 
 logger = logging.getLogger("github_api")
 
@@ -75,6 +77,9 @@ keyring = GithubKeyring()
 
 class ZipGetterException(Exception):
     db_str = None
+
+class NotFoundException(Exception):
+    pass
 
 class ZipGetter():
 
@@ -290,6 +295,76 @@ def get_profile(username, api_key_tuple):
         username=username
     )
     return make_ratelimited_call(url, api_key_tuple)
+
+
+def get_python_requirements(login, repo_name):
+    try:
+        ret = get_requirements_txt_requirements(login, repo_name)
+        print "got {} requirements.txt requirements for {}/{}".format(
+            len(ret),
+            login,
+            repo_name
+        )
+    except NotFoundException:
+        ret = get_setup_py_requirements(login, repo_name)
+        print "got {} setup.py requirements for {}/{}".format(
+            len(ret),
+            login,
+            repo_name
+        )
+    return ret
+
+
+
+def get_setup_py_requirements(login, repo_name):
+    url = 'https://api.github.com/repos/{login}/{repo_name}/contents/setup.py'.format(
+        login=login,
+        repo_name=repo_name
+    )
+    resp = make_ratelimited_call(url)
+    try:
+        file_contents = resp["content"]
+    except KeyError:
+        raise NotFoundException
+
+    decoded_file_contents = base64.decodestring(file_contents)
+    parsed = ast.parse(decoded_file_contents)
+    ret = []
+    # see ast docs: https://greentreesnakes.readthedocs.org/en/latest/index.html
+    for node in ast.walk(parsed):
+        try:
+            if node.func.id == "setup":
+                for keyword in node.keywords:
+                    if keyword.arg=="install_requires":
+                        for elt in keyword.value.elts:
+                            ret.append(elt.s)
+                    if keyword.arg == "extras_require":
+                        for my_list in keyword.value.values:
+                            for elt in my_list.elts:
+                                ret.append(elt.s)
+
+        except AttributeError:
+            continue
+
+    return ret
+
+
+def get_requirements_txt_requirements(login, repo_name):
+    url = 'https://api.github.com/repos/{login}/{repo_name}/contents/requirements.txt'.format(
+        login=login,
+        repo_name=repo_name
+    )
+    resp = make_ratelimited_call(url)
+    try:
+        file_contents = resp["content"]
+    except KeyError:
+        raise NotFoundException
+
+    decoded_file_contents = base64.decodestring(file_contents)
+    dep_lines = decoded_file_contents.split("\n")
+    deps = [x.split("==")[0] for x in dep_lines if x != '']
+
+    return deps
 
 
 
