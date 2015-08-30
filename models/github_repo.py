@@ -135,6 +135,7 @@ class GithubRepo(db.Model):
 
         # great, we found one!
         # pypi_package_names is loaded as module import, it's a cache.
+        print "there are {} items inteh pypipackagenames cache".format(len(PypiPackageNames.get()))
         if module_name in PypiPackageNames.get():
             return module_name
 
@@ -224,9 +225,6 @@ def set_pypi_dependencies(login, repo_name):
 
 
 def set_all_pypi_dependencies(q_limit=100):
-    PypiPackageNames.load_cache()
-    PythonStandardLibs.load_cache()
-
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(GithubRepo.dependency_lines != None)
     q = q.filter(GithubRepo.pypi_dependencies == None)
