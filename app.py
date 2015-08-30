@@ -62,11 +62,11 @@ github_zip_queue = Queue("github_zip", connection=redis_rq_conn)
 
 
 # these imports are needed so that tables will get auto-created.
+from models import github_repo
 from models import profile
 from models import repo
 from models import github_user
-from models import github_repo
-from models import pypi_project
+#from models import pypi_project
 from models import cran_project
 
 db.create_all()
