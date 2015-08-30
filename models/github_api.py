@@ -334,6 +334,16 @@ def get_python_requirements(login, repo_name):
     return sorted(ret)
 
 
+def _clean_setup_req(req):
+    """
+    get rid of cruft in setup.py req format params.
+
+    gets "Markdown" out of:
+    "Markdown==5.5",
+    "Markdown>=5",
+    "Markdown == 5"
+    """
+    return re.compile("(=|>)").split(req)[0].strip()
 
 def get_setup_py_requirements(login, repo_name):
     url = 'https://api.github.com/repos/{login}/{repo_name}/contents/setup.py'.format(
@@ -356,11 +366,11 @@ def get_setup_py_requirements(login, repo_name):
                 for keyword in node.keywords:
                     if keyword.arg=="install_requires":
                         for elt in keyword.value.elts:
-                            ret.append(elt.s)
+                            ret.append(_clean_setup_req(elt.s))
                     if keyword.arg == "extras_require":
                         for my_list in keyword.value.values:
                             for elt in my_list.elts:
-                                ret.append(elt.s)
+                                ret.append(_clean_setup_req(elt.s))
 
         except AttributeError:
             continue
