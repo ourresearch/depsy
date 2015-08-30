@@ -86,7 +86,7 @@ class GithubRepo(db.Model):
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
         for line in import_lines:
-            print u"checking this line: {}".format(line)
+            print line
             try:
                 nodes = ast.parse(line.strip()).body
             except SyntaxError:
