@@ -23,11 +23,6 @@ from time import sleep
 import ast
 import subprocess
 
-# this is set in module because it takes a long time to get from db.
-# we must move it tho because it makes testing excruciatingly slow.
-# plan is to put these in a text file in the /data directory, like for
-# the standard library names.
-#pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -112,6 +107,12 @@ class GithubRepo(db.Model):
         lines = self.dependency_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
+
+        # this is SUPER slow here.
+        # make get get_pypi_package_names() open a pickle file instead.
+        pypi_package_names = get_pypi_package_names()
+
+
         for line in import_lines:
             print u"checking this line: {}".format(line)
             try:
