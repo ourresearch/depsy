@@ -11,7 +11,7 @@ from models.github_api import github_zip_getter_factory
 from models.pypi_project import PypiProject
 
 from models.pypi_project import PythonStandardLibs
-from models.pypi_project import PypiPackageNames
+from models.pypi_project import get_pypi_package_names
 
 
 from models import github_api
@@ -21,6 +21,9 @@ from time import time
 from time import sleep
 import ast
 import subprocess
+
+# this is set in module because it takes a long time to get from db.
+pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -113,9 +116,8 @@ class GithubRepo(db.Model):
                 for my_name in node.names:
                     modules_imported.add(my_name.name)
 
-
         for module_name in modules_imported:
-            pypi_package = self._get_pypi_package(module_name)
+            pypi_package = self._get_pypi_package(module_name, pypi_package_names)
             if pypi_package is not None:
                 self.pypi_dependencies.append(pypi_package)
 
@@ -126,7 +128,7 @@ class GithubRepo(db.Model):
         )
         return self.pypi_dependencies
 
-    def _get_pypi_package(self, module_name):
+    def _get_pypi_package(self, module_name, pypi_package_names):
 
         # if it's in the standard lib it doesn't count,
         # even if in might be in pypi
@@ -135,14 +137,13 @@ class GithubRepo(db.Model):
 
         # great, we found one!
         # pypi_package_names is loaded as module import, it's a cache.
-        print "there are {} items inteh pypipackagenames cache".format(len(PypiPackageNames.get()))
-        if module_name in PypiPackageNames.get():
+        if module_name in pypi_package_names:
             return module_name
 
         # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
         elif '.' in module_name:
             shortened_name = module_name.split('.')[-1]
-            return self._get_pypi_package(shortened_name)
+            return self._get_pypi_package(shortened_name, pypi_package_names)
 
         # if there's no dot in your name, there are no more options, you're done
         else:

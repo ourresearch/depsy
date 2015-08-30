@@ -94,19 +94,15 @@ def add_all_pypi_dependency_lines():
 """
 
 
- caching database and file operations.
+database and file operations.
 
 """
 
-python_standard_libs_cache = []
 
 class PythonStandardLibs():
     url = "https://docs.python.org/2.7/py-modindex.html"
     data_dir = Path(__file__, "../../data").resolve()
     pickle_path = Path(data_dir, "python_standard_libs.pickle")
-
-    def __init__(self):
-        pass
 
     @classmethod
     def save_from_web(cls):  # only needs to be used once ever, here for tidiness
@@ -121,14 +117,9 @@ class PythonStandardLibs():
         print "saved these to file: {}".format(libs)
 
     @classmethod
-    def load_cache(cls):
-        global python_standard_libs_cache
-        with open(str(cls.pickle_path), "r") as f:
-            python_standard_libs_cache = pickle.load(f)
-
-    @classmethod
     def get(cls):
-        return python_standard_libs_cache
+        with open(str(cls.pickle_path), "r") as f:
+            return pickle.load(f)
 
 
 def save_python_standard_libs():
@@ -141,33 +132,17 @@ def save_python_standard_libs():
 
 
 
+def get_pypi_package_names():
+    start_time = time()
+    pypi_q = db.session.query(PypiProject.project_name)
+    pypi_lib_names = [r[0] for r in pypi_q.all()]
 
+    print "got {} PyPi project names in {}sec.".format(
+        len(pypi_lib_names),
+        elapsed(start_time)
+    )
 
-pypi_package_names_cache = []
-
-class PypiPackageNames():
-
-    def __init__(self):
-        pass
-
-    @classmethod
-    def load_cache(cls):
-        start_time = time()
-        global pypi_package_names_cache
-
-        pypi_q = db.session.query(PypiProject.project_name)
-        pypi_package_names_cache = [r[0] for r in pypi_q.all()]
-
-        print "got {} PyPi project names in {}sec.".format(
-            len(pypi_package_names_cache),
-            elapsed(start_time)
-        )
-
-
-    @classmethod
-    def get(cls):
-        return pypi_package_names_cache
-
+    return pypi_lib_names
 
 
 
