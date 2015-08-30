@@ -27,7 +27,7 @@ import subprocess
 # we must move it tho because it makes testing excruciatingly slow.
 # plan is to put these in a text file in the /data directory, like for
 # the standard library names.
-pypi_package_names = get_pypi_package_names()
+#pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -428,11 +428,6 @@ def add_repos_from_remote_csv(csv_url, language):
                     elapsed=elapsed(start))
 
     db.session.commit()
-
-
-
-
-
 
 
 
