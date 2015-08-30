@@ -54,12 +54,19 @@ class GithubKeyring():
 
     def report(self):
         print "remaining calls by key: "
+        total_remaining = 0
         for login, token in self._keys_from_env():
             remaining = self._check_remaining_for_key(login, token)
+            total_remaining += remaining
             print "{login:>16}: {remaining}".format(
                 login=login,
                 remaining=remaining
             )
+
+        print "{:>16}: {}".format(
+            "TOTAL",
+            total_remaining
+        )
         print "\n"
 
     def _get_good_key(self):
@@ -372,11 +379,29 @@ def get_requirements_txt_requirements(login, repo_name):
     except KeyError:
         raise NotFoundException
 
-    decoded_file_contents = base64.decodestring(file_contents)
-    dep_lines = decoded_file_contents.split("\n")
-    deps = [x.split("==")[0] for x in dep_lines if x != '']
+    # see here for spec used in parsing the file:
+    # https://pip.readthedocs.org/en/1.1/requirements.html#the-requirements-file-format
+    # it doesn't mention the '#' comment but found it often in examples.
+    # not using this test str in  the function, just a handy place to keep it.
+    test_str = """# my comment
+file://blahblah
+-e http:blahblah
+foo==10.2
+baz>=3.6
+foo.bar>=3.33
+foo-bar==2.2
+foo_bar==1.1
+foo == 5.5
+-e http://blah
+  foo_with_space_in_front = 1.1"""
 
-    return deps
+    decoded_file_contents = base64.decodestring(file_contents)
+    reqs = re.findall(
+        r'^(?!#|file|-e)\s*([\w\.-]+)',
+        decoded_file_contents,
+        re.MULTILINE | re.IGNORECASE
+    )
+    return reqs
 
 
 
