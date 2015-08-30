@@ -9,7 +9,10 @@ from models import github_api
 from models.github_api import username_and_repo_name_from_github_url
 from models.github_api import github_zip_getter_factory
 from models.pypi_project import PypiProject
+
 from models.pypi_project import PythonStandardLibs
+from models.pypi_project import PypiPackageNames
+
 
 from models import github_api
 import requests
@@ -63,7 +66,7 @@ class GithubRepo(db.Model):
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
 
-    def set_pypi_dependencies(self, pypi_lib_names):
+    def set_pypi_dependencies(self):
         """
         using self.dependency_lines, finds all pypi libs imported by repo.
 
@@ -86,7 +89,7 @@ class GithubRepo(db.Model):
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
         for line in import_lines:
-            print line
+            print u"checking this line: {}".format(line)
             try:
                 nodes = ast.parse(line.strip()).body
             except SyntaxError:
@@ -112,7 +115,7 @@ class GithubRepo(db.Model):
 
 
         for module_name in modules_imported:
-            pypi_package = self._get_pypi_package(module_name, pypi_lib_names)
+            pypi_package = self._get_pypi_package(module_name)
             if pypi_package is not None:
                 self.pypi_dependencies.append(pypi_package)
 
@@ -123,20 +126,22 @@ class GithubRepo(db.Model):
         )
         return self.pypi_dependencies
 
-    def _get_pypi_package(self, module_name, pypi_lib_names):
+    def _get_pypi_package(self, module_name):
 
-        # if it's in the standard lib it doesn't count--even if in might be in pypi
+        # if it's in the standard lib it doesn't count,
+        # even if in might be in pypi
         if module_name in PythonStandardLibs.get():
             return None
 
         # great, we found one!
-        if module_name in pypi_lib_names:
+        # pypi_package_names is loaded as module import, it's a cache.
+        if module_name in PypiPackageNames.get():
             return module_name
 
         # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
         elif '.' in module_name:
             shortened_name = module_name.split('.')[-1]
-            return self._get_pypi_package(shortened_name, pypi_lib_names)
+            return self._get_pypi_package(shortened_name)
 
         # if there's no dot in your name, there are no more options, you're done
         else:
@@ -212,21 +217,16 @@ def set_pypi_dependencies(login, repo_name):
     if repo is None:
         return None
 
-    pypi_q = db.session.query(PypiProject.project_name)
-    pypi_lib_names = [r[0] for r in pypi_q.all()]
-    num_pypi_lib_names = len(pypi_lib_names)
-    print "got {} PyPi project names in {}sec.".format(
-        num_pypi_lib_names,
-        elapsed(start_time)
-    )
-
-    repo.set_pypi_dependencies(pypi_lib_names)
+    repo.set_pypi_dependencies()
     commit_repo(repo)
     print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
     return None  # important that it returns None for RQ
 
 
 def set_all_pypi_dependencies(q_limit=100):
+    PypiPackageNames.load_cache()
+    PythonStandardLibs.load_cache()
+
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(GithubRepo.dependency_lines != None)
     q = q.filter(GithubRepo.pypi_dependencies == None)

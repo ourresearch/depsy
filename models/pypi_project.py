@@ -5,6 +5,8 @@ import requests
 import re
 import pickle
 from pathlib import Path
+from time import time
+from util import elapsed
 
 class PypiProject(db.Model):
     project_name = db.Column(db.Text, primary_key=True)
@@ -89,10 +91,22 @@ def add_all_pypi_dependency_lines():
 
 
 
+"""
+
+
+ caching database and file operations.
+
+"""
+
+python_standard_libs_cache = []
+
 class PythonStandardLibs():
     url = "https://docs.python.org/2.7/py-modindex.html"
     data_dir = Path(__file__, "../../data").resolve()
     pickle_path = Path(data_dir, "python_standard_libs.pickle")
+
+    def __init__(self):
+        pass
 
     @classmethod
     def save_from_web(cls):  # only needs to be used once ever, here for tidiness
@@ -107,9 +121,13 @@ class PythonStandardLibs():
         print "saved these to file: {}".format(libs)
 
     @classmethod
-    def get(cls):
+    def load_cache(cls):
         with open(str(cls.pickle_path), "r") as f:
             return pickle.load(f)
+
+    @classmethod
+    def get(cls):
+        return python_standard_libs_cache
 
 
 def save_python_standard_libs():
@@ -117,6 +135,36 @@ def save_python_standard_libs():
 
     # to show the thing works
     print "got these from pickled file: {}".format(PythonStandardLibs.get())
+
+
+
+
+
+
+
+pypi_package_names_cache = []
+
+class PypiPackageNames():
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def load_cache(cls):
+        start_time = time()
+        pypi_q = db.session.query(PypiProject.project_name)
+        pypi_lib_names = [r[0] for r in pypi_q.all()]
+        num_pypi_lib_names = len(pypi_lib_names)
+
+        print "got {} PyPi project names in {}sec.".format(
+            num_pypi_lib_names,
+            elapsed(start_time)
+        )
+
+
+    @classmethod
+    def get(cls):
+        return pypi_package_names_cache
 
 
 
