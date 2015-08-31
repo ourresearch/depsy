@@ -94,13 +94,13 @@ class GithubRepo(db.Model):
                 # nope, no setup.py either. oh well we tried. quit now.
                 self.reqs_file = None
                 self.requirements = []
-        finally:
-            # no matter what, record that we did go out and look.
-            self.reqs_file_tried = True
-            print "found {} requirements for {}".format(
-                len(self.requirements),
-                self.full_name
-            )
+
+
+        self.reqs_file_tried = True
+        print "found {} requirements for {}".format(
+            len(self.requirements),
+            self.full_name
+        )
 
 
     @property
