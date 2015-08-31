@@ -1,15 +1,15 @@
 <div class="landing">
    <div class="tagline">
-      Find the impact of Python and R libraries.
+      Find the impact of software libraries in R and Python.
    </div>
    <div class="search-box">
     <input type="text"
            ng-model="asyncSelected"
-           placeholder="Locations loaded via $http"
-           typeahead="address for address in getLocation($viewValue)"
+           placeholder="Search by library or author name"
+           typeahead="address for address in doSearch($viewValue)"
            typeahead-loading="loadingLocations"
            typeahead-no-results="noResults"
-           class="form-control">
+           class="form-control input-lg">
    </div>
 
 </div>

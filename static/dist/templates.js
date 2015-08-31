@@ -113,16 +113,16 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
     "   <div class=\"tagline\">\n" +
-    "      Find the impact of Python and R libraries.\n" +
+    "      Find the impact of software libraries in R and Python.\n" +
     "   </div>\n" +
     "   <div class=\"search-box\">\n" +
     "    <input type=\"text\"\n" +
     "           ng-model=\"asyncSelected\"\n" +
-    "           placeholder=\"Locations loaded via $http\"\n" +
-    "           typeahead=\"address for address in getLocation($viewValue)\"\n" +
+    "           placeholder=\"Search by library or author name\"\n" +
+    "           typeahead=\"address for address in doSearch($viewValue)\"\n" +
     "           typeahead-loading=\"loadingLocations\"\n" +
     "           typeahead-no-results=\"noResults\"\n" +
-    "           class=\"form-control\">\n" +
+    "           class=\"form-control input-lg\">\n" +
     "   </div>\n" +
     "\n" +
     "</div>\n" +
