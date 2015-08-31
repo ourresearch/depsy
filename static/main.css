@@ -100,42 +100,17 @@ div.header div.controls .menu-button {
 div.header div.controls .menu-button.on-dark-bg {
   color: #fff;
 }
-div.landing {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: url(img/servers.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  background-color: transparent;
-}
 div.landing div.tagline {
   text-align: center;
-  color: #fff;
-  font-size: 50px;
+  color: #333;
+  font-size: 30px;
   width: 1100px;
   margin: 200px auto 0;
   font-weight: 100;
-  text-shadow: 0 2px 10px #000;
 }
 div.landing div.big-action-button {
   text-align: center;
   margin-top: 80px;
-}
-div.landing div.big-action-button span.btn {
-  background: #ff3000;
-  -webkit-box-shadow: 0 1px 50px rgba(0, 0, 0, 0.7);
-  -moz-box-shadow: 0 1px 50px rgba(0, 0, 0, 0.7);
-  box-shadow: 0 1px 50px rgba(0, 0, 0, 0.7);
-  border: none;
-  font-size: 35px;
-}
-div.landing div.big-action-button span.btn i {
-  margin-right: 5px;
 }
 div.profile-page {
   margin-left: 200px;

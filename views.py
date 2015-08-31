@@ -1,4 +1,6 @@
 from app import app, db
+from sqlalchemy import sql
+
 from providers import github
 from models.profile import Profile
 from models.profile import create_profile
@@ -186,9 +188,22 @@ def api_repo(username, reponame):
     return json_resp_from_thing( repo.display_dict())
 
 
-@app.route("/search/<search_str>")
+@app.route("/api/search/<search_str>")
 def search(search_str):
-    return json_resp_from_thing({"msg": "searching for something?"})
+    command = "select * from project_names where name like '{str}%'".format(
+        str=search_str
+    )
+    res = db.session.connection().execute(sql.text(command))
+    ret = []
+    rows =  res.fetchall()
+    for row in rows:
+        row_dict = dict(zip(['language', 'name', 'summary'], row))
+        ret.append(row_dict)
+
+    print "i can json my str"
+    print json.dumps(ret)
+
+    return jsonify({"list": ret})
 
 
 @app.route('/auth/github', methods=['POST'])

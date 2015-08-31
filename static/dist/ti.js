@@ -102,6 +102,7 @@ angular.module('app').controller('AppCtrl', function(
 
 
   $scope.page = PageService
+
   $scope.currentUser = CurrentUser
   CurrentUser.get()
 
@@ -264,35 +265,13 @@ angular.module('landingPage', [
                                           $http,
                                           $auth, // from satellizer
                                           $rootScope,
-                                          PageService,
-                                          ProfileService){
+                                          PageService){
 
 
     PageService.d.hasDarkBg = true
 
-    $scope.newProfile = {}
-    $scope.newProfile.coreJournals = [{}]
-
-    $scope.makeProfile = function(){
-      ProfileService.createProfile(
-        $scope.newProfile.name,
-        $scope.newProfile.pmids.split("\n"),
-        _.pluck($scope.newProfile.coreJournals, "name")
-      )
-    }
-
-    $scope.addCoreJournal = function(){
-      console.log("adding a core journal field")
-      $scope.newProfile.coreJournals.push({})
-    }
 
 
-    $scope.getJournalNames = function(nameStartsWith){
-      return $http.get("api/journals/" + nameStartsWith)
-      .then(function(resp){
-          return resp.data
-      })
-    }
 
   })
 
@@ -685,14 +664,16 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
   $templateCache.put("landing-page/landing.tpl.html",
     "<div class=\"landing\">\n" +
     "   <div class=\"tagline\">\n" +
-    "      Discover the full impact of your research software:\n" +
-    "      citations, forks, reverse dependencies and more.\n" +
+    "      Find the impact of Python and R libraries.\n" +
     "   </div>\n" +
-    "   <div class=\"big-action-button\">\n" +
-    "      <span class=\"btn btn-lg btn-primary\" ng-click=\"authenticate()\">\n" +
-    "         <i class=\"fa fa-github\"></i>\n" +
-    "         Sign in with GitHub\n" +
-    "      </span>\n" +
+    "   <div class=\"search-box\">\n" +
+    "    <input type=\"text\"\n" +
+    "           ng-model=\"asyncSelected\"\n" +
+    "           placeholder=\"Locations loaded via $http\"\n" +
+    "           typeahead=\"address for address in getLocation($viewValue)\"\n" +
+    "           typeahead-loading=\"loadingLocations\"\n" +
+    "           typeahead-no-results=\"noResults\"\n" +
+    "           class=\"form-control\">\n" +
     "   </div>\n" +
     "\n" +
     "</div>\n" +

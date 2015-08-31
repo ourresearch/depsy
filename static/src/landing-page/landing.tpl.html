@@ -1,13 +1,15 @@
 <div class="landing">
    <div class="tagline">
-      Discover the full impact of your research software:
-      citations, forks, reverse dependencies and more.
+      Find the impact of Python and R libraries.
    </div>
-   <div class="big-action-button">
-      <span class="btn btn-lg btn-primary" ng-click="authenticate()">
-         <i class="fa fa-github"></i>
-         Sign in with GitHub
-      </span>
+   <div class="search-box">
+    <input type="text"
+           ng-model="asyncSelected"
+           placeholder="Locations loaded via $http"
+           typeahead="address for address in getLocation($viewValue)"
+           typeahead-loading="loadingLocations"
+           typeahead-no-results="noResults"
+           class="form-control">
    </div>
 
 </div>

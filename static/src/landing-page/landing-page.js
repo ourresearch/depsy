@@ -17,35 +17,13 @@ angular.module('landingPage', [
                                           $http,
                                           $auth, // from satellizer
                                           $rootScope,
-                                          PageService,
-                                          ProfileService){
+                                          PageService){
 
 
     PageService.d.hasDarkBg = true
 
-    $scope.newProfile = {}
-    $scope.newProfile.coreJournals = [{}]
-
-    $scope.makeProfile = function(){
-      ProfileService.createProfile(
-        $scope.newProfile.name,
-        $scope.newProfile.pmids.split("\n"),
-        _.pluck($scope.newProfile.coreJournals, "name")
-      )
-    }
-
-    $scope.addCoreJournal = function(){
-      console.log("adding a core journal field")
-      $scope.newProfile.coreJournals.push({})
-    }
 
 
-    $scope.getJournalNames = function(nameStartsWith){
-      return $http.get("api/journals/" + nameStartsWith)
-      .then(function(resp){
-          return resp.data
-      })
-    }
 
   })
 
