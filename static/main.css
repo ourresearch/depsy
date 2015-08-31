@@ -105,7 +105,7 @@ div.landing div.tagline {
   color: #333;
   font-size: 30px;
   width: 1100px;
-  margin: 200px auto 0;
+  margin: 150px auto 0;
   font-weight: 100;
 }
 div.landing div.search-box {
@@ -115,6 +115,11 @@ div.landing div.search-box {
 div.landing div.search-box input {
   width: 400px;
   margin: 0 auto;
+  font-size: 20px;
+}
+div.landing div.search-box ul.dropdown-menu li > a {
+  width: 400px;
+  font-size: 20px;
 }
 div.profile-page {
   margin-left: 200px;
