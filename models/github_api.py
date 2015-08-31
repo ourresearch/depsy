@@ -257,6 +257,12 @@ def make_ratelimited_call(url):
     try:
         login, token = keyring.get()
     except GithubRateLimitException:
+
+
+        # kill the script, don't keep trying.
+        raise GithubRateLimitException
+
+
         # wait a bit and try again, forever
         print "{}: our github keys have all reached their rate limits. sleeping....".format(
             url

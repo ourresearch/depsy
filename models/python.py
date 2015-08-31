@@ -69,6 +69,14 @@ def _clean_setup_req(req):
     except IndexError:
         return None
 
+
+
+def regex_parse_setup_py(contents):
+    # not using this yet, but it will get more stuff than ast approach.
+    requirement_lists_regex = r'(install_requires|requires|tests_require)\s*=\s*(\[[^\]]+\])'
+    requirement_dicts_regex = r'(extras_require)\s*=\s*(\[[^\]]+\])'
+
+
 def parse_setup_py(contents):
     parsed = ast.parse(contents)
     ret = []
