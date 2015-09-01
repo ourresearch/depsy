@@ -23,6 +23,7 @@ from time import time
 from time import sleep
 import ast
 import subprocess
+import re
 
 
 pypi_package_names = get_pypi_package_names()
@@ -40,6 +41,7 @@ class GithubRepo(db.Model):
     zip_download_error = db.Column(db.Text)
     zip_grep_elapsed = db.Column(db.Float)
     pypi_dependencies = db.Column(JSONB)
+    cran_dependencies = db.Column(JSONB)
     requirements = db.Column(JSONB)
     reqs_file = db.Column(db.Text)
     reqs_file_tried = db.Column(db.Boolean)
@@ -222,6 +224,39 @@ class GithubRepo(db.Model):
 
 
 
+    def set_cran_dependencies(self):
+        """
+        using self.dependency_lines, finds all cran libs imported by repo.
+        """
+        start_time = time()
+        self.cran_dependencies = []
+        if not self.dependency_lines:
+            return []
+
+        lines = self.dependency_lines.split("\n")
+        print lines
+        import_lines = [l.split(":")[1] for l in lines if ":" in l]
+        modules_imported = set()
+        library_or_require_re = re.compile("library(.*)|require(.*)")
+
+
+        for line in import_lines:
+            print u"checking this line: {}".format(line)
+            # put re here
+            # modules_imported.add(node.module)
+
+
+        # for module_name in modules_imported:
+        #     pypi_package = self._get_pypi_package(module_name, pypi_package_names)
+        #     if pypi_package is not None:
+        #         self.cran_dependencies.append(cran_package)
+
+        print "done finding cran deps for {}: {} (took {}sec)".format(
+            self.full_name,
+            self.cran_dependencies,
+            elapsed(start_time, 4)
+        )
+        return self.cran_dependencies
 
 
 
@@ -278,7 +313,16 @@ def add_all_github_dependency_lines(q_limit=100):
     return enque_repos(q, add_github_dependency_lines)
 
 
+def add_all_r_github_dependency_lines(q_limit=100):
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    # q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
+    # q = q.filter(GithubRepo.zip_download_error == None)
+    # q = q.filter(GithubRepo.zip_download_elapsed == None)
+    q = q.filter(GithubRepo.language == 'r')
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
 
+    return enque_repos(q, add_github_dependency_lines)
 
 
 
@@ -309,7 +353,6 @@ def set_all_zip_filenames(q_limit=100):
 
 
 
-
 """
 find and save list of pypi dependencies for each repo
 """
@@ -333,17 +376,38 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    # for row in q.all():
-    #     #print "setting this row", row
-    #     set_pypi_dependencies(row[0], row[1])
-
     return enque_repos(q, set_pypi_dependencies)
 
 
 
 
+"""
+find and save list of cran dependencies for each repo
+"""
+def set_cran_dependencies(login, repo_name):
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_cran_dependencies()
+    # commit_repo(repo)
+    print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
 
 
+def set_all_cran_dependencies(q_limit=100):
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.dependency_lines != None)
+    q = q.filter(GithubRepo.cran_dependencies == None)
+    q = q.filter(GithubRepo.language == "r")
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    # return enque_repos(q, set_cran_dependencies)
+    for row in q.all():
+        #print "setting this row", row
+        set_cran_dependencies(row[0], row[1])
 
 
 
@@ -392,6 +456,7 @@ def enque_repos(q, fn, *args):
     empty_github_zip_queue()
 
     start_time = time()
+    new_loop_start_time = time()
     index = 0
 
     print "running this query: \n{}\n".format(
@@ -414,10 +479,12 @@ def enque_repos(q, fn, *args):
         job.meta["full_repo_name"] = row[0] + "/" + row[1]
         job.save()
         if index % 1000 == 0:
-            print "added {} jobs to queue in {}sec".format(
+            print "added {} jobs to queue in {}sec total, {}sec this loop".format(
                 index,
-                elapsed(start_time)
+                elapsed(start_time),
+                new_loop_start_time(start_time)
             )
+            new_loop_start_time = time()
         index += 1
     print "last repo added to the queue was {}".format(row[0] + "/" + row[1])
 
