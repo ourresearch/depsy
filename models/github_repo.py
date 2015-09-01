@@ -482,7 +482,7 @@ def enque_repos(q, fn, *args):
             print "added {} jobs to queue in {}sec total, {}sec this loop".format(
                 index,
                 elapsed(start_time),
-                new_loop_start_time(start_time)
+                elapsed(new_loop_start_time)
             )
             new_loop_start_time = time()
         index += 1
