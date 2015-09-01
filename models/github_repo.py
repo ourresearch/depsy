@@ -63,6 +63,7 @@ class GithubRepo(db.Model):
         getter.set_dep_lines(self.language)
 
         self.dependency_lines = getter.dep_lines
+        print u"found depencency lines: {}".format(self.dependency_lines)
         self.zip_download_elapsed = getter.download_elapsed
         self.zip_download_size = getter.download_kb
         self.zip_download_error = getter.error
@@ -391,7 +392,7 @@ def set_cran_dependencies(login, repo_name):
         return None
 
     repo.set_cran_dependencies()
-    # commit_repo(repo)
+    commit_repo(repo)
     print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
     return None  # important that it returns None for RQ
 
