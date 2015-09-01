@@ -44,6 +44,9 @@ class GithubRepo(db.Model):
     reqs_file = db.Column(db.Text)
     reqs_file_tried = db.Column(db.Boolean)
 
+    zip_filenames = db.Column(JSONB)
+    zip_filenames_tried = db.Column(db.Boolean)
+
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
             language=self.language, login=self.login, repo_name=self.repo_name)
@@ -55,7 +58,7 @@ class GithubRepo(db.Model):
     def set_github_dependency_lines(self):
 
         getter = github_zip_getter_factory(self.login, self.repo_name)
-        getter.get_dep_lines(self.language)
+        getter.set_dep_lines(self.language)
 
         self.dependency_lines = getter.dep_lines
         self.zip_download_elapsed = getter.download_elapsed
@@ -64,6 +67,14 @@ class GithubRepo(db.Model):
         self.zip_grep_elapsed = getter.grep_elapsed
 
         return self.dependency_lines
+
+    def set_zip_filenames(self):
+        print "getting zip filenames for {}".format(self.full_name)
+
+        getter = github_zip_getter_factory(self.login, self.repo_name)
+        self.zip_filenames = getter.get_filenames()
+        self.zip_filenames_tried = True
+
 
     def set_requirements(self):
         return self.set_reqs_file()
@@ -243,6 +254,8 @@ def add_all_github_about():
 
 
 
+
+
 """
 add github dependency lines
 """
@@ -263,6 +276,33 @@ def add_all_github_dependency_lines(q_limit=100):
     q = q.limit(q_limit)
 
     return enque_repos(q, add_github_dependency_lines)
+
+
+
+
+
+
+
+"""
+add github repo zip filenames
+"""
+def set_zip_filenames(login, repo_name):
+    repo = get_repo(login, repo_name)
+    if repo:
+        repo.set_zip_filenames()
+        commit_repo(repo)
+    return None  # important that it returns None for RQ
+
+
+def set_all_zip_filenames(q_limit=100):
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
+    q = q.filter(GithubRepo.zip_download_error == None)
+    q = q.filter(GithubRepo.zip_filenames_tried == None)
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    return enque_repos(q, set_zip_filenames)
 
 
 
