@@ -8,6 +8,7 @@ from time import time
 from util import elapsed
 import json
 import subprocess32
+import zipfile
 import base64
 import re
 import ast
@@ -204,7 +205,17 @@ class ZipGetter():
             print "finished dep lines search in {} sec".format(self.grep_elapsed)
 
 
-    def get_dep_lines(self, language):
+    def get_filenames(self):
+        self.download()
+        if self.error:
+            print "Problems with the downloaded zip, quitting without getting filenames."
+            return None
+
+        z = zipfile.ZipFile(self.temp_file_name)
+        return z.namelist()
+
+
+    def set_dep_lines(self, language):
         self.download()
         if self.error:
             print "There are problems with the downloaded zip, quitting without getting deps."
