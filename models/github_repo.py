@@ -25,6 +25,9 @@ import ast
 import subprocess
 
 
+pypi_package_names = get_pypi_package_names()
+
+
 
 class GithubRepo(db.Model):
     login = db.Column(db.Text, primary_key=True)
@@ -138,11 +141,17 @@ class GithubRepo(db.Model):
 
         # this is SUPER slow here.
         # make get get_pypi_package_names() open a pickle file instead.
-        pypi_package_names = get_pypi_package_names()
+
+        # HAP:  made this a module include for now to speed this up
+        # another alternative: filter query against PyPiProject table for the set of names
+        # that are included in that table
+
+        # pypi_package_names = get_pypi_package_names()
+
 
 
         for line in import_lines:
-            print u"checking this line: {}".format(line)
+            # print u"checking this line: {}".format(line)
             try:
                 nodes = ast.parse(line.strip()).body
             except SyntaxError:
@@ -165,6 +174,7 @@ class GithubRepo(db.Model):
             elif isinstance(node, ast.Import):
                 for my_name in node.names:
                     modules_imported.add(my_name.name)
+
 
         for module_name in modules_imported:
             pypi_package = self._get_pypi_package(module_name, pypi_package_names)
@@ -283,7 +293,12 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_pypi_dependencies)
+    # replace the RQ way for now, so it can run in parallel with another RQ task easily
+    for row in q.all():
+        #print "setting this row", row
+        set_pypi_dependencies(row[0], row[1])
+
+    # return enque_repos(q, set_pypi_dependencies)
 
 
 
