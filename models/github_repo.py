@@ -26,7 +26,8 @@ import subprocess
 import re
 
 
-pypi_package_names = get_pypi_package_names()
+# comment this out here now, because usually not using
+# pypi_package_names = get_pypi_package_names()
 
 
 
@@ -162,11 +163,12 @@ class GithubRepo(db.Model):
         # this is SUPER slow here.
         # make get get_pypi_package_names() open a pickle file instead.
 
-        # HAP:  made this a module include for now to speed this up
+        # If we want to speed this up, comment back in the module-level version
+        # at the top of this file, and comment it out here.
         # another alternative: filter query against PyPiProject table for the set of names
         # that are included in that table
 
-        # pypi_package_names = get_pypi_package_names()
+        pypi_package_names = get_pypi_package_names()
 
 
 
@@ -244,13 +246,23 @@ class GithubRepo(db.Model):
         print lines
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
-        library_or_require_re = re.compile("library(.*)|require(.*)")
+        library_or_require_re = re.compile("library|require\((.*?)(?:,.*)*\)", re.IGNORECASE)
 
 
         for line in import_lines:
-            print u"checking this line: {}".format(line)
-            # put re here
-            # modules_imported.add(node.module)
+            print u"\nchecking this line: {}".format(line)
+            clean_line = line.strip()
+            if clean_line.startswith("#"):
+                pass # is a comment
+            else:
+                modules = library_or_require_re.findall(clean_line)
+                for module in modules:
+                    modules_imported.add(module)
+                if modules:
+                    print "found modules", modules
+                else:
+                    print "no modules found in ", clean_line 
+        print "all modules found:", modules_imported
 
 
         # for module_name in modules_imported:
