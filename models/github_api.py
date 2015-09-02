@@ -224,7 +224,6 @@ class ZipGetter():
         if language == "r":
             print "getting dep lines in r"
             include_globs = []
-            query_str = "library|require"
             r_include_globs = ["*.R", "*.Rnw", "*.Rmd", "*.Rhtml", "*.Rtex", "*.Rst"]
             for r_include_glob in r_include_globs:
                 include_globs.append(r_include_glob.upper())
@@ -233,7 +232,13 @@ class ZipGetter():
             include_globs += r_include_globs
 
             exclude_globs = ["*.foo"]  # hack, because some value is expected
-            self._grep_for_dep_lines(query_str, include_globs, exclude_globs)
+
+            # heroku zipgrep doesn't allow ors
+            self._grep_for_dep_lines("library", include_globs, exclude_globs)
+            first_half_dependency = self.dep_lines
+            self._grep_for_dep_lines("require", include_globs, exclude_globs)
+            if first_half_dependency:
+                self.dep_lines = "\n".join([first_half_dependency, self.dep_lines])
 
         elif language == "python":
             print "getting dep lines in python"

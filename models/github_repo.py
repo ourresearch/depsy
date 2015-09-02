@@ -63,7 +63,13 @@ class GithubRepo(db.Model):
         getter.set_dep_lines(self.language)
 
         self.dependency_lines = getter.dep_lines
-        print u"found depencency lines: {}".format(self.dependency_lines)
+        if self.dependency_lines:
+            try:
+                print u"FOUND depencency lines: {}".format(self.dependency_lines)
+            except UnicodeDecodeError:
+                pass
+        else:
+            print "NO dependency lines found"
         self.zip_download_elapsed = getter.download_elapsed
         self.zip_download_size = getter.download_kb
         self.zip_download_error = getter.error
@@ -316,15 +322,19 @@ def add_all_github_dependency_lines(q_limit=100):
 
 def add_all_r_github_dependency_lines(q_limit=100):
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    # q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
-    # q = q.filter(GithubRepo.zip_download_error == None)
-    # q = q.filter(GithubRepo.zip_download_elapsed == None)
+    q = q.filter(GithubRepo.dependency_lines == None)
+    q = q.filter(GithubRepo.zip_download_error == None)
+    q = q.filter(GithubRepo.zip_download_elapsed == None)
     q = q.filter(GithubRepo.language == 'r')
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, add_github_dependency_lines)
+    # return enque_repos(q, add_github_dependency_lines)
 
+    # return enque_repos(q, set_cran_dependencies)
+    for row in q.all():
+        #print "setting this row", row
+        add_github_dependency_lines(row[0], row[1])
 
 
 
