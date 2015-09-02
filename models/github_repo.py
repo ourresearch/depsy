@@ -246,13 +246,16 @@ class GithubRepo(db.Model):
         print lines
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
-        library_or_require_re = re.compile("library|require\((.*?)(?:,.*)*\)", re.IGNORECASE)
+        library_or_require_re = re.compile("[library|require]\((.*?)(?:,.*)*\)", re.IGNORECASE)
 
 
         for line in import_lines:
             print u"\nchecking this line: {}".format(line)
             clean_line = line.strip()
+            clean_line = clean_line.replace("'", "")
+            clean_line = clean_line.replace('"', "")
             if clean_line.startswith("#"):
+                print "skipping, is a comment"
                 pass # is a comment
             else:
                 modules = library_or_require_re.findall(clean_line)
@@ -261,14 +264,10 @@ class GithubRepo(db.Model):
                 if modules:
                     print "found modules", modules
                 else:
-                    print "no modules found in ", clean_line 
+                    print "NO MODULES found in ", clean_line 
         print "all modules found:", modules_imported
 
-
-        # for module_name in modules_imported:
-        #     pypi_package = self._get_pypi_package(module_name, pypi_package_names)
-        #     if pypi_package is not None:
-        #         self.cran_dependencies.append(cran_package)
+        self.cran_dependencies = list(modules_imported)
 
         print "done finding cran deps for {}: {} (took {}sec)".format(
             self.full_name,
