@@ -190,7 +190,8 @@ def api_repo(username, reponame):
 
 @app.route("/api/search/<search_str>")
 def search(search_str):
-    command = "select * from project_names where name like '{str}%' limit 10".format(
+    # ilike to make case insensitive
+    command = "select * from project_names where name ilike '{str}%' limit 10".format(
         str=search_str
     )
     res = db.session.connection().execute(sql.text(command))

@@ -26,7 +26,8 @@ import subprocess
 import re
 
 
-pypi_package_names = get_pypi_package_names()
+# comment this out here now, because usually not using
+# pypi_package_names = get_pypi_package_names()
 
 
 
@@ -162,11 +163,12 @@ class GithubRepo(db.Model):
         # this is SUPER slow here.
         # make get get_pypi_package_names() open a pickle file instead.
 
-        # HAP:  made this a module include for now to speed this up
+        # If we want to speed this up, comment back in the module-level version
+        # at the top of this file, and comment it out here.
         # another alternative: filter query against PyPiProject table for the set of names
         # that are included in that table
 
-        # pypi_package_names = get_pypi_package_names()
+        pypi_package_names = get_pypi_package_names()
 
 
 
@@ -244,19 +246,31 @@ class GithubRepo(db.Model):
         print lines
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
-        library_or_require_re = re.compile("library(.*)|require(.*)")
+        library_or_require_re = re.compile("[library|require]\((.*?)(?:,.*)*", re.IGNORECASE)
 
 
         for line in import_lines:
-            print u"checking this line: {}".format(line)
-            # put re here
-            # modules_imported.add(node.module)
+            # print u"\nchecking this line: {}".format(line)
+            clean_line = line.strip()
+            clean_line = clean_line.replace("'", "")
+            clean_line = clean_line.replace('"', "")
+            clean_line = clean_line.replace(' ', "")
+            clean_line = clean_line.replace('library.dynam', "library")
+            if clean_line.startswith("#"):
+                print "skipping, is a comment"
+                pass # is a comment
+            else:
+                modules = library_or_require_re.findall(clean_line)
+                for module in modules:
+                    modules_imported.add(module)
+                if modules:
+                    # print "found modules", modules
+                    pass
+                else:
+                    print "NO MODULES found in ", clean_line 
+        print "all modules found:", modules_imported
 
-
-        # for module_name in modules_imported:
-        #     pypi_package = self._get_pypi_package(module_name, pypi_package_names)
-        #     if pypi_package is not None:
-        #         self.cran_dependencies.append(cran_package)
+        self.cran_dependencies = list(modules_imported)
 
         print "done finding cran deps for {}: {} (took {}sec)".format(
             self.full_name,
@@ -331,7 +345,7 @@ def add_all_r_github_dependency_lines(q_limit=100):
 
     return enque_repos(q, add_github_dependency_lines)
 
-    # return enque_repos(q, set_cran_dependencies)
+    # return enque_repos(q, add_github_dependency_lines)
     # for row in q.all():
     #     #print "setting this row", row
     #     add_github_dependency_lines(row[0], row[1])
@@ -415,10 +429,11 @@ def set_all_cran_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    # return enque_repos(q, set_cran_dependencies)
-    for row in q.all():
-        #print "setting this row", row
-        set_cran_dependencies(row[0], row[1])
+    return enque_repos(q, set_cran_dependencies)
+
+    # for row in q.all():
+    #     #print "setting this row", row
+    #     set_cran_dependencies(row[0], row[1])
 
 
 

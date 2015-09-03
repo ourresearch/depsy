@@ -105,7 +105,9 @@ class PythonStandardLibs():
     pickle_path = Path(data_dir, "python_standard_libs.pickle")
 
     @classmethod
-    def save_from_web(cls):  # only needs to be used once ever, here for tidiness
+    def save_from_web(cls):  
+        # only needs to be used once ever, here for tidiness
+        # checked the result into source control as python_standard_libs.pickle
         html = requests.get(cls.url).text
         exp = r'<tt class="xref">([^<]+)'
         matches = re.findall(exp, html)
