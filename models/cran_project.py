@@ -61,12 +61,10 @@ class CranProject(db.Model):
         urls = re.compile(r",*\s*\n*").split(urls_str)
 
         for url in urls:
-            github_url = github_api.get_github_homepage(url)
-            if github_url is None:
-                continue
-            else:
-                self.github_owner, self.github_repo_name = \
-                    github_api.username_and_repo_name_from_github_url(url)
+            login, repo_name = github_api.login_and_repo_name_from_url(url)
+            if login and repo_name:
+                self.github_repo_name = repo_name
+                self.github_owner = login
 
                 # there may be more than one github url. if so, too bad,
                 # we're just picking the first one.
@@ -239,6 +237,9 @@ def set_all_cran_github_ids():
     q = q.order_by(CranProject.project_name)
 
     update_fn = make_update_fn("set_github_repo")
+    update_fn("DT")
+    return False
+
     for row in q.all():
         update_fn(row[0])
 
