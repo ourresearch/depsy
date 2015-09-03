@@ -440,33 +440,6 @@ def login_and_repo_name_from_url(url):
 
 
 
-def get_github_homepage(url):
-    # WARNING  this is out of data and unused since jason did scripts.
-    # todo delete?
-
-    try:
-        parsed = urlparse(url)
-    except AttributeError:
-        return None  # no url was given
-
-    # we are getting rid of things that
-    # 1. aren't on github (duh)
-    # 2. are just "github.com"
-    # this leaves some things that have multiple pypi project in one github repo
-
-    path_elements = filter(None, parsed.path.split("/"))
-    netloc_elements = parsed.netloc.split(".")
-
-    # github.com/login/repo_name
-    if parsed.netloc == "github.com" and len(path_elements) == 2:
-        return url
-
-    # login.github.io/repo_name (github pages)
-    elif netloc_elements[1:] == ['github', 'io'] and len(path_elements) == 1:
-        return url
-    else:
-        return None
-
 
 def check_keys():
     keyring.report()
