@@ -394,21 +394,25 @@ def get_repo_data(login, repo_name, trim=True):
 
 
 def username_and_repo_name_from_github_url(url):
+    username = None
+    repo_name = None
+
     try:
         path = urlparse(url).path
+        netloc = urlparse(url).netloc
     except AttributeError:  # there's no url
         return [None, None]
 
-    split_path = path.split("/")
-    try:
-        username = split_path[1]
-    except IndexError:
-        username = None
+    netloc_parts = netloc.split('.')
+    path_parts = filter(None, path.split("/"))
 
-    try:
-        repo_name = split_path[2]
-    except IndexError:
-        repo_name = None
+    if netloc_parts[1:] == ['github', 'io'] and len(path_parts) == 1:
+        username = netloc_parts[0]
+        repo_name = path[0]
+
+    elif len(path_parts) == 2:
+        username = path_parts[0]
+        repo_name = path_parts[1]
 
     return [username, repo_name]
 
