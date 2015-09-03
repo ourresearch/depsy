@@ -246,7 +246,7 @@ class GithubRepo(db.Model):
         print lines
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
-        library_or_require_re = re.compile("[library|require]\((.*?)(?:,.*)*\)", re.IGNORECASE)
+        library_or_require_re = re.compile("[library|require]\((.*?)(?:,.*)*", re.IGNORECASE)
 
 
         for line in import_lines:
@@ -254,6 +254,8 @@ class GithubRepo(db.Model):
             clean_line = line.strip()
             clean_line = clean_line.replace("'", "")
             clean_line = clean_line.replace('"', "")
+            clean_line = clean_line.replace(' ', "")
+            clean_line = clean_line.replace('library.dynam', "library")
             if clean_line.startswith("#"):
                 print "skipping, is a comment"
                 pass # is a comment
