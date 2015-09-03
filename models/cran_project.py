@@ -51,16 +51,26 @@ class CranProject(db.Model):
 
     def set_github_repo(self):
         try:
-            url = self.api_raw['URL']
+            url_str = self.api_raw['URL']
         except KeyError:
             return False
 
-        github_url = github_api.get_github_homepage(url)
-        if github_url is None:
-            return False
+        # People sometimes put comma-delimited lists of urls in this field :/
+        # Sometimes this split approach will break, when there's a comma
+        # in a url. oh well.
+        urls = [u.strip() for u in url_str.split(",")]
 
-        self.github_owner, self.github_repo_name = \
-            github_api.username_and_repo_name_from_github_url(url)
+        for url in urls:
+            github_url = github_api.get_github_homepage(url)
+            if github_url is None:
+                continue
+            else:
+                self.github_owner, self.github_repo_name = \
+                    github_api.username_and_repo_name_from_github_url(url)
+
+                # there may be more than one github url. if so, too bad,
+                # we're just picking the first one.
+                break
 
         print "successfully set a github ID for {name}: {login}/{repo_name}.".format(
             name=self.project_name,
@@ -251,7 +261,7 @@ def make_update_fn(method_name):
         print "ran {repr}.{method_name}() method  and committed. took {elapsted}sec".format(
             repr=obj,
             method_name=method_name,
-            elapsted=elapsed(start_time)
+            elapsted=elapsed(start_time, 4)
         )
         return None  # important for if we use this on RQ
 
