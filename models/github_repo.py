@@ -250,7 +250,7 @@ class GithubRepo(db.Model):
 
 
         for line in import_lines:
-            print u"\nchecking this line: {}".format(line)
+            # print u"\nchecking this line: {}".format(line)
             clean_line = line.strip()
             clean_line = clean_line.replace("'", "")
             clean_line = clean_line.replace('"', "")
@@ -262,7 +262,8 @@ class GithubRepo(db.Model):
                 for module in modules:
                     modules_imported.add(module)
                 if modules:
-                    print "found modules", modules
+                    # print "found modules", modules
+                    pass
                 else:
                     print "NO MODULES found in ", clean_line 
         print "all modules found:", modules_imported
@@ -342,7 +343,7 @@ def add_all_r_github_dependency_lines(q_limit=100):
 
     return enque_repos(q, add_github_dependency_lines)
 
-    # return enque_repos(q, set_cran_dependencies)
+    # return enque_repos(q, add_github_dependency_lines)
     # for row in q.all():
     #     #print "setting this row", row
     #     add_github_dependency_lines(row[0], row[1])
@@ -426,10 +427,11 @@ def set_all_cran_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    # return enque_repos(q, set_cran_dependencies)
-    for row in q.all():
-        #print "setting this row", row
-        set_cran_dependencies(row[0], row[1])
+    return enque_repos(q, set_cran_dependencies)
+
+    # for row in q.all():
+    #     #print "setting this row", row
+    #     set_cran_dependencies(row[0], row[1])
 
 
 
