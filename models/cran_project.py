@@ -51,14 +51,14 @@ class CranProject(db.Model):
 
     def set_github_repo(self):
         try:
-            url_str = self.api_raw['URL']
+            urls_str = self.api_raw['URL']
         except KeyError:
             return False
 
-        # People sometimes put comma-delimited lists of urls in this field :/
-        # Sometimes this split approach will break, when there's a comma
-        # in a url. oh well.
-        urls = [u.strip() for u in url_str.split(",")]
+        # People put all kinds of lists in this field. So we're splitting on
+        # newlines, commas, and spaces. Won't get everything, but will
+        # get most.
+        urls = re.compile(r",*\s*\n*").split(urls_str)
 
         for url in urls:
             github_url = github_api.get_github_homepage(url)
@@ -266,8 +266,6 @@ def make_update_fn(method_name):
         return None  # important for if we use this on RQ
 
     return fn
-
-
 
 
 
