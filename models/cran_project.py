@@ -237,8 +237,6 @@ def set_all_cran_github_ids():
     q = q.order_by(CranProject.project_name)
 
     update_fn = make_update_fn("set_github_repo")
-    update_fn("DT")
-    return False
 
     for row in q.all():
         update_fn(row[0])

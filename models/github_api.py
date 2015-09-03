@@ -362,8 +362,12 @@ def get_setup_py_contents(login, repo_name):
         raise NotFoundException
 
 
-
-
+def get_repo_commits(self, login, repo_name):
+    url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
+        username=self.repo_owner,
+        repo_name=self.repo_name
+    )
+    return make_ratelimited_call(url)
 
 
 def get_repo_data(login, repo_name, trim=True):
