@@ -362,12 +362,25 @@ def get_setup_py_contents(login, repo_name):
         raise NotFoundException
 
 
-def get_repo_commits(self, login, repo_name):
+def get_repo_contributors(login, repo_name):
+    if login is None or repo_name is None:
+        return None
+
     url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
-        username=self.repo_owner,
-        repo_name=self.repo_name
+        username=login,
+        repo_name=repo_name
     )
-    return make_ratelimited_call(url)
+    contribs = make_ratelimited_call(url)
+    if isinstance(contribs, dict):  # it's our error object, not a return.
+        return contribs
+    else:
+        ret = []
+        for contrib in contribs:
+            ret.append({
+                "login": contrib["login"],
+                "contributions": contrib["contributions"]
+            })
+        return ret
 
 
 def get_repo_data(login, repo_name, trim=True):

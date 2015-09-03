@@ -16,6 +16,8 @@ class CranProject(db.Model):
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
 
+    github_contributors = db.Column(JSONB)
+
     api_raw = db.Column(JSONB)
     downloads = db.Column(JSONB)
     reverse_deps = db.Column(JSONB)
@@ -32,6 +34,14 @@ class CranProject(db.Model):
         print data_url
         response = requests.get(data_url)
         self.api_raw = response.json()
+
+    def set_github_contributors(self):
+        self.github_contributors = github_api.get_repo_contributors(
+            self.github_owner,
+            self.github_repo_name
+        )
+        print "added github contributors!"
+        print self.github_contributors
 
 
     def set_downloads(self):
@@ -237,6 +247,21 @@ def set_all_cran_github_ids():
     q = q.order_by(CranProject.project_name)
 
     update_fn = make_update_fn("set_github_repo")
+
+    for row in q.all():
+        update_fn(row[0])
+
+
+"""
+get github contrib info
+"""
+
+def set_all_cran_github_contributors():
+    q = db.session.query(CranProject.project_name)
+    q = q.filter(CranProject.github_repo_name != None)
+    q = q.order_by(CranProject.project_name)
+
+    update_fn = make_update_fn("set_github_contributors")
 
     for row in q.all():
         update_fn(row[0])
