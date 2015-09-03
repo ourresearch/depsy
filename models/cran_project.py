@@ -1,7 +1,10 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 import requests
+from models import github_api
 from lxml import html
+from util import elapsed
+from time import time
 import re
 
 
@@ -45,6 +48,25 @@ class CranProject(db.Model):
         else:
             data = {"total_downloads": 0}
         self.downloads = data
+
+    def set_github_repo(self):
+        try:
+            url = self.api_raw['URL']
+        except KeyError:
+            return False
+
+        github_url = github_api.get_github_homepage(url)
+        if github_url is None:
+            return False
+
+        self.github_owner, self.github_repo_name = \
+            github_api.username_and_repo_name_from_github_url(url)
+
+        print "successfully set a github ID for {name}: {login}/{repo_name}.".format(
+            name=self.project_name,
+            login=self.github_owner,
+            repo_name=self.github_repo_name
+        )
 
 
     def set_reverse_depends(self):
@@ -96,6 +118,7 @@ class CranProject(db.Model):
             proxy_papers = "No proxy paper"
 
         self.proxy_papers = proxy_papers
+
 
 
 #useful info: http://www.r-pkg.org/services
@@ -196,8 +219,43 @@ def add_all_cran_proxy_papers():
         add_cran_proxy_papers(row[0])
 
 
+"""
+set cran github info
+"""
+
+def set_all_cran_github_ids():
+    q = db.session.query(CranProject.project_name)
+    q = q.filter(CranProject.api_raw.has_key("URL"))  # if there's no url, there's no github url.
+    q = q.order_by(CranProject.project_name)
+
+    update_fn = make_update_fn("set_github_repo")
+    for row in q.all():
+        update_fn(row[0])
 
 
+
+
+def make_update_fn(method_name):
+    def fn(obj_id):
+        start_time = time()
+
+        obj = db.session.query(CranProject).get(obj_id)
+        if obj is None:
+            return None
+
+        method_to_run = getattr(obj, method_name)
+        method_to_run()
+
+        db.session.commit()
+
+        print "ran {repr}.{method_name}() method  and committed. took {elapsted}sec".format(
+            repr=obj,
+            method_name=method_name,
+            elapsted=elapsed(start_time)
+        )
+        return None  # important for if we use this on RQ
+
+    return fn
 
 
 
