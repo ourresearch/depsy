@@ -6,7 +6,7 @@ from sqlalchemy.exc import DataError
 from sqlalchemy import or_
 
 from models import github_api
-from models.github_api import username_and_repo_name_from_github_url
+from models.github_api import login_and_repo_name_from_url
 from models.github_api import github_zip_getter_factory
 from models.pypi_project import PypiProject
 
@@ -586,7 +586,7 @@ def add_repos_from_remote_csv(csv_url, language):
     index = 0
 
     for github_url in response.iter_lines(chunk_size=1000):
-        login, repo_name = username_and_repo_name_from_github_url(github_url)
+        login, repo_name = login_and_repo_name_from_url(github_url)
         if login and repo_name:
             repo = GithubRepo(
                 login=login,

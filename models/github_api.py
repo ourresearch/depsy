@@ -362,8 +362,25 @@ def get_setup_py_contents(login, repo_name):
         raise NotFoundException
 
 
+def get_repo_contributors(login, repo_name):
+    if login is None or repo_name is None:
+        return None
 
-
+    url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
+        username=login,
+        repo_name=repo_name
+    )
+    contribs = make_ratelimited_call(url)
+    if isinstance(contribs, dict):  # it's our error object, not a return.
+        return contribs
+    else:
+        ret = []
+        for contrib in contribs:
+            ret.append({
+                "login": contrib["login"],
+                "contributions": contrib["contributions"]
+            })
+        return ret
 
 
 def get_repo_data(login, repo_name, trim=True):
@@ -393,42 +410,35 @@ def get_repo_data(login, repo_name, trim=True):
 
 
 
-def username_and_repo_name_from_github_url(url):
+def login_and_repo_name_from_url(url):
+    username = None
+    repo_name = None
+
+    print "trying this url", url
+
     try:
         path = urlparse(url).path
+        netloc = urlparse(url).netloc
     except AttributeError:  # there's no url
         return [None, None]
 
-    split_path = path.split("/")
-    try:
-        username = split_path[1]
-    except IndexError:
-        username = None
+    netloc_parts = netloc.split('.')
+    path_parts = filter(None, path.split("/"))
 
-    try:
-        repo_name = split_path[2]
-    except IndexError:
-        repo_name = None
+    print "here is the path, netloc", netloc_parts, path_parts
+
+    if netloc_parts[1:] == ['github', 'io'] and len(path_parts) == 1:
+        username = netloc_parts[0]
+        repo_name = path_parts[0]
+
+    elif netloc == "github.com" and len(path_parts) == 2:
+        username = path_parts[0]
+        repo_name = path_parts[1]
 
     return [username, repo_name]
 
 
 
-
-def get_github_homepage(url):
-    try:
-        parsed = urlparse(url)
-    except AttributeError:
-        return None  # no url was given
-
-    # we are getting rid of things that
-    # 1. aren't on github (duh)
-    # 2. are just "github.com"
-    # this leaves some things that have multiple pypi project in one github repo
-    if parsed.netloc == "github.com" and len(parsed.path.split("/")) > 1:
-        return url
-    else:
-        return None
 
 
 def check_keys():

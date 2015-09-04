@@ -1,6 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
-from models.github_api import ZipGetter
+from models import github_api
 import requests
 import re
 import pickle
@@ -14,6 +14,7 @@ class PypiProject(db.Model):
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
+    github_contributors = db.Column(JSONB)
 
     api_raw = db.Column(JSONB)
     reverse_deps = db.Column(JSONB)
@@ -23,8 +24,8 @@ class PypiProject(db.Model):
     zip_download_size = db.Column(db.Integer)
     zip_download_error = db.Column(db.Text)
 
-    dependency_lines = db.Column(db.Text)
-    zip_grep_elapsed = db.Column(db.Float)
+    #dependency_lines = db.Column(db.Text)
+    #zip_grep_elapsed = db.Column(db.Float)
 
     def __repr__(self):
         return u'<PypiProject {project_name}>'.format(
@@ -33,6 +34,14 @@ class PypiProject(db.Model):
     @property
     def language(self):
         return "python"
+
+    def set_github_contributors(self):
+        self.github_contributors = github_api.get_repo_contributors(
+            self.github_owner,
+            self.github_repo_name
+        )
+        print "added github contributors!"
+        print self.github_contributors
 
 
     #def set_dependency_lines(self):
@@ -145,6 +154,50 @@ def get_pypi_package_names():
     )
 
     return pypi_lib_names
+
+
+
+
+
+
+"""
+get github contrib info
+"""
+
+def set_all_pypi_github_contributors(limit=100):
+    q = db.session.query(PypiProject.project_name)
+    q = q.filter(PypiProject.github_repo_name != None)
+    q = q.filter(PypiProject.github_contributors == None)
+    q = q.order_by(PypiProject.project_name)
+    q = q.limit(limit)
+
+    update_fn = make_update_fn("set_github_contributors")
+
+    for row in q.all():
+        update_fn(row[0])
+
+
+def make_update_fn(method_name):
+    def fn(obj_id):
+        start_time = time()
+
+        obj = db.session.query(PypiProject).get(obj_id)
+        if obj is None:
+            return None
+
+        method_to_run = getattr(obj, method_name)
+        method_to_run()
+
+        db.session.commit()
+
+        print "ran {repr}.{method_name}() method  and committed. took {elapsted}sec".format(
+            repr=obj,
+            method_name=method_name,
+            elapsted=elapsed(start_time, 4)
+        )
+        return None  # important for if we use this on RQ
+
+    return fn
 
 
 

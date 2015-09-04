@@ -1,7 +1,10 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 import requests
+from models import github_api
 from lxml import html
+from util import elapsed
+from time import time
 import re
 
 
@@ -12,6 +15,8 @@ class CranProject(db.Model):
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
+
+    github_contributors = db.Column(JSONB)
 
     api_raw = db.Column(JSONB)
     downloads = db.Column(JSONB)
@@ -30,6 +35,14 @@ class CranProject(db.Model):
         response = requests.get(data_url)
         self.api_raw = response.json()
 
+    def set_github_contributors(self):
+        self.github_contributors = github_api.get_repo_contributors(
+            self.github_owner,
+            self.github_repo_name
+        )
+        print "added github contributors!"
+        print self.github_contributors
+
 
     def set_downloads(self):
         url_template = "http://cranlogs.r-pkg.org/downloads/daily/1900-01-01:2020-01-01/%s"
@@ -45,6 +58,33 @@ class CranProject(db.Model):
         else:
             data = {"total_downloads": 0}
         self.downloads = data
+
+    def set_github_repo(self):
+        try:
+            urls_str = self.api_raw['URL']
+        except KeyError:
+            return False
+
+        # People put all kinds of lists in this field. So we're splitting on
+        # newlines, commas, and spaces. Won't get everything, but will
+        # get most.
+        urls = re.compile(r",*\s*\n*").split(urls_str)
+
+        for url in urls:
+            login, repo_name = github_api.login_and_repo_name_from_url(url)
+            if login and repo_name:
+                self.github_repo_name = repo_name
+                self.github_owner = login
+
+                # there may be more than one github url. if so, too bad,
+                # we're just picking the first one.
+                break
+
+        print "successfully set a github ID for {name}: {login}/{repo_name}.".format(
+            name=self.project_name,
+            login=self.github_owner,
+            repo_name=self.github_repo_name
+        )
 
 
     def set_reverse_depends(self):
@@ -96,6 +136,7 @@ class CranProject(db.Model):
             proxy_papers = "No proxy paper"
 
         self.proxy_papers = proxy_papers
+
 
 
 #useful info: http://www.r-pkg.org/services
@@ -196,10 +237,59 @@ def add_all_cran_proxy_papers():
         add_cran_proxy_papers(row[0])
 
 
+"""
+set cran github info
+"""
+
+def set_all_cran_github_ids():
+    q = db.session.query(CranProject.project_name)
+    q = q.filter(CranProject.api_raw.has_key("URL"))  # if there's no url, there's no github url.
+    q = q.order_by(CranProject.project_name)
+
+    update_fn = make_update_fn("set_github_repo")
+
+    for row in q.all():
+        update_fn(row[0])
+
+
+"""
+get github contrib info
+"""
+
+def set_all_cran_github_contributors():
+    q = db.session.query(CranProject.project_name)
+    q = q.filter(CranProject.github_repo_name != None)
+    q = q.order_by(CranProject.project_name)
+
+    update_fn = make_update_fn("set_github_contributors")
+
+    for row in q.all():
+        update_fn(row[0])
 
 
 
 
+def make_update_fn(method_name):
+    def fn(obj_id):
+        start_time = time()
+
+        obj = db.session.query(CranProject).get(obj_id)
+        if obj is None:
+            return None
+
+        method_to_run = getattr(obj, method_name)
+        method_to_run()
+
+        db.session.commit()
+
+        print "ran {repr}.{method_name}() method  and committed. took {elapsted}sec".format(
+            repr=obj,
+            method_name=method_name,
+            elapsted=elapsed(start_time, 4)
+        )
+        return None  # important for if we use this on RQ
+
+    return fn
 
 
 

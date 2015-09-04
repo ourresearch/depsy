@@ -1,7 +1,7 @@
 from app import db
 from models.pypi_repo import PyPiRepo
 from models.pypi_repo import set_all_repo_commits
-from models.github_api import username_and_repo_name_from_github_url
+from models.github_api import login_and_repo_name_from_url
 
 
 from util import update_sqla_objects
@@ -14,7 +14,7 @@ from time import time
 
 
 def add_github_repo_name_info(repo):
-    username, repo_name = username_and_repo_name_from_github_url(repo.github_url)
+    username, repo_name = login_and_repo_name_from_url(repo.github_url)
     repo.repo_owner = username
     repo.repo_name = repo_name
     return repo
