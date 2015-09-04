@@ -17,6 +17,8 @@ from models.pypi_project import *
 from models.github_api import *
 from models.cran_project import *
 from models.github_repo import *
+from models.person import *
+from models.package import *
 
 def test_no_args():
     print "test_no_args function ran"

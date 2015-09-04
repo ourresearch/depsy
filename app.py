@@ -68,6 +68,7 @@ from models import repo
 from models import github_user
 #from models import pypi_project
 from models import cran_project
+from models import person
 
 db.create_all()
 db.session.commit()
