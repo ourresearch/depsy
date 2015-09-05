@@ -143,10 +143,12 @@ def save_python_standard_libs():
 
 
 
-def get_pypi_package_names():
+def get_pypi_package_names(force_lower=True):
     start_time = time()
     pypi_q = db.session.query(PypiProject.project_name)
     pypi_lib_names = [r[0] for r in pypi_q.all()]
+    if force_lower:
+        pypi_lib_names = [r.lower() for r in pypi_lib_names]
 
     print "got {} PyPi project names in {}sec.".format(
         len(pypi_lib_names),
