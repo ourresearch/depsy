@@ -201,6 +201,8 @@ class GithubRepo(db.Model):
             if pypi_package is not None:
                 self.pypi_dependencies.append(pypi_package)
 
+        #dedup
+        self.pypi_dependencies = list(set(self.pypi_dependencies))
 
         print "done finding pypi deps for {}: {} (took {}sec)".format(
             self.full_name,
@@ -239,6 +241,9 @@ class GithubRepo(db.Model):
         # great, we found one!
         # pypi_package_names is loaded as module import, it's a cache.
         if module_name in pypi_package_names:
+            # don't include modules that are in their filepaths
+            # because those are more likely their personal code 
+            # with accidental pypi names than than pypi libraries
             if self._in_filepath(module_name):
                 return None
             else:
@@ -445,10 +450,12 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_pypi_dependencies)
-    # for row in q.all():
-    #     #print "setting this row", row
-    #     set_pypi_dependencies(row[0], row[1])
+    # return enque_repos(q, set_pypi_dependencies)
+
+
+    for row in q.all():
+        #print "setting this row", row
+        set_pypi_dependencies(row[0], row[1])
 
 
 
