@@ -75,7 +75,7 @@ def make_pypi_repo(pypi_dict):
 #         return (self.repo_owner, self.repo_name)
 
 #     def set_repo_commits(self):
-#         url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
+#         url = "https://api.github.com/repos/{username}/{repo_name}/contributors?per_page=100".format(
 #             username=self.repo_owner,
 #             repo_name=self.repo_name
 #         )
