@@ -68,6 +68,9 @@ class Package(db.Model):
             # it's an error resp from the API, doh.
             return None
 
+        if self.github_contributors is None:
+            return None
+
         total_contributions_count = sum([c['contributions'] for c in self.github_contributors])
         for github_contrib in self.github_contributors:
             person = get_or_make_person(github_login=github_contrib["login"])
