@@ -2,7 +2,7 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from util import elapsed
 from time import time
-
+from validate_email import validate_email
 
 from models import github_api
 from models.person import Person
@@ -53,8 +53,17 @@ class Package(db.Model):
         return response
 
 
-    def save_contributors_to_db(self):
 
+    def save_contributors_to_db(self):
+        self.save_github_contribs_to_db()
+        self.save_github_owner_to_db()
+
+    def save_host_contributors(self):
+        # this needs to be overridden, because it depends on whether we've
+        # got a pypi or cran package...they have diff metadata formats.
+        raise NotImplementedError
+
+    def save_github_contribs_to_db(self):
         if isinstance(self.github_contributors, dict):
             # it's an error resp from the API, doh.
             return None
@@ -78,6 +87,7 @@ class Package(db.Model):
             return False
 
         person = get_or_make_person(github_login=self.github_owner)
+        self._save_contribution(person,  "github_owner")
 
 
     def _save_contribution(self, person, role, quantity=None, percent=None):
@@ -136,6 +146,19 @@ class PypiPackage(Package):
         return u'<PypiPackage {name}>'.format(
             name=self.full_name)
 
+    def save_host_contributors(self):
+        author = self.api_raw["info"]["author"]
+        author_email = self.api_raw["info"]["author_email"]
+        if not author:
+            return False
+
+        if validate_email(author_email):
+            person = Person(name=author, email=author_email)
+        else:
+            person = Person(name=author)
+
+        self._save_contribution(person, "author")
+
 
 
 class CranPackage(Package):
@@ -167,9 +190,9 @@ def test_package():
     #db.session.add(my_person)
     #db.session.merge(my_package)
 
-def make_persons_from_github_contribs(limit=10):
+def make_persons_from_github_owner_and_contribs(limit=10):
     q = db.session.query(Package.full_name)
-    q = q.filter(Package.github_contributors != None)
+    q = q.filter(Package.github_owner != None)
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
@@ -203,6 +226,8 @@ def set_all_github_contributors(limit=10):
 
 
 
+
+
 def make_update_fn(method_name):
     def fn(obj_id):
         start_time = time()
@@ -229,3 +254,8 @@ def make_update_fn(method_name):
         return None  # important for if we use this on RQ
 
     return fn
+
+
+
+
+
