@@ -25,33 +25,51 @@ class Person(db.Model):
     github_about = db.Column(JSONB)
 
     type = db.Column(db.Text)
+    contributions = db.relationship(
+        'Contribution',
+        lazy='subquery',
+        cascade="all, delete-orphan",
+        backref=db.backref("person", lazy="subquery")
+    )
 
-    __mapper_args__ = {
-        'polymorphic_on':type,
-        'polymorphic_identity':'person',
-        'with_polymorphic': '*'
-    }
-    def print_favorite_word(self):
-        print "i'm not sure?"
-
-    def person_thing(self):
-        print "i am a person, that i am"
+    def __repr__(self):
+        return u'<Person {id}: {name}>'.format(
+            id=self.id,
+            name=self.name
+        )
 
 
-class GithubPerson(Person):
-    __mapper_args__ = {
-        'polymorphic_identity': 'githubperson'
-    }
+
+def get_or_make_person(**kwargs):
+    res = None
+    if "github_login" in kwargs:
+        res = db.session.query(Person).filter(
+            Person.github_login == kwargs["github_login"]
+        ).first()
+
+    elif "email" in kwargs:
+        res = db.session.query(Person).filter(
+            Person.email == kwargs["email"]
+        ).first()
+
+    if res is not None:
+        return res
+    else:
+        new_person = Person(**kwargs)
+        db.session.add(new_person)
+        db.session.commit()
+
+        return new_person
+
+
+
+
 
 
 
 def test_person():
-    #p = FooPerson(email="1@fooperson.com")
-    #db.session.add(p)
-    #db.session.commit()
 
     res_obj = db.session.query(Person).get(1)
     print "got this:", res_obj.email, res_obj.type
-    res_obj.person_thing()
 
     print "i'm in the person module."
