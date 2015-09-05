@@ -1,7 +1,9 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
-from github_api import get_profile
+from sqlalchemy import text
 
+from github_api import get_profile
+from jobs import make_update_fn
 """
 this file in progress. i think should have:
 
@@ -34,15 +36,35 @@ class Person(db.Model):
     )
 
     def __repr__(self):
-        return u'<Person {id}: {name}>'.format(
-            id=self.id,
-            name=self.name
+        return u'<Person names "{name}" ({id})>'.format(
+            name=self.name,
+            id=self.id
         )
 
     def set_github_about(self):
-        if self.github_login is not None:
-            self.github_about = get_profile(self.github_login)
+        if self.github_login is None:
+            return None
 
+        self.github_about = get_profile(self.github_login)
+        if not self.name:
+            self.name = self.github_about["name"]
+
+        if not self.email :
+            self.email = self.github_about["email"]
+
+
+
+
+def get_github_about_for_all_persons(limit=10):
+    q = db.session.query(Person.id)
+    q = q.filter(Person.github_about == text("'null'"))  # jsonb null, not sql NULL
+    q = q.order_by(Person.id)
+    q = q.limit(limit)
+
+    update_fn = make_update_fn(Person, "set_github_about")
+
+    for row in q.all():
+        update_fn(row[0])
 
 
 

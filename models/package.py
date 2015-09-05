@@ -4,6 +4,7 @@ from util import elapsed
 from time import time
 from validate_email import validate_email
 
+from jobs import make_update_fn
 from models import github_api
 from models.person import Person
 from models.person import get_or_make_person
@@ -182,16 +183,6 @@ def test_package():
 
     print my_package.save_contributors_to_db()
 
-    #my_package.save_contributors_to_db()
-    #db.session.commit()
-
-
-    #contrib = Contribution(role="author")
-    #my_person = Person(name="jason1 test", email="test1@foo.com")
-    #my_person.contributions.append(contrib)
-    #my_package.contributions.append(contrib)
-    #db.session.add(my_person)
-    #db.session.merge(my_package)
 
 def make_persons_from_github_owner_and_contribs(limit=10):
     q = db.session.query(Package.full_name)
@@ -199,11 +190,10 @@ def make_persons_from_github_owner_and_contribs(limit=10):
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
-    update_fn = make_update_fn("save_contributors_to_db")
+    update_fn = make_update_fn(Package, "save_contributors_to_db")
 
     for row in q.all():
         update_fn(row[0])
-
 
 
 
@@ -219,7 +209,7 @@ def set_all_github_contributors(limit=10):
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
-    update_fn = make_update_fn("set_github_contributors")
+    update_fn = make_update_fn(Package, "set_github_contributors")
 
     for row in q.all():
         update_fn(row[0])
@@ -228,35 +218,6 @@ def set_all_github_contributors(limit=10):
 
 
 
-
-
-
-def make_update_fn(method_name):
-    def fn(obj_id):
-        start_time = time()
-
-        obj = db.session.query(Package).get(obj_id)
-        if obj is None:
-            return None
-
-        method_to_run = getattr(obj, method_name)
-
-        print "running {repr}.{method_name}() method".format(
-            repr=obj,
-            method_name=method_name
-        )
-
-        method_to_run()
-        db.session.commit()
-
-        print "finished {repr}.{method_name}(). took {elapsted}sec".format(
-            repr=obj,
-            method_name=method_name,
-            elapsted=elapsed(start_time, 4)
-        )
-        return None  # important for if we use this on RQ
-
-    return fn
 
 
 

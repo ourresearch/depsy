@@ -330,7 +330,7 @@ def make_ratelimited_call(url):
 
 def get_profile(login):
     url = "https://api.github.com/users/{login}".format(
-        username=login
+        login=login
     )
     return make_ratelimited_call(url)
 
