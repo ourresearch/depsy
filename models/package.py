@@ -59,18 +59,48 @@ class Package(db.Model):
             # it's an error resp from the API, doh.
             return None
 
+        total_contributions_count = sum([c['contributions'] for c in self.github_contributors])
         for github_contrib in self.github_contributors:
             person = get_or_make_person(github_login=github_contrib["login"])
+            percent_total_contribs = round(
+                github_contrib["contributions"] / float(total_contributions_count) * 100,
+                3
+            )
+            self._save_contribution(
+                person,
+                "github_contributor",
+                quantity=github_contrib["contributions"],
+                percent=percent_total_contribs
+            )
 
-            extant_contrib = self.get_contribution(person.id, "github_contributor")
-            if extant_contrib is None:
-                new_contrib = Contribution(
-                    role="github_contributor",
-                    quantity=github_contrib["contributions"]
-                )
-                self.contributions.append(new_contrib)
-                person.contributions.append(new_contrib)
-                db.session.merge(person)
+    def save_github_owner_to_db(self):
+        if not self.github_owner:
+            return False
+
+        person = get_or_make_person(github_login=self.github_owner)
+
+
+    def _save_contribution(self, person, role, quantity=None, percent=None):
+        extant_contrib = self.get_contribution(person.id, role)
+        if extant_contrib is None:
+
+            # make the new contrib.
+            # there's got to be a better way to make this args thing...
+            kwargs_dict = {
+                "role": role
+            }
+            if quantity is not None:
+                kwargs_dict["quantity"] = quantity
+            if percent is not None:
+                kwargs_dict["percent"] = percent
+
+            new_contrib = Contribution(**kwargs_dict)
+
+            # set the contrib in its various places.
+            self.contributions.append(new_contrib)
+            person.contributions.append(new_contrib)
+            db.session.merge(person)
+
 
     def get_contribution(self, person_id, role):
         for contrib in self.contributions:
@@ -159,6 +189,7 @@ here as an example we were using it in the old cran_project module.
 def set_all_github_contributors(limit=10):
     q = db.session.query(Package.full_name)
     q = q.filter(Package.github_repo_name != None)
+    q = q.filter(Package.github_contributors == None)
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 

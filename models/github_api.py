@@ -328,11 +328,11 @@ def make_ratelimited_call(url):
 
 
 
-def get_profile(username, api_key_tuple):
-    url = "https://api.github.com/users/{username}".format(
-        username=username
+def get_profile(login):
+    url = "https://api.github.com/users/{login}".format(
+        username=login
     )
-    return make_ratelimited_call(url, api_key_tuple)
+    return make_ratelimited_call(url)
 
 
 
@@ -366,7 +366,7 @@ def get_repo_contributors(login, repo_name):
     if login is None or repo_name is None:
         return None
 
-    url = "https://api.github.com/repos/{username}/{repo_name}/contributors".format(
+    url = "https://api.github.com/repos/{username}/{repo_name}/contributors?per_page=100".format(
         username=login,
         repo_name=repo_name
     )
