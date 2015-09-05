@@ -211,7 +211,15 @@ class GithubRepo(db.Model):
 
 
     def _in_filepath(self, module_name):
-        python_filenames = [filename for filename in self.zip_filenames if filename.endswith(".py")]
+        python_filenames = []
+
+        for filename in self.zip_filenames:
+            if "/venv/" in filename or "/virtualenv/" in filename:
+                print "skipping a venv directory"
+                pass
+            elif filename.endswith(".py"):
+                python_filenames += filename
+
         filenames_string = "\n".join(python_filenames)
         filenames_string_with_dots = filenames_string.replace("/", ".")
         module_name_surrounded_by_dots = ".{}.".format(module_name)
