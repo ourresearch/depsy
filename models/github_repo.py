@@ -221,13 +221,14 @@ class GithubRepo(db.Model):
                 print "skipping a venv directory"
                 pass
             elif filename.endswith(".py"):
-                python_filenames += filename
+                python_filenames += [filename]
 
         filenames_string = "\n".join(python_filenames)
+
         filenames_string_with_dots = filenames_string.replace("/", ".")
         module_name_surrounded_by_dots = ".{}.".format(module_name)
         if module_name_surrounded_by_dots in filenames_string_with_dots:
-            print "found in filepath!", module_name_surrounded_by_dots
+            print "found in filepath! removing as dependency:", module_name_surrounded_by_dots
             return True
         else:
             return False
