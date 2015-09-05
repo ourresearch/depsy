@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from github_api import get_profile
 
 """
 this file in progress. i think should have:
@@ -37,6 +38,11 @@ class Person(db.Model):
             id=self.id,
             name=self.name
         )
+
+    def set_github_about(self):
+        if self.github_login is not None:
+            self.github_about = get_profile(self.github_login)
+
 
 
 
