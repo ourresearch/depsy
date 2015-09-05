@@ -264,7 +264,7 @@ class GithubRepo(db.Model):
         # if it's in the standard lib it doesn't count,
         # even if in might be in pypi
         if module_name in PythonStandardLibs.get():
-            return "found in standard lib, skipping", module_name
+            print "found in standard lib, skipping", module_name
             return None
 
         def return_match_if_found(x, y):
