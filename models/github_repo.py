@@ -8,10 +8,10 @@ from sqlalchemy import or_
 from models import github_api
 from models.github_api import login_and_repo_name_from_url
 from models.github_api import github_zip_getter_factory
+from models.package import PypiPackage
+from models.pypi_project import get_pypi_package_names
 from models.pypi_project import PypiProject
-
 from models.pypi_project import PythonStandardLibs
-
 from models.cran_project import CranProject
 
 from models import python
@@ -25,6 +25,9 @@ from time import sleep
 import ast
 import subprocess
 import re
+
+# comment this out here now, because usually not using
+# pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -156,6 +159,16 @@ class GithubRepo(db.Model):
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
 
+        # this is SUPER slow here.
+        # make get get_pypi_package_names() open a pickle file instead.
+
+        # If we want to speed this up, comment back in the module-level version
+        # at the top of this file, and comment it out here.
+        # another alternative: filter query against PyPiProject table for the set of names
+        # that are included in that table
+
+        pypi_package_names = get_pypi_package_names()
+
 
         for line in import_lines:
             # print u"checking this line: {}".format(line)
@@ -183,7 +196,11 @@ class GithubRepo(db.Model):
                     modules_imported.add(my_name.name)
 
 
-        self.pypi_dependencies = self._get_pypi_packages(modules_imported)
+        for module_name in modules_imported:
+            pypi_package = self._get_pypi_package(module_name, pypi_package_names)
+            if pypi_package is not None:
+                self.pypi_dependencies.append(pypi_package)
+
 
         print "done finding pypi deps for {}: {} (took {}sec)".format(
             self.full_name,
@@ -193,29 +210,60 @@ class GithubRepo(db.Model):
         return self.pypi_dependencies
 
 
-    def _valid_package_names(self, module_names):
-        q = db.session.query(PypiProject.project_name).filter(PypiProject.project_name.in_(module_names))
-        response = [row[0] for row in q.all()]
-        return response
+    def _in_filepath(self, module_name):
+        python_filenames = [filename for filename in self.zip_filenames if filename.endswith(".py")]
+        filenames_string = "\n".join(python_filenames)
+        filenames_string_with_dots = filenames_string.replace("/", ".")
+        module_name_surrounded_by_dots = ".{}.".format(module_name)
+        if module_name_surrounded_by_dots in filenames_string_with_dots:
+            print "found in filepath!", module_name_surrounded_by_dots
+            return True
+        else:
+            return False
 
-    def _get_pypi_packages(self, module_names):
 
-        pypi_packages = []
-
+    def _get_pypi_package(self, module_name, pypi_package_names):
         # if it's in the standard lib it doesn't count,
         # even if in might be in pypi
-        candidates = set([name for name in module_names if name not in PythonStandardLibs.get()])
+        if module_name in PythonStandardLibs.get():
+            return None
 
-        found_in_pypi = set(self._valid_package_names(candidates))
-        not_found_in_pypi = candidates - candidates
+        # great, we found one!
+        # pypi_package_names is loaded as module import, it's a cache.
+        if module_name in pypi_package_names:
+            if self._in_filepath(module_name):
+                return None
+            else:
+                return module_name
 
         # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
-        shortened_names = [module_name.split('.')[-1] for name in not_found_in_pypi]
+        elif '.' in module_name:
+            shortened_name = module_name.split('.')[-1]
+            return self._get_pypi_package(shortened_name, pypi_package_names)
+
+        # if there's no dot in your name, there are no more options, you're done
+        else:
+            return None
+
+
+    def _get_pypi_packages(self, candidate_names):
+
+        found_in_pypi = set(PypiPackage.valid_package_names(candidate_names))
+
+        # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
+        not_found_in_pypi = candidate_names - found_in_pypi
+        shortened_names = [name.split('.')[-1] for name in not_found_in_pypi]
         if shortened_names:
-            new_finds = self._valid_package_names(shortened_names)
+            new_finds = PypiPackage.valid_package_names(shortened_names)
             found_in_pypi.update(new_finds)
 
-        return list(found_in_pypi)
+        # if it's in the standard lib it doesn't count, even if in might be in pypi
+        names_only_in_pypi = [name for name in found_in_pypi if name not in PythonStandardLibs.get()]
+
+        # exclude if it is in filepath
+        names_not_in_filepath = [name for name in names_only_in_pypi if not self._in_filepath(name)]
+
+        return names_not_in_filepath
 
 
     def set_cran_dependencies(self):
@@ -255,8 +303,7 @@ class GithubRepo(db.Model):
                     print "NO MODULES found in ", clean_line 
         print "all modules found:", modules_imported
 
-        q = db.query.filter(CranProject).in_(modules_imported)
-        matching_cran_packages = set([row[0] for row in q.all()])
+        matching_cran_packages = set(CranPackage.valid_package_names(modules_imported))
         print "and here are the ones that match cran!", matching_cran_packages
         print "here are the ones that didn't match", modules_imported - matching_cran_packages
         self.cran_dependencies = list(matching_cran_packages)
@@ -391,6 +438,9 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.limit(q_limit)
 
     return enque_repos(q, set_pypi_dependencies)
+    # for row in q.all():
+    #     #print "setting this row", row
+    #     set_pypi_dependencies(row[0], row[1])
 
 
 
