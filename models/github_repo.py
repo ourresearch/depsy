@@ -43,6 +43,7 @@ class GithubRepo(db.Model):
     pypi_dependencies = db.Column(JSONB)
     cran_dependencies = db.Column(JSONB)
     requirements = db.Column(JSONB)
+    requirements_pypi = db.Column(JSONB)
     reqs_file = db.Column(db.Text)
     reqs_file_tried = db.Column(db.Boolean)
 
@@ -83,6 +84,24 @@ class GithubRepo(db.Model):
         getter = github_zip_getter_factory(self.login, self.repo_name)
         self.zip_filenames = getter.get_filenames()
         self.zip_filenames_tried = True
+
+
+    def set_requirements_pypi(self):
+        matching_pypi_packages = set()
+
+        for module_name in self.requirements:
+            pypi_package = self._get_pypi_package(module_name, pypi_package_names)
+            if pypi_package:
+                matching_pypi_packages.add(pypi_package)
+                # print "got matching_pypi_packages", matching_pypi_packages
+
+        self.requirements_pypi = list(matching_pypi_packages)
+        print "self.requirements", self.requirements
+        print "matching_pypi_packages", matching_pypi_packages
+        print "removed_packages", set(self.requirements) - matching_pypi_packages
+        print "added_packages", matching_pypi_packages - set(self.requirements)
+        return self.requirements_pypi
+
 
 
     def set_requirements(self):
@@ -215,6 +234,8 @@ class GithubRepo(db.Model):
 
     def _in_filepath(self, module_name):
         python_filenames = []
+        if not self.zip_filenames:
+            return False
 
         for filename in self.zip_filenames:
             if "/venv/" in filename or "/virtualenv/" in filename:
@@ -234,23 +255,54 @@ class GithubRepo(db.Model):
             return False
 
 
+
     def _get_pypi_package(self, module_name, pypi_package_names):
+        if len(module_name.split(".")) > 5:
+            print "too many parts to be a pypi lib, skipping", module_name            
+            return None
+
         # if it's in the standard lib it doesn't count,
         # even if in might be in pypi
         if module_name in PythonStandardLibs.get():
+            return "found in standard lib, skipping", module_name
             return None
 
-        # great, we found one!
-        # pypi_package_names is loaded as module import, it's a cache.
-        if module_name.lower() in pypi_package_names:
+        def return_match_if_found(x, y):
+            lookup_key = module_name.lower().replace(x, y)
+            # pypi_package_names is loaded as module import, it's a cache.
+            # search the keys of pypi_package_names, which are all lowercase
+            if lookup_key in pypi_package_names.keys():
+                return lookup_key
+            return None   
+
+        # try the originals first
+        found_key = return_match_if_found("", "")
+
+        # try lots of things, to work around hyphens
+        if not found_key:
+            found_key = return_match_if_found("-", "_")
+        if not found_key:
+            found_key = return_match_if_found("-", "-")
+        if not found_key:
+            found_key = return_match_if_found("_", "-")
+        if not found_key:
+            found_key = return_match_if_found(".", "-")
+        if not found_key:
+            found_key = return_match_if_found(".ext.", "-")
+        if not found_key:
+            found_key = return_match_if_found("ext.", "-")
+
+        if found_key:
+            official_pypi_name = pypi_package_names[found_key]
+            # a last check:
             # don't include modules that are in their filepaths
             # because those are more likely their personal code 
             # with accidental pypi names than than pypi libraries
-            if self._in_filepath(module_name):
+            if self._in_filepath(found_key):
                 return None
             else:
-                print "found one!", module_name
-                return module_name
+                print "found one!", official_pypi_name
+                return official_pypi_name
 
         # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
         elif '.' in module_name:
@@ -435,6 +487,7 @@ def set_all_zip_filenames(q_limit=100):
 find and save list of pypi dependencies for each repo
 """
 def set_pypi_dependencies(login, repo_name):
+    print "running with", login, repo_name
     start_time = time()
     repo = get_repo(login, repo_name)
     if repo is None:
@@ -446,7 +499,7 @@ def set_pypi_dependencies(login, repo_name):
     return None  # important that it returns None for RQ
 
 
-def set_all_pypi_dependencies(q_limit=100):
+def set_all_pypi_dependencies(q_limit=100, run_mode='with_rq'):
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
     q = q.filter(GithubRepo.dependency_lines != None)
     q = q.filter(GithubRepo.pypi_dependencies == None)
@@ -454,12 +507,12 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_pypi_dependencies)
-
-
-    # for row in q.all():
-    #     #print "setting this row", row
-    #     set_pypi_dependencies(row[0], row[1])
+    if run_mode=='with_rq':  
+        return enque_repos(q, set_pypi_dependencies)
+    else:                   
+        for row in q.all():
+            #print "setting this row", row
+            set_pypi_dependencies(row[0], row[1])
 
 
 
@@ -524,6 +577,38 @@ def set_all_requirements(q_limit=9500):
 
     return enque_repos(q, set_requirements)
 
+
+
+
+"""
+save python requirements from requirements.txt and setup.py
+"""
+def set_requirements_pypi(login, repo_name):
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_requirements_pypi()
+    commit_repo(repo)
+    print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
+
+
+def set_all_requirements_pypi(q_limit=9500, run_mode='with_rq'):
+    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.requirements_pypi == None)
+    q = q.filter(GithubRepo.requirements != [])
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    if run_mode=='with_rq':  
+        return enque_repos(q, set_requirements_pypi)
+    else:                   
+        for row in q.all():
+            #print "setting this row", row
+            set_requirements_pypi(row[0], row[1])
 
 
 

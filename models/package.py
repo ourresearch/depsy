@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import func
 from util import elapsed
 from time import time
 
@@ -48,7 +49,9 @@ class Package(db.Model):
         """
         this will normally be called by subclasses, to filter by specific package hosts
         """
-        q = db.session.query(cls.project_name).filter(cls.project_name.in_(module_names))
+        lowercase_module_names = [n.lower() for n in module_names]
+        q = db.session.query(cls.project_name)
+        q = q.filter(func.lower(cls.project_name).in_(lowercase_module_names))
         response = [row[0] for row in q.all()]
         return response
 

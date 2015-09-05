@@ -144,18 +144,21 @@ def save_python_standard_libs():
 
 
 def get_pypi_package_names(force_lower=True):
+    """
+        returns a dict with the key as the lowercase name and the value as the orig cased name
+    """
     start_time = time()
     pypi_q = db.session.query(PypiProject.project_name)
     pypi_lib_names = [r[0] for r in pypi_q.all()]
-    if force_lower:
-        pypi_lib_names = [r.lower() for r in pypi_lib_names]
+
+    pypi_lib_lookup = dict([(name.lower(), name) for name in pypi_lib_names])
 
     print "got {} PyPi project names in {}sec.".format(
-        len(pypi_lib_names),
+        len(pypi_lib_lookup),
         elapsed(start_time)
     )
 
-    return pypi_lib_names
+    return pypi_lib_lookup
 
 
 
