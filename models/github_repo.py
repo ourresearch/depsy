@@ -221,13 +221,14 @@ class GithubRepo(db.Model):
                 print "skipping a venv directory"
                 pass
             elif filename.endswith(".py"):
-                python_filenames += filename
+                python_filenames += [filename]
 
         filenames_string = "\n".join(python_filenames)
+
         filenames_string_with_dots = filenames_string.replace("/", ".")
         module_name_surrounded_by_dots = ".{}.".format(module_name)
         if module_name_surrounded_by_dots in filenames_string_with_dots:
-            print "found in filepath!", module_name_surrounded_by_dots
+            print "found in filepath! removing as dependency:", module_name_surrounded_by_dots
             return True
         else:
             return False
@@ -453,12 +454,12 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    # return enque_repos(q, set_pypi_dependencies)
+    return enque_repos(q, set_pypi_dependencies)
 
 
-    for row in q.all():
-        #print "setting this row", row
-        set_pypi_dependencies(row[0], row[1])
+    # for row in q.all():
+    #     #print "setting this row", row
+    #     set_pypi_dependencies(row[0], row[1])
 
 
 
