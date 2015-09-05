@@ -453,12 +453,12 @@ def set_all_pypi_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    # return enque_repos(q, set_pypi_dependencies)
+    return enque_repos(q, set_pypi_dependencies)
 
 
-    for row in q.all():
-        #print "setting this row", row
-        set_pypi_dependencies(row[0], row[1])
+    # for row in q.all():
+    #     #print "setting this row", row
+    #     set_pypi_dependencies(row[0], row[1])
 
 
 
