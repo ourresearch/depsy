@@ -43,6 +43,15 @@ class Package(db.Model):
         return u'<Package {name}>'.format(
             name=self.full_name)
 
+    @classmethod
+    def valid_package_names(cls, module_names):
+        """
+        this will normally be called by subclasses, to filter by specific package hosts
+        """
+        q = db.session.query(cls.project_name).filter(cls.project_name.in_(module_names))
+        response = [row[0] for row in q.all()]
+        return response
+
 
     def save_contributors_to_db(self):
 
@@ -84,6 +93,7 @@ class Package(db.Model):
             ret.append(contrib.person)
 
         return ret
+
 
 
 
