@@ -60,6 +60,11 @@ redis_rq_conn = redis.from_url(
 db = SQLAlchemy(app)
 github_zip_queue = Queue("github_zip", connection=redis_rq_conn)
 
+# do this later...
+#queues = []
+#for i in range(0, 9):
+#    queues[i] = Queue("queue-" + i, connection=redis_rq_conn)
+
 
 # these imports are needed so that tables will get auto-created.
 from models import github_repo

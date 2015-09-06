@@ -58,7 +58,7 @@ class Package(db.Model):
 
 
 
-    def save_contributors_to_db(self):
+    def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
         self.save_github_owner_to_db()
 
@@ -156,13 +156,14 @@ class PypiPackage(Package):
     def save_host_contributors(self):
         author = self.api_raw["info"]["author"]
         author_email = self.api_raw["info"]["author_email"]
+
         if not author:
             return False
 
-        if validate_email(author_email):
-            person = Person(name=author, email=author_email)
+        if author_email and validate_email(author_email):
+            person = get_or_make_person(name=author, email=author_email)
         else:
-            person = Person(name=author)
+            person = get_or_make_person(name=author)
 
         self._save_contribution(person, "author")
 
@@ -193,18 +194,25 @@ def make_persons_from_github_owner_and_contribs(limit=10):
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
-    update_fn = make_update_fn(Package, "save_contributors_to_db")
+    update_fn = make_update_fn(Package, "save_github_owners_and_contributors")
+    for row in q.all():
+        update_fn(row[0])
 
+
+def save_host_contributors_pypi(limit=10):
+    # has to be run all in one go, db stores no indicator this has run.
+    q = db.session.query(PypiPackage.full_name)
+    q = q.order_by(Package.project_name)
+    q = q.limit(limit)
+
+    update_fn = make_update_fn(Package, "save_host_contributors")
     for row in q.all():
         update_fn(row[0])
 
 
 
-"""
-get github contrib info.
 
-here as an example we were using it in the old cran_project module.
-"""
+
 def set_all_github_contributors(limit=10):
     q = db.session.query(Package.full_name)
     q = q.filter(Package.github_repo_name != None)

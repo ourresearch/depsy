@@ -75,6 +75,15 @@ def get_github_about_for_all_persons(limit=10):
 
 def get_or_make_person(**kwargs):
     res = None
+
+    if kwargs["name"] == "UNKNOWN":
+        # pypi sets unknown people to have the name "UNKNOWN"
+        # we don't want to make tons of these, it's just one 'person'.
+        return db.session.query(Person).filter(
+            Person.name == "UNKNOWN"
+        ).first()
+
+
     if "github_login" in kwargs:
         res = db.session.query(Person).filter(
             Person.github_login == kwargs["github_login"]
@@ -84,6 +93,11 @@ def get_or_make_person(**kwargs):
         res = db.session.query(Person).filter(
             Person.email == kwargs["email"]
         ).first()
+        if res is not None:
+            print u"we matched a person ({}) based on email {}".format(
+                res,
+                kwargs["email"]
+            )
 
     if res is not None:
         return res
