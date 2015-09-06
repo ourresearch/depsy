@@ -46,12 +46,17 @@ class Person(db.Model):
             return None
 
         self.github_about = get_profile(self.github_login)
-        if not self.name:
-            self.name = self.github_about["name"]
+        try:
+            if not self.name:
+                self.name = self.github_about["name"]
 
-        if not self.email :
-            self.email = self.github_about["email"]
+            if not self.email :
+                self.email = self.github_about["email"]
+        except KeyError:
 
+            # our github_about is an error object,
+            # it's got no info about the person in it.
+            return False
 
 
 
