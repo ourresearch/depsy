@@ -279,8 +279,8 @@ class GithubRepo(db.Model):
             print "found in standard lib, skipping", module_name
             return None
 
-        def return_match_if_found(x, y, name=module_name):
-            lookup_key = name.lower().replace(x, y)
+        def return_match_if_found(x, y):
+            lookup_key = module_name.lower().replace(x, y)
             # pypi_package_names is loaded as module import, it's a cache.
             # search the keys of pypi_package_names, which are all lowercase
             if lookup_key in pypi_package_names.keys():
@@ -291,6 +291,19 @@ class GithubRepo(db.Model):
         found_key = return_match_if_found("", "")
 
         # try lots of things, to work around hyphens
+        special_cases = {
+            "dateutil": "python-dateutil",
+            "bs4": "beautifulsoup4",
+            "yaml": "PyYAML",
+            "PIL": "Pillow",
+            "Image": "Pillow"
+        }
+        if not found_key:
+            if module_name in special_cases.keys():
+                found_key = special_cases[module_name].lower()
+        if not found_key:
+            if module_name in special_cases.values():
+                found_key = module_name.lower()
         if not found_key:
             found_key = return_match_if_found("-", "_")
         if not found_key:
@@ -303,10 +316,6 @@ class GithubRepo(db.Model):
             found_key = return_match_if_found(".ext.", "-")
         if not found_key:
             found_key = return_match_if_found("ext.", "-")
-        # if not found_key:
-        #     # prepend "python-" to the library name, will handle python-dateutils
-        #     prepended_module_name = "python-{}".format(module_name)
-        #     found_key = return_match_if_found("", "", name=prepended_module_name)
 
         if found_key:
             official_pypi_name = pypi_package_names[found_key]
