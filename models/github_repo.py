@@ -49,6 +49,7 @@ class GithubRepo(db.Model):
 
     zip_filenames = db.Column(JSONB)
     zip_filenames_tried = db.Column(db.Boolean)
+    pypi_in_formal_only = db.Column(JSONB)
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -154,6 +155,17 @@ class GithubRepo(db.Model):
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
 
+    def set_pypi_in_formal_only(self):
+
+        self.pypi_in_formal_only = []
+        for name in self.requirements_pypi:
+            if name not in self.pypi_dependencies:
+                # print "only in requirements:", name
+                self.pypi_in_formal_only += [name]
+            # else:
+            #     print "also in imports", name
+        print "ending with:", self.pypi_in_formal_only
+        return self.pypi_in_formal_only
 
     def set_pypi_dependencies(self):
         """
@@ -279,6 +291,19 @@ class GithubRepo(db.Model):
         found_key = return_match_if_found("", "")
 
         # try lots of things, to work around hyphens
+        special_cases = {
+            "dateutil": "python-dateutil",
+            "bs4": "beautifulsoup4",
+            "yaml": "PyYAML",
+            "PIL": "Pillow",
+            "Image": "Pillow"
+        }
+        if not found_key:
+            if module_name in special_cases.keys():
+                found_key = special_cases[module_name].lower()
+        if not found_key:
+            if module_name in special_cases.values():
+                found_key = module_name.lower()
         if not found_key:
             found_key = return_match_if_found("-", "_")
         if not found_key:
@@ -612,6 +637,39 @@ def set_all_requirements_pypi(q_limit=9500, run_mode='with_rq'):
 
 
 
+"""
+save python requirements from requirements.txt and setup.py
+"""
+def set_pypi_in_formal_only(login, repo_name):
+    print "working on ", login, repo_name
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_pypi_in_formal_only()
+
+    commit_repo(repo)
+    print "calculated pypi_in_formal_only, committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
+
+
+def set_all_pypi_in_formal_only(q_limit=9500, run_mode='with_rq'):
+    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.requirements_pypi != [])
+    q = q.filter(GithubRepo.pypi_dependencies != [])
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    if run_mode=='with_rq':  
+        return enque_repos(q, set_pypi_in_formal_only)
+    else:                   
+        for row in q.all():
+            #print "setting this row", row
+            set_pypi_in_formal_only(row[0], row[1])
+
+
 
 
 """
@@ -672,6 +730,7 @@ def commit_repo(repo):
     try:
         db.session.commit()
     except DataError:
+        print "error committing repo, rolling back and setting save error for ", repo
         db.session.rollback()
         repo.set_save_error()
         db.session.commit()
