@@ -160,7 +160,7 @@ class PypiPackage(Package):
         if not author:
             return False
 
-        if validate_email(author_email):
+        if author_email and validate_email(author_email):
             person = get_or_make_person(name=author, email=author_email)
         else:
             person = get_or_make_person(name=author)
