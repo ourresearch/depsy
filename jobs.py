@@ -5,7 +5,7 @@ from util import elapsed
 
 
 
-def make_update_fn(cls, method_name):
+def make_update_fn(cls, method_name, commit=True):
     def fn(obj_id):
         start_time = time()
 
@@ -21,7 +21,8 @@ def make_update_fn(cls, method_name):
         )
 
         method_to_run()
-        db.session.commit()
+        if commit:  # you can pass commit=False when you're testing stuff.
+            db.session.commit()
 
         print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
             repr=obj,
