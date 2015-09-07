@@ -291,7 +291,7 @@ class GithubRepo(db.Model):
         found_key = return_match_if_found("", "")
 
         # try lots of things, to work around hyphens
-        # format is  {import version: the official PyPi name}
+        # format is  {<the name you use to import>: <the official PyPi name>}
         special_cases = {
             "dateutil": "python-dateutil",
             "bs4": "beautifulsoup4",
