@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.exc import DataError
 from sqlalchemy import or_
+from sqlalchemy.orm import deferred
 
 from models import github_api
 from models.github_api import login_and_repo_name_from_url
@@ -34,8 +35,8 @@ class GithubRepo(db.Model):
     login = db.Column(db.Text, primary_key=True)
     repo_name = db.Column(db.Text, primary_key=True)
     language = db.Column(db.Text)
-    api_raw = db.Column(JSONB)
-    dependency_lines = db.Column(db.Text)
+    api_raw = deferred(db.Column(JSONB))
+    dependency_lines = deferred(db.Column(db.Text))
     zip_download_elapsed = db.Column(db.Float)
     zip_download_size = db.Column(db.Integer)
     zip_download_error = db.Column(db.Text)
@@ -44,14 +45,14 @@ class GithubRepo(db.Model):
     cran_dependencies = db.Column(JSONB)
     requirements = db.Column(JSONB)
     requirements_pypi = db.Column(JSONB)
-    reqs_file = db.Column(db.Text)
+    reqs_file = deferred(db.Column(db.Text))
     reqs_file_tried = db.Column(db.Boolean)
 
-    zip_filenames = db.Column(JSONB)
+    zip_filenames = deferred(db.Column(JSONB))
     zip_filenames_tried = db.Column(db.Boolean)
     pypi_in_formal_only = db.Column(JSONB)
 
-    setup_py_no_forks = db.Column(db.Text)
+    setup_py_no_forks = deferred(db.Column(db.Text))
     bucket = db.Column(JSONB)
 
 
@@ -283,12 +284,13 @@ class GithubRepo(db.Model):
             print "found in standard lib, skipping", module_name
             return None
 
-        def return_match_if_found(x, y):
-            lookup_key = module_name.lower().replace(x, y)
-            # pypi_package_names is loaded as module import, it's a cache.
-            # search the keys of pypi_package_names, which are all lowercase
-            if lookup_key in pypi_package_names.keys():
-                return lookup_key
+        def return_match_if_found(match, replace_with):
+            if match in module_name.lower():
+                lookup_key = module_name.lower().replace(match, replace_with)
+                # pypi_package_names is loaded as module import, it's a cache.
+                # search the keys of pypi_package_names, which are all lowercase
+                if lookup_key in pypi_package_names.keys():
+                    return lookup_key
             return None   
 
         # try the originals first
@@ -337,7 +339,7 @@ class GithubRepo(db.Model):
         # if foo.bar.baz is not in pypi, maybe foo.bar is. let's try that.
         elif '.' in module_name:
             shortened_name = module_name.rsplit('.', 1)[0]
-            print "now trying shortened_name", shortened_name
+            # print "now trying shortened_name", shortened_name
             return self._get_pypi_package(shortened_name, pypi_package_names)
 
         # if there's no dot in your name, there are no more options, you're done
@@ -777,7 +779,7 @@ def set_all_requirements_pypi(q_limit=9500, use_rq="rq"):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    enqueue_jobs(GithubRepo, "set_requirements_pypi", q, 6, use_rq)
+    enqueue_jobs(GithubRepo, "set_requirements_pypi", q, 7, use_rq)
 
 
 
