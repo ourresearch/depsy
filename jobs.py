@@ -108,14 +108,14 @@ def check_queue(queue_number, start_time, num_jobs):
         left=current_count,
         per_job=time_per_job
     )    
-    return time_per_job
+    return current_count
 
 
 def monitor_queue_loop(queue_number, start_time, num_jobs):
     current_count = ti_queues[queue_number].count
     while current_count:
         sleep(1)
-        current_count = ti_queues[queue_number].count = check_queue(queue_number, start_time, num_jobs)
+        current_count = check_queue(queue_number, start_time, num_jobs)
 
 
     print "Done! {} jobs took {} seconds".format(
