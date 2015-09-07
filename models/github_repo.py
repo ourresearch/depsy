@@ -1,7 +1,5 @@
 from app import db
-from app import github_zip_queue
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.dialects import postgresql
 from sqlalchemy.exc import DataError
 from sqlalchemy import or_
 
@@ -16,6 +14,8 @@ from models.cran_project import CranProject
 
 from models import python
 
+from jobs import enqueue_jobs
+
 
 from models import github_api
 import requests
@@ -27,7 +27,8 @@ import subprocess
 import re
 
 # comment this out here now, because usually not using
-pypi_package_names = get_pypi_package_names()
+# todo uncomment
+#pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -462,7 +463,7 @@ def add_all_github_dependency_lines(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, add_github_dependency_lines)
+    return enqueue_jobs(q, add_github_dependency_lines, 0)
 
 
 def add_all_r_github_dependency_lines(q_limit=100):
@@ -474,9 +475,9 @@ def add_all_r_github_dependency_lines(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, add_github_dependency_lines)
+    return enqueue_jobs(q, add_github_dependency_lines, 0)
 
-    # return enque_repos(q, add_github_dependency_lines)
+    # return enqueue_jobs(q, add_github_dependency_lines, 0)
     # for row in q.all():
     #     #print "setting this row", row
     #     add_github_dependency_lines(row[0], row[1])
@@ -502,7 +503,7 @@ def set_all_zip_filenames(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_zip_filenames)
+    return enqueue_jobs(q, set_zip_filenames, 0)
 
 
 
@@ -534,7 +535,7 @@ def set_all_pypi_dependencies(q_limit=100, run_mode='with_rq'):
     q = q.limit(q_limit)
 
     if run_mode=='with_rq':  
-        return enque_repos(q, set_pypi_dependencies)
+        return enqueue_jobs(q, set_pypi_dependencies, 0)
     else:                   
         for row in q.all():
             #print "setting this row", row
@@ -566,7 +567,7 @@ def set_all_cran_dependencies(q_limit=100):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_cran_dependencies)
+    return enqueue_jobs(q, set_cran_dependencies, 0)
 
     # for row in q.all():
     #     #print "setting this row", row
@@ -601,7 +602,7 @@ def set_all_requirements(q_limit=9500):
     q = q.order_by(GithubRepo.login)
     q = q.limit(q_limit)
 
-    return enque_repos(q, set_requirements)
+    return enqueue_jobs(q, set_requirements, 0)
 
 
 
@@ -630,7 +631,7 @@ def set_all_requirements_pypi(q_limit=9500, run_mode='with_rq'):
     q = q.limit(q_limit)
 
     if run_mode=='with_rq':  
-        return enque_repos(q, set_requirements_pypi)
+        return enqueue_jobs(q, set_requirements_pypi, 0)
     else:                   
         for row in q.all():
             #print "setting this row", row
@@ -664,7 +665,7 @@ def set_all_pypi_in_formal_only(q_limit=9500, run_mode='with_rq'):
     q = q.limit(q_limit)
 
     if run_mode=='with_rq':  
-        return enque_repos(q, set_pypi_in_formal_only)
+        return enqueue_jobs(q, set_pypi_in_formal_only, 0)
     else:                   
         for row in q.all():
             #print "setting this row", row
@@ -677,47 +678,6 @@ def set_all_pypi_in_formal_only(q_limit=9500, run_mode='with_rq'):
 utility functions
 """
 
-def enque_repos(q, fn, *args):
-    """
-    Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
-    """
-    empty_github_zip_queue()
-
-    start_time = time()
-    new_loop_start_time = time()
-    index = 0
-
-    print "running this query: \n{}\n".format(
-        q.statement.compile(dialect=postgresql.dialect())
-    )
-    row_list = q.all()
-    num_jobs = len(row_list)
-    print "finished query in {}sec".format(elapsed(start_time))
-    print "adding {} jobs to queue...".format(num_jobs)
-
-    for row in row_list:
-        row_args = (row[0], row[1])
-        row_args += args  # pass incoming option args to the enqueued function
-
-        job = github_zip_queue.enqueue_call(
-            func=fn,
-            args=row_args,
-            result_ttl=0  # number of seconds
-        )
-        job.meta["full_repo_name"] = row[0] + "/" + row[1]
-        job.save()
-        if index % 1000 == 0:
-            print "added {} jobs to queue in {}sec total, {}sec this loop".format(
-                index,
-                elapsed(start_time),
-                elapsed(new_loop_start_time)
-            )
-            new_loop_start_time = time()
-        index += 1
-    print "last repo added to the queue was {}".format(row[0] + "/" + row[1])
-
-    monitor_github_zip_queue(start_time, num_jobs)
-    return True
 
 
 def get_repo(login, repo_name):
@@ -736,39 +696,6 @@ def commit_repo(repo):
         repo.set_save_error()
         db.session.commit()
 
-
-def monitor_github_zip_queue(start_time, num_jobs):
-    current_count = github_zip_queue.count
-    time_per_job = 1
-    while current_count:
-        sleep(1)
-        current_count = github_zip_queue.count
-        done = num_jobs - current_count
-        try:
-            time_per_job = elapsed(start_time) / done
-        except ZeroDivisionError:
-            pass
-
-        mins_left = int(current_count * time_per_job / 60)
-
-        print "finished {done} jobs in {elapsed} min. {left} left (est {mins_left}min)".format(
-            done=done,
-            elapsed=int(elapsed(start_time) / 60),
-            mins_left=mins_left,
-            left=current_count
-        )
-    print "Done! {} jobs took {} seconds (avg {} secs/job)".format(
-        num_jobs,
-        elapsed(start_time),
-        time_per_job
-    )
-    return True
-
-
-def empty_github_zip_queue():
-    print "emptying {} jobs on the github zip queue....".format(github_zip_queue.count)
-    github_zip_queue.empty()
-    print "done. there's {} jobs on the github zip queue now.".format(github_zip_queue.count)
 
 
 

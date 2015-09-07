@@ -11,6 +11,8 @@ from models.person import Person
 from models.person import get_or_make_person
 from models.contribution import Contribution
 
+from jobs import enqueue_jobs
+
 class Package(db.Model):
     full_name = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
@@ -57,6 +59,9 @@ class Package(db.Model):
         response = [row[0] for row in q.all()]
         return response
 
+
+    def test(self):
+        print "i am running as a test:", self
 
 
     def save_github_owners_and_contributors(self):
@@ -209,9 +214,19 @@ class CranPackage(Package):
 
 
 
-def test_package():
+def test_package(limit=10):
     my_package = db.session.query(Package).get('pypi:2mp4')
     print my_package
+
+    q = db.session.query(Package.full_name)
+    q = q.filter(Package.github_owner != None)
+    q = q.order_by(Package.project_name)
+    q = q.limit(limit)
+
+    update_fn = make_update_fn(Package, "test")
+    enqueue_jobs(q, update_fn, 1)
+
+
 
 
 def make_persons_from_github_owner_and_contribs(limit=10):
