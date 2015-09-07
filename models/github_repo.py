@@ -27,7 +27,6 @@ import subprocess
 import re
 
 # comment this out here now, because usually not using
-# todo uncomment
 pypi_package_names = get_pypi_package_names()
 
 
@@ -53,7 +52,7 @@ class GithubRepo(db.Model):
     pypi_in_formal_only = db.Column(JSONB)
 
     setup_py_no_forks = db.Column(db.Text)
-
+    bucket = db.Column(JSONB)
 
 
     def __repr__(self):
@@ -432,6 +431,24 @@ class GithubRepo(db.Model):
         except github_api.NotFoundException:
             self.setup_py_no_forks = "not_found"
 
+    def set_setup_py_name(self):
+        if self.setup_py_no_forks is None:
+            return None
+
+        m = re.compile(r'name\s*=\s*[\'"](.+?)[\'"]').findall(self.setup_py_no_forks)
+
+        try:
+            if self.bucket is None:
+                self.bucket = {}
+
+            self.bucket["setup_py_name"] = m[0]
+            print "set {} setup_py_name to '{}'".format(
+                self,
+                m[0]
+            )
+        except IndexError:
+            return None
+
 
 
 
@@ -779,6 +796,26 @@ def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
     q = q.limit(limit)
 
     enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 5, use_rq)
+
+
+
+
+
+def set_all_setup_py_names(limit=10, use_rq="rq"):
+
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.setup_py_no_forks != None)
+
+    q = q.filter(GithubRepo.bucket == None)  # just a speed optimization
+
+    #q = q.filter(~GithubRepo.bucket.has_key("setup_py_name"))
+
+
+    q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(limit)
+
+    enqueue_jobs(GithubRepo, "set_setup_py_name", q, 1, use_rq)
 
 
 
