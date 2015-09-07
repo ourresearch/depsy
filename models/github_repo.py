@@ -289,7 +289,7 @@ class GithubRepo(db.Model):
                 lookup_key = module_name.lower().replace(match, replace_with)
                 # pypi_package_names is loaded as module import, it's a cache.
                 # search the keys of pypi_package_names, which are all lowercase
-                if lookup_key in pypi_package_names.keys():
+                if lookup_key in pypi_package_names:
                     return lookup_key
             return None   
 
@@ -306,7 +306,7 @@ class GithubRepo(db.Model):
             "_imaging": "Pillow"
         }
         if not found_key:
-            if module_name in special_cases.keys():
+            if module_name in special_cases:
                 found_key = special_cases[module_name].lower()
         if not found_key:
             if module_name in special_cases.values():
