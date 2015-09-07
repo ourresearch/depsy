@@ -528,39 +528,6 @@ def set_all_zip_filenames(q_limit=100):
 
 
 
-"""
-find and save list of pypi dependencies for each repo
-"""
-def set_pypi_dependencies(login, repo_name):
-    print "running with", login, repo_name
-    start_time = time()
-    repo = get_repo(login, repo_name)
-    if repo is None:
-        return None
-
-    repo.set_pypi_dependencies()
-    commit_repo(repo)
-    print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
-    return None  # important that it returns None for RQ
-
-
-def set_all_pypi_dependencies(q_limit=100, run_mode='with_rq'):
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.dependency_lines != None)
-    q = q.filter(GithubRepo.pypi_dependencies == None)
-    q = q.filter(GithubRepo.language == "python")
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(q_limit)
-
-    if run_mode=='with_rq':  
-        return enqueue_jobs(q, set_pypi_dependencies, 0)
-    else:                   
-        for row in q.all():
-            #print "setting this row", row
-            set_pypi_dependencies(row[0], row[1])
-
-
-
 
 """
 find and save list of cran dependencies for each repo
@@ -737,6 +704,34 @@ def add_repos_from_remote_csv(csv_url, language):
 
 
 
+
+
+
+"""
+find and save list of pypi dependencies for each repo
+"""
+def set_pypi_dependencies(login, repo_name):
+    print "running with", login, repo_name
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_pypi_dependencies()
+    commit_repo(repo)
+    print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
+
+
+def set_all_pypi_dependencies(q_limit=100, use_rq='rq'):
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.dependency_lines != None)
+    q = q.filter(GithubRepo.pypi_dependencies == None)
+    q = q.filter(GithubRepo.language == "python")
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    enqueue_jobs(GithubRepo, "set_pypi_dependencies", q, 6, use_rq)
 
 
 
