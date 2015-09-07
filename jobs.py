@@ -78,6 +78,10 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
                 elapsed(start_time),
                 elapsed(new_loop_start_time)
             )
+            
+            # also let us know how the stuff already on is doing
+            check_queue(queue_number, start_time, num_jobs)
+
             new_loop_start_time = time()
         index += 1
     print "last object added to the queue was {}".format(list(object_id_row))
@@ -86,26 +90,34 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
     return True
 
 
-def monitor_queue(queue_number, start_time, num_jobs):
+def check_queue(queue_number, start_time, num_jobs):
     current_count = ti_queues[queue_number].count
-    time_per_job = 1
+    done = num_jobs - current_count
+    try:
+        time_per_job = elapsed(start_time) / done
+    except ZeroDivisionError:
+        time_per_job = 1
+        pass
+
+    mins_left = int(current_count * time_per_job / 60)
+
+    print "finished {done} jobs in {elapsed} min. {left} left (est {mins_left}min, avg {per_job} sec/job)".format(
+        done=done,
+        elapsed=int(elapsed(start_time) / 60),
+        mins_left=mins_left,
+        left=current_count,
+        per_job=time_per_job
+    )    
+    return time_per_job
+
+
+def monitor_queue_loop(queue_number, start_time, num_jobs):
+    current_count = ti_queues[queue_number].count
     while current_count:
         sleep(1)
-        current_count = ti_queues[queue_number].count
-        done = num_jobs - current_count
-        try:
-            time_per_job = elapsed(start_time) / done
-        except ZeroDivisionError:
-            pass
+        time_per_job = check_queue(queue_number, start_time, num_jobs)
 
-        mins_left = int(current_count * time_per_job / 60)
 
-        print "finished {done} jobs in {elapsed} min. {left} left (est {mins_left}min)".format(
-            done=done,
-            elapsed=int(elapsed(start_time) / 60),
-            mins_left=mins_left,
-            left=current_count
-        )
     print "Done! {} jobs took {} seconds (avg {} secs/job)".format(
         num_jobs,
         elapsed(start_time),
