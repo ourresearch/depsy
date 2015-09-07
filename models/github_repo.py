@@ -52,6 +52,10 @@ class GithubRepo(db.Model):
     zip_filenames_tried = db.Column(db.Boolean)
     pypi_in_formal_only = db.Column(JSONB)
 
+    setup_py_no_forks = db.Column(db.Text)
+
+
+
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
             language=self.language, login=self.login, repo_name=self.repo_name)
@@ -412,7 +416,21 @@ class GithubRepo(db.Model):
         return self.cran_dependencies
 
 
+    def set_setup_py_no_forks(self):
 
+        # isn't going to get called if the repo has a fork
+        if self.api_raw["fork"]:
+            print "is a fork, so skipping"
+            return
+
+        try:
+            self.setup_py_no_forks = github_api.get_setup_py_contents(
+                self.login,
+                self.repo_name
+            )
+            print "found a setup.py for {}".format(self.full_name)
+        except github_api.NotFoundException:
+            self.setup_py_no_forks = "not_found"
 
 
 
@@ -674,6 +692,8 @@ def set_all_pypi_in_formal_only(q_limit=9500, run_mode='with_rq'):
 
 
 
+
+
 """
 utility functions
 """
@@ -749,6 +769,22 @@ def add_repos_from_remote_csv(csv_url, language):
 
 
 
+
+
+
+
+
+# this is the one that works, make them like this from now on
+def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
+
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.reqs_file != None)
+    q = q.filter(GithubRepo.setup_py_no_forks == None)
+    q = q.filter(GithubRepo.api_raw.contains({"fork":False}))
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(limit)
+
+    enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 5, use_rq)
 
 
 

@@ -15,8 +15,6 @@ def update_fn(cls, method_name, obj_id):
 
     obj = db.session.query(cls).get(obj_id)
 
-    print "i'm in make_update_fn, i got an object here", obj
-
     if obj is None:
         return None
 
