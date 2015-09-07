@@ -52,6 +52,8 @@ class GithubRepo(db.Model):
     zip_filenames_tried = db.Column(db.Boolean)
     pypi_in_formal_only = db.Column(JSONB)
 
+    bucket = db.Column(JSONB)
+
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
             language=self.language, login=self.login, repo_name=self.repo_name)
