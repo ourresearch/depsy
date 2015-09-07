@@ -7,45 +7,46 @@ from sqlalchemy.dialects import postgresql
 
 
 
-def make_update_fn(cls, method_name, commit=True):
-    def fn(obj_id):
-        start_time = time()
-
-        obj = db.session.query(cls).get(obj_id)
-        if obj is None:
-            return None
-
-        method_to_run = getattr(obj, method_name)
-
-        print u"running {repr}.{method_name}() method".format(
-            repr=obj,
-            method_name=method_name
-        )
-
-        method_to_run()
-        if commit:  # you can pass commit=False when you're testing stuff.
-            db.session.commit()
-
-        print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
-            repr=obj,
-            method_name=method_name,
-            elapsed=elapsed(start_time, 4)
-        )
-        return None  # important for if we use this on RQ
-
-    return fn
 
 
-def enqueue_jobs(q, fn, queue_number, *args):
+def update_fn(cls, method_name, obj_id):
+
+    start_time = time()
+
+    obj = db.session.query(cls).get(obj_id)
+
+    print "i'm in make_update_fn, i got an object here", obj
+
+    if obj is None:
+        return None
+
+    method_to_run = getattr(obj, method_name)
+
+    print u"running {repr}.{method_name}() method".format(
+        repr=obj,
+        method_name=method_name
+    )
+
+    method_to_run()
+    db.session.commit()
+
+    print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
+        repr=obj,
+        method_name=method_name,
+        elapsed=elapsed(start_time, 4)
+    )
+    return None  # important for if we use this on RQ
+
+
+
+def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
     """
     Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
     """
-    empty_queue(queue_number)
 
-    print "running eneueueue jobs, here are the args", q, fn, queue_number
-    print "running fn()"
-    fn()
-    print "ran fn()"
+    if use_rq == "rq":
+        empty_queue(queue_number)
+
 
     start_time = time()
     new_loop_start_time = time()
@@ -60,16 +61,19 @@ def enqueue_jobs(q, fn, queue_number, *args):
     print "adding {} jobs to queue...".format(num_jobs)
 
     for object_id_row in row_list:
-        row_args = list(object_id_row)
-        row_args += args  # pass incoming option args to the enqueued function
+        update_fn_args = [cls, method, tuple(object_id_row)]
 
-        job = ti_queues[queue_number].enqueue_call(
-            func=fn,
-            args=row_args,
-            result_ttl=0  # number of seconds
-        )
-        job.meta["object_id"] = list(object_id_row)
-        job.save()
+        if use_rq == "rq":
+            job = ti_queues[queue_number].enqueue_call(
+                func=update_fn,
+                args=update_fn_args,
+                result_ttl=0  # number of seconds
+            )
+            job.meta["object_id"] = list(object_id_row)
+            job.save()
+        else:
+            update_fn(*update_fn_args)
+
         if index % 1000 == 0:
             print "added {} jobs to queue in {}sec total, {}sec this loop".format(
                 index,

@@ -5,7 +5,6 @@ from util import elapsed
 from time import time
 from validate_email import validate_email
 
-from jobs import make_update_fn
 from models import github_api
 from models.person import Person
 from models.person import get_or_make_person
@@ -58,7 +57,6 @@ class Package(db.Model):
         q = q.filter(func.lower(cls.project_name).in_(lowercase_module_names))
         response = [row[0] for row in q.all()]
         return response
-
 
     def test(self):
         print "i am running as a test:", self
@@ -214,19 +212,6 @@ class CranPackage(Package):
 
 
 
-def test_package(limit=10):
-    my_package = db.session.query(Package).get('pypi:2mp4')
-    print my_package
-
-    q = db.session.query(Package.full_name)
-    q = q.filter(Package.github_owner != None)
-    q = q.order_by(Package.project_name)
-    q = q.limit(limit)
-
-    update_fn = make_update_fn(Package, "test")
-    enqueue_jobs(q, update_fn, 1)
-
-
 
 
 def make_persons_from_github_owner_and_contribs(limit=10):
@@ -275,6 +260,27 @@ def set_all_github_contributors(limit=10):
 
     for row in q.all():
         update_fn(row[0])
+
+
+
+
+
+
+
+# this is the one that works, make them like this from now on
+def test_package(limit=10, use_rq="rq"):
+
+    q = db.session.query(Package.full_name)
+    q = q.filter(Package.github_owner != None)
+    q = q.order_by(Package.project_name)
+    q = q.limit(limit)
+
+    enqueue_jobs(Package, "test", q, 1, use_rq)
+
+
+
+
+
 
 
 

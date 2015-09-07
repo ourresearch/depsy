@@ -3,7 +3,6 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import text
 
 from github_api import get_profile
-from jobs import make_update_fn
 """
 this file in progress. i think should have:
 
