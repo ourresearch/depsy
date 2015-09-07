@@ -28,7 +28,7 @@ import re
 
 # comment this out here now, because usually not using
 # todo uncomment
-#pypi_package_names = get_pypi_package_names()
+pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -625,36 +625,6 @@ def set_all_requirements(q_limit=9500):
 
 
 
-"""
-save python requirements from requirements.txt and setup.py
-"""
-def set_requirements_pypi(login, repo_name):
-    start_time = time()
-    repo = get_repo(login, repo_name)
-    if repo is None:
-        return None
-
-    repo.set_requirements_pypi()
-    commit_repo(repo)
-    print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
-    return None  # important that it returns None for RQ
-
-
-def set_all_requirements_pypi(q_limit=9500, run_mode='with_rq'):
-    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.requirements_pypi == None)
-    q = q.filter(GithubRepo.requirements != [])
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(q_limit)
-
-    if run_mode=='with_rq':  
-        return enqueue_jobs(q, set_requirements_pypi, 0)
-    else:                   
-        for row in q.all():
-            #print "setting this row", row
-            set_requirements_pypi(row[0], row[1])
-
 
 
 """
@@ -772,9 +742,33 @@ def add_repos_from_remote_csv(csv_url, language):
 
 
 
+"""
+save python requirements from requirements.txt and setup.py
+"""
+def set_requirements_pypi(login, repo_name):
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_requirements_pypi()
+    commit_repo(repo)
+    print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
 
 
-# this is the one that works, make them like this from now on
+def set_all_requirements_pypi(q_limit=9500, use_rq="rq"):
+    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.requirements_pypi == None)
+    q = q.filter(GithubRepo.requirements != [])
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    enqueue_jobs(GithubRepo, "set_requirements_pypi", q, 6, use_rq)
+
+
+
 def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
 
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
