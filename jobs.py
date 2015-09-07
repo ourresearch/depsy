@@ -86,7 +86,7 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
         index += 1
     print "last object added to the queue was {}".format(list(object_id_row))
 
-    monitor_queue(queue_number, start_time, num_jobs)
+    monitor_queue_loop(queue_number, start_time, num_jobs)
     return True
 
 
