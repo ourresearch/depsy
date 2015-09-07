@@ -3,7 +3,6 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import text
 
 from github_api import get_profile
-from jobs import make_update_fn
 """
 this file in progress. i think should have:
 
@@ -76,12 +75,24 @@ def get_github_about_for_all_persons(limit=10):
 def get_or_make_person(**kwargs):
     res = None
 
+
     if kwargs["name"] == "UNKNOWN":
         # pypi sets unknown people to have the name "UNKNOWN"
         # we don't want to make tons of these, it's just one 'person'.
-        return db.session.query(Person).filter(
+        res = db.session.query(Person).filter(
             Person.name == "UNKNOWN"
         ).first()
+
+    if kwargs["name"] == "ORPHANED":
+        # cran sets this when the maintainer is gone.
+        # we don't want to make tons of these, it's just one 'person'.
+        res = db.session.query(Person).filter(
+            Person.name == "ORPHANED"
+        ).first()
+
+    if res is not None:
+        return res
+
 
 
     if "github_login" in kwargs:
@@ -101,6 +112,8 @@ def get_or_make_person(**kwargs):
 
     if res is not None:
         return res
+
+
     else:
         new_person = Person(**kwargs)
         db.session.add(new_person)

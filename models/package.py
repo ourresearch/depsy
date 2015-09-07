@@ -5,11 +5,12 @@ from util import elapsed
 from time import time
 from validate_email import validate_email
 
-from jobs import make_update_fn
 from models import github_api
 from models.person import Person
 from models.person import get_or_make_person
 from models.contribution import Contribution
+
+from jobs import enqueue_jobs
 
 class Package(db.Model):
     full_name = db.Column(db.Text, primary_key=True)
@@ -28,6 +29,7 @@ class Package(db.Model):
 
     proxy_papers = db.Column(db.Text)
     github_contributors = db.Column(JSONB)
+    bucket = db.Column(JSONB)
 
     contributions = db.relationship(
         'Contribution',
@@ -56,6 +58,8 @@ class Package(db.Model):
         response = [row[0] for row in q.all()]
         return response
 
+    def test(self):
+        print "i am running as a test:", self
 
 
     def save_github_owners_and_contributors(self):
@@ -178,14 +182,36 @@ class CranPackage(Package):
         return u'<CranPackage {name}>'.format(
             name=self.full_name)
 
+    def save_host_contributors(self):
+        all_authors = self.api_raw["Author"]
+        maintainer = self.api_raw["Maintainer"]
 
 
 
-def test_package():
 
-    my_package = db.session.query(Package).get('pypi:2mp4')
+        #if not author:
+        #    return False
+        #
+        #if author_email and validate_email(author_email):
+        #    person = get_or_make_person(name=author, email=author_email)
+        #else:
+        #    person = get_or_make_person(name=author)
+        #
+        #self._save_contribution(person, "author")
 
-    print my_package.save_contributors_to_db()
+
+
+    def _remove_all_authors_cruft(self, all_authors):
+        return all_authors
+
+    def _extract_author_strings(self, all_authors):
+        return []
+
+    def _name_and_email_from_author_str(self, author_str):
+        return [None, None]
+
+
+
 
 
 def make_persons_from_github_owner_and_contribs(limit=10):
@@ -209,6 +235,16 @@ def save_host_contributors_pypi(limit=10):
     for row in q.all():
         update_fn(row[0])
 
+def save_host_contributors_cran(limit=10):
+    # has to be run all in one go, db stores no indicator this has run.
+    q = db.session.query(CranPackage.full_name)
+    q = q.order_by(Package.project_name)
+    q = q.limit(limit)
+
+    update_fn = make_update_fn(Package, "save_host_contributors")
+    for row in q.all():
+        update_fn(row[0])
+
 
 
 
@@ -224,6 +260,27 @@ def set_all_github_contributors(limit=10):
 
     for row in q.all():
         update_fn(row[0])
+
+
+
+
+
+
+
+# this is the one that works, make them like this from now on
+def test_package(limit=10, use_rq="rq"):
+
+    q = db.session.query(Package.full_name)
+    q = q.filter(Package.github_owner != None)
+    q = q.order_by(Package.project_name)
+    q = q.limit(limit)
+
+    enqueue_jobs(Package, "test", q, 1, use_rq)
+
+
+
+
+
 
 
 
