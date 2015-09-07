@@ -9,7 +9,7 @@ from models import github_api
 from models.person import Person
 from models.person import get_or_make_person
 from models.contribution import Contribution
-
+from models.github_repo import GithubRepo
 from jobs import enqueue_jobs
 
 class Package(db.Model):
@@ -57,10 +57,6 @@ class Package(db.Model):
         q = q.filter(func.lower(cls.project_name).in_(lowercase_module_names))
         response = [row[0] for row in q.all()]
         return response
-
-    def test(self):
-        print "i am running as a test:", self
-
 
     def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
@@ -136,6 +132,24 @@ class Package(db.Model):
             self.github_repo_name
         )
         print self.github_contributors
+
+    def set_github_repo_ids(self):
+        q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+        q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
+        q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
+        row = q.first()
+
+        if row is None:
+            return None
+
+        else:
+            print "Setting a new github repo for {}: {}/{}".format(
+                self,
+                row[0],
+                row[1]
+            )
+            self.github_owner = row[0]
+            self.github_repo_name = row[1]
 
     @property
     def contributors(self):
@@ -264,9 +278,6 @@ def set_all_github_contributors(limit=10):
 
 
 
-
-
-
 # this is the one that works, make them like this from now on
 def test_package(limit=10, use_rq="rq"):
 
@@ -278,6 +289,18 @@ def test_package(limit=10, use_rq="rq"):
     enqueue_jobs(Package, "test", q, 1, use_rq)
 
 
+
+
+
+
+def set_all_github_repo_ids(limit=10, use_rq="rq"):
+
+    q = db.session.query(PypiPackage.full_name)
+    q = q.filter(PypiPackage.github_repo_name == None)
+    q = q.order_by(PypiPackage.project_name)
+    q = q.limit(limit)
+
+    enqueue_jobs(Package, "set_github_repo_ids", q, 1, use_rq)
 
 
 
