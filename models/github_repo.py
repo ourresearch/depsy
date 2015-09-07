@@ -28,7 +28,7 @@ import re
 
 # comment this out here now, because usually not using
 # todo uncomment
-#pypi_package_names = get_pypi_package_names()
+pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
@@ -52,7 +52,9 @@ class GithubRepo(db.Model):
     zip_filenames_tried = db.Column(db.Boolean)
     pypi_in_formal_only = db.Column(JSONB)
 
-    bucket = db.Column(JSONB)
+    setup_py_no_forks = db.Column(db.Text)
+
+
 
     def __repr__(self):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
@@ -294,7 +296,7 @@ class GithubRepo(db.Model):
         found_key = return_match_if_found("", "")
 
         # try lots of things, to work around hyphens
-        # format is  {import version: the official PyPi name}
+        # format is  {<the name you use to import>: <the official PyPi name>}
         special_cases = {
             "dateutil": "python-dateutil",
             "bs4": "beautifulsoup4",
@@ -414,7 +416,21 @@ class GithubRepo(db.Model):
         return self.cran_dependencies
 
 
+    def set_setup_py_no_forks(self):
 
+        # isn't going to get called if the repo has a fork
+        if self.api_raw["fork"]:
+            print "is a fork, so skipping"
+            return
+
+        try:
+            self.setup_py_no_forks = github_api.get_setup_py_contents(
+                self.login,
+                self.repo_name
+            )
+            print "found a setup.py for {}".format(self.full_name)
+        except github_api.NotFoundException:
+            self.setup_py_no_forks = "not_found"
 
 
 
@@ -609,36 +625,6 @@ def set_all_requirements(q_limit=9500):
 
 
 
-"""
-save python requirements from requirements.txt and setup.py
-"""
-def set_requirements_pypi(login, repo_name):
-    start_time = time()
-    repo = get_repo(login, repo_name)
-    if repo is None:
-        return None
-
-    repo.set_requirements_pypi()
-    commit_repo(repo)
-    print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
-    return None  # important that it returns None for RQ
-
-
-def set_all_requirements_pypi(q_limit=9500, run_mode='with_rq'):
-    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.requirements_pypi == None)
-    q = q.filter(GithubRepo.requirements != [])
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(q_limit)
-
-    if run_mode=='with_rq':  
-        return enqueue_jobs(q, set_requirements_pypi, 0)
-    else:                   
-        for row in q.all():
-            #print "setting this row", row
-            set_requirements_pypi(row[0], row[1])
-
 
 
 """
@@ -672,6 +658,8 @@ def set_all_pypi_in_formal_only(q_limit=9500, run_mode='with_rq'):
         for row in q.all():
             #print "setting this row", row
             set_pypi_in_formal_only(row[0], row[1])
+
+
 
 
 
@@ -751,6 +739,46 @@ def add_repos_from_remote_csv(csv_url, language):
 
 
 
+
+
+
+"""
+save python requirements from requirements.txt and setup.py
+"""
+def set_requirements_pypi(login, repo_name):
+    start_time = time()
+    repo = get_repo(login, repo_name)
+    if repo is None:
+        return None
+
+    repo.set_requirements_pypi()
+    commit_repo(repo)
+    print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
+    return None  # important that it returns None for RQ
+
+
+def set_all_requirements_pypi(q_limit=9500, use_rq="rq"):
+    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.requirements_pypi == None)
+    q = q.filter(GithubRepo.requirements != [])
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(q_limit)
+
+    enqueue_jobs(GithubRepo, "set_requirements_pypi", q, 6, use_rq)
+
+
+
+def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
+
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.reqs_file != None)
+    q = q.filter(GithubRepo.setup_py_no_forks == None)
+    q = q.filter(GithubRepo.api_raw.contains({"fork":False}))
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(limit)
+
+    enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 5, use_rq)
 
 
 
