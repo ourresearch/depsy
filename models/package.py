@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from util import elapsed
 from time import time
@@ -29,7 +30,7 @@ class Package(db.Model):
 
     proxy_papers = db.Column(db.Text)
     github_contributors = db.Column(JSONB)
-    bucket = db.Column(JSONB)
+    bucket = db.Column(MutableDict.as_mutable(JSONB))
 
     contributions = db.relationship(
         'Contribution',
@@ -150,6 +151,7 @@ class Package(db.Model):
             )
             self.github_owner = row[0]
             self.github_repo_name = row[1]
+            self.bucket["github_id_matched_from_setup_py"] = True
 
     @property
     def contributors(self):
