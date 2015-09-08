@@ -303,19 +303,28 @@ def test_package(limit=10, use_rq="rq"):
 
 
 
-def set_all_github_repo_ids(limit=10, use_rq="rq"):
+def set_all_pypi_github_repo_ids(limit=10, use_rq="rq"):
 
     q = db.session.query(PypiPackage.full_name)
-
-    # megahack!
-    q = q.filter(PypiPackage.full_name > 'pypi:svgobject')
-
-
     q = q.filter(PypiPackage.github_repo_name == None)
     q = q.order_by(PypiPackage.project_name)
     q = q.limit(limit)
 
     enqueue_jobs(Package, "set_github_repo_ids", q, 1, use_rq)
+
+
+
+
+
+def set_all_cran_github_repo_ids(limit=10, use_rq="rq"):
+
+    q = db.session.query(CranPackage.full_name)
+    q = q.filter(CranPackage.github_repo_name == None)
+    q = q.order_by(PypiPackage.project_name)
+    q = q.limit(limit)
+
+    enqueue_jobs(Package, "set_github_repo_ids", q, 1, use_rq)
+
 
 
 
