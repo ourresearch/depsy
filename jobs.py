@@ -58,6 +58,8 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
     print "finished query in {}sec".format(elapsed(start_time))
     print "adding {} jobs to queue...".format(num_jobs)
 
+    update = Update(num_jobs, queue_number)
+
     for object_id_row in row_list:
         update_fn_args = [cls, method, tuple(object_id_row)]
 
@@ -72,7 +74,7 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
         else:
             update_fn(*update_fn_args)
 
-        if index % 1000 == 0:
+        if index % 1000 == 0 and index != 0:
             print "added {} jobs to queue in {}sec total, {}sec this loop".format(
                 index,
                 elapsed(start_time),
@@ -80,49 +82,80 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
             )
             
             # also let us know how the stuff already on is doing
-            check_queue(queue_number, start_time, num_jobs)
+            update.print_status(recurse=False)
 
             new_loop_start_time = time()
         index += 1
     print "last object added to the queue was {}".format(list(object_id_row))
 
-    monitor_queue_loop(queue_number, start_time, num_jobs)
+    update.print_status(recurse=True)
     return True
 
 
-def check_queue(queue_number, start_time, num_jobs):
-    current_count = ti_queues[queue_number].count
-    done = num_jobs - current_count
-    try:
-        time_per_job = elapsed(start_time) / done
-    except ZeroDivisionError:
-        time_per_job = 1
-        pass
 
-    mins_left = int(current_count * time_per_job / 60)
+class Update():
+    seconds_between_chunks = 15
 
-    print "finished {done} jobs in {elapsed} min. {left} left (est {mins_left}min, avg {per_job} sec/job)".format(
-        done=done,
-        elapsed=int(elapsed(start_time) / 60),
-        mins_left=mins_left,
-        left=current_count,
-        per_job=time_per_job
-    )    
-    return current_count
+    def __init__(self, num_jobs, queue_number):
+        self.num_jobs_total = num_jobs
+        self.queue_number = queue_number
+        self.start_time = time()
+
+        self.last_chunk_start_time = time()
+        self.last_chunk_num_jobs_completed = 0
+        self.number_of_prints = 0
 
 
-def monitor_queue_loop(queue_number, start_time, num_jobs):
-    current_count = ti_queues[queue_number].count
-    while current_count:
-        sleep(1)
-        current_count = check_queue(queue_number, start_time, num_jobs)
+
+    def print_status(self, recurse=False):
+        sleep(1)  # make sure there's time for the jobs to be saved in redis.
+
+        num_jobs_remaining = ti_queues[self.queue_number].count
+        num_jobs_done = self.num_jobs_total - num_jobs_remaining
 
 
-    print "Done! {} jobs took {} seconds".format(
-        num_jobs,
-        elapsed(start_time)
-    )
-    return True
+        print "finished {done} jobs in {elapsed} min. {left} left.".format(
+            done=num_jobs_done,
+            elapsed=round(elapsed(self.start_time) / 60, 1),
+            left=num_jobs_remaining
+        )
+        self.number_of_prints += 1
+
+
+        if self.number_of_prints % self.seconds_between_chunks == self.seconds_between_chunks - 1:
+
+            num_jobs_finished_this_chunk = num_jobs_done - self.last_chunk_num_jobs_completed
+            if not num_jobs_finished_this_chunk:
+                print "No jobs finished this chunk... :/"
+
+            else:
+                chunk_elapsed = elapsed(self.last_chunk_start_time)
+
+                jobs_per_hour_this_chunk = int(
+                    num_jobs_finished_this_chunk / float(chunk_elapsed / 3600),
+                )
+
+                predicted_mins_to_finish = round(
+                    (num_jobs_remaining / jobs_per_hour_this_chunk) * 60,
+                    1
+                )
+                print "We're doing {} jobs per hour. At this rate, done in {}min\n".format(
+                    jobs_per_hour_this_chunk,
+                    predicted_mins_to_finish
+                )
+
+                self.last_chunk_start_time = time()
+                self.last_chunk_num_jobs_completed = num_jobs_done
+
+        if num_jobs_remaining == 0:
+            print "we finished! :)"
+            return True
+
+        elif recurse:
+            return self.print_status(recurse=True)
+
+
+
 
 
 def empty_queue(queue_number):

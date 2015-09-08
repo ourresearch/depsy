@@ -27,7 +27,7 @@ import subprocess
 import re
 
 # comment this out here now, because usually not using
-pypi_package_names = get_pypi_package_names()
+#pypi_package_names = get_pypi_package_names()
 
 
 class GithubRepo(db.Model):
