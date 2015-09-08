@@ -131,16 +131,15 @@ class Update():
             else:
                 chunk_elapsed = elapsed(self.last_chunk_start_time)
 
-                jobs_per_hour_this_chunk = int(
-                    num_jobs_finished_this_chunk / float(chunk_elapsed / 3600),
-                )
+                jobs_per_hour_this_chunk = num_jobs_finished_this_chunk / float(chunk_elapsed / 3600)
+
 
                 predicted_mins_to_finish = round(
                     (num_jobs_remaining / float(jobs_per_hour_this_chunk)) * 60,
                     1
                 )
                 print "We're doing {} jobs per hour. At this rate, done in {}min\n".format(
-                    jobs_per_hour_this_chunk,
+                    int(jobs_per_hour_this_chunk),
                     predicted_mins_to_finish
                 )
 
