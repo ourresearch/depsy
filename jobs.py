@@ -82,7 +82,7 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
             )
             
             # also let us know how the stuff already on is doing
-            update.print_status(recurse=False)
+            #update.print_status(recurse=False)
 
             new_loop_start_time = time()
         index += 1
@@ -136,7 +136,7 @@ class Update():
                 )
 
                 predicted_mins_to_finish = round(
-                    (num_jobs_remaining / jobs_per_hour_this_chunk) * 60,
+                    (num_jobs_remaining / float(jobs_per_hour_this_chunk)) * 60,
                     1
                 )
                 print "We're doing {} jobs per hour. At this rate, done in {}min\n".format(
