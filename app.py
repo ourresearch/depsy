@@ -60,7 +60,7 @@ redis_rq_conn = redis.from_url(
 db = SQLAlchemy(app)
 
 ti_queues = []
-for i in range(0, 9):
+for i in range(0, 10):
     ti_queues.append(
         Queue("ti-queue-{}".format(i), connection=redis_rq_conn)
     )
