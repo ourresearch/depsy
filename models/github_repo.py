@@ -40,6 +40,7 @@ class GithubRepo(db.Model):
     requirements_pypi = db.Column(JSONB)
     cran_dependencies = db.Column(JSONB)
     bucket = db.Column(JSONB)
+    cran_descr_file = db.Column(db.Text)
 
     # old, and removed from current database.  only in backups of database.
     # requirements = db.Column(JSONB)
@@ -452,6 +453,25 @@ class GithubRepo(db.Model):
             return None
 
 
+    def set_cran_descr_file_name(self):
+        if self.cran_descr_file is None:
+            return None
+
+        m = re.compile(r'^Package\s*:\s*(.+?)\s').findall(self.cran_descr_file)
+
+        try:
+            if self.bucket is None:
+                self.bucket = {}
+
+            self.bucket["cran_descr_file_name"] = m[0]
+            print "set {} cran_descr_file_name to '{}'".format(
+                self.full_name,
+                m[0]
+            )
+        except IndexError:
+            return None
+
+
 
     def set_named_deps(self):
 
@@ -465,6 +485,7 @@ class GithubRepo(db.Model):
 
         #uniquify
         self.named_deps = list(set(self.named_deps))
+        print "self.named_deps", self.named_deps
 
 
 
@@ -806,7 +827,7 @@ def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
     q = q.order_by(GithubRepo.login)
     q = q.limit(limit)
 
-    enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 5, use_rq)
+    enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 8, use_rq)
 
 
 def get_all_set_named_deps(limit=10, use_rq="rq"):
@@ -828,15 +849,25 @@ def set_all_setup_py_names(limit=10, use_rq="rq"):
     q = q.filter(GithubRepo.setup_py_no_forks != None)
 
     q = q.filter(GithubRepo.bucket == None)  # just a speed optimization
-
-    #q = q.filter(~GithubRepo.bucket.has_key("setup_py_name"))
-
-
     q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
     q = q.order_by(GithubRepo.login)
     q = q.limit(limit)
 
     enqueue_jobs(GithubRepo, "set_setup_py_name", q, 1, use_rq)
+
+
+
+def set_all_cran_descr_file_names(limit=10, use_rq="rq"):
+
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.cran_descr_file != None)
+    q = q.filter(GithubRepo.cran_descr_file != "not_found")
+    # q = q.filter(GithubRepo.api_raw.contains({"fork": False}))  #already did this when we made it
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(limit)
+
+    enqueue_jobs(GithubRepo, "set_cran_descr_file_name", q, 9, use_rq)
+
 
 
 
