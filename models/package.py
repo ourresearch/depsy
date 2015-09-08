@@ -137,6 +137,11 @@ class Package(db.Model):
     def set_github_repo_ids(self):
         q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
         q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
+
+        # try this
+        q = q.with_for_update(read=True, nowait=True)
+
+
         q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
 
         start = time()
@@ -303,7 +308,7 @@ def set_all_github_repo_ids(limit=10, use_rq="rq"):
     q = db.session.query(PypiPackage.full_name)
 
     # megahack!
-    q = q.filter(PypiPackage.full_name > 'pypi:pyjava')
+    q = q.filter(PypiPackage.full_name > 'pypi:svgobject')
 
 
     q = q.filter(PypiPackage.github_repo_name == None)
