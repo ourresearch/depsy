@@ -729,7 +729,7 @@ def add_repos_from_remote_csv(csv_url, language):
 """
 find and save list of pypi dependencies for each repo
 """
-def set_pypi_dependencies(login, repo_name):
+def set_one_pypi_dependencies(login, repo_name):
     print "running with", login, repo_name
     start_time = time()
     repo = get_repo(login, repo_name)
@@ -759,7 +759,7 @@ def set_all_pypi_dependencies(q_limit=100, use_rq='rq'):
 """
 save python requirements from requirements.txt and setup.py
 """
-def set_requirements_pypi(login, repo_name):
+def set_one_requirements_pypi(login, repo_name):
     start_time = time()
     repo = get_repo(login, repo_name)
     if repo is None:
@@ -793,6 +793,16 @@ def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
     q = q.limit(limit)
 
     enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 5, use_rq)
+
+
+def get_all_set_named_deps(limit=10, use_rq="rq"):
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.set_named_deps == None)
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(limit)
+
+    enqueue_jobs(GithubRepo, "set_named_deps", q, 5, use_rq)
+
 
 
 
