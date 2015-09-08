@@ -240,6 +240,7 @@ class CranPackage(Package):
     def set_github_repo_ids(self):
         q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
         q = q.filter(GithubRepo.language == 'r')
+        q = q.filter(GithubRepo.login != 'cran')  # these are just mirrors.
         q = q.filter(GithubRepo.bucket.contains({"cran_descr_file_name": self.project_name}))
         q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
 
