@@ -59,6 +59,7 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
     print "adding {} jobs to queue...".format(num_jobs)
 
     update = Update(num_jobs, queue_number)
+    object_id_row = []
 
     for object_id_row in row_list:
         update_fn_args = [cls, method, tuple(object_id_row)]

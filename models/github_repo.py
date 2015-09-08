@@ -453,6 +453,20 @@ class GithubRepo(db.Model):
 
 
 
+    def set_named_deps(self):
+
+        self.named_deps = []
+
+        if self.pypi_dependencies:
+            self.named_deps += self.pypi_dependencies
+
+        if self.requirements_pypi:
+            self.named_deps += self.requirements_pypi
+
+        #uniquify
+        self.named_deps = list(set(self.named_deps))
+
+
 
 
 """
@@ -797,7 +811,7 @@ def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
 
 def get_all_set_named_deps(limit=10, use_rq="rq"):
     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.set_named_deps == None)
+    q = q.filter(GithubRepo.named_deps == None)
     q = q.order_by(GithubRepo.login)
     q = q.limit(limit)
 
