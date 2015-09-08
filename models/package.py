@@ -273,17 +273,14 @@ def save_host_contributors_cran(limit=10):
 
 
 
-def set_all_github_contributors(limit=10):
+def set_all_github_contributors(limit=10, use_rq="rq"):
     q = db.session.query(Package.full_name)
     q = q.filter(Package.github_repo_name != None)
     q = q.filter(Package.github_contributors == None)
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
-    update_fn = make_update_fn(Package, "set_github_contributors")
-
-    for row in q.all():
-        update_fn(row[0])
+    enqueue_jobs(Package, "set_github_contributors", q, 1, use_rq)
 
 
 
