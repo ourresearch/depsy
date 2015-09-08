@@ -76,14 +76,14 @@ def get_or_make_person(**kwargs):
     res = None
 
 
-    if kwargs["name"] == "UNKNOWN":
+    if 'name' in kwargs and kwargs["name"] == "UNKNOWN":
         # pypi sets unknown people to have the name "UNKNOWN"
         # we don't want to make tons of these, it's just one 'person'.
         res = db.session.query(Person).filter(
             Person.name == "UNKNOWN"
         ).first()
 
-    if kwargs["name"] == "ORPHANED":
+    if 'name' in kwargs and kwargs["name"] == "ORPHANED":
         # cran sets this when the maintainer is gone.
         # we don't want to make tons of these, it's just one 'person'.
         res = db.session.query(Person).filter(

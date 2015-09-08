@@ -265,15 +265,14 @@ class CranPackage(Package):
 
 
 
-def make_persons_from_github_owner_and_contribs(limit=10):
+def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
     q = db.session.query(Package.full_name)
-    q = q.filter(Package.github_owner != None)
-    q = q.order_by(Package.project_name)
+    q = q.filter(Package.github_repo_name != None)
+    q = q.order_by(Package.full_name)
     q = q.limit(limit)
 
-    update_fn = make_update_fn(Package, "save_github_owners_and_contributors")
-    for row in q.all():
-        update_fn(row[0])
+    enqueue_jobs(Package, "save_github_owners_and_contributors", q, 1, use_rq)
+
 
 
 def save_host_contributors_pypi(limit=10):
