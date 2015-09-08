@@ -82,13 +82,13 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
             )
             
             # also let us know how the stuff already on is doing
-            #update.print_status(recurse=False)
+            #update.print_status()
 
             new_loop_start_time = time()
         index += 1
     print "last object added to the queue was {}".format(list(object_id_row))
 
-    update.print_status(recurse=True)
+    update.print_status_loop()
     return True
 
 
@@ -107,7 +107,13 @@ class Update():
 
 
 
-    def print_status(self, recurse=False):
+    def print_status_loop(self):
+        num_jobs_remaining = self.print_status()
+        while num_jobs_remaining > 0:
+            num_jobs_remaining = self.print_status()
+
+
+    def print_status(self):
         sleep(1)  # make sure there's time for the jobs to be saved in redis.
 
         num_jobs_remaining = ti_queues[self.queue_number].count
@@ -146,12 +152,8 @@ class Update():
                 self.last_chunk_start_time = time()
                 self.last_chunk_num_jobs_completed = num_jobs_done
 
-        if num_jobs_remaining == 0:
-            print "we finished! :)"
-            return True
+        return num_jobs_remaining
 
-        elif recurse:
-            return self.print_status(recurse=True)
 
 
 
