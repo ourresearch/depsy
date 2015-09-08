@@ -138,7 +138,10 @@ class Package(db.Model):
         q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
         q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
         q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
+
+        start = time()
         row = q.first()
+        print "Github repo query took {}".format(elapsed(start, 4))
 
         if row is None:
             return None
