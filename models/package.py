@@ -132,7 +132,7 @@ class Package(db.Model):
             self.github_owner,
             self.github_repo_name
         )
-        print self.github_contributors
+        print "found github contributors", self.github_contributors
 
     def set_github_repo_id(self):
         # override in subclass
