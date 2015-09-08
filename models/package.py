@@ -134,32 +134,11 @@ class Package(db.Model):
         )
         print self.github_contributors
 
-    def set_github_repo_ids(self):
-        q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-        q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
-
-        # try this
-        q = q.with_for_update(read=True, nowait=True)
+    def set_github_repo_id(self):
+        # override in subclass
+        raise NotImplementedError
 
 
-        q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
-
-        start = time()
-        row = q.first()
-        print "Github repo query took {}".format(elapsed(start, 4))
-
-        if row is None:
-            return None
-
-        else:
-            print "Setting a new github repo for {}: {}/{}".format(
-                self,
-                row[0],
-                row[1]
-            )
-            self.github_owner = row[0]
-            self.github_repo_name = row[1]
-            self.bucket["github_id_matched_from_setup_py"] = True
 
     @property
     def contributors(self):
@@ -194,6 +173,29 @@ class PypiPackage(Package):
             person = get_or_make_person(name=author)
 
         self._save_contribution(person, "author")
+
+
+    def set_github_repo_ids(self):
+        q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+        q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
+        q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
+
+        start = time()
+        row = q.first()
+        print "Github repo query took {}".format(elapsed(start, 4))
+
+        if row is None:
+            return None
+
+        else:
+            print "Setting a new github repo for {}: {}/{}".format(
+                self,
+                row[0],
+                row[1]
+            )
+            self.github_owner = row[0]
+            self.github_repo_name = row[1]
+            self.bucket["matched_from_github_metadata"] = True
 
 
 
@@ -233,6 +235,30 @@ class CranPackage(Package):
 
     def _name_and_email_from_author_str(self, author_str):
         return [None, None]
+
+
+    def set_github_repo_ids(self):
+        q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+        q = q.filter(GithubRepo.language == 'r')
+        q = q.filter(GithubRepo.bucket.contains({"cran_descr_file_name": self.project_name}))
+        q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
+
+        start = time()
+        row = q.first()
+        print "Github repo query took {}".format(elapsed(start, 4))
+
+        if row is None:
+            return None
+
+        else:
+            print "Setting a new github repo for {}: {}/{}".format(
+                self,
+                row[0],
+                row[1]
+            )
+            self.github_owner = row[0]
+            self.github_repo_name = row[1]
+            self.bucket["matched_from_github_metadata"] = True
 
 
 
@@ -320,7 +346,7 @@ def set_all_cran_github_repo_ids(limit=10, use_rq="rq"):
     q = q.order_by(CranPackage.project_name)
     q = q.limit(limit)
 
-    enqueue_jobs(Package, "set_github_repo_ids", q, 1, use_rq)
+    enqueue_jobs(CranPackage, "set_github_repo_ids", q, 1, use_rq)
 
 
 
