@@ -303,7 +303,7 @@ def set_all_github_repo_ids(limit=10, use_rq="rq"):
     q = db.session.query(PypiPackage.full_name)
 
     # megahack!
-    q = q.filter(PypiPackage.full_name > 'pypi:noah')
+    q = q.filter(PypiPackage.full_name > 'pypi:pyjava')
 
 
     q = q.filter(PypiPackage.github_repo_name == None)
