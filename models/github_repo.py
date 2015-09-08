@@ -35,24 +35,25 @@ class GithubRepo(db.Model):
     repo_name = db.Column(db.Text, primary_key=True)
     language = db.Column(db.Text)
     api_raw = deferred(db.Column(JSONB))
-    dependency_lines = deferred(db.Column(db.Text))
-    zip_download_elapsed = db.Column(db.Float)
-    zip_download_size = db.Column(db.Integer)
-    zip_download_error = db.Column(db.Text)
-    zip_grep_elapsed = db.Column(db.Float)
+    named_deps = db.Column(JSONB)
     pypi_dependencies = db.Column(JSONB)
-    cran_dependencies = db.Column(JSONB)
-    requirements = db.Column(JSONB)
     requirements_pypi = db.Column(JSONB)
-    reqs_file = deferred(db.Column(db.Text))
-    reqs_file_tried = db.Column(db.Boolean)
-
-    zip_filenames = deferred(db.Column(JSONB))
-    zip_filenames_tried = db.Column(db.Boolean)
-    pypi_in_formal_only = db.Column(JSONB)
-
-    setup_py_no_forks = deferred(db.Column(db.Text))
+    cran_dependencies = db.Column(JSONB)
     bucket = db.Column(JSONB)
+
+    # old, and removed from current database.  only in backups of database.
+    # requirements = db.Column(JSONB)
+    # reqs_file = deferred(db.Column(db.Text))
+    # reqs_file_tried = db.Column(db.Boolean)
+    # zip_filenames = deferred(db.Column(JSONB))
+    # zip_filenames_tried = db.Column(db.Boolean)
+    # pypi_in_formal_only = db.Column(JSONB)
+    # dependency_lines = deferred(db.Column(db.Text))
+    # zip_download_elapsed = db.Column(db.Float)
+    # zip_download_size = db.Column(db.Integer)
+    # zip_download_error = db.Column(db.Text)
+    # zip_grep_elapsed = db.Column(db.Float)
+    # setup_py_no_forks = deferred(db.Column(db.Text))
 
 
     def __repr__(self):
