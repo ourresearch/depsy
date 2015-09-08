@@ -117,6 +117,8 @@ def get_or_make_person(**kwargs):
     else:
         new_person = Person(**kwargs)
         db.session.add(new_person)
+
+        # we can probably get rid of this commit
         db.session.commit()
 
         return new_person

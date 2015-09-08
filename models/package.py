@@ -1,5 +1,7 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import deferred
+
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from util import elapsed
@@ -21,7 +23,7 @@ class Package(db.Model):
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
 
-    api_raw = db.Column(JSONB)
+    api_raw = deferred(db.Column(JSONB))
     downloads = db.Column(JSONB)
 
     github_reverse_deps = db.Column(JSONB)
@@ -137,7 +139,6 @@ class Package(db.Model):
     def set_github_repo_id(self):
         # override in subclass
         raise NotImplementedError
-
 
 
     @property
@@ -265,16 +266,6 @@ class CranPackage(Package):
 
 
 
-def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
-    q = db.session.query(Package.full_name)
-    q = q.filter(Package.github_repo_name != None)
-    q = q.order_by(Package.full_name)
-    q = q.limit(limit)
-
-    enqueue_jobs(Package, "save_github_owners_and_contributors", q, 1, use_rq)
-
-
-
 def save_host_contributors_pypi(limit=10):
     # has to be run all in one go, db stores no indicator this has run.
     q = db.session.query(PypiPackage.full_name)
@@ -351,6 +342,15 @@ def set_all_cran_github_repo_ids(limit=10, use_rq="rq"):
 
 
 
+
+def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
+    q = db.session.query(Package.full_name)
+    q = q.filter(Package.github_repo_name != None)
+    q = q.filter(Package.bucket.contains({"matched_from_github_metadata": True}))
+    q = q.order_by(Package.full_name)
+    q = q.limit(limit)
+
+    enqueue_jobs(Package, "save_github_owners_and_contributors", q, 1, use_rq)
 
 
 

@@ -37,7 +37,7 @@ def update_fn(cls, method_name, obj_id):
 
 
 
-def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
+def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
     """
     Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
     """
@@ -50,13 +50,19 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
     new_loop_start_time = time()
     index = 0
 
-    print "running this query: \n{}\n".format(
-        q.statement.compile(dialect=postgresql.dialect())
-    )
-    row_list = q.all()
+    try:
+        print "running this query: \n{}\n".format(
+            ids_q_or_list.statement.compile(dialect=postgresql.dialect())
+        )
+        row_list = ids_q_or_list.all()
+        print "finished query in {}sec".format(elapsed(start_time))
+    except AttributeError:
+        # instead of a sqlalchemy query object,
+        # it looks like we got a standard python list. use it.
+        print "Got a list of IDs."
+        row_list = ids_q_or_list
 
     num_jobs = len(row_list)
-    print "finished query in {}sec".format(elapsed(start_time))
     print "adding {} jobs to queue...".format(num_jobs)
 
     update = Update(num_jobs, queue_number)
