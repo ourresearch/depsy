@@ -39,6 +39,7 @@ class GithubRepo(db.Model):
     pypi_dependencies = db.Column(JSONB)
     requirements_pypi = db.Column(JSONB)
     cran_dependencies = db.Column(JSONB)
+    cran_descr_file = db.Column(db.Text)
     bucket = db.Column(JSONB)
     cran_descr_file = db.Column(db.Text)
 
@@ -433,6 +434,23 @@ class GithubRepo(db.Model):
             print "found a setup.py for {}".format(self.full_name)
         except github_api.NotFoundException:
             self.setup_py_no_forks = "not_found"
+
+
+    def set_cran_descr_file(self):
+        # isn't going to get called if the repo has a fork
+        if self.api_raw["fork"]:
+            print "is a fork, so skipping"
+            return
+
+        try:
+            self.cran_descr_file = github_api.get_cran_descr_contents(
+                self.login,
+                self.repo_name
+            )
+            print "found a REQUIREMENTS file for {}".format(self.full_name)
+        except github_api.NotFoundException:
+            self.cran_descr_file = "not_found"
+
 
     def set_setup_py_name(self):
         if self.setup_py_no_forks is None:
@@ -870,6 +888,19 @@ def set_all_cran_descr_file_names(limit=10, use_rq="rq"):
 
 
 
+
+
+
+def set_all_cran_descr_file(limit=10, use_rq="rq"):
+
+    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
+    q = q.filter(GithubRepo.language == 'r')
+    q = q.filter(GithubRepo.cran_descr_file == None)
+    q = q.order_by(GithubRepo.login)
+    q = q.limit(limit)
+
+    enqueue_jobs(GithubRepo, "set_cran_descr_file", q, 3, use_rq)
 
 
 

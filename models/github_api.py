@@ -362,6 +362,21 @@ def get_setup_py_contents(login, repo_name):
         raise NotFoundException
 
 
+def get_cran_descr_contents(login, repo_name):
+    url = 'https://api.github.com/repos/{login}/{repo_name}/contents/DESCRIPTION'.format(
+        login=login,
+        repo_name=repo_name
+    )
+    resp = make_ratelimited_call(url)
+    try:
+        return base64.decodestring(resp["content"])
+    except KeyError:
+        raise NotFoundException
+
+
+
+
+
 def get_repo_contributors(login, repo_name):
     if login is None or repo_name is None:
         return None

@@ -54,6 +54,7 @@ def enqueue_jobs(cls, method, q, queue_number, use_rq="rq"):
         q.statement.compile(dialect=postgresql.dialect())
     )
     row_list = q.all()
+
     num_jobs = len(row_list)
     print "finished query in {}sec".format(elapsed(start_time))
     print "adding {} jobs to queue...".format(num_jobs)
