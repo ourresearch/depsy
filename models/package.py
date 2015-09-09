@@ -182,12 +182,12 @@ class PypiPackage(Package):
         q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
 
         start = time()
-        row = q.first()
-        print "Github repo query took {}".format(elapsed(start, 4))
-        start = time()
-        db.session.expunge_all()
-        db.session.remove()
-        print "Github repo expunge and remove took {}".format(elapsed(start, 4))
+
+
+        row = None
+
+        # row = q.first()
+        # print "Github repo query took {}".format(elapsed(start, 4))
 
         if row is None:
             return None
