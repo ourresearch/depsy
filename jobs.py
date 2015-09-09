@@ -28,13 +28,15 @@ def update_fn(cls, method_name, obj_id):
     method_to_run()
 
     db.session.commit()
-    db.session.remove()  # close connection nicely
 
     print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
         repr=obj,
         method_name=method_name,
         elapsed=elapsed(start_time, 4)
     )
+
+    db.session.remove()  # close connection nicely
+
     return None  # important for if we use this on RQ
 
 
