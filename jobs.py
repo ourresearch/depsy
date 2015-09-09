@@ -18,35 +18,43 @@ def update_fn(cls, method_name, obj_id):
     # will get a new one automatically
     db.engine.dispose()
 
-    #command = "select project_name from package where project_name='{str}%'".format(
-    #    str=obj_id[0]
-    #)
-    #res = db.session.connection().execute(sql.text(command))
-
-
-
-
-    obj = db.session.query(cls).get(obj_id)
-
-    if obj is None:
-        return None
-
-    method_to_run = getattr(obj, method_name)
-
-    print u"running {repr}.{method_name}() method".format(
-        repr=obj,
-        method_name=method_name
+    command = "select full_name from package where full_name='{str}'".format(
+       str=obj_id[0]
     )
+    q = db.session.connection().execute(sql.text(command))
+    rows = q.fetchall()
+    for row in rows:
+        print "sql return is", row[0]
 
-    method_to_run()
 
-    db.session.commit()
 
-    print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
-        repr=obj,
-        method_name=method_name,
-        elapsed=elapsed(start_time, 4)
-    )
+    # comment out the real guts for now
+    # obj = db.session.query(cls).get(obj_id)
+
+    # if obj is None:
+    #     return None
+
+    # method_to_run = getattr(obj, method_name)
+
+    # print u"running {repr}.{method_name}() method".format(
+    #     repr=obj,
+    #     method_name=method_name
+    # )
+
+    # method_to_run()
+
+    # db.session.commit()
+
+    # print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
+    #     repr=obj,
+    #     method_name=method_name,
+    #     elapsed=elapsed(start_time, 4)
+    # )
+
+
+
+
+
 
     db.session.remove()  # close connection nicely
 
@@ -96,6 +104,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
             job.meta["object_id"] = list(object_id_row)
             job.save()
         else:
+            print "running task immediately!  here goes."
             update_fn(*update_fn_args)
 
         if index % 1000 == 0 and index != 0:

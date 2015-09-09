@@ -324,7 +324,7 @@ def set_all_pypi_github_repo_ids(limit=10, use_rq="rq"):
     q = q.order_by(PypiPackage.project_name)
     q = q.limit(limit)
 
-    enqueue_jobs(Package, "set_github_repo_ids", q, 1, use_rq)
+    enqueue_jobs(PypiPackage, "set_github_repo_ids", q, 1, use_rq)
 
 
 
@@ -353,6 +353,13 @@ def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
     enqueue_jobs(Package, "save_github_owners_and_contributors", q, 1, use_rq)
 
 
+def test_me(limit=10, use_rq="rq"):
+    q = db.session.query(Package.full_name)
+    q = q.order_by(Package.full_name)
+    q = q.limit(limit)
+
+    # doesn't matter what this is now, because update function overwritten
+    enqueue_jobs(Package, "set_github_repo_ids", q, 6, use_rq)
 
 
 
