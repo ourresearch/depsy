@@ -25,7 +25,9 @@ def update_fn(cls, method_name, obj_id):
     for row in rows:
         print "sql return is", row[0]
 
-
+    print u"finished running method test_me, took {elapsed}sec".format(
+        elapsed=elapsed(start_time, 4)
+    )
 
     # comment out the real guts for now
     # obj = db.session.query(cls).get(obj_id)
@@ -49,11 +51,6 @@ def update_fn(cls, method_name, obj_id):
     #     method_name=method_name,
     #     elapsed=elapsed(start_time, 4)
     # )
-
-
-
-
-
 
     db.session.remove()  # close connection nicely
 
