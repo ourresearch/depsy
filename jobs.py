@@ -13,6 +13,12 @@ def update_fn(cls, method_name, obj_id):
 
     start_time = time()
 
+    # we are in a fork!  dispose of our engine.  
+    # will get a new one automatically
+    print "disposing of the engine!"
+    db.engine.dispose()
+    print "engine disposed of."
+
     obj = db.session.query(cls).get(obj_id)
 
     if obj is None:
