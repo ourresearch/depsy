@@ -14,6 +14,8 @@ def update_fn(cls, method_name, obj_id):
     start_time = time()
 
     obj = db.session.query(cls).get(obj_id)
+    db.session.expunge_all()
+    db.session.remove()
 
     if obj is None:
         return None
@@ -26,7 +28,10 @@ def update_fn(cls, method_name, obj_id):
     )
 
     method_to_run()
-    # db.session.commit()
+
+    db.session.add(obj)
+    db.session.commit()
+    db.session.remove()
 
     print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
         repr=obj,
