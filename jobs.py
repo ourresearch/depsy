@@ -4,6 +4,7 @@ from app import db
 from util import elapsed
 from app import ti_queues
 from sqlalchemy.dialects import postgresql
+from sqlalchemy import sql
 
 
 
@@ -15,9 +16,15 @@ def update_fn(cls, method_name, obj_id):
 
     # we are in a fork!  dispose of our engine.  
     # will get a new one automatically
-    print "disposing of the engine!"
     db.engine.dispose()
-    print "engine disposed of."
+
+    #command = "select project_name from package where project_name='{str}%'".format(
+    #    str=obj_id[0]
+    #)
+    #res = db.session.connection().execute(sql.text(command))
+
+
+
 
     obj = db.session.query(cls).get(obj_id)
 
