@@ -5,16 +5,17 @@ from util import elapsed
 from app import ti_queues
 from sqlalchemy.dialects import postgresql
 from sqlalchemy import sql
+import newrelic.agent
 
 
 
 
-
+@newrelic.agent.background_task()
 def update_fn(cls, method_name, obj_id):
 
     start_time = time()
 
-    # we are in a fork!  dispose of our engine.  
+    # we are in a fork!  dispose of our engine.
     # will get a new one automatically
     db.engine.dispose()
 
