@@ -65,7 +65,6 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
     num_jobs = len(row_list)
     print "adding {} jobs to queue...".format(num_jobs)
 
-    update = Update(num_jobs, queue_number)
     object_id_row = []
 
     for object_id_row in row_list:
@@ -89,15 +88,18 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
                 elapsed(new_loop_start_time)
             )
             
-            # also let us know how the stuff already on is doing
-            #update.print_status()
-
             new_loop_start_time = time()
         index += 1
     print "last object added to the queue was {}".format(list(object_id_row))
 
-    update.print_status_loop()
     return True
+
+
+def queue_status(queue_number_str):
+    queue_number = int(queue_number_str)
+    num_jobs_to_start = ti_queues[queue_number].count
+    update = Update(num_jobs_to_start, queue_number)
+    update.print_status_loop()
 
 
 
@@ -122,7 +124,7 @@ class Update():
 
 
     def print_status(self):
-        sleep(1)  # make sure there's time for the jobs to be saved in redis.
+        sleep(1)  # at top to make sure there's time for the jobs to be saved in redis.
 
         num_jobs_remaining = ti_queues[self.queue_number].count
         num_jobs_done = self.num_jobs_total - num_jobs_remaining

@@ -21,6 +21,8 @@ from models.person import *
 from models.package import *
 from models.contribution import *
 
+from jobs import queue_status
+
 def test_no_args():
     print "test_no_args function ran"
 
@@ -46,6 +48,7 @@ def main(fn, optional_args=None):
         globals()[fn]()
 
     print "total time to run:", elapsed(start)
+
 
 
 if __name__ == "__main__":
