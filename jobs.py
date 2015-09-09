@@ -20,14 +20,22 @@ def update_fn(cls, method_name, obj_id):
     command = "select full_name from package where full_name='{str}'".format(
        str=obj_id[0]
     )
+
+
     q = db.session.connection().execute(sql.text(command))
     rows = q.fetchall()
     for row in rows:
         print "sql return is", row[0]
 
+    print "sleeping"
+    sleep(2)
+
+
     print u"finished running method test_me, took {elapsed}sec".format(
         elapsed=elapsed(start_time, 4)
     )
+
+
 
     # comment out the real guts for now
     # obj = db.session.query(cls).get(obj_id)
