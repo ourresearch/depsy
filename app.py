@@ -59,6 +59,33 @@ redis_rq_conn = redis.from_url(
 # database stuff
 db = SQLAlchemy(app)
 
+
+
+
+
+# try from http://docs.sqlalchemy.org/en/latest/core/pooling.html#using-connection-pools-with-multiprocessing
+from sqlalchemy import event
+from sqlalchemy import exc
+import os
+@event.listens_for(engine, "connect")
+def connect(dbapi_connection, connection_record):
+    connection_record.info['pid'] = os.getpid()
+
+@event.listens_for(engine, "checkout")
+def checkout(dbapi_connection, connection_record, connection_proxy):
+    pid = os.getpid()
+    if connection_record.info['pid'] != pid:
+        connection_record.connection = connection_proxy.connection = None
+        raise exc.DisconnectionError(
+                "Connection record belongs to pid %s, "
+                "attempting to check out in pid %s" %
+                (connection_record.info['pid'], pid)
+        )
+
+
+
+
+
 ti_queues = []
 for i in range(0, 10):
     ti_queues.append(
