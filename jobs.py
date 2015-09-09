@@ -26,7 +26,7 @@ def update_fn(cls, method_name, obj_id):
     )
 
     method_to_run()
-    db.session.commit()
+    # db.session.commit()
 
     print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
         repr=obj,
