@@ -5,17 +5,11 @@ from util import elapsed
 from app import ti_queues
 from sqlalchemy.dialects import postgresql
 from sqlalchemy import sql
-import newrelic.agent
-
-
-
-def wrapper(cls, method_name, obj_id):
-    update_fn(cls, method_name, obj_id)
 
 
 
 
-@newrelic.agent.background_task()
+
 def update_fn(cls, method_name, obj_id):
 
     start_time = time()
@@ -95,14 +89,14 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
 
         if use_rq == "rq":
             job = ti_queues[queue_number].enqueue_call(
-                func=wrapper,
+                func=update_fn,
                 args=update_fn_args,
                 result_ttl=0  # number of seconds
             )
             job.meta["object_id"] = list(object_id_row)
             job.save()
         else:
-            wrapper(*update_fn_args)
+            update_fn(*update_fn_args)
 
         if index % 1000 == 0 and index != 0:
             print "added {} jobs to queue in {}sec total, {}sec this loop".format(
