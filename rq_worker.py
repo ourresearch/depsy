@@ -42,7 +42,5 @@ if __name__ == '__main__':
     print u"Starting an RQ worker, listening on '{queue_name}'\n".format(
         queue_name=queue_name
     )
-    # start_worker(queue_name)
+    start_worker(queue_name)
 
-
-    
