@@ -33,6 +33,8 @@ import re
 class GithubRepo(db.Model):
     login = db.Column(db.Text, primary_key=True)
     repo_name = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Text)
+
     language = db.Column(db.Text)
     api_raw = deferred(db.Column(JSONB))
     named_deps = db.Column(JSONB)

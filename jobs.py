@@ -6,55 +6,58 @@ from app import ti_queues
 from sqlalchemy.dialects import postgresql
 from sqlalchemy import sql
 
+from util import chunks
 
 
 
 
-def update_fn(cls, method_name, obj_id):
 
-    start_time = time()
+def update_fn(cls, method_name, obj_id_list):
 
     # we are in a fork!  dispose of our engine.
     # will get a new one automatically
     db.engine.dispose()
 
-    #command = "select project_name from package where project_name='{str}%'".format(
-    #    str=obj_id[0]
-    #)
-    #res = db.session.connection().execute(sql.text(command))
-
-
-
-
-    obj = db.session.query(cls).get(obj_id)
-
-    if obj is None:
-        return None
-
-    method_to_run = getattr(obj, method_name)
-
-    print u"running {repr}.{method_name}() method".format(
-        repr=obj,
-        method_name=method_name
+    start = time()
+    q = db.session.query(cls).filter(cls.id.in_(obj_id_list))
+    obj_rows = q.all()
+    num_obj_rows = len(obj_rows)
+    print "{repr}.{method_name}() got {num_obj_rows} objects in {elapsed}sec".format(
+        repr=cls.__name__,
+        method_name=method_name,
+        num_obj_rows=num_obj_rows,
+        elapsed=elapsed(start)
     )
 
-    method_to_run()
+    for obj in obj_rows:
+        start_time = time()
+
+        if obj is None:
+            return None
+
+        method_to_run = getattr(obj, method_name)
+
+        print u"running {repr}.{method_name}() method".format(
+            repr=obj,
+            method_name=method_name
+        )
+
+        method_to_run()
+
+        print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
+            repr=obj,
+            method_name=method_name,
+            elapsed=elapsed(start_time, 4)
+        )
+
 
     db.session.commit()
-
-    print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
-        repr=obj,
-        method_name=method_name,
-        elapsed=elapsed(start_time, 4)
-    )
-
     db.session.remove()  # close connection nicely
-
     return None  # important for if we use this on RQ
 
 
 
-def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
+def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_size=1000):
     """
     Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
     """
@@ -67,25 +70,23 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
     new_loop_start_time = time()
     index = 0
 
-    try:
-        print "running this query: \n{}\n".format(
-            ids_q_or_list.statement.compile(dialect=postgresql.dialect())
-        )
-        row_list = ids_q_or_list.all()
-        print "finished query in {}sec".format(elapsed(start_time))
-    except AttributeError:
-        # instead of a sqlalchemy query object,
-        # it looks like we got a standard python list. use it.
-        print "Got a list of IDs."
-        row_list = ids_q_or_list
+    print "running this query: \n{}\n".format(
+        ids_q_or_list.statement.compile(dialect=postgresql.dialect())
+    )
+    row_list = ids_q_or_list.all()
+    print "finished query in {}sec".format(elapsed(start_time))
+    if row_list is None:
+        print "no IDs, all done."
+        return None
 
-    num_jobs = len(row_list)
+    object_ids = [row[0] for row in row_list]
+
+    num_jobs = len(object_ids)
     print "adding {} jobs to queue...".format(num_jobs)
 
-    object_id_row = []
-
-    for object_id_row in row_list:
-        update_fn_args = [cls, method, tuple(object_id_row)]
+    # iterate through chunks of IDs like [[id1, id2], [id3, id4], ...  ]
+    for object_ids_chunk in chunks(object_ids, chunk_size):
+        update_fn_args = [cls, method, object_ids_chunk]
 
         if use_rq == "rq":
             job = ti_queues[queue_number].enqueue_call(
@@ -93,7 +94,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
                 args=update_fn_args,
                 result_ttl=0  # number of seconds
             )
-            job.meta["object_id"] = list(object_id_row)
+            job.meta["object_ids_chunk"] = object_ids_chunk
             job.save()
         else:
             update_fn(*update_fn_args)
@@ -107,7 +108,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq"):
             
             new_loop_start_time = time()
         index += 1
-    print "last object added to the queue was {}".format(list(object_id_row))
+    print "last object added to the queue was {}".format(list(object_ids_chunk))
 
     return True
 

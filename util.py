@@ -67,7 +67,14 @@ def underscore_to_camelcase(value):
 
     return "".join(capitalized_words)
 
+def chunks(l, n):
+    """
+    Yield successive n-sized chunks from l.
 
+    from http://stackoverflow.com/a/312464
+    """
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
 
 def page_query(q, page_size=1000):
     offset = 0
