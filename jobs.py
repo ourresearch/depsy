@@ -92,6 +92,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
             job = ti_queues[queue_number].enqueue_call(
                 func=update_fn,
                 args=update_fn_args,
+                timeout=60 * 10,
                 result_ttl=0  # number of seconds
             )
             job.meta["object_ids_chunk"] = object_ids_chunk
