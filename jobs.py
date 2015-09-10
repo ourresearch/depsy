@@ -17,48 +17,27 @@ def update_fn(cls, method_name, obj_id):
     # will get a new one automatically
     db.engine.dispose()
 
-    command = "select full_name from package where full_name='{str}'".format(
-       str=obj_id[0]
+    obj = db.session.query(cls).get(obj_id)
+
+    if obj is None:
+        return None
+
+    method_to_run = getattr(obj, method_name)
+
+    print u"running {repr}.{method_name}() method".format(
+        repr=obj,
+        method_name=method_name
     )
 
+    method_to_run()
 
-    q = db.session.connection().execute(sql.text(command))
-    rows = q.fetchall()
-    for row in rows:
-        print "sql return is", row[0]
+    db.session.commit()
 
-    print "sleeping"
-    sleep(2)
-
-
-    print u"finished running method test_me, took {elapsed}sec".format(
+    print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
+        repr=obj,
+        method_name=method_name,
         elapsed=elapsed(start_time, 4)
     )
-
-
-
-    # comment out the real guts for now
-    # obj = db.session.query(cls).get(obj_id)
-
-    # if obj is None:
-    #     return None
-
-    # method_to_run = getattr(obj, method_name)
-
-    # print u"running {repr}.{method_name}() method".format(
-    #     repr=obj,
-    #     method_name=method_name
-    # )
-
-    # method_to_run()
-
-    # db.session.commit()
-
-    # print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
-    #     repr=obj,
-    #     method_name=method_name,
-    #     elapsed=elapsed(start_time, 4)
-    # )
 
     db.session.remove()  # close connection nicely
 

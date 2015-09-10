@@ -7,6 +7,7 @@ from sqlalchemy import func
 from util import elapsed
 from time import time
 from validate_email import validate_email
+import zipfile
 
 from models import github_api
 from models.person import Person
@@ -161,6 +162,14 @@ class PypiPackage(Package):
         return u'<PypiPackage {name}>'.format(
             name=self.full_name)
 
+    @property
+    def source_url(self):
+        for url_dict in self.api_raw["urls"]:
+            if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
+                return url_dict["url"]
+        return None
+
+
     def save_host_contributors(self):
         author = self.api_raw["info"]["author"]
         author_email = self.api_raw["info"]["author_email"]
@@ -197,6 +206,29 @@ class PypiPackage(Package):
             self.github_owner = row[0]
             self.github_repo_name = row[1]
             self.bucket["matched_from_github_metadata"] = True
+
+
+    def get_requires_files(self):
+        # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
+        filenames_to_get = [
+            "requires.txt",
+            "setup_requires.txt",
+            "depends.txt"
+        ]
+
+        print "going to get requirements for {} from {}".format(
+            self.id, self.source_url)
+        getter = ZipGetter(self.source_url)
+        if getter.error:
+            print "Problems with the downloaded zip, quitting without getting filenames."
+            return None
+
+        self.requires_files = getter.get_files(filenames_to_get)
+        if self.requires_files:
+            print "found requires files", self.requires_files.keys()
+        else:
+            print "no requires files found"
+        return len(self.requires_files)
 
 
 
@@ -363,6 +395,13 @@ def test_me(limit=10, use_rq="rq"):
 
 
 
+def set_requires_files(limit=10, use_rq="rq"):
+    q = db.session.query(PypiPackage.full_name)
+    q = q.order_by(PypiPackage.full_name)
+    q = q.limit(limit)
+
+    # doesn't matter what this is now, because update function overwritten
+    enqueue_jobs(PypiPackage, "set_requires_files", q, 6, use_rq)
 
 
 
