@@ -1,3 +1,9 @@
+from time import time
+import requests
+import zipfile
+import tarfile
+
+from util import elapsed
 
 class ZipGetterException(Exception):
     db_str = None
@@ -15,7 +21,7 @@ class ZipGetter():
         self.grep_elapsed = 0
         self.download_kb = 0
         self.error = None
-        self.temp_file_name = "GithubRepoZip.temp.zip"
+        self.temp_file_name = "_downloaded.temp.zip"
         self.dep_lines = None
 
 
@@ -119,19 +125,51 @@ class ZipGetter():
         return z.namelist()
 
 
-    def get_files(self, filenames):
+    def get_files(self, short_filenames):
+        requests.packages.urllib3.disable_warnings()
         self.download()
         if self.error:
             print "Problems with the downloaded zip, quitting without getting filenames."
             return None
 
-        z = zipfile.ZipFile(self.temp_file_name)
-
         contents = {}
-        for filename in filenames:
-            extracted_place = z.extract(file)
-            print "extracted_place", extracted_place
-            contents[filename] = extracted_place.read()
+        zip_type = "tarfile"
+        try:
+            zip_file_obj = tarfile.open(self.temp_file_name, "r")
+            all_filenames_in_zip = zip_file_obj.getnames()
+
+        except tarfile.ReadError:
+            # isn't a tarfile.  try as a zip file
+            zip_type = "zipfile"
+            try:
+                zip_file_obj = zipfile.ZipFile(self.temp_file_name)
+                all_filenames_in_zip = zip_file_obj.namelist()
+            except zipfile.BadZipfile:
+                self.error = "unzip_error"
+                return None
+
+        # get the names that match the listing from the zip
+        long_names = []
+        for filename_in_zip in all_filenames_in_zip:
+            for short_filename in short_filenames:
+                if filename_in_zip.endswith(short_filename):
+                    long_names.append(filename_in_zip)
+
+        for filename in long_names:
+            try:
+                if zip_type=="tarfile":
+                    extracted_place = zip_file_obj.extractfile(filename)
+                else:
+                    extracted_place = zip_file_obj.open(filename)
+                print "extracted_place", extracted_place
+                contents[filename] = extracted_place.read()
+                if contents[filename]:
+                    print "got it!!!!!  with zip_type=", zip_type
+            except KeyError:
+                print "not found", filename
+                pass # isn't a problem
+        if not contents:
+            print "nothing found with ziptype", zip_type
         return contents
 
 

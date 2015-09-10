@@ -1,10 +1,8 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import deferred
-
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
-from util import elapsed
 from time import time
 from validate_email import validate_email
 import zipfile
@@ -14,7 +12,9 @@ from models.person import Person
 from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.github_repo import GithubRepo
+from models.zip_getter import ZipGetter
 from jobs import enqueue_jobs
+from util import elapsed
 
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
@@ -34,6 +34,7 @@ class Package(db.Model):
     proxy_papers = db.Column(db.Text)
     github_contributors = db.Column(JSONB)
     bucket = db.Column(MutableDict.as_mutable(JSONB))
+    requires_files = db.Column(MutableDict.as_mutable(JSONB))
 
     contributions = db.relationship(
         'Contribution',
@@ -164,9 +165,19 @@ class PypiPackage(Package):
 
     @property
     def source_url(self):
-        for url_dict in self.api_raw["urls"]:
-            if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
-                return url_dict["url"]
+        if self.api_raw:
+            if not "package_url" in self.api_raw["info"]:
+                print "NO PACKAGE URL!  skipping."
+                return None
+
+            if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
+                if "http://" in self.api_raw["info"]["download_url"]:
+                    print "got a download url", self.api_raw["info"]["download_url"]
+                    return self.api_raw["info"]["download_url"]
+
+            for url_dict in self.api_raw["urls"]:
+                if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
+                    return url_dict["url"]
         return None
 
 
@@ -208,7 +219,7 @@ class PypiPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
-    def get_requires_files(self):
+    def set_requires_files(self):
         # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
         filenames_to_get = [
             "requires.txt",
@@ -216,19 +227,22 @@ class PypiPackage(Package):
             "depends.txt"
         ]
 
-        print "going to get requirements for {} from {}".format(
+        print "getting requires files for {} from {}".format(
             self.id, self.source_url)
+        if not self.source_url:
+            print "No source_url, so skipping"
+            self.requires_files = {"error": "error_no_source_url"}
+            return None
+
         getter = ZipGetter(self.source_url)
         if getter.error:
             print "Problems with the downloaded zip, quitting without getting filenames."
+            self.requires_files = {"error": "error_with_zip"}
             return None
 
         self.requires_files = getter.get_files(filenames_to_get)
-        if self.requires_files:
-            print "found requires files", self.requires_files.keys()
-        else:
-            print "no requires files found"
-        return len(self.requires_files)
+        return self.requires_files
+
 
 
 
@@ -386,8 +400,8 @@ def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
 
 
 def test_me(limit=10, use_rq="rq"):
-    q = db.session.query(Package.full_name)
-    q = q.order_by(Package.full_name)
+    q = db.session.query(Package.id)
+    q = q.order_by(Package.id)
     q = q.limit(limit)
 
     # doesn't matter what this is now, because update function overwritten
@@ -396,13 +410,14 @@ def test_me(limit=10, use_rq="rq"):
 
 
 def set_requires_files(limit=10, use_rq="rq"):
-    q = db.session.query(PypiPackage.full_name)
-    q = q.order_by(PypiPackage.full_name)
+    q = db.session.query(PypiPackage.id)
+    q = q.filter(PypiPackage.requires_files == None)   
+    # q = q.filter(PypiPackage.id == "pypi:115wangpan") 
+    q = q.order_by(PypiPackage.id)
     q = q.limit(limit)
 
     # doesn't matter what this is now, because update function overwritten
     enqueue_jobs(PypiPackage, "set_requires_files", q, 6, use_rq)
-
 
 
 
