@@ -330,14 +330,14 @@ def set_all_pypi_github_repo_ids(limit=10, use_rq="rq"):
 
 
 
-def set_all_cran_github_repo_ids(limit=10, use_rq="rq"):
+def set_all_cran_github_repo_ids(limit=10, use_rq="rq", chunk_size=1000):
 
     q = db.session.query(CranPackage.id)
     q = q.filter(CranPackage.github_repo_name == None)
     q = q.order_by(CranPackage.project_name)
     q = q.limit(limit)
 
-    enqueue_jobs(CranPackage, "set_github_repo_ids", q, 1, use_rq)
+    enqueue_jobs(CranPackage, "set_github_repo_ids", q, 1, use_rq, chunk_size)
 
 
 
