@@ -11,6 +11,7 @@ from util import chunks
 
 
 
+def update_fn(cls, method_name, obj_id):
 
 def update_fn(cls, method_name, obj_id_list):
 
