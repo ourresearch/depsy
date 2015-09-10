@@ -11,8 +11,6 @@ from util import chunks
 
 
 
-def update_fn(cls, method_name, obj_id):
-
 def update_fn(cls, method_name, obj_id_list):
 
     # we are in a fork!  dispose of our engine.
@@ -38,10 +36,10 @@ def update_fn(cls, method_name, obj_id_list):
 
         method_to_run = getattr(obj, method_name)
 
-        print u"running {repr}.{method_name}() method".format(
-            repr=obj,
-            method_name=method_name
-        )
+        #print u"running {repr}.{method_name}() method".format(
+        #    repr=obj,
+        #    method_name=method_name
+        #)
 
         method_to_run()
 
