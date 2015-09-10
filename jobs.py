@@ -63,6 +63,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
 
     if use_rq == "rq":
         empty_queue(queue_number)
+    chunk_size = int(chunk_size)
 
 
     start_time = time()

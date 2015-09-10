@@ -317,14 +317,14 @@ def test_package(limit=10, use_rq="rq"):
 
 
 
-def set_all_pypi_github_repo_ids(limit=10, use_rq="rq"):
+def set_all_pypi_github_repo_ids(limit=10, use_rq="rq", chunk_size=1000):
 
     q = db.session.query(PypiPackage.id)
     q = q.filter(PypiPackage.github_repo_name == None)
     q = q.order_by(PypiPackage.project_name)
     q = q.limit(limit)
 
-    enqueue_jobs(PypiPackage, "set_github_repo_ids", q, 1, use_rq)
+    enqueue_jobs(PypiPackage, "set_github_repo_ids", q, 1, use_rq, chunk_size)
 
 
 
