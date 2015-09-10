@@ -17,7 +17,7 @@ from models.github_repo import GithubRepo
 from jobs import enqueue_jobs
 
 class Package(db.Model):
-    full_name = db.Column(db.Text, primary_key=True)
+    id = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
     project_name = db.Column(db.Text)
 
@@ -49,7 +49,7 @@ class Package(db.Model):
 
     def __repr__(self):
         return u'<Package {name}>'.format(
-            name=self.full_name)
+            name=self.id)
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -160,7 +160,7 @@ class PypiPackage(Package):
 
     def __repr__(self):
         return u'<PypiPackage {name}>'.format(
-            name=self.full_name)
+            name=self.id)
 
     @property
     def source_url(self):
@@ -239,7 +239,7 @@ class CranPackage(Package):
 
     def __repr__(self):
         return u'<CranPackage {name}>'.format(
-            name=self.full_name)
+            name=self.id)
 
     def save_host_contributors(self):
         all_authors = self.api_raw["Author"]
@@ -300,7 +300,7 @@ class CranPackage(Package):
 
 def save_host_contributors_pypi(limit=10):
     # has to be run all in one go, db stores no indicator this has run.
-    q = db.session.query(PypiPackage.full_name)
+    q = db.session.query(PypiPackage.id)
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
@@ -310,7 +310,7 @@ def save_host_contributors_pypi(limit=10):
 
 def save_host_contributors_cran(limit=10):
     # has to be run all in one go, db stores no indicator this has run.
-    q = db.session.query(CranPackage.full_name)
+    q = db.session.query(CranPackage.id)
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
 
@@ -323,7 +323,7 @@ def save_host_contributors_cran(limit=10):
 
 
 def set_all_github_contributors(limit=10, use_rq="rq"):
-    q = db.session.query(Package.full_name)
+    q = db.session.query(Package.id)
     q = q.filter(Package.github_repo_name != None)
     q = q.filter(Package.github_contributors == None)
     q = q.order_by(Package.project_name)
@@ -337,7 +337,7 @@ def set_all_github_contributors(limit=10, use_rq="rq"):
 # this is the one that works, make them like this from now on
 def test_package(limit=10, use_rq="rq"):
 
-    q = db.session.query(Package.full_name)
+    q = db.session.query(Package.id)
     q = q.filter(Package.github_owner != None)
     q = q.order_by(Package.project_name)
     q = q.limit(limit)
@@ -349,37 +349,37 @@ def test_package(limit=10, use_rq="rq"):
 
 
 
-def set_all_pypi_github_repo_ids(limit=10, use_rq="rq"):
+def set_all_pypi_github_repo_ids(limit=10, use_rq="rq", chunk_size=1000):
 
-    q = db.session.query(PypiPackage.full_name)
+    q = db.session.query(PypiPackage.id)
     q = q.filter(PypiPackage.github_repo_name == None)
     q = q.order_by(PypiPackage.project_name)
     q = q.limit(limit)
 
-    enqueue_jobs(PypiPackage, "set_github_repo_ids", q, 1, use_rq)
+    enqueue_jobs(PypiPackage, "set_github_repo_ids", q, 1, use_rq, chunk_size)
 
 
 
 
 
-def set_all_cran_github_repo_ids(limit=10, use_rq="rq"):
+def set_all_cran_github_repo_ids(limit=10, use_rq="rq", chunk_size=1000):
 
-    q = db.session.query(CranPackage.full_name)
+    q = db.session.query(CranPackage.id)
     q = q.filter(CranPackage.github_repo_name == None)
     q = q.order_by(CranPackage.project_name)
     q = q.limit(limit)
 
-    enqueue_jobs(CranPackage, "set_github_repo_ids", q, 1, use_rq)
+    enqueue_jobs(CranPackage, "set_github_repo_ids", q, 1, use_rq, chunk_size)
 
 
 
 
 
 def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
-    q = db.session.query(Package.full_name)
+    q = db.session.query(Package.id)
     q = q.filter(Package.github_repo_name != None)
     q = q.filter(Package.bucket.contains({"matched_from_github_metadata": True}))
-    q = q.order_by(Package.full_name)
+    q = q.order_by(Package.id)
     q = q.limit(limit)
 
     enqueue_jobs(Package, "save_github_owners_and_contributors", q, 1, use_rq)
@@ -402,7 +402,6 @@ def set_requires_files(limit=10, use_rq="rq"):
 
     # doesn't matter what this is now, because update function overwritten
     enqueue_jobs(PypiPackage, "set_requires_files", q, 6, use_rq)
-
 
 
 

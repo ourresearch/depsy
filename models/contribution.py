@@ -11,7 +11,7 @@ class Contribution(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
-    package_full_name = db.Column(db.Text, db.ForeignKey("package.full_name"))
+    package_id = db.Column(db.Text, db.ForeignKey("package.id"))
 
     role = db.Column(db.Text)
     quantity = db.Column(db.Integer)
@@ -20,5 +20,5 @@ class Contribution(db.Model):
     def __repr__(self):
         return u"Contribution from Person #{} to Package {}".format(
             self.person_id,
-            self.package_full_name
+            self.package_id
         )
