@@ -15,6 +15,8 @@ from models.contribution import Contribution
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
 from jobs import enqueue_jobs
+from jobs import update_registry
+from jobs import Update
 from util import elapsed
 
 class Package(db.Model):
@@ -63,6 +65,9 @@ class Package(db.Model):
         q = q.filter(func.lower(cls.project_name).in_(lowercase_module_names))
         response = [row[0] for row in q.all()]
         return response
+
+    def test(self):
+        print "{}: I'm a test!".format(self)
 
     def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
@@ -427,6 +432,20 @@ def set_requires_files(limit=10, use_rq="rq"):
 
     # doesn't matter what this is now, because update function overwritten
     enqueue_jobs(PypiPackage, "set_requires_files", q, 6, use_rq)
+
+
+
+# example
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+
+update_registry.register(Update(
+    job=Package.test,
+    query=q,
+    queue_id=2
+))
+
+
 
 
 
