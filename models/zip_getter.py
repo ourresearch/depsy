@@ -54,7 +54,7 @@ class ZipGetter():
                 print "Downloading zip from {}...".format(self.url)
                 r = requests.get(self.url, stream=True)
         except requests.exceptions.ConnectionError:
-            print "ConnectionError for {}".format(r.url)
+            print "ConnectionError for {}".format(self.url)
             self.error = "request_error_ConnectionError"
             return None
 
