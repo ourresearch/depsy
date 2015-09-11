@@ -246,7 +246,8 @@ class UpdateStatus():
 
 
 
-def empty_queue(queue_number):
+def empty_queue(queue_number_str):
+    queue_number = int(queue_number_str)
     num_jobs = ti_queues[queue_number].count
     ti_queues[queue_number].empty()
 

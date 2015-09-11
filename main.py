@@ -20,9 +20,7 @@ from models.github_repo import *
 from models.person import *
 from models.package import *
 from models.contribution import *
-from jobs import update_registry
-
-from jobs import queue_status
+from jobs import *
 
 def test_no_args():
     print "test_no_args function ran"
