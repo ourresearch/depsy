@@ -204,10 +204,6 @@ class PypiPackage(Package):
 
         if self.api_raw:
         
-           if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-              if self.api_raw["info"]["download_url"].startswith("http://"):
-                  return self.api_raw["info"]["download_url"]
-           
            if "releases" in self.api_raw and self.api_raw["releases"]:
               versions = self.api_raw["releases"].keys()
            
@@ -222,7 +218,11 @@ class PypiPackage(Package):
                       if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
                           if "url" in url_dict:
                               return url_dict["url"]
-        
+
+           if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
+              if self.api_raw["info"]["download_url"].startswith("http://"):
+                  return self.api_raw["info"]["download_url"]
+                   
         return None
 
 
