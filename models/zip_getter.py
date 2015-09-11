@@ -167,8 +167,10 @@ class ZipGetter():
                     extracted_place = zip_file_obj.extractfile(filename)
                 else:
                     extracted_place = zip_file_obj.open(filename)
-                contents[filename] = extracted_place.read()
-                if contents[filename]:
+
+                dict_key = filename.split("/")[-1]
+                contents[dict_key] = extracted_place.read()
+                if contents[dict_key]:
                     print "got it!!!!!  with zip_type=", zip_type
             except KeyError:
                 print "not found", filename
