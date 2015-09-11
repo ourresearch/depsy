@@ -111,6 +111,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
         index += 1
     print "last object added to the queue was {}".format(list(object_ids_chunk))
 
+    db.session.remove()  # close connection nicely
     return True
 
 
@@ -173,9 +174,6 @@ class Update():
             use_rq,
             chunk_size
         )
-
-        if not no_rq:
-            queue_status(str(self.queue_id))
 
 
 
