@@ -178,50 +178,28 @@ class PypiPackage(Package):
         if not self.api_raw:
             return None
 
-        # requests.packages.urllib3.disable_warnings()
-        # r = requests.get(
-        #     "https://pypi.python.org/pypi/{}".format(self.project_name)
-        # )
+        if "releases" in self.api_raw and self.api_raw["releases"]:
+            versions = self.api_raw["releases"].keys()
 
-        # if r.status_code >= 400:
-        #     return None
+            try:
+                versions.sort(key=StrictVersion, reverse=True)
+            except ValueError:
+                versions #give up sorting, just go for it
 
-        # page = r.content
-        # tree = html.fromstring(page)
-        # try:
-        #     source_url = tree.xpath("//table//a[contains(@href, '.tar') or contains(@href, '.zip') or contains(@href, '.egg')]/@href")[0]
-        # except IndexError:
-        #     print "looking for download url"
-        #     try:
-        #         source_url = tree.xpath('//li[starts-with(strong, "Download")]/a/@href')[0]
-        #         if source_url:
-        #             print "found source url through download link!", source_url
-        #     except IndexError:
-        #         print "didn't find download url either"
-        #         pass
+            for version in versions:
+                release_dict = self.api_raw["releases"][version]
+                for url_dict in release_dict:
+                    if "packagetype" in url_dict:
+                        if url_dict["packagetype"]=="bdist_wheel":
+                            if "url" in url_dict:
+                                return url_dict["url"]
+                        if url_dict["packagetype"]=="sdist":
+                            if "url" in url_dict:
+                                return url_dict["url"]
 
-        # return source_url
-
-        if self.api_raw:
-        
-           if "releases" in self.api_raw and self.api_raw["releases"]:
-              versions = self.api_raw["releases"].keys()
-           
-              try:
-                  versions.sort(key=StrictVersion, reverse=True)
-              except ValueError:
-                  versions #give up sorting, just go for it
-           
-              for version in versions:
-                  release_dict = self.api_raw["releases"][version]
-                  for url_dict in release_dict:
-                      if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
-                          if "url" in url_dict:
-                              return url_dict["url"]
-
-           if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-              if self.api_raw["info"]["download_url"].startswith("http://"):
-                  return self.api_raw["info"]["download_url"]
+            if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
+                if urlparse(self.api_raw["info"]["download_url"]).scheme:
+                    return self.api_raw["info"]["download_url"]
                    
         return None
 
@@ -269,7 +247,8 @@ class PypiPackage(Package):
         filenames_to_get = [
             "/requires.txt",
             "/setup_requires.txt",
-            "/depends.txt"
+            "/depends.txt",
+            "/metadata.json"
         ]
 
         print "getting requires files for {} from {}".format(

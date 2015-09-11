@@ -85,6 +85,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
     print "adding {} jobs to queue...".format(num_jobs)
 
     # iterate through chunks of IDs like [[id1, id2], [id3, id4], ...  ]
+    object_ids_chunk = []
     for object_ids_chunk in chunks(object_ids, chunk_size):
         update_fn_args = [cls, method, object_ids_chunk]
 
