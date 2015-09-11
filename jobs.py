@@ -164,7 +164,8 @@ class Update():
         if obj_id is None:
             query = self.query.limit(num_jobs)
         else:
-            query = self.query.filter(self.cls.id == obj_id)
+            # don't run the query, just get the id that was requested
+            query = db.query(self.cls).filter(self.cls.id == obj_id)
 
         enqueue_jobs(
             self.cls,

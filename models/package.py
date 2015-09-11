@@ -438,7 +438,7 @@ def test_me(limit=10, use_rq="rq"):
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.requires_files == {})   
+# q = q.filter(PypiPackage.requires_files == {})   
 
 update_registry.register(Update(
     job=PypiPackage.set_requires_files,
