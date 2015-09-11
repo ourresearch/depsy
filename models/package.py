@@ -178,23 +178,21 @@ class PypiPackage(Package):
         if not self.api_raw:
             return None
 
+        requests.packages.urllib3.disable_warnings()
         r = requests.get(
-            "https://pypi.python.org/simple/{}".format(self.project_name)
+            "https://pypi.python.org/pypi/{}".format(self.project_name)
         )
 
         if r.status_code >= 400:
             return None
 
-        page = r.text
+        page = r.content
         tree = html.fromstring(page)
         try:
-            link = tree.xpath("//a/@href")[0]
+            source_url = tree.xpath("//table//a[contains(@href, '.tar') or contains(@href, '.zip') or contains(@href, '.egg')]/@href")[0]
         except IndexError:
             return None
 
-        partial_link = link.replace("../../", "")
-
-        source_url = "https://pypi.python.org/" + partial_link
         return source_url
 
 

@@ -165,7 +165,7 @@ class Update():
             query = self.query.limit(num_jobs)
         else:
             # don't run the query, just get the id that was requested
-            query = db.query(self.cls).filter(self.cls.id == obj_id)
+            query = db.session.query(self.cls.id).filter(self.cls.id == obj_id)
 
         enqueue_jobs(
             self.cls,

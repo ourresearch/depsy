@@ -148,8 +148,6 @@ class ZipGetter():
                 self.error = "unzip_error"
                 return None
 
-        print "got a zip file"
-
         # get the names that match the listing from the zip
         long_names = []
         for filename_in_zip in all_filenames_in_zip:
@@ -157,10 +155,9 @@ class ZipGetter():
                 if filename_in_zip.endswith(short_filename):
                     long_names.append(filename_in_zip)
 
-        print "now going to extract short_filenames:", short_filenames
-        print "all_filenames_in_zip", "\n".join(all_filenames_in_zip)
-        print "now going to extract long_names:", long_names
-
+        # print "now going to extract short_filenames:", short_filenames
+        # print "all_filenames_in_zip", "\n".join(all_filenames_in_zip)
+        # print "now going to extract long_names:", long_names
 
         for filename in long_names:
             try:
