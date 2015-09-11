@@ -178,49 +178,52 @@ class PypiPackage(Package):
         if not self.api_raw:
             return None
 
-        requests.packages.urllib3.disable_warnings()
-        r = requests.get(
-            "https://pypi.python.org/pypi/{}".format(self.project_name)
-        )
+        # requests.packages.urllib3.disable_warnings()
+        # r = requests.get(
+        #     "https://pypi.python.org/pypi/{}".format(self.project_name)
+        # )
 
-        if r.status_code >= 400:
-            return None
+        # if r.status_code >= 400:
+        #     return None
 
-        page = r.content
-        tree = html.fromstring(page)
-        try:
-            source_url = tree.xpath("//table//a[contains(@href, '.tar') or contains(@href, '.zip') or contains(@href, '.egg')]/@href")[0]
-        except IndexError:
-            return None
+        # page = r.content
+        # tree = html.fromstring(page)
+        # try:
+        #     source_url = tree.xpath("//table//a[contains(@href, '.tar') or contains(@href, '.zip') or contains(@href, '.egg')]/@href")[0]
+        # except IndexError:
+        #     print "looking for download url"
+        #     try:
+        #         source_url = tree.xpath('//li[starts-with(strong, "Download")]/a/@href')[0]
+        #         if source_url:
+        #             print "found source url through download link!", source_url
+        #     except IndexError:
+        #         print "didn't find download url either"
+        #         pass
 
-        return source_url
+        # return source_url
 
-
-
-
-
-        #if self.api_raw:
-        #
-        #    #if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-        #    #    if self.api_raw["info"]["download_url"].startswith("http://"):
-        #    #        return self.api_raw["info"]["download_url"]
-        #    #
-        #    #if "releases" in self.api_raw and self.api_raw["releases"]:
-        #    #    versions = self.api_raw["releases"].keys()
-        #    #
-        #    #    try:
-        #    #        versions.sort(key=StrictVersion, reverse=True)
-        #    #    except ValueError:
-        #    #        versions #give up sorting, just go for it
-        #    #
-        #    #    for version in versions:
-        #    #        release_dict = self.api_raw["releases"][version]
-        #    #        for url_dict in release_dict:
-        #    #            if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
-        #    #                if "url" in url_dict:
-        #    #                    return url_dict["url"]
-        #
-        #return None
+        if self.api_raw:
+        
+           if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
+              if self.api_raw["info"]["download_url"].startswith("http://"):
+                  return self.api_raw["info"]["download_url"]
+           
+           if "releases" in self.api_raw and self.api_raw["releases"]:
+              versions = self.api_raw["releases"].keys()
+           
+              try:
+                  versions.sort(key=StrictVersion, reverse=True)
+              except ValueError:
+                  versions #give up sorting, just go for it
+           
+              for version in versions:
+                  release_dict = self.api_raw["releases"][version]
+                  for url_dict in release_dict:
+                      if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
+                          if "url" in url_dict:
+                              return url_dict["url"]
+        
+        return None
 
 
     def save_host_contributors(self):
@@ -466,7 +469,7 @@ def test_me(limit=10, use_rq="rq"):
 
 
 q = db.session.query(PypiPackage.id)
-# q = q.filter(PypiPackage.requires_files == {})   
+q = q.filter(PypiPackage.requires_files == None)   
 
 update_registry.register(Update(
     job=PypiPackage.set_requires_files,

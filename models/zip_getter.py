@@ -2,6 +2,8 @@ from time import time
 import requests
 import zipfile
 import tarfile
+import subprocess32
+
 
 from util import elapsed
 
