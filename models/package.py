@@ -423,15 +423,26 @@ def test_me(limit=10, use_rq="rq"):
 
 
 
-def set_requires_files(limit=10, use_rq="rq"):
-    q = db.session.query(PypiPackage.id)
-    q = q.filter(PypiPackage.requires_files == None)   
-    # q = q.filter(PypiPackage.id == "pypi:115wangpan") 
-    q = q.order_by(PypiPackage.id)
-    q = q.limit(limit)
 
-    # doesn't matter what this is now, because update function overwritten
-    enqueue_jobs(PypiPackage, "set_requires_files", q, 6, use_rq)
+
+############
+
+# # update everything
+# python update.py PypiPackage.set_requires_files --limit 10 --chunk 5 --no-rq
+
+# # update one thing
+# python update.py Package.test --id cran:BioGeoBEARS  --no-rq
+
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.requires_files == None)   
+
+update_registry.register(Update(
+    job=PypiPackage.set_requires_files,
+    query=q,
+    queue_id=6
+))
 
 
 
