@@ -14,6 +14,8 @@ from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.github_repo import GithubRepo
 from jobs import enqueue_jobs
+from jobs import update_registry
+from jobs import Update
 
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
@@ -60,6 +62,9 @@ class Package(db.Model):
         q = q.filter(func.lower(cls.project_name).in_(lowercase_module_names))
         response = [row[0] for row in q.all()]
         return response
+
+    def test(self):
+        print "{}: I'm a test!".format(self)
 
     def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
@@ -360,6 +365,17 @@ def test_me(limit=10, use_rq="rq"):
 
     # doesn't matter what this is now, because update function overwritten
     enqueue_jobs(Package, "set_github_repo_ids", q, 6, use_rq)
+
+
+
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+
+update_registry.register(Update(
+    job=Package.test,
+    query=q,
+    queue_id=2
+))
 
 
 

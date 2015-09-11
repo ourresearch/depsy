@@ -4,6 +4,7 @@ from app import db
 from util import elapsed
 from app import ti_queues
 from sqlalchemy.dialects import postgresql
+import argparse
 from sqlalchemy import sql
 
 from util import chunks
@@ -117,12 +118,69 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
 def queue_status(queue_number_str):
     queue_number = int(queue_number_str)
     num_jobs_to_start = ti_queues[queue_number].count
-    update = Update(num_jobs_to_start, queue_number)
+    update = UpdateStatus(num_jobs_to_start, queue_number)
     update.print_status_loop()
 
 
 
+class UpdateRegistry():
+    def __init__(self):
+        self.updates = {}
+
+    def register(self, update):
+        self.updates[update.name] = update
+
+    def get(self, update_name):
+        return self.updates[update_name]
+
+update_registry = UpdateRegistry()
+
+
 class Update():
+    def __init__(self, job, query, queue_id):
+
+        self.queue_id = queue_id
+        self.job = job
+        self.method = job
+        self.cls = job.im_class
+
+        self.name = "{}.{}".format(self.cls.__name__, self.method.__name__)
+        self.query = query.order_by(self.cls.id)
+
+    def run(self, no_rq=False, obj_id=None, num_jobs=None, chunk_size=None):
+
+        if num_jobs is None:
+            num_jobs = 1000
+
+        if no_rq == False:
+            use_rq = "rq"
+        else:
+            use_rq = "you should not use RQ, computer."
+
+        if chunk_size is None:
+            chunk_size = 10
+
+        if obj_id is None:
+            query = self.query.limit(num_jobs)
+        else:
+            query = self.query.filter(self.cls.id == obj_id)
+
+        enqueue_jobs(
+            self.cls,
+            self.method.__name__,
+            query,
+            self.queue_id,
+            use_rq,
+            chunk_size
+        )
+
+        if not no_rq:
+            queue_status(str(self.queue_id))
+
+
+
+
+class UpdateStatus():
     seconds_between_chunks = 15
 
     def __init__(self, num_jobs, queue_number):
@@ -196,4 +254,7 @@ def empty_queue(queue_number):
         num_jobs,
         queue_number
     )
+
+
+
 
