@@ -249,12 +249,14 @@ class PypiPackage(Package):
             return None
 
         getter = ZipGetter(self.source_url)
+
+        self.requires_files = getter.download_and_extract_files(filenames_to_get)
+
         if getter.error:
             print "Problems with the downloaded zip, quitting without getting filenames."
             self.requires_files = {"error": "error_with_zip"}
             return None
 
-        self.requires_files = getter.get_files(filenames_to_get)
         return self.requires_files
 
 
@@ -431,12 +433,12 @@ def test_me(limit=10, use_rq="rq"):
 # python update.py PypiPackage.set_requires_files --limit 10 --chunk 5 --no-rq
 
 # # update one thing
-# python update.py Package.test --id cran:BioGeoBEARS  --no-rq
+# python update.py PypiPackage.set_requires_files --id pypi:fastly --no-rq
 
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.requires_files == None)   
+q = q.filter(PypiPackage.requires_files == {})   
 
 update_registry.register(Update(
     job=PypiPackage.set_requires_files,

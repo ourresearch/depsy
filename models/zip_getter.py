@@ -125,7 +125,7 @@ class ZipGetter():
         return z.namelist()
 
 
-    def get_files(self, short_filenames):
+    def download_and_extract_files(self, short_filenames):
         requests.packages.urllib3.disable_warnings()
         self.download()
         if self.error:
@@ -148,6 +148,8 @@ class ZipGetter():
                 self.error = "unzip_error"
                 return None
 
+        print "got a zip file"
+
         # get the names that match the listing from the zip
         long_names = []
         for filename_in_zip in all_filenames_in_zip:
@@ -155,21 +157,27 @@ class ZipGetter():
                 if filename_in_zip.endswith(short_filename):
                     long_names.append(filename_in_zip)
 
+        print "now going to extract short_filenames:", short_filenames
+        print "all_filenames_in_zip", "\n".join(all_filenames_in_zip)
+        print "now going to extract long_names:", long_names
+
+
         for filename in long_names:
             try:
                 if zip_type=="tarfile":
                     extracted_place = zip_file_obj.extractfile(filename)
                 else:
                     extracted_place = zip_file_obj.open(filename)
-                print "extracted_place", extracted_place
                 contents[filename] = extracted_place.read()
                 if contents[filename]:
                     print "got it!!!!!  with zip_type=", zip_type
             except KeyError:
                 print "not found", filename
                 pass # isn't a problem
+        
         if not contents:
             print "nothing found with ziptype", zip_type
+        
         return contents
 
 
