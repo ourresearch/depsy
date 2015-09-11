@@ -10,6 +10,18 @@ from models import person
 
 
 
+"""
+examples of calling this:
+
+# update everything
+python update.py Package.test --limit 10 --chunk 5 --no-rq
+
+# update one thing
+python update.py Package.test --id cran:BioGeoBEARS  --no-rq
+
+"""
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run stuff.")
 

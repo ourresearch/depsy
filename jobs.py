@@ -137,12 +137,13 @@ update_registry = UpdateRegistry()
 
 
 class Update():
-    def __init__(self, job, query, queue_id):
+    def __init__(self, job, query, queue_id, chunk_size_default=10):
 
         self.queue_id = queue_id
         self.job = job
         self.method = job
         self.cls = job.im_class
+        self.chunk_size_default = chunk_size_default
 
         self.name = "{}.{}".format(self.cls.__name__, self.method.__name__)
         self.query = query.order_by(self.cls.id)
@@ -158,7 +159,7 @@ class Update():
             use_rq = "you should not use RQ, computer."
 
         if chunk_size is None:
-            chunk_size = 10
+            chunk_size = self.chunk_size_default
 
         if obj_id is None:
             query = self.query.limit(num_jobs)
