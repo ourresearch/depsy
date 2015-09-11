@@ -7,6 +7,7 @@ from time import time
 from validate_email import validate_email
 from distutils.version import StrictVersion
 import zipfile
+from urlparse import urlparse
 
 from models import github_api
 from models.person import Person
