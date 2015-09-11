@@ -5,6 +5,7 @@ from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from time import time
 from validate_email import validate_email
+from distutils.version import StrictVersion
 import zipfile
 
 from models import github_api
@@ -166,18 +167,26 @@ class PypiPackage(Package):
     @property
     def source_url(self):
         if self.api_raw:
-            if not "package_url" in self.api_raw["info"]:
-                print "NO PACKAGE URL!  skipping."
-                return None
 
             if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-                if "http://" in self.api_raw["info"]["download_url"]:
-                    print "got a download url", self.api_raw["info"]["download_url"]
+                if self.api_raw["info"]["download_url"].startswith("http://"):
                     return self.api_raw["info"]["download_url"]
 
-            for url_dict in self.api_raw["urls"]:
-                if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
-                    return url_dict["url"]
+            if "releases" in self.api_raw and self.api_raw["releases"]:
+                versions = self.api_raw["releases"].keys()
+
+                try:
+                    versions.sort(key=StrictVersion, reverse=True)
+                except ValueError:
+                    versions #give up sorting, just go for it
+
+                for version in versions:
+                    release_dict = self.api_raw["releases"][version]
+                    for url_dict in release_dict:
+                        if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
+                            if "url" in url_dict:
+                                return url_dict["url"]
+
         return None
 
 
@@ -222,9 +231,9 @@ class PypiPackage(Package):
     def set_requires_files(self):
         # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
         filenames_to_get = [
-            "requires.txt",
-            "setup_requires.txt",
-            "depends.txt"
+            "/requires.txt",
+            "/setup_requires.txt",
+            "/depends.txt"
         ]
 
         print "getting requires files for {} from {}".format(
