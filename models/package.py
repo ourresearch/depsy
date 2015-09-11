@@ -19,6 +19,10 @@ from jobs import update_registry
 from jobs import Update
 from util import elapsed
 
+import requests
+from lxml import html
+
+
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
@@ -171,28 +175,54 @@ class PypiPackage(Package):
 
     @property
     def source_url(self):
-        if self.api_raw:
+        if not self.api_raw:
+            return None
 
-            if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-                if self.api_raw["info"]["download_url"].startswith("http://"):
-                    return self.api_raw["info"]["download_url"]
+        r = requests.get(
+            "https://pypi.python.org/simple/{}".format(self.project_name)
+        )
 
-            if "releases" in self.api_raw and self.api_raw["releases"]:
-                versions = self.api_raw["releases"].keys()
+        if r.status_code >= 400:
+            return None
 
-                try:
-                    versions.sort(key=StrictVersion, reverse=True)
-                except ValueError:
-                    versions #give up sorting, just go for it
+        page = r.text
+        tree = html.fromstring(page)
+        try:
+            link = tree.xpath("//a/@href")[0]
+        except IndexError:
+            return None
 
-                for version in versions:
-                    release_dict = self.api_raw["releases"][version]
-                    for url_dict in release_dict:
-                        if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
-                            if "url" in url_dict:
-                                return url_dict["url"]
+        partial_link = link.replace("../../", "")
 
-        return None
+        source_url = "https://pypi.python.org/" + partial_link
+        return source_url
+
+
+
+
+
+        #if self.api_raw:
+        #
+        #    #if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
+        #    #    if self.api_raw["info"]["download_url"].startswith("http://"):
+        #    #        return self.api_raw["info"]["download_url"]
+        #    #
+        #    #if "releases" in self.api_raw and self.api_raw["releases"]:
+        #    #    versions = self.api_raw["releases"].keys()
+        #    #
+        #    #    try:
+        #    #        versions.sort(key=StrictVersion, reverse=True)
+        #    #    except ValueError:
+        #    #        versions #give up sorting, just go for it
+        #    #
+        #    #    for version in versions:
+        #    #        release_dict = self.api_raw["releases"][version]
+        #    #        for url_dict in release_dict:
+        #    #            if "packagetype" in url_dict and url_dict["packagetype"]=="sdist":
+        #    #                if "url" in url_dict:
+        #    #                    return url_dict["url"]
+        #
+        #return None
 
 
     def save_host_contributors(self):
@@ -438,7 +468,7 @@ def test_me(limit=10, use_rq="rq"):
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.requires_files == {})   
+#q = q.filter(PypiPackage.requires_files == {})
 
 update_registry.register(Update(
     job=PypiPackage.set_requires_files,
