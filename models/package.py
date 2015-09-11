@@ -287,6 +287,22 @@ class PypiPackage(Package):
 
         return self.requires_files
 
+    def set_api_raw(self):
+        requests.packages.urllib3.disable_warnings()
+        url = 'https://pypi.python.org/pypi/{}/json'.format(self.project_name)
+        r = requests.get(url)
+        try:
+            self.api_raw = r.json()
+        except ValueError:
+            self.api_raw = {"error": "no_json"}
+
+
+
+
+
+
+
+
 
 
 
@@ -472,6 +488,17 @@ update_registry.register(Update(
     job=PypiPackage.set_requires_files,
     query=q,
     queue_id=6
+))
+
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.api_raw == None)
+
+update_registry.register(Update(
+    job=PypiPackage.set_api_raw,
+    query=q,
+    queue_id=4
 ))
 
 
