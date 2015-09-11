@@ -190,12 +190,13 @@ class PypiPackage(Package):
                 release_dict = self.api_raw["releases"][version]
                 for url_dict in release_dict:
                     if "packagetype" in url_dict:
-                        if url_dict["packagetype"]=="bdist_wheel":
-                            if "url" in url_dict:
-                                return url_dict["url"]
-                        if url_dict["packagetype"]=="sdist":
-                            if "url" in url_dict:
-                                return url_dict["url"]
+
+                        # trying these in priority order
+                        valid_type = ["bdist_wheel", "bdist_egg", "sdist"]
+                        for packagetype in valid_type:
+                            if url_dict["packagetype"]==packagetype:
+                                if "url" in url_dict:
+                                    return url_dict["url"]
 
             if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
                 if urlparse(self.api_raw["info"]["download_url"]).scheme:
