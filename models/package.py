@@ -7,7 +7,6 @@ from time import time
 from validate_email import validate_email
 from distutils.version import StrictVersion
 import zipfile
-from urlparse import urlparse
 
 from models import github_api
 from models.person import Person
@@ -196,11 +195,11 @@ class PypiPackage(Package):
                         valid_type = ["bdist_wheel", "bdist_egg", "sdist"]
                         for packagetype in valid_type:
                             if url_dict["packagetype"]==packagetype:
-                                if "url" in url_dict:
+                                if "url" in url_dict and url_dict["url"].startswith("http"):
                                     return url_dict["url"]
 
             if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-                if urlparse(self.api_raw["info"]["download_url"]).scheme:
+                if self.api_raw["info"]["download_url"].startswith("http"):                
                     return self.api_raw["info"]["download_url"]
                    
         return None
