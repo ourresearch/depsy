@@ -50,14 +50,13 @@ def update_fn(cls, method_name, obj_id_list):
             elapsed=elapsed(start_time, 4)
         )
 
-
     db.session.commit()
     db.session.remove()  # close connection nicely
     return None  # important for if we use this on RQ
 
 
 
-def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_size=1000):
+def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_size=10):
     """
     Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
     """
