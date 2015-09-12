@@ -65,7 +65,6 @@ class Package(db.Model):
 
 
     def to_dict(self, full=True):
-        return {"o": 2}
         ret = dict_from_dir(self, keys_to_ignore=[
             "proxy_papers",
             "github_contributors",
