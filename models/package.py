@@ -261,8 +261,7 @@ class PypiPackage(Package):
         # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
         filenames_to_get = [
             "/requires.txt",
-            "/metadata.json",
-            "/METADATA"
+            "/metadata.json"
         ]
 
         print "getting requires files for {} from {}".format(
