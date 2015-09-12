@@ -19,6 +19,9 @@ logger = logging.getLogger("github_api")
 class GithubRateLimitException(Exception):
     pass
 
+class NotFoundException(Exception):
+    pass
+
 class GithubKeyring():
     def __init__(self):
         self.expired_keys = []

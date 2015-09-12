@@ -5,7 +5,7 @@ from util import dict_from_dir
 
 # sqla needs these two imports when you get started:
 #from models import package
-from models import person
+#from models import person
 
 class Contribution(db.Model):
     __tablename__ = 'contribution'
@@ -15,8 +15,8 @@ class Contribution(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
     package_id = db.Column(db.Text, db.ForeignKey("package.id"))
 
-    person = db.relationship("Person", backref="contributions")
-    package = db.relationship("Package", backref="contributions")
+    #person = db.relationship("Person", backref="contributions")
+    #package = db.relationship("Package", backref="contributions")
 
     role = db.Column(db.Text)
     quantity = db.Column(db.Integer)
@@ -28,19 +28,14 @@ class Contribution(db.Model):
             self.package_id
         )
 
-    def to_dict(self, show_side=None):
+    def to_dict(self):
         ret = {
             "role": self.role,
             "quantity": self.quantity,
             "percent": self.percent,
+            "package": self.package.to_dict(full=False),
+            "person": self.person.to_dict(full=False)
         }
-
-        if show_side == "package":
-            ret["package"] = self.package.to_dict(full=False)
-
-        elif show_side == "person":
-            ret["person"] = self.person.to_dict(full=False)
-
         return ret
 
 

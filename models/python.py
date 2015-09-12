@@ -42,7 +42,7 @@ foo == 5.5
   foo_with_space_in_front = 1.1"""
 
     reqs = re.findall(
-        r'^(?!#|file|-|\.)\s*([\w\.-]+)',
+        r'^#(?!|file:|-|\.)\s*([\w\.-]+)',
         contents,
         re.MULTILINE | re.IGNORECASE
     )

@@ -1,7 +1,7 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import text
-
+from models.contribution import Contribution
 from github_api import get_profile
 from util import dict_from_dir
 """
@@ -36,14 +36,23 @@ class Person(db.Model):
             id=self.id
         )
 
+    contributions = db.relationship(
+        'Contribution',
+        lazy='subquery',
+        cascade="all, delete-orphan",
+        backref="person"
+    )
+
+
 
 
     def to_dict(self, full=True):
         #full= False
 
         ret = dict_from_dir(self, keys_to_ignore=["contributions", "github_about"])
+
         if full:
-            ret["contributions"] = [c.to_dict("package") for c in self.contributions]
+            ret["contributions"] = [c.to_dict() for c in self.contributions]
         return ret
 
 
