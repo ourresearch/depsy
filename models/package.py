@@ -4,9 +4,12 @@ from sqlalchemy.orm import deferred
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from time import time
+import json
 from validate_email import validate_email
 from distutils.version import StrictVersion
 import zipfile
+import requests
+from lxml import html
 
 from models import github_api
 from models.person import Person
@@ -20,8 +23,6 @@ from jobs import Update
 from util import elapsed
 from util import dict_from_dir
 
-import requests
-from lxml import html
 
 
 class Package(db.Model):
@@ -206,7 +207,7 @@ class PypiPackage(Package):
                     if "packagetype" in url_dict:
 
                         # trying these in priority order
-                        valid_type = ["bdist_wheel", "bdist_egg", "sdist"]
+                        valid_type = ["bdist_wheel", "bdist_egg", "sdist", "bdist_dumb"]
                         for packagetype in valid_type:
                             if url_dict["packagetype"]==packagetype:
                                 if "url" in url_dict and url_dict["url"].startswith("http"):
@@ -261,9 +262,8 @@ class PypiPackage(Package):
         # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
         filenames_to_get = [
             "/requires.txt",
-            "/setup_requires.txt",
-            "/depends.txt",
-            "/metadata.json"
+            "/metadata.json",
+            "/METADATA"
         ]
 
         print "getting requires files for {} from {}".format(
@@ -294,6 +294,38 @@ class PypiPackage(Package):
             self.api_raw = {"error": "no_json"}
 
 
+    def set_host_reverse_deps(self):
+        self.host_reverse_deps = []
+        if "metadata.json" in self.requires_files:
+            metadata = json.loads(self.requires_files["metadata.json"])
+            reverse_deps = []
+            for key in metadata:
+                if key.endswith("_requires"):
+                    for requires_dict in metadata.get(key, {}):
+                        for require_entry in requires_dict["requires"]:
+                            print require_entry
+                            # parsed_reqs = requirements.parse(require_entry)
+                            # reverse_deps += [req.name for req in parsed_reqs]
+            print "\nrunning on ", self.project_name
+            print "metadata.json"
+            print "found ", reverse_deps
+
+            # self.host_reverse_deps = reverse_deps
+
+        elif "requires.txt" in self.requires_files:
+            reverse_deps = []
+            print self.requires_files["requires.txt"]
+            # parsed_reqs = requirements.parse(self.requires_files["requires.txt"])
+            # print parsed_reqs
+            # if parsed_reqs:
+            #     reverse_deps += [req.name for req in parsed_reqs]
+            # self.host_reverse_deps = reverse_deps
+            print "\nrunning on ", self.project_name
+            print "requires.txt"
+            print "found ", reverse_deps
+
+        else:
+            self.host_reverse_deps = []
 
 
 
@@ -476,6 +508,15 @@ def test_me(limit=10, use_rq="rq"):
 # # update one thing
 # python update.py PypiPackage.set_requires_files --id pypi:fastly --no-rq
 
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.host_reverse_deps == None)   
+
+update_registry.register(Update(
+    job=PypiPackage.set_host_reverse_deps,
+    query=q,
+    queue_id=6
+))
 
 
 q = db.session.query(PypiPackage.id)
