@@ -192,7 +192,7 @@ class PypiPackage(Package):
                     if "packagetype" in url_dict:
 
                         # trying these in priority order
-                        valid_type = ["bdist_wheel", "bdist_egg", "sdist"]
+                        valid_type = ["bdist_wheel", "bdist_egg", "sdist", "bdist_dumb"]
                         for packagetype in valid_type:
                             if url_dict["packagetype"]==packagetype:
                                 if "url" in url_dict and url_dict["url"].startswith("http"):
@@ -247,9 +247,8 @@ class PypiPackage(Package):
         # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
         filenames_to_get = [
             "/requires.txt",
-            "/setup_requires.txt",
-            "/depends.txt",
-            "/metadata.json"
+            "/metadata.json",
+            "/METADATA"
         ]
 
         print "getting requires files for {} from {}".format(
