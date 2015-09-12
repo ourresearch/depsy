@@ -46,12 +46,12 @@ class Package(db.Model):
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
 
-    #contributions = db.relationship(
-    #    'Contribution',
-    #    lazy='subquery',
-    #    cascade="all, delete-orphan",
-    #    backref="foo"
-    #)
+    contributions = db.relationship(
+        'Contribution',
+        lazy='subquery',
+        cascade="all, delete-orphan",
+        backref="package"
+    )
 
 
 
@@ -77,7 +77,7 @@ class Package(db.Model):
         ])
         if full:
             ret["api_raw"] = self.api_raw
-            ret["contributions"] = [c.to_dict("person") for c in self.contributions]
+            ret["contributions"] = [c.to_dict() for c in self.contributions]
 
         return ret
 

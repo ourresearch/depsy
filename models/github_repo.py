@@ -15,6 +15,8 @@ from models.cran_project import CranProject
 from models import python
 
 from jobs import enqueue_jobs
+from jobs import update_registry
+from jobs import Update
 
 
 from models import github_api
@@ -25,6 +27,7 @@ from time import sleep
 import ast
 import subprocess
 import re
+import hashlib
 
 # comment this out here now, because usually not using
 #pypi_package_names = get_pypi_package_names()
@@ -44,6 +47,8 @@ class GithubRepo(db.Model):
     cran_descr_file = db.Column(db.Text)
     bucket = db.Column(JSONB)
     cran_descr_file = db.Column(db.Text)
+    setup_py = db.Column(db.Text)
+    setup_py_hash = db.Column(db.Text)
 
     # old, and removed from current database.  only in backups of database.
     # requirements = db.Column(JSONB)
@@ -436,6 +441,21 @@ class GithubRepo(db.Model):
             print "found a setup.py for {}".format(self.full_name)
         except github_api.NotFoundException:
             self.setup_py_no_forks = "not_found"
+
+
+    def set_setup_py(self):
+        try:
+            self.setup_py = github_api.get_setup_py_contents(
+                self.login,
+                self.repo_name
+            )
+
+            # set the hash while we're at it.
+            self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
+
+        except github_api.NotFoundException:
+            print "No setup.py found for {}".format(self.full_name)
+            self.setup_py = "not_found"
 
 
     def set_cran_descr_file(self):
@@ -906,7 +926,15 @@ def set_all_cran_descr_file(limit=10, use_rq="rq"):
 
 
 
+q = db.session.query(GithubRepo.id)
+q = q.filter(GithubRepo.bucket != None)
+q = q.filter(GithubRepo.setup_py == None)
 
+update_registry.register(Update(
+    job=GithubRepo.set_setup_py,
+    query=q,
+    queue_id=4
+))
 
 
 
