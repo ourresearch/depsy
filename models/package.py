@@ -174,13 +174,6 @@ class Package(db.Model):
         raise NotImplementedError
 
 
-    @property
-    def contributors(self):
-        ret = []
-        for contrib in self.contributions:
-            ret.append(contrib.person)
-
-        return ret
 
 
 
