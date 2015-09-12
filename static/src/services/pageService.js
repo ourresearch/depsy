@@ -6,9 +6,7 @@ angular.module('pageService', [
   .factory("PageService", function(){
 
     var data = {}
-    var defaultData = {
-      hasDarkBg: false
-    }
+    var defaultData = {}
 
     function reset(){
       console.log("resetting the page service data")

@@ -3,8 +3,6 @@ angular.module('app', [
   'ngRoute',
   'ngResource',
   'ui.bootstrap',
-  'satellizer',
-  'snap', // hosted locally
 
   'templates.app',  // this is how it accesses the cached templates in ti.js
 
@@ -13,7 +11,6 @@ angular.module('app', [
   'articlePage',
 
   'resourcesModule',
-  'currentUserService',
   'pageService',
   'globalModal'
 
@@ -23,14 +20,8 @@ angular.module('app', [
 
 
 angular.module('app').config(function ($routeProvider,
-                                       $authProvider, // from satellizer
-                                       snapRemoteProvider,
                                        $locationProvider) {
   $locationProvider.html5Mode(true);
-  $authProvider.github({
-    clientId: '46b1f697afdd04e119fb' // hard-coded for now
-  });
-  snapRemoteProvider.globalOptions.disable = 'left';
 
 
 //  paginationTemplateProvider.setPath('directives/pagination.tpl.html')
@@ -68,42 +59,13 @@ angular.module('app').controller('AppCtrl', function(
   $rootScope,
   $scope,
   $location,
-  snapRemote,
   PageService,
-  CurrentUser,
-  GlobalModal,
-  $auth){
+  GlobalModal){
 
-
-  $scope.isAuthenticated = function() {
-    return $auth.isAuthenticated();
-  };
-  $scope.logout = function(){
-    $auth.logout("/")
-  }
-
-
-  $scope.authenticate = function() {
-    console.log("user fired authenticate() function")
-
-    // they'll see this when they get back from github
-    GlobalModal.open("Signing in")
-
-    $auth.authenticate("github").then(function(resp){
-      console.log("authenticated. resp:", resp, resp.data, resp.data.username)
-
-      // they'll see this over their empty profile
-      GlobalModal.setMsg("Loading your profile", "(this may take a minute)")
-
-      $location.path("/u/" + resp.data.username)
-    })
-  };
 
 
   $scope.page = PageService
 
-  $scope.currentUser = CurrentUser
-  CurrentUser.get()
 
 
   /*
@@ -113,7 +75,6 @@ angular.module('app').controller('AppCtrl', function(
   */
 
   $scope.$on('$routeChangeSuccess', function(next, current){
-    snapRemote.close()
     PageService.reset()
   })
 

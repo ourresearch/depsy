@@ -18,6 +18,7 @@ from jobs import enqueue_jobs
 from jobs import update_registry
 from jobs import Update
 from util import elapsed
+from util import dict_from_dir
 
 import requests
 from lxml import html
@@ -39,16 +40,19 @@ class Package(db.Model):
     dependencies = db.Column(JSONB)
 
     proxy_papers = db.Column(db.Text)
-    github_contributors = db.Column(JSONB)
-    bucket = db.Column(MutableDict.as_mutable(JSONB))
-    requires_files = db.Column(MutableDict.as_mutable(JSONB))
+    github_contributors = db.deferred(db.Column(JSONB))
+    bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
 
-    contributions = db.relationship(
-        'Contribution',
-        lazy='subquery',
-        cascade="all, delete-orphan",
-        backref=db.backref("package", lazy="subquery")
-    )
+    #contributions = db.relationship(
+    #    'Contribution',
+    #    lazy='subquery',
+    #    cascade="all, delete-orphan",
+    #    backref="foo"
+    #)
+
+
+
     __mapper_args__ = {
         'polymorphic_on': host,
         'with_polymorphic': '*'
@@ -58,6 +62,23 @@ class Package(db.Model):
     def __repr__(self):
         return u'<Package {name}>'.format(
             name=self.id)
+
+
+    def to_dict(self, full=True):
+        ret = dict_from_dir(self, keys_to_ignore=[
+            "proxy_papers",
+            "github_contributors",
+            "bucket",
+            "requires_files",
+            "contributions",
+            "api_raw"
+        ])
+        if full:
+            ret["api_raw"] = self.api_raw
+            ret["contributions"] = [c.to_dict("person") for c in self.contributions]
+
+        return ret
+
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -153,13 +174,6 @@ class Package(db.Model):
         raise NotImplementedError
 
 
-    @property
-    def contributors(self):
-        ret = []
-        for contrib in self.contributions:
-            ret.append(contrib.person)
-
-        return ret
 
 
 

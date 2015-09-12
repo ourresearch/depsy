@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html', 'side-menu.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -101,7 +101,6 @@ angular.module("header.tpl.html", []).run(["$templateCache", function($templateC
     "   </h1>\n" +
     "   <div class=\"controls\">\n" +
     "      <span class=\"menu-button\"\n" +
-    "            ng-class=\"{'on-dark-bg': page.d.hasDarkBg}\"\n" +
     "            snap-toggle=\"right\">\n" +
     "         <i class=\"fa fa-bars\"></i>\n" +
     "      </span>\n" +
@@ -136,68 +135,7 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
 angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("profile-page/profile.tpl.html",
     "<div class=\"profile-page\">\n" +
-    "   <div class=\"owner-info\">\n" +
-    "      <img ng-src=\"{{ profile.avatar_url }}\" alt=\"\"/>\n" +
-    "      <h2>{{ profile.name }}</h2>\n" +
-    "   </div>\n" +
-    "\n" +
-    "\n" +
-    "   <div class=\"repos\">\n" +
-    "      <div class=\"repo\" ng-repeat=\"repo in profile.repos | orderBy: 'language'\">\n" +
-    "         <div class=\"meta\">\n" +
-    "            <h3>\n" +
-    "               <span class=\"repo-name\">\n" +
-    "                  {{ repo.name }}\n" +
-    "               </span>\n" +
-    "               <language-icon language=\"{{ repo.language }}\"></language-icon>\n" +
-    "               </h3>\n" +
-    "            <span class=\"description\">{{ repo.description }}</span>\n" +
-    "            <a class=\"repo_url\" href=\"{{ profile.html_url }}/{{ repo.name }}\"><i class=\"fa fa-share\"></i></a>\n" +
-    "         </div>\n" +
-    "         <div class=\"impact\">\n" +
-    "            <div class=\"stars metric\" ng-show=\"repo.github_stargazers_count\">\n" +
-    "               <i class=\"fa fa-star-o\"></i>\n" +
-    "               <span class=\"val\">{{ repo.github_stargazers_count }}</span>\n" +
-    "               <span class=\"descr\">stars</span>\n" +
-    "            </div>\n" +
-    "            <div class=\"forks metric\" ng-show=\"repo.github_forks_count\">\n" +
-    "               <i class=\"fa fa-code-fork\"></i>\n" +
-    "               <span class=\"val\">{{ repo.github_forks_count }}</span>\n" +
-    "               <span class=\"descr\">forks</span>\n" +
-    "            </div>\n" +
-    "\n" +
-    "\n" +
-    "            <div class=\"subscribers\" ng-show=\"repo.subscribers_count\">\n" +
-    "               <i class=\"fa fa-eye\"></i>\n" +
-    "               <span class=\"val\">{{ repo.subscribers_count }}</span>\n" +
-    "               <span class=\"descr\">subscribers</span>\n" +
-    "               <span class=\"subscriber-list\" ng-repeat=\"subscriber in repo.subscribers\">\n" +
-    "                  <a class=\"subscriber-name\" href=\"{{ subscriber.html_url }}\">\n" +
-    "                     {{ subscriber.login }}\n" +
-    "                  </a>\n" +
-    "               </span>\n" +
-    "            </div>      \n" +
-    "            <div class=\"downloads\" ng-show=\"repo.total_downloads\">\n" +
-    "               <i class=\"fa fa-cloud-download\"></i>\n" +
-    "               <span class=\"val\">{{ repo.total_downloads }}</span>\n" +
-    "               <span class=\"descr\">downloads from CRAN</span>\n" +
-    "            </div>\n" +
-    "            <div class=\"used_by\" ng-show=\"repo.used_by\">\n" +
-    "               <i class=\"fa fa-cubes\"></i>\n" +
-    "               <span class=\"val\">{{ repo.used_by_count }}</span>\n" +
-    "               <span class=\"descr\">R packages use this package: </span>\n" +
-    "               <span class=\"used-by-list\">{{ repo.used_by }}</span>\n" +
-    "            </div>\n" +
-    "\n" +
-    "            </div>                         \n" +
-    "         </div>\n" +
-    "\n" +
-    "      </div>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "   </div>\n" +
-    "\n" +
+    "   <h1>boom, profile page!</h1>\n" +
     "\n" +
     "</div>\n" +
     "");
@@ -219,56 +157,4 @@ angular.module("services/global-modal.tpl.html", []).run(["$templateCache", func
     "   </div>\n" +
     "</div>\n" +
     "");
-}]);
-
-angular.module("side-menu.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("side-menu.tpl.html",
-    "<ul class=\"our-nav not-signed-in\" ng-show=\"!isAuthenticated()\">\n" +
-    "   <li>\n" +
-    "      <a ng-click=\"authenticate()\">\n" +
-    "         <i class=\"fa fa-sign-in\"></i>\n" +
-    "         Sign in\n" +
-    "      </a>\n" +
-    "   </li>\n" +
-    "</ul>\n" +
-    "\n" +
-    "<ul class=\"our-nav signed-in\" ng-show=\"isAuthenticated()\">\n" +
-    "   <li>\n" +
-    "      <a href=\"/u/{{ currentUser.d.username }}\" class=\"user-name-and-pic\">\n" +
-    "         <img src=\"{{ currentUser.d.avatar_url }}\"/>\n" +
-    "         <span class=\"name\">\n" +
-    "            {{ currentUser.d.name }}\n" +
-    "         </span>\n" +
-    "      </a>\n" +
-    "   </li>\n" +
-    "   <li>\n" +
-    "      <a href=\"/settings\">\n" +
-    "         <i class=\"fa fa-cog\"></i>\n" +
-    "         Settings\n" +
-    "      </a>\n" +
-    "   </li>\n" +
-    "\n" +
-    "\n" +
-    "   <li>\n" +
-    "      <a href=\"/\" ng-click=\"logout()\">\n" +
-    "         <i class=\"fa fa-sign-out\"></i>\n" +
-    "         Log out\n" +
-    "      </a>\n" +
-    "   </li>\n" +
-    "</ul>\n" +
-    "\n" +
-    "<div class=\"bottom-menu\">\n" +
-    "   <ul class=\"our-nav\">\n" +
-    "      <!--\n" +
-    "      <li>\n" +
-    "         <a href=\"/about\">\n" +
-    "            About\n" +
-    "         </a>\n" +
-    "      </li>\n" +
-    "      -->\n" +
-    "   </ul>\n" +
-    "   <a class=\"home-link\" href=\"/\">\n" +
-    "      <img src=\"static/img/impactstory-logo.png\" alt=\"\"/>\n" +
-    "   </a>\n" +
-    "</div>");
 }]);

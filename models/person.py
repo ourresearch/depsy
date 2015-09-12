@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import text
 
 from github_api import get_profile
+from util import dict_from_dir
 """
 this file in progress. i think should have:
 
@@ -24,21 +25,27 @@ class Person(db.Model):
     name = db.Column(db.Text)
     other_names = db.Column(JSONB)
     github_login = db.Column(db.Text)
-    github_about = db.Column(JSONB)
+    github_about = db.deferred(db.Column(JSONB))
 
     type = db.Column(db.Text)
-    contributions = db.relationship(
-        'Contribution',
-        lazy='subquery',
-        cascade="all, delete-orphan",
-        backref=db.backref("person", lazy="subquery")
-    )
+
 
     def __repr__(self):
         return u'<Person names "{name}" ({id})>'.format(
             name=self.name,
             id=self.id
         )
+
+
+
+    def to_dict(self, full=True):
+        #full= False
+
+        ret = dict_from_dir(self, keys_to_ignore=["contributions", "github_about"])
+        if full:
+            ret["contributions"] = [c.to_dict("package") for c in self.contributions]
+        return ret
+
 
     def set_github_about(self):
         if self.github_login is None:

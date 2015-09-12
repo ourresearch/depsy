@@ -7,7 +7,6 @@
   ---------------------------------------------------*/
 body {
   font-family: lato, helvetica, arial, sans-serif;
-  background: #333;
 }
 .tooltip {
   font-weight: 300;
@@ -15,54 +14,6 @@ body {
 }
 li {
   list-style-type: none;
-}
-.snap-content {
-  background: #fff;
-  border: none;
-}
-.snap-drawer {
-  background: #333;
-  padding-top: 15px;
-  font-weight: 300;
-}
-.snap-drawer ul.our-nav li i.fa {
-  margin-right: 5px;
-}
-.snap-drawer ul.our-nav li a {
-  width: 100%;
-  padding: 10px 35px;
-  font-size: 20px;
-  color: #fff;
-  text-decoration: none;
-  display: inline-block;
-}
-.snap-drawer ul.our-nav li a.user-name-and-pic {
-  padding-left: 25px;
-  margin-top: -7px;
-}
-.snap-drawer ul.our-nav li a.user-name-and-pic img {
-  -webkit-border-radius: 30px;
-  -moz-border-radius: 30px;
-  border-radius: 30px;
-  height: 35px;
-  margin-right: 5px;
-}
-.snap-drawer ul.our-nav li a:hover {
-  background: #000;
-  cursor: pointer;
-}
-.snap-drawer div.bottom-menu {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-.snap-drawer div.bottom-menu a.home-link {
-  width: 100%;
-}
-.snap-drawer div.bottom-menu a.home-link img {
-  padding: 13px 20px;
-  width: 200px;
 }
 div.global-modal .modal-body {
   text-align: center;
