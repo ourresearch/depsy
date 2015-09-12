@@ -39,6 +39,7 @@ class Person(db.Model):
 
 
     def to_dict(self, full=True):
+        #full= False
 
         ret = dict_from_dir(self, keys_to_ignore=["contributions", "github_about"])
         if full:

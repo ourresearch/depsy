@@ -40,9 +40,9 @@ class Package(db.Model):
     dependencies = db.Column(JSONB)
 
     proxy_papers = db.Column(db.Text)
-    github_contributors = db.Column(JSONB)
-    bucket = db.Column(MutableDict.as_mutable(JSONB))
-    requires_files = db.Column(MutableDict.as_mutable(JSONB))
+    github_contributors = db.deferred(db.Column(JSONB))
+    bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
 
     #contributions = db.relationship(
     #    'Contribution',
@@ -65,6 +65,7 @@ class Package(db.Model):
 
 
     def to_dict(self, full=True):
+        return {"o": 2}
         ret = dict_from_dir(self, keys_to_ignore=[
             "proxy_papers",
             "github_contributors",
@@ -75,7 +76,7 @@ class Package(db.Model):
         ])
         if full:
             ret["api_raw"] = self.api_raw
-            ret["contributors"] = [c.to_dict("person") for c in self.contributions]
+            ret["contributions"] = [c.to_dict("person") for c in self.contributions]
 
         return ret
 
