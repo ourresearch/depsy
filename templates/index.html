@@ -46,12 +46,7 @@
    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
 
    <!-- local angular libs -->
-   <script src="{{ url_for('static', filename='bower_components/snapjs/snap.js') }}"></script>
-   <script src="{{ url_for('static', filename='bower_components/angular-snap/angular-snap.js') }}"></script>
-
-   <!-- test -->
-   <script src="//cdn.jsdelivr.net/satellizer/0.11.3/satellizer.min.js"></script>
-
+   <!-- none currently -->
 
 
 
@@ -62,14 +57,8 @@
 </head>
 <body>
 
-   <div snap-drawer="right">
-      <div ng-include="'side-menu.tpl.html'"></div>
-   </div>
-
-   <div snap-content>
-      <div ng-include="'header.tpl.html'"></div>
-      <div ng-view class="main-view container-fluid"></div>
-   </div>
+   <div ng-include="'header.tpl.html'"></div>
+   <div ng-view class="main-view container-fluid"></div>
 
 </body>
 </html>

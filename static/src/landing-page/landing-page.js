@@ -15,12 +15,10 @@ angular.module('landingPage', [
 
   .controller("landingPageCtrl", function($scope,
                                           $http,
-                                          $auth, // from satellizer
                                           $rootScope,
                                           PageService){
 
 
-    PageService.d.hasDarkBg = true
     $scope.doSearch = function(val){
       console.log("val", val)
       return $http.get("/api/search/" + val)

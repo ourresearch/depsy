@@ -1,11 +1,13 @@
 from app import app, db
 from sqlalchemy import sql
 
-from providers import github
 from models.profile import Profile
 from models.profile import create_profile
 from models.repo import create_repo
 from models.repo import Repo
+
+from models.person import Person
+from models.package import Package
 
 from flask import make_response
 from flask import request
@@ -157,35 +159,36 @@ def login_required(f):
 def api_test():
     return jsonify({"resp": "Hi, I'm Impactstory!"})
 
-@app.route("/api/u/<username>")
-@app.route("/api/u/<username>.json")
-def api_users(username):
-    profile = None
-    profile = Profile.query.get(username)
+@app.route("/api/u/<user_id>")
+@app.route("/api/u/<user_id>.json")
+def person(user_id):
+    person = Person.query.get(int(user_id))
 
-    if not profile:
-        profile = create_profile(username)
-    return json_resp_from_thing(profile.to_dict())
-
-@app.route('/api/me')
-@login_required
-def me():
-    profile = Profile.query.get(g.current_user_username)
-    return json_resp_from_thing(profile.to_dict())
+    if not person:
+        abort_json(404, "This person's not in the database")
+    return json_resp_from_thing(person.to_dict())
 
 
-@app.route("/api/r/<username>/<reponame>")
-@app.route("/api/r/<username>/<reponame>.json")
-def api_repo(username, reponame):
-    repo = None
+@app.route("/api/p/<host>/<project_name>")
+@app.route("/api/p/<host>/<project_name>.json")
+def package(host, project_name):
 
-    # Comment this next line out for debugging,
-    # it makes a new profile every time.
-    repo = Repo.query.filter(Repo.username==username, Repo.reponame==reponame).first()
+    if host.lower() == "python":
+        id = "pypi:" + project_name
+    elif host.lower() == "r":
+        id = "cran:" + project_name
 
-    if not repo:
-        repo = create_repo(username, reponame)
-    return json_resp_from_thing( repo.display_dict())
+    my_package = Package.query.get(id)
+
+    if not my_package:
+        abort_json(404, "This person's not in the database")
+
+    resp_dict = my_package.to_dict()
+    return json_resp_from_thing(resp_dict)
+
+
+
+
 
 
 @app.route("/api/search/<search_str>")
@@ -205,54 +208,6 @@ def search(search_str):
     print json.dumps(ret)
 
     return jsonify({"list": ret})
-
-
-@app.route('/auth/github', methods=['POST'])
-def github():
-    """
-    based on satellizer example here:
-    https://github.com/sahat/satellizer/blob/master/examples/server/python/app.py#L199
-    """
-
-    logger.info(u"in /auth/github")
-
-    access_token_url = 'https://github.com/login/oauth/access_token'
-    users_api_url = 'https://api.github.com/user'
-
-    params = {
-        'client_id': request.json['clientId'],
-        'redirect_uri': request.json['redirectUri'],
-        'client_secret': app.config['GITHUB_SECRET'],
-        'code': request.json['code']
-    }
-
-    # Step 1. Exchange authorization code for access token.
-    r = requests.get(access_token_url, params=params)
-    access_token = dict(parse_qsl(r.text))
-    headers = {'User-Agent': 'Impactstory'}
-
-    # Step 2. Retrieve information about the current user.
-    r = requests.get(users_api_url, params=access_token, headers=headers)
-    github_profile = json.loads(r.text)
-    logger.info(u"we got a profile back from github." + ",".join(github_profile.keys()))
-
-
-    # Step 3. (optional) Link accounts. REMOVED, we don't need this. since we're
-    # only using public stuff, this authentication doesnt' actually give us
-    # any new information if we have the profile
-
-    # Step 4. Create a new account or return an existing one. REMOVED, because
-    # simply hitting /api/u/:username creates the profile, this is just for
-    # logging in.
-    # that means just hitting this endpoint WON'T create a profile, someone
-    # (the client) needs you to hit /api/u/:username for that to happen.
-
-    # return the token. used to be part of their Step 4, but j extracted it.
-    github_username = github_profile['login']
-    token = create_token_from_username(github_username)
-    logger.info("trying to jsonify this token: " + token)
-    return jsonify(token=token, username=github_username)
-
 
 
 
