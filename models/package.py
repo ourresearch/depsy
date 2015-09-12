@@ -9,6 +9,7 @@ from validate_email import validate_email
 from distutils.version import StrictVersion
 import zipfile
 import requests
+import hashlib
 from lxml import html
 
 from models import github_api
@@ -45,6 +46,9 @@ class Package(db.Model):
     github_contributors = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+
+    setup_py = db.deferred(db.Column(db.Text))
+    setup_py_hash = db.Column(db.Text)
 
     contributions = db.relationship(
         'Contribution',
@@ -259,6 +263,25 @@ class PypiPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
+    def _get_files(self, filenames_to_get):
+
+        print "getting requires files for {} from {}".format(
+            self.id, self.source_url)
+        if not self.source_url:
+            print "No source_url, so skipping"
+            return {"error": "error_no_source_url"}
+
+        getter = ZipGetter(self.source_url)
+
+        ret = getter.download_and_extract_files(filenames_to_get)
+
+        if getter.error:
+            print "Problems with the downloaded zip, quitting without getting filenames."
+            ret = {"error": "error_with_zip"}
+
+        return ret
+
+
     def set_requires_files(self):
         # from https://pythonhosted.org/setuptools/formats.html#dependency-metadata
         filenames_to_get = [
@@ -266,24 +289,26 @@ class PypiPackage(Package):
             "/metadata.json",
             "/METADATA"
         ]
-
-        print "getting requires files for {} from {}".format(
-            self.id, self.source_url)
-        if not self.source_url:
-            print "No source_url, so skipping"
-            self.requires_files = {"error": "error_no_source_url"}
-            return None
-
-        getter = ZipGetter(self.source_url)
-
-        self.requires_files = getter.download_and_extract_files(filenames_to_get)
-
-        if getter.error:
-            print "Problems with the downloaded zip, quitting without getting filenames."
-            self.requires_files = {"error": "error_with_zip"}
-            return None
-
+        self.requires_files = self._get_files(filenames_to_get)
         return self.requires_files
+
+    def set_setup_py(self):
+        res = self._get_files(["setup.py"])
+        if "error" in res:
+            self.setup_py = res["error"]  # save the error string
+
+        else:
+            try:
+                self.setup_py = res["setup.py"]
+                self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
+
+            except KeyError:
+                # seems there is in setup.py here.
+                self.setup_py = "error_not_found"
+
+        return self.setup_py
+
+
 
     def set_api_raw(self):
         requests.packages.urllib3.disable_warnings()
@@ -551,16 +576,35 @@ update_registry.register(Update(
 ))
 
 
-
-# example
-q = db.session.query(Package.id)
-q = q.filter(Package.github_owner != None)
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.setup_py == None)
 
 update_registry.register(Update(
-    job=Package.test,
+    job=PypiPackage.set_setup_py,
     query=q,
     queue_id=2
 ))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
