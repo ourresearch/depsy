@@ -23,6 +23,7 @@ from jobs import update_registry
 from jobs import Update
 from util import elapsed
 from util import dict_from_dir
+from python import parse_requirements_txt
 
 
 
@@ -320,42 +321,50 @@ class PypiPackage(Package):
 
 
     def set_host_reverse_deps(self):
-        self.host_reverse_deps = []
-        if "metadata.json" in self.requires_files:
-            metadata = json.loads(self.requires_files["metadata.json"])
-            reverse_deps = []
-            for key in metadata:
-                if key.endswith("_requires"):
-                    for requires_dict in metadata.get(key, {}):
-                        for require_entry in requires_dict["requires"]:
-                            print require_entry
-                            # parsed_reqs = requirements.parse(require_entry)
-                            # reverse_deps += [req.name for req in parsed_reqs]
-            print "\nrunning on ", self.project_name
-            print "metadata.json"
-            print "found ", reverse_deps
+        reverse_deps = []
 
-            # self.host_reverse_deps = reverse_deps
+        if "METADATA" in self.requires_files:
+            requirement_text = self.requires_files["METADATA"]
+            # exclude everything after a heading
+            core_requirement_list = []
+            for line in requirement_text.split("\n"):
+
+                # see spec at https://www.python.org/dev/peps/pep-0345/#download-url
+                # "Requires" start is depricated
+                if line.startswith("Requires-Dist:") or line.startswith("Requires:"):
+                    line = line.replace("Requires-Dist:", "")
+                    line = line.replace("Requires:", "")
+                    if ";" in line:
+                        # has extras in it... so isn't in core requirements, so skip
+                        pass
+                    else:
+                        core_requirement_list += [line]
+            core_requirement_lines = "\n".join(core_requirement_list)
 
         elif "requires.txt" in self.requires_files:
-            reverse_deps = []
-            print self.requires_files["requires.txt"]
-            # parsed_reqs = requirements.parse(self.requires_files["requires.txt"])
-            # print parsed_reqs
-            # if parsed_reqs:
-            #     reverse_deps += [req.name for req in parsed_reqs]
-            # self.host_reverse_deps = reverse_deps
-            print "\nrunning on ", self.project_name
-            print "requires.txt"
-            print "found ", reverse_deps
+            requirement_text = self.requires_files["requires.txt"]
 
-        else:
+            # exclude everything after a heading
+            core_requirement_list = []
+            for line in requirement_text.split("\n"):
+                if line.startswith("["):
+                    break
+                core_requirement_list += [line]
+            core_requirement_lines = "\n".join(core_requirement_list)
+
+            reverse_deps = parse_requirements_txt(core_requirement_lines)
+
+
+        print "found requirements={}\n\n".format(reverse_deps)
+        if not reverse_deps:
             self.host_reverse_deps = []
+            return None
 
-
-
-
-
+        q = db.session.query(PypiPackage.project_name)
+        q = q.filter(PypiPackage.project_name.in_(reverse_deps))        
+        rows = q.all()
+        reverse_deps_in_pypi = [row[0] for row in rows]
+        self.host_reverse_deps = reverse_deps_in_pypi
 
 
 
@@ -535,12 +544,13 @@ def test_me(limit=10, use_rq="rq"):
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.host_reverse_deps == None)   
+# q = q.filter(PypiPackage.host_reverse_deps == None)   
+q = q.filter(PypiPackage.requires_files != None)   
 
 update_registry.register(Update(
     job=PypiPackage.set_host_reverse_deps,
     query=q,
-    queue_id=6
+    queue_id=5
 ))
 
 
