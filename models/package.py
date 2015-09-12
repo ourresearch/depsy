@@ -296,7 +296,7 @@ class PypiPackage(Package):
 
 
     def set_host_reverse_deps(self):
-        reverse_deps = []
+        core_requirement_lines = ""
 
         if "METADATA" in self.requires_files:
             requirement_text = self.requires_files["METADATA"]
@@ -327,8 +327,7 @@ class PypiPackage(Package):
                 core_requirement_list += [line]
             core_requirement_lines = "\n".join(core_requirement_list)
 
-            reverse_deps = parse_requirements_txt(core_requirement_lines)
-
+        reverse_deps = parse_requirements_txt(core_requirement_lines)
 
         print "found requirements={}\n\n".format(reverse_deps)
         if not reverse_deps:
@@ -339,6 +338,9 @@ class PypiPackage(Package):
         q = q.filter(PypiPackage.project_name.in_(reverse_deps))        
         rows = q.all()
         reverse_deps_in_pypi = [row[0] for row in rows]
+        print "reverse_deps_in_pypi", reverse_deps_in_pypi
+        if len(reverse_deps_in_pypi) != len(reverse_deps):
+            print "some reverse deps not in pypi:", set(reverse_deps) - set(reverse_deps_in_pypi)
         self.host_reverse_deps = reverse_deps_in_pypi
 
 
@@ -519,7 +521,6 @@ def test_me(limit=10, use_rq="rq"):
 
 
 q = db.session.query(PypiPackage.id)
-# q = q.filter(PypiPackage.host_reverse_deps == None)   
 q = q.filter(PypiPackage.requires_files != None)   
 
 update_registry.register(Update(
