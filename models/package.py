@@ -8,7 +8,6 @@ import json
 from validate_email import validate_email
 from distutils.version import StrictVersion
 import zipfile
-import requirements
 import requests
 from lxml import html
 
