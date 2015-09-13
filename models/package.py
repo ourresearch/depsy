@@ -300,7 +300,12 @@ class PypiPackage(Package):
         else:
             try:
                 self.setup_py = res["setup.py"]
-                self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
+
+                # major hack! comment this in ONLY when there's nothing
+                # left to check but weird files that break on UTF-8 errors.
+                #self.setup_py = "error_utf8"
+
+                self.setup_py_hash = hashlib.md5(res["setup.py"]).hexdigest()
 
             except KeyError:
                 # seems there is in setup.py here.

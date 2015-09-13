@@ -188,6 +188,8 @@ class ZipGetter():
             except KeyError:
                 print "not found", filename
                 pass # isn't a problem
+            except AttributeError:
+                print "Couldn't open the archive file."
         
         if not contents:
             print "nothing found with ziptype", zip_type
