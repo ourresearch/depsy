@@ -4,6 +4,7 @@ from sqlalchemy import text
 from models.contribution import Contribution
 from github_api import get_profile
 from util import dict_from_dir
+import hashlib
 """
 this file in progress. i think should have:
 
@@ -26,6 +27,7 @@ class Person(db.Model):
     other_names = db.Column(JSONB)
     github_login = db.Column(db.Text)
     github_about = db.deferred(db.Column(JSONB))
+    bucket = db.Column(JSONB)
 
     type = db.Column(db.Text)
 
@@ -72,6 +74,33 @@ class Person(db.Model):
             # our github_about is an error object,
             # it's got no info about the person in it.
             return False
+
+    @property
+    def is_academic(self):
+        try:
+            return self.bucket["is_academic"]
+        except KeyError:
+            return False
+
+    def _make_gravatar_url(self, size):
+        if self.email is not None:
+            hash = hashlib.md5(self.email).hexdigest()
+        else:
+            hash = hashlib.md5("placeholder@example.com").hexdigest()
+
+        url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=mm".format(
+            hash=hash,
+            size=size
+        )
+        return url
+
+    @property
+    def icon(self):
+        return self._make_gravatar_url(160)
+
+    @property
+    def icon_small(self):
+        return self._make_gravatar_url(30)
 
 
 
