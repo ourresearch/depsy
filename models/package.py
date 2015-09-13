@@ -18,6 +18,7 @@ from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
+from models.pypi_project import get_pypi_package_names
 from jobs import enqueue_jobs
 from jobs import update_registry
 from jobs import Update
@@ -25,6 +26,7 @@ from util import elapsed
 from util import dict_from_dir
 from python import parse_requirements_txt
 
+pypi_package_names = get_pypi_package_names()
 
 
 class Package(db.Model):
@@ -359,13 +361,18 @@ class PypiPackage(Package):
             self.host_reverse_deps = []
             return None
 
-        q = db.session.query(PypiPackage.project_name)
-        q = q.filter(PypiPackage.project_name.in_(reverse_deps))        
-        rows = q.all()
-        reverse_deps_in_pypi = [row[0] for row in rows]
-        print "reverse_deps_in_pypi", reverse_deps_in_pypi
+        # see if is in pypi, case insensitively, getting normalized case
+        reverse_deps_in_pypi = []
+        for dep in reverse_deps:
+            if dep.lower() in pypi_package_names:
+                pypi_package_normalized_case = pypi_package_names[dep.lower()]
+                reverse_deps_in_pypi.append(pypi_package_normalized_case)
+
         if len(reverse_deps_in_pypi) != len(reverse_deps):
-            print "some reverse deps not in pypi:", set(reverse_deps) - set(reverse_deps_in_pypi)
+            print "some reverse deps not in pypi for {}:{}".format(
+                self.id, set(reverse_deps) - set(reverse_deps_in_pypi))
+            print reverse_deps
+            print reverse_deps_in_pypi
         self.host_reverse_deps = reverse_deps_in_pypi
 
 
