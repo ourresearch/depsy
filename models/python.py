@@ -32,6 +32,7 @@ def parse_requirements_txt(contents):
 file://blahblah
 foo==10.2
 baz>=3.6
+# other comment
 foo.bar>=3.33
 foo-bar==2.2
 foo_bar==1.1
