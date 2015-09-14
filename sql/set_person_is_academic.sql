@@ -15,7 +15,7 @@ select * from person where github_about->>'bio' != 'null'
 select * from person where github_about->>'company' != 'null'
 -- 15k
 
-
+select * from person where github_login = 'kennethreitz'
 -- finding academics:
 select * from person 
 	where false  -- just makes it easier to comment stuff in and out

@@ -96,12 +96,11 @@ angular.module("header.tpl.html", []).run(["$templateCache", function($templateC
     "<div class=\"header\">\n" +
     "   <h1>\n" +
     "      <a href=\"/\">\n" +
-    "         <img src=\"static/img/impactstory-software.png\" alt=\"Impactstory software\"/>\n" +
+    "         depful\n" +
     "      </a>\n" +
     "   </h1>\n" +
     "   <div class=\"controls\">\n" +
-    "      <span class=\"menu-button\"\n" +
-    "            snap-toggle=\"right\">\n" +
+    "      <span class=\"menu-button\">\n" +
     "         <i class=\"fa fa-bars\"></i>\n" +
     "      </span>\n" +
     "   </div>\n" +

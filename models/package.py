@@ -52,6 +52,8 @@ class Package(db.Model):
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.Column(db.Text)
 
+    tags = db.Column(JSONB)
+
     contributions = db.relationship(
         'Contribution',
         lazy='subquery',
@@ -79,7 +81,9 @@ class Package(db.Model):
             "bucket",
             "requires_files",
             "contributions",
-            "api_raw"
+            "api_raw",
+            "setup_py",
+            "person"
         ])
         if full:
             ret["api_raw"] = self.api_raw
@@ -178,6 +182,10 @@ class Package(db.Model):
         print "found github contributors", self.github_contributors
 
     def set_github_repo_id(self):
+        # override in subclass
+        raise NotImplementedError
+
+    def set_tags(self):
         # override in subclass
         raise NotImplementedError
 
@@ -379,6 +387,36 @@ class PypiPackage(Package):
             print reverse_deps
             print reverse_deps_in_pypi
         self.host_reverse_deps = reverse_deps_in_pypi
+
+
+    def set_tags(self):
+        self.tags = []
+        try:
+            pypi_classifiers = self.api_raw["info"]["classifiers"]
+        except KeyError:
+            print "no keywords for {}".format(self)
+            return None
+
+        working_tag_list = []
+        for classifier in pypi_classifiers:
+            if not classifier.startswith("Topic"):
+                continue
+
+            my_tags = classifier.split(" :: ")
+            working_tag_list += my_tags
+
+        unique_tags = list(set(working_tag_list))
+        for tag in unique_tags:
+            if len(tag) > 1:
+                self.tags.append(tag)
+
+        if len(self.tags):
+            print "set tags for {}: {}".format(self, ",".join(self.tags))
+        else:
+            print "found no tags for {}".format(self)
+
+        return self.tags
+
 
 
 
@@ -593,6 +631,20 @@ q = q.filter(PypiPackage.setup_py == None)
 
 update_registry.register(Update(
     job=PypiPackage.set_setup_py,
+    query=q,
+    queue_id=2
+))
+
+
+
+
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.tags == None)
+
+update_registry.register(Update(
+    job=PypiPackage.set_tags,
     query=q,
     queue_id=2
 ))
