@@ -26,7 +26,7 @@ from util import elapsed
 from util import dict_from_dir
 from python import parse_requirements_txt
 
-pypi_package_names = get_pypi_package_names()
+#pypi_package_names = get_pypi_package_names()
 
 
 class Package(db.Model):

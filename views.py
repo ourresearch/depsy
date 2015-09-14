@@ -5,6 +5,7 @@ from models.profile import Profile
 from models.profile import create_profile
 from models.repo import create_repo
 from models.repo import Repo
+from models.search import autocomplete
 
 from models.person import Person
 from models.package import Package
@@ -193,19 +194,23 @@ def package(host, project_name):
 
 @app.route("/api/search/<search_str>")
 def search(search_str):
-    # ilike to make case insensitive
-    command = "select * from project_names where name ilike '{str}%' limit 10".format(
-        str=search_str
-    )
-    res = db.session.connection().execute(sql.text(command))
-    ret = []
-    rows =  res.fetchall()
-    for row in rows:
-        row_dict = dict(zip(['language', 'name', 'summary'], row))
-        ret.append(row_dict)
 
-    print "i can json my str"
-    print json.dumps(ret)
+
+    ret = autocomplete(search_str)
+
+    # ilike to make case insensitive
+    #command = "select * from project_names where name ilike '{str}%' limit 10".format(
+    #    str=search_str
+    #)
+    #res = db.session.connection().execute(sql.text(command))
+    #ret = []
+    #rows =  res.fetchall()
+    #for row in rows:
+    #    row_dict = dict(zip(['language', 'name', 'summary'], row))
+    #    ret.append(row_dict)
+    #
+    #print "i can json my str"
+    #print json.dumps(ret)
 
     return jsonify({"list": ret})
 
