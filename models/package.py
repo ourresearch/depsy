@@ -48,6 +48,7 @@ class Package(db.Model):
     github_contributors = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    sort_score = db.Column(db.Float)
 
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.Column(db.Text)
@@ -188,6 +189,11 @@ class Package(db.Model):
     def set_tags(self):
         # override in subclass
         raise NotImplementedError
+
+    def set_sort_score(self):
+        # override in subclass
+        raise NotImplementedError
+
 
 
 
@@ -423,6 +429,14 @@ class PypiPackage(Package):
 
         return self.tags
 
+    def set_sort_score(self):
+        # this is super temp, to help jason on UI dev
+        try:
+            self.sort_score = self.api_raw["info"]["downloads"]["last_month"]
+        except TypeError:
+            self.sort_score = 0
+
+        return self.sort_score
 
 
 
@@ -441,7 +455,14 @@ class CranPackage(Package):
         maintainer = self.api_raw["Maintainer"]
 
 
+    def set_sort_score(self):
+        # this is super temp, to help jason on UI dev
+        try:
+            self.sort_score = self.downloads["total_downloads"]
+        except KeyError:
+            self.sort_score = 0
 
+        return self.sort_score
 
         #if not author:
         #    return False
@@ -651,6 +672,17 @@ q = q.filter(PypiPackage.tags == None)
 
 update_registry.register(Update(
     job=PypiPackage.set_tags,
+    query=q,
+    queue_id=2
+))
+
+
+# for all Packages, not just pypi
+q = db.session.query(Package.id)
+q = q.filter(Package.sort_score == None)
+
+update_registry.register(Update(
+    job=Package.set_sort_score,
     query=q,
     queue_id=2
 ))

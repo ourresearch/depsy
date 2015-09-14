@@ -42,6 +42,3 @@ class Contribution(db.Model):
 
 
 
-
-
-
