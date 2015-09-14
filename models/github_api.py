@@ -16,6 +16,7 @@ from zip_getter import ZipGetter
 
 logger = logging.getLogger("github_api")
 
+
 class GithubRateLimitException(Exception):
     pass
 

@@ -18,16 +18,13 @@ from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
-from models.pypi_project import get_pypi_package_names
+from models.pypi_project import pypi_package_names
 from jobs import enqueue_jobs
 from jobs import update_registry
 from jobs import Update
 from util import elapsed
 from util import dict_from_dir
 from python import parse_requirements_txt
-
-pypi_package_names = get_pypi_package_names()
-
 
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
@@ -438,6 +435,18 @@ class PypiPackage(Package):
 
         return self.sort_score
 
+    def set_downloads(self):
+        if not self.api_raw:
+            return None
+
+        total_downloads = 0
+
+        for version, package_list in self.api_raw.get("releases", {}).iteritems():
+            for release_dict in package_list:
+                this_release_downloads = int(release_dict.get("downloads", 0))
+                total_downloads += this_release_downloads
+
+        self.downloads = {"total_downloads": total_downloads}
 
 
 
@@ -687,6 +696,16 @@ update_registry.register(Update(
     queue_id=2
 ))
 
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.downloads == None)
+
+update_registry.register(Update(
+    job=PypiPackage.set_downloads,
+    query=q,
+    queue_id=7
+))
 
 
 

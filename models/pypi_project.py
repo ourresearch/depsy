@@ -8,6 +8,11 @@ from pathlib import Path
 from time import time
 from util import elapsed
 
+# set to nothing most of the time, so imports work
+pypi_package_names = None
+# comment this out here now, because usually not using
+#pypi_package_names = get_pypi_package_names()
+
 class PypiProject(db.Model):
     project_name = db.Column(db.Text, primary_key=True)
     owner_name = db.Column(db.Text)
