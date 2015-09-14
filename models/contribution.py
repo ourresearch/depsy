@@ -34,7 +34,8 @@ class Contribution(db.Model):
             "quantity": self.quantity,
             "percent": self.percent,
             "package": self.package.to_dict(full=False),
-            "person": self.person.to_dict(full=False)
+            "person": self.person.to_dict(full=False),
+            "fractional_sort_score": self.fractional_sort_score
         }
         return ret
 
@@ -46,7 +47,7 @@ class Contribution(db.Model):
             fraction = 100
 
         try:
-            return self.product.sort_score * fraction
+            return self.package.sort_score * fraction
         except TypeError:  # no sort score for some reason?
             return 0
 
