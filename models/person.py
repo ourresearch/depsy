@@ -2,9 +2,14 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import text
 from models.contribution import Contribution
+from jobs import update_registry
+from jobs import Update
+
 from github_api import get_profile
 from util import dict_from_dir
 import hashlib
+
+
 """
 this file in progress. i think should have:
 
@@ -28,6 +33,7 @@ class Person(db.Model):
     github_login = db.Column(db.Text)
     github_about = db.deferred(db.Column(JSONB))
     bucket = db.Column(JSONB)
+    sort_score = db.Column(db.Float)
 
     type = db.Column(db.Text)
 
@@ -74,6 +80,14 @@ class Person(db.Model):
             # our github_about is an error object,
             # it's got no info about the person in it.
             return False
+
+
+    def set_sort_score(self):
+        self.sort_score = 0
+        for contrib in self.contributions:
+            self.sort_score += contrib.fractional_sort_score
+
+        return self.sort_score
 
     @property
     def is_academic(self):
@@ -172,11 +186,14 @@ def get_or_make_person(**kwargs):
 
 
 
+# for all Packages, not just pypi
+q = db.session.query(Person.id)
+q = q.filter(Person.sort_score == None)
+
+update_registry.register(Update(
+    job=Person.set_sort_score,
+    query=q,
+    queue_id=3
+))
 
 
-def test_person():
-
-    res_obj = db.session.query(Person).get(1)
-    print "got this:", res_obj.email, res_obj.type
-
-    print "i'm in the person module."

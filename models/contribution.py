@@ -38,6 +38,22 @@ class Contribution(db.Model):
         }
         return ret
 
+    @property
+    def fractional_sort_score(self):
+        if self.percent:
+            fraction = self.percent / 100
+        else:
+            fraction = 100
+
+        try:
+            return self.product.sort_score * fraction
+        except TypeError:  # no sort score for some reason?
+            return 0
+
+
+
+
+
 
 
 
