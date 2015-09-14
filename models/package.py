@@ -433,7 +433,7 @@ class PypiPackage(Package):
         # this is super temp, to help jason on UI dev
         try:
             self.sort_score = self.api_raw["info"]["downloads"]["last_month"]
-        except TypeError:
+        except (TypeError, KeyError):
             self.sort_score = 0
 
         return self.sort_score
