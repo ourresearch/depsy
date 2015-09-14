@@ -391,6 +391,10 @@ class PypiPackage(Package):
 
     def set_tags(self):
         self.tags = []
+        tags_to_reject = [
+            "Python Modules",
+            "Libraries",
+        ]
         try:
             pypi_classifiers = self.api_raw["info"]["classifiers"]
         except KeyError:
@@ -402,12 +406,13 @@ class PypiPackage(Package):
             if not classifier.startswith("Topic"):
                 continue
 
-            my_tags = classifier.split(" :: ")
+            # the first 'tag' is useless
+            my_tags = classifier.split(" :: ")[1:]
             working_tag_list += my_tags
 
         unique_tags = list(set(working_tag_list))
         for tag in unique_tags:
-            if len(tag) > 1:
+            if len(tag) > 1 and tag not in tags_to_reject:
                 self.tags.append(tag)
 
         if len(self.tags):
