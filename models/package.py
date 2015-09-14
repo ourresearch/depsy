@@ -394,6 +394,7 @@ class PypiPackage(Package):
         tags_to_reject = [
             "Python Modules",
             "Libraries",
+            "Software Development"
         ]
         try:
             pypi_classifiers = self.api_raw["info"]["classifiers"]
