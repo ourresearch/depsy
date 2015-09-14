@@ -50,6 +50,9 @@ class Contribution(db.Model):
             return self.package.sort_score * fraction
         except TypeError:  # no sort score for some reason?
             return 0
+        except AttributeError:
+            # no package, this is an orphan contribution
+            return 0
 
 
 
