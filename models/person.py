@@ -186,7 +186,8 @@ def get_or_make_person(**kwargs):
 
 
 
-# for all Packages, not just pypi
+# i do not understand why, but this does not work in RQ, you must run in
+# a single dyno with --no-rq flag set...takes a good 30min :/
 q = db.session.query(Person.id)
 q = q.filter(Person.sort_score == None)
 
