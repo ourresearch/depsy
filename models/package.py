@@ -35,7 +35,7 @@ class Package(db.Model):
     github_repo_name = db.Column(db.Text)
 
     api_raw = deferred(db.Column(JSONB))
-    downloads = db.Column(JSONB)
+    downloads = db.Column(MutableDict.as_mutable(JSONB))
 
     github_reverse_deps = db.Column(JSONB)
     host_reverse_deps = db.Column(JSONB)
@@ -435,18 +435,7 @@ class PypiPackage(Package):
 
         return self.sort_score
 
-    def set_downloads(self):
-        if not self.api_raw:
-            return None
 
-        total_downloads = 0
-
-        for version, package_list in self.api_raw.get("releases", {}).iteritems():
-            for release_dict in package_list:
-                this_release_downloads = int(release_dict.get("downloads", 0))
-                total_downloads += this_release_downloads
-
-        self.downloads = {"total_downloads": total_downloads}
 
 
 
@@ -518,6 +507,23 @@ class CranPackage(Package):
             self.github_owner = row[0]
             self.github_repo_name = row[1]
             self.bucket["matched_from_github_metadata"] = True
+
+
+    def set_downloads_since(self):
+
+        ### hacky!  hard code this
+        get_downloads_since_date = "2015-07-25"
+
+        if not self.downloads:
+            return None
+
+        download_sum = 0
+
+        for download_dict in self.downloads.get("daily_downloads", []):
+            if download_dict["day"] > get_downloads_since_date:
+                download_sum += download_dict["downloads"]
+
+        self.downloads["last_month"] = download_sum
 
 
 
@@ -698,11 +704,11 @@ update_registry.register(Update(
 
 
 
-q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.downloads == None)
+q = db.session.query(CranPackage.id)
+q = q.filter(~CranPackage.downloads.has_key('monthly_downloads'))
 
 update_registry.register(Update(
-    job=PypiPackage.set_downloads,
+    job=CranPackage.set_downloads_since,
     query=q,
     queue_id=7
 ))
