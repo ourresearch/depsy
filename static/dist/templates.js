@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -91,20 +91,40 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
     "</span>");
 }]);
 
-angular.module("header.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("header.tpl.html",
-    "<div class=\"header\">\n" +
+angular.module("header/header.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("header/header.tpl.html",
+    "<div class=\"ti-header\" ng-controller=\"headerCtrl\">\n" +
     "   <h1>\n" +
     "      <a href=\"/\">\n" +
-    "         depful\n" +
+    "         depsy\n" +
     "      </a>\n" +
     "   </h1>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"search-box\">\n" +
+    "    <input type=\"text\"\n" +
+    "           ng-model=\"asyncSelected\"\n" +
+    "           placeholder=\"search packages, authors, and topics\"\n" +
+    "           typeahead=\"address for address in doSearch($viewValue)\"\n" +
+    "           typeahead-loading=\"loadingLocations\"\n" +
+    "           typeahead-no-results=\"noResults\"\n" +
+    "           class=\"form-control input-lg\">\n" +
+    "   </div>\n" +
+    "\n" +
+    "\n" +
     "   <div class=\"controls\">\n" +
     "      <span class=\"menu-button\">\n" +
     "         <i class=\"fa fa-bars\"></i>\n" +
     "      </span>\n" +
     "   </div>\n" +
-    "</div>");
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "");
 }]);
 
 angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
@@ -113,15 +133,7 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
     "   <div class=\"tagline\">\n" +
     "      Find the impact of software libraries for Python and R.\n" +
     "   </div>\n" +
-    "   <div class=\"search-box\">\n" +
-    "    <input type=\"text\"\n" +
-    "           ng-model=\"asyncSelected\"\n" +
-    "           placeholder=\"Search libraries and authors\"\n" +
-    "           typeahead=\"address for address in doSearch($viewValue)\"\n" +
-    "           typeahead-loading=\"loadingLocations\"\n" +
-    "           typeahead-no-results=\"noResults\"\n" +
-    "           class=\"form-control input-lg\">\n" +
-    "   </div>\n" +
+    "\n" +
     "\n" +
     "</div>\n" +
     "\n" +

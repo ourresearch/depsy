@@ -27,28 +27,51 @@ div.global-modal .modal-body div.sub-msg {
   font-size: 18px;
   color: #555;
 }
-div.header {
+div.ti-header {
+  margin: 0;
   position: relative;
   width: 100%;
-  z-index: 100;
+  padding: 10px 0 20px;
+  background: #ddd;
 }
-div.header h1 {
-  margin: 20px 30px;
+div.ti-header h1 {
+  margin: 0 20px;
+  font-weight: 900;
 }
-div.header h1 img {
+div.ti-header h1 a {
+  color: orangered;
+}
+div.ti-header h1 a img {
   width: 150px;
 }
-div.header div.controls {
+div.ti-header div.search-box {
+  text-align: center;
+  width: 600px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -300px;
+  padding-top: 10px;
+}
+div.ti-header div.search-box input {
+  width: 100%;
+  font-size: 20px;
+}
+div.ti-header div.search-box ul.dropdown-menu li > a {
+  width: 400px;
+  font-size: 20px;
+}
+div.ti-header div.controls {
   position: absolute;
   right: 20px;
-  top: 0;
+  top: 20px;
 }
-div.header div.controls .menu-button {
+div.ti-header div.controls .menu-button {
   font-size: 30px;
   color: #555;
   cursor: pointer;
 }
-div.header div.controls .menu-button.on-dark-bg {
+div.ti-header div.controls .menu-button.on-dark-bg {
   color: #fff;
 }
 div.landing div.tagline {
@@ -58,19 +81,6 @@ div.landing div.tagline {
   width: 1100px;
   margin: 150px auto 0;
   font-weight: 100;
-}
-div.landing div.search-box {
-  text-align: center;
-  margin: 40px 0 0;
-}
-div.landing div.search-box input {
-  width: 400px;
-  margin: 0 auto;
-  font-size: 20px;
-}
-div.landing div.search-box ul.dropdown-menu li > a {
-  width: 400px;
-  font-size: 20px;
 }
 div.profile-page {
   margin-left: 200px;

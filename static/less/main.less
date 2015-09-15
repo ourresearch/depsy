@@ -44,20 +44,50 @@ div.global-modal {
 
 
 
-div.header {
+div.ti-header {
+   @header-padding-top: 10px;
+   margin: 0;
    position: relative;
    width: 100%;
-   z-index: 100;
+   padding: @header-padding-top 0 20px;
+   background: #ddd;
    h1 {
-      margin: 20px 30px;
-      img {
-         width: 150px;
+      margin: 0 20px;
+      font-weight: 900;
+      a {
+         color: orangered;
+         img {
+            width: 150px;
+         }
       }
    }
+
+   div.search-box {
+      @search-box-width: 600px;
+      text-align: center;
+      width: @search-box-width;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      margin-left: -0.5 * @search-box-width;
+      padding-top: @header-padding-top;
+      input {
+         width: 100%;
+         font-size: 20px;
+      }
+      ul.dropdown-menu {
+         li > a {
+            width: 400px;
+            font-size: 20px;
+         }
+      }
+   }
+
+
    div.controls {
       position: absolute;
       right: 20px;
-      top: 0;
+      top: @header-padding-top + 10px;
       .menu-button {
          font-size: 30px;
          color: #555;
@@ -79,25 +109,8 @@ div.landing {
       width: 1100px;
       margin: 150px auto 0;
       font-weight: 100;
-//      text-shadow: 0 2px 10px #000;
    }
 
-   div.search-box {
-      text-align: center;
-      margin: 40px 0 0;
-      input {
-         width: 400px;
-         margin: 0 auto;
-         font-size: 20px;
-      }
-      ul.dropdown-menu {
-         li > a {
-            width: 400px;
-            font-size: 20px;
-         }
-      }
-
-   }
 
 
 

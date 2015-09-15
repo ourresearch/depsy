@@ -9,6 +9,7 @@ angular.module('app', [
   'landingPage',
   'profilePage',
   'articlePage',
+  'header',
 
   'resourcesModule',
   'pageService',
