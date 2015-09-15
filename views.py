@@ -198,7 +198,7 @@ def search(search_str):
 
     ret = autocomplete(search_str)
 
-    # ilike to make case insensitive
+    #ilike to make case insensitive
     #command = "select * from project_names where name ilike '{str}%' limit 10".format(
     #    str=search_str
     #)
@@ -212,7 +212,7 @@ def search(search_str):
     #print "i can json my str"
     #print json.dumps(ret)
 
-    return jsonify({"list": ret})
+    return jsonify({"list": ret, "count": len(ret)})
 
 
 

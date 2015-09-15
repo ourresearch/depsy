@@ -1,76 +1,55 @@
-from models.person import Person
-from models.package import PypiPackage
-from models.package import CranPackage
-from models.package import Package
-from models.tag import Tag
+from sqlalchemy import sql
+
 
 from app import db
 
 def autocomplete(search_str):
 
+    command = """(select project_name, sort_score, api_raw->'info'->>'summary' as summary, 'pypi_project' as type, 1 as first_sort
+    from package
+    where host='pypi'
+    and project_name ilike '{str}%'
+    order by sort_score desc
+    limit 5)
+    union
+    (select project_name, sort_score, api_raw->>'Title' as summary, 'cran_project' as type, 2 as first_sort
+    from package
+    where host='cran'
+    and project_name ilike '{str}%'
+    order by sort_score desc
+    limit 5)
+    union
+    (select name, sort_score, github_about->>'company' as summary, 'person' as type, 3 as first_sort
+    from person
+    where name ilike '%{str}%'
+    order by sort_score desc
+    limit 5)
+    union
+    (select name, "count" as sort_score, null as summary, 'tag' as type, 4 as first_sort
+    from tags
+    where name ilike '%{str}%'
+    order by sort_score desc
+    limit 5)
+    order by first_sort, sort_score desc""".format(str=search_str)
+
+    res = db.session.connection().execute(sql.text(command))
+    rows = res.fetchall()
     ret = []
-
-
-    # pypi packages
-    q = db.session.query(PypiPackage)
-    q = q.filter(PypiPackage.project_name.ilike("%{}%".format(search_str)))
-    q = q.order_by(PypiPackage.sort_score.desc())
-    q = q.limit(5)
-
-    first = True
-    print "got Packages", q.all()
-    for package in q.all():
-        d = package.as_search_result
-        d["first"] = first
-        ret.append(d)
-        first = False
-
-
-    # cran packages
-    q = db.session.query(CranPackage)
-    q = q.filter(CranPackage.project_name.ilike("%{}%".format(search_str)))
-    q = q.order_by(CranPackage.sort_score.desc())
-    q = q.limit(5)
-
-    first = True
-    print "got Packages", q.all()
-    for package in q.all():
-        d = package.as_search_result
-        d["first"] = first
-        ret.append(d)
-        first = False
-
-
-    # persons
-    q = db.session.query(Person)
-    q = q.filter(Person.name.ilike("%{}%".format(search_str)))
-    q = q.order_by(Person.sort_score.desc())
-    q = q.limit(5)
-
-    first = True
-    print "got Persons", q.all()
-    for person in q.all():
-        d = person.as_search_result
-        d["first"] = first
-        ret.append(d)
-        first = False
-
-    # tags
-    q = db.session.query(Tag)
-    q = q.filter(Tag.name.ilike("%{}%".format(search_str)))
-    q = q.order_by(Tag.count.desc())
-    q = q.limit(5)
-
-    first = True
-    print "got tags", q.all()
-    for tag in q.all():
-        d = tag.as_search_result
-        d["first"] = first
-        ret.append(d)
-        first = False
+    prev_type = "there is no current type"
+    for row in rows:
+        ret.append({
+            "name": row[0],
+            "sort_score": row[1],
+            "summary": row[2],
+            "type": row[3],
+            "is_first": prev_type != row[3]
+        })
+        prev_type = row[3]
 
 
     return ret
+
+   
 
 
 

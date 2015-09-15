@@ -72,23 +72,6 @@ class Package(db.Model):
             name=self.id)
 
 
-    def to_dict(self, full=True):
-        ret = dict_from_dir(self, keys_to_ignore=[
-            "proxy_papers",
-            "github_contributors",
-            "bucket",
-            "requires_files",
-            "contributions",
-            "api_raw",
-            "setup_py",
-            "person"
-        ])
-        if full:
-            ret["api_raw"] = self.api_raw
-            ret["contributions"] = [c.to_dict() for c in self.contributions]
-
-        return ret
-
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -191,9 +174,6 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
-    @property
-    def as_search_result(self):
-        raise NotImplementedError
 
 
 
@@ -538,21 +518,6 @@ class CranPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
-    @property
-    def as_search_result(self):
-        try:
-            summary = self.api_raw["Title"]
-        except (TypeError, KeyError):
-            summary = None
-
-        ret = {
-            "name": self.project_name,
-            "namespace": "cran",
-            "type": "CranPackage",
-            "sort_score": self.sort_score,
-            "summary": summary
-        }
-        return ret
 
 
 

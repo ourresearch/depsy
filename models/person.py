@@ -116,22 +116,6 @@ class Person(db.Model):
     def icon_small(self):
         return self._make_gravatar_url(30)
 
-    @property
-    def as_search_result(self):
-        try:
-            summary = self.github_about["company"]
-        except (TypeError, KeyError):
-            summary = None
-
-        ret = {
-            "name": self.name,
-            "namespace": None,
-            "type": "Person",
-            "sort_score": self.sort_score,
-            "summary": summary,
-            "icon": self.icon_small
-        }
-        return ret
 
 
 def get_github_about_for_all_persons(limit=10):
