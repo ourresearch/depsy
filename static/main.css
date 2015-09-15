@@ -58,8 +58,34 @@ div.ti-header div.search-box input {
   font-size: 20px;
 }
 div.ti-header div.search-box ul.dropdown-menu li > a {
-  width: 400px;
-  font-size: 20px;
+  cursor: pointer;
+  width: 600px;
+  font-size: 16px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+div.ti-header div.search-box ul.dropdown-menu li > a:before,
+div.ti-header div.search-box ul.dropdown-menu li > a:after {
+  content: " ";
+  display: table;
+}
+div.ti-header div.search-box ul.dropdown-menu li > a:after {
+  clear: both;
+}
+div.ti-header div.search-box ul.dropdown-menu li > a span.summary {
+  font-size: 13px;
+  float: right;
+  white-space: normal;
+  width: 300px;
+  line-height: 1.4;
+}
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header {
+  font-size: 15px;
+  padding: 5px 10px;
+  margin: 20px 10px 0;
+  border-bottom: 1px solid #ddd;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 div.ti-header div.controls {
   position: absolute;

@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -107,9 +107,10 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "    <input type=\"text\"\n" +
     "           ng-model=\"asyncSelected\"\n" +
     "           placeholder=\"search packages, authors, and topics\"\n" +
-    "           typeahead=\"address for address in doSearch($viewValue)\"\n" +
+    "           typeahead=\"result as result.name for result in doSearch($viewValue)\"\n" +
     "           typeahead-loading=\"loadingLocations\"\n" +
     "           typeahead-no-results=\"noResults\"\n" +
+    "           typeahead-template-url=\"header/search-result.tpl.html\"\n" +
     "           class=\"form-control input-lg\">\n" +
     "   </div>\n" +
     "\n" +
@@ -123,6 +124,41 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "\n" +
     "\n" +
     "\n" +
+    "\n" +
+    "");
+}]);
+
+angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("header/search-result.tpl.html",
+    "\n" +
+    "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
+    "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
+    "      Python packages\n" +
+    "   </span>\n" +
+    "   <span class=\"group-header-type cran-package\" ng-if=\"match.model.type=='cran_project'\">\n" +
+    "      R packages\n" +
+    "   </span>\n" +
+    "   <span class=\"group-header-type people\" ng-if=\"match.model.type=='person'\">\n" +
+    "      People\n" +
+    "   </span>\n" +
+    "   <span class=\"group-header-type tags\" ng-if=\"match.model.type=='tag'\">\n" +
+    "      Tags\n" +
+    "   </span>\n" +
+    "\n" +
+    "</div>\n" +
+    "<a>\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "   <span  class=\"summary\">\n" +
+    "      {{ match.model.summary }}\n" +
+    "   </span>\n" +
+    "\n" +
+    "   <span class=\"tag summary\"  ng-if=\"match.model.type=='tag'\">\n" +
+    "      {{ match.model.sort_score }} packages\n" +
+    "   </span>\n" +
+    "\n" +
+    "</a>\n" +
     "\n" +
     "");
 }]);

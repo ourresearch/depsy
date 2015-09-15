@@ -9,11 +9,12 @@ angular.module('header', [
 
 
     $scope.doSearch = function(val){
-      console.log("val", val)
       return $http.get("/api/search/" + val)
         .then(
           function(resp){
             console.log("this is the response", resp)
+            return resp.data.list
+
             var names = _.pluck(resp.data.list, "name")
             console.log(names)
             return names
@@ -21,8 +22,15 @@ angular.module('header', [
         )
     }
 
+  })
 
+.controller("searchResultCtrl", function($scope, $sce){
 
+    $scope.trustHtml = function(str){
+      console.log("trustHtml got a thing", str)
+
+      return $sce.trustAsHtml(str)
+    }
 
 
   })

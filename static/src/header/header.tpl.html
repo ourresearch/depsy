@@ -12,9 +12,10 @@
     <input type="text"
            ng-model="asyncSelected"
            placeholder="search packages, authors, and topics"
-           typeahead="address for address in doSearch($viewValue)"
+           typeahead="result as result.name for result in doSearch($viewValue)"
            typeahead-loading="loadingLocations"
            typeahead-no-results="noResults"
+           typeahead-template-url="header/search-result.tpl.html"
            class="form-control input-lg">
    </div>
 

@@ -1,0 +1,30 @@
+
+<div class="typeahead-group-header" ng-if="match.model.is_first">
+   <span class="group-header-type pypy-package" ng-if="match.model.type=='pypi_project'">
+      Python packages
+   </span>
+   <span class="group-header-type cran-package" ng-if="match.model.type=='cran_project'">
+      R packages
+   </span>
+   <span class="group-header-type people" ng-if="match.model.type=='person'">
+      People
+   </span>
+   <span class="group-header-type tags" ng-if="match.model.type=='tag'">
+      Tags
+   </span>
+
+</div>
+<a>
+   <span class="name">
+      {{ match.model.name }}
+   </span>
+   <span  class="summary">
+      {{ match.model.summary }}
+   </span>
+
+   <span class="tag summary"  ng-if="match.model.type=='tag'">
+      {{ match.model.sort_score }} packages
+   </span>
+
+</a>
+

@@ -77,8 +77,31 @@ div.ti-header {
       }
       ul.dropdown-menu {
          li > a {
-            width: 400px;
-            font-size: 20px;
+            .clearfix();
+            cursor: pointer;
+            width:@search-box-width;
+            font-size: 16px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+
+
+            span.summary {
+               font-size: 13px;
+               float: right;
+               white-space: normal;
+               width: 300px;
+               line-height: 1.4;
+            }
+         }
+
+         div.typeahead-group-header {
+            font-size: 15px;
+            padding: 5px 10px;
+            margin: 20px 10px 0;
+            border-bottom: 1px solid #ddd;
+            font-weight: 900;
+            text-transform: uppercase;
+
          }
       }
    }

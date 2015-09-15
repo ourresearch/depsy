@@ -60,12 +60,18 @@ angular.module('app').controller('AppCtrl', function(
   $rootScope,
   $scope,
   $location,
+  $sce,
   PageService,
   GlobalModal){
 
 
 
   $scope.page = PageService
+
+  $scope.trustHtml = function(str){
+    console.log("trusting html:", str)
+    return $sce.trustAsHtml(str)
+  }
 
 
 
