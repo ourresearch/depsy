@@ -72,23 +72,6 @@ class Package(db.Model):
             name=self.id)
 
 
-    def to_dict(self, full=True):
-        ret = dict_from_dir(self, keys_to_ignore=[
-            "proxy_papers",
-            "github_contributors",
-            "bucket",
-            "requires_files",
-            "contributions",
-            "api_raw",
-            "setup_py",
-            "person"
-        ])
-        if full:
-            ret["api_raw"] = self.api_raw
-            ret["contributions"] = [c.to_dict() for c in self.contributions]
-
-        return ret
-
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -190,6 +173,7 @@ class Package(db.Model):
     def set_sort_score(self):
         # override in subclass
         raise NotImplementedError
+
 
 
 
@@ -435,7 +419,21 @@ class PypiPackage(Package):
 
         return self.sort_score
 
+    @property
+    def as_search_result(self):
+        try:
+            summary = self.api_raw["info"]["summary"]
+        except (TypeError, KeyError):
+            summary = None
 
+        ret = {
+            "name": self.project_name,
+            "namespace": "pypi",
+            "type": "PypiPackage",
+            "sort_score": self.sort_score,
+            "summary": summary
+        }
+        return ret
 
 
 
