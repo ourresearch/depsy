@@ -51,6 +51,7 @@ class Package(db.Model):
     setup_py_hash = db.Column(db.Text)
 
     tags = db.Column(JSONB)
+    pmc_mentions = db.Column(JSONB)
 
     contributions = db.relationship(
         'Contribution',
@@ -174,7 +175,31 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
+    def set_pmc_mentions(self):
 
+        # nothing to do here at the moment
+        if not self.github_owner:
+            return None
+
+        pmc_api_url_template = "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query={query}&pageSize=1000&format=json&resulttype=idlist"
+
+        # don't start with http:// for now because then can get urls that include www
+        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
+        url = pmc_api_url_template.format(query=github_url_query)
+        print "trying with", self.id
+        try:
+            r = requests.get(url)
+        except requests.exceptions.RequestException:
+            print "RequestException, failed on", url
+            return None
+
+        results = r.json()
+        if results["hitCount"] == 0:
+            self.pmc_mentions = []
+        else:
+            self.pmc_mentions = [r["pmid"] for r in results["resultList"]["result"]]
+            print "found some!!!", self.pmc_mentions
+        return self.pmc_mentions
 
 
 
@@ -712,7 +737,16 @@ update_registry.register(Update(
 ))
 
 
+# runs on all packages
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.pmc_mentions == None)
 
+update_registry.register(Update(
+    job=Package.set_pmc_mentions,
+    query=q,
+    queue_id=7
+))
 
 
 
