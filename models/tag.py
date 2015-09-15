@@ -4,7 +4,6 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 
 
-
 class Tag(db.Model):
     __tablename__ = 'tags'
 
@@ -17,3 +16,14 @@ class Tag(db.Model):
 
     def __repr__(self):
         return u'<Tag "{}">'.format(self.id)
+
+    @property
+    def as_search_result(self):
+        ret = {
+            "name": self.name,
+            "namespace": self.namespace,
+            "type": "Tag",
+            "sort_score": self.count,
+            "summary": None
+        }
+        return ret

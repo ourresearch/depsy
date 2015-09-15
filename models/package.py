@@ -194,6 +194,10 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
+    @property
+    def as_search_result(self):
+        raise NotImplementedError
+
 
 
 
@@ -438,7 +442,21 @@ class PypiPackage(Package):
 
         return self.sort_score
 
+    @property
+    def as_search_result(self):
+        try:
+            summary = self.api_raw["info"]["summary"]
+        except (TypeError, KeyError):
+            summary = None
 
+        ret = {
+            "name": self.project_name,
+            "namespace": "pypi",
+            "type": "PypiPackage",
+            "sort_score": self.sort_score,
+            "summary": summary
+        }
+        return ret
 
 
 class CranPackage(Package):
@@ -511,6 +529,21 @@ class CranPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
+    @property
+    def as_search_result(self):
+        try:
+            summary = self.api_raw["Title"]
+        except (TypeError, KeyError):
+            summary = None
+
+        ret = {
+            "name": self.project_name,
+            "namespace": "cran",
+            "type": "CranPackage",
+            "sort_score": self.sort_score,
+            "summary": summary
+        }
+        return ret
 
 
 
