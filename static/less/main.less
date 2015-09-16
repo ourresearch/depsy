@@ -10,6 +10,10 @@
 
 body {
    font-family: lato, helvetica, arial, sans-serif;
+   .wrapper {
+      width: 1200px;
+      margin: 0 auto;
+   }
 }
 
 
@@ -44,20 +48,87 @@ div.global-modal {
 
 
 
-div.header {
+div.ti-header {
+   @header-padding-top: 10px;
+   margin: 0;
    position: relative;
    width: 100%;
-   z-index: 100;
+   padding: @header-padding-top 0 20px;
+   background: #ddd;
    h1 {
-      margin: 20px 30px;
-      img {
-         width: 150px;
+      margin: 0 20px;
+      font-weight: 900;
+      a {
+         color: orangered;
+         img {
+            width: 150px;
+         }
       }
    }
+
+   div.search-box {
+      @search-box-width: 600px;
+      text-align: center;
+      width: @search-box-width;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      margin-left: -0.5 * @search-box-width;
+      padding-top: @header-padding-top;
+      input {
+         width: 100%;
+         font-size: 20px;
+      }
+      ul.dropdown-menu {
+         li > a {
+            .clearfix();
+            cursor: pointer;
+            width:@search-box-width;
+            font-size: 16px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+
+
+            span.summary {
+               font-size: 13px;
+               float: right;
+               white-space: normal;
+               width: 300px;
+               line-height: 1.4;
+            }
+         }
+
+         div.typeahead-group-header {
+            font-size: 15px;
+            padding: 5px 10px;
+            margin: 20px 10px 0;
+            border-bottom: 1px solid #ddd;
+            font-weight: 900;
+            text-transform: uppercase;
+            img {
+               width: 22px;
+               vertical-align:-5px;
+               margin-right: 2px;
+            }
+            i.fa {
+               margin-right: 3px;
+               &.fa-user {
+                  color: green;
+               }
+               &.fa-tag {
+                  color: blueviolet;
+               }
+            }
+
+         }
+      }
+   }
+
+
    div.controls {
       position: absolute;
       right: 20px;
-      top: 0;
+      top: @header-padding-top + 10px;
       .menu-button {
          font-size: 30px;
          color: #555;
@@ -70,8 +141,6 @@ div.header {
 }
 
 div.landing {
-
-
    div.tagline {
       text-align: center;
       color: #333;
@@ -79,336 +148,23 @@ div.landing {
       width: 1100px;
       margin: 150px auto 0;
       font-weight: 100;
-//      text-shadow: 0 2px 10px #000;
    }
-
-   div.search-box {
-      text-align: center;
-      margin: 40px 0 0;
-      input {
-         width: 400px;
-         margin: 0 auto;
-         font-size: 20px;
-      }
-      ul.dropdown-menu {
-         li > a {
-            width: 400px;
-            font-size: 20px;
-         }
-      }
-
-   }
-
-
-
 }
 
-
-
-div.profile-page {
-   margin-left: 200px;
-
-   div.owner-info {
-      .clearfix();
-      padding: 50px 0;
-      img {
-         float: left;
-         height: 60px;
-         .rounded(30px);
-         margin-right: 20px;
-      }
-      h2 {
-         padding-top: 0;
-         margin-top: 10px;
-         font-size: 35px;
-
-      }
-   }
-
-   div.repos {
-      clear: left;
-      div.repo {
-         div.meta {
-            h3 {
-               margin-bottom: 0;
-               padding-bottom: 0;
-               span.language {
-                  vertical-align: 3px;
-                  opacity: .4;
-                  cursor: default;
-                  &:hover {
-                     opacity: 1;
-                  }
-               }
-            }
-         }
-      }
-      div.impact {
-         margin-left: 30px;
-         i {
-            width: 15px;
-
+div.person-page {
+   div.ti-page-header {
+      h1 {
+         img {
+            height: 60px;
+            .rounded(40px);
          }
       }
    }
-
 }
 
 
 
 
-
-
-
-div.article-page {
-   margin-left: 200px;
-   div.header {
-      width: 1000px;
-      margin: 50 auto 100px;
-      span.title {
-         font-size: 22px;
-      }
-      span.under-title {
-         display: block;
-      }
-      // this is just the header article
-      div.article {
-         .article-biblio {
-            .title {
-               font-size: 24px;
-               margin-top: -5px;
-            }
-         }
-      }
-   }
-
-
-
-   div.articles-infovis {
-      margin-bottom: 500px;
-
-
-      // same for everything with journal lines
-      ul.journal-lines {
-         li.single-journal-line {
-            margin-bottom: 10px;
-
-            span.journal-name {
-               font-size: 18px;
-               display: inline-block;
-               vertical-align: 5px;
-               width: 300px;
-               background: #fff;
-               text-align: right;
-               padding-right: 10px;
-               .article-count {
-                  font-size: 12px;
-                  font-weight: 300;
-               }
-            }
-         }
-      }
-
-      &.journal-histograms {
-         display:none;
-         div.journal-scopus-bins {
-
-            height: 20px;
-            margin-bottom: -10px;
-            border-bottom: 1px solid #ddd;
-            position: relative;
-
-            div.owner-article-scopus {
-               background: red;
-               position: absolute;
-               width: 3px;
-               top: 0;
-               bottom: -20;
-               z-index: 9;
-            }
-
-            display: inline-block;
-            a.journal-scopus-bin {
-               display: inline-block;
-               height: 100%;
-               position:relative;
-               width: 5px; // this defines the bar width
-
-               span.bar {
-                  display:block;
-                  position:absolute;
-                  bottom:0;
-                  left: 0;
-                  right: 0;
-                  background: #555;
-
-               }
-            }
-         }
-      }
-
-      &.journal-dots {
-       .tooltip {
-            .tooltip-inner {
-               text-align: left;
-               width: 600px;
-            }
-         }
-         div.journal-articles-with-dots {
-            height: 10px;
-            width: 400px;
-            position: relative;
-            display: inline-block;
-            vertical-align: 5px;
-            border-right: 1px solid #555;
-            border-left: 1px solid #555;
-            div.median {
-               width: 4px;
-               margin-left: -2px; // so it stays exactly centred
-               background: orange;
-               position:absolute;
-               z-index: 9;
-               top: -10px;
-               bottom: -10px;
-            }
-            div.owner-article-scopus {
-               position: absolute;
-               width: 6px;
-               margin-left: 3px; // so it stays exactly centred
-               top: -30px;
-               bottom: -30px;
-               z-index: 9;
-
-               &.scale-0 { background: #ff0000;} // not used because we are doing ciel
-               &.scale-1 { background: #e91212;}
-               &.scale-2 { background: #ca2a2a;}
-               &.scale-3 { background: #a84545;}
-               &.scale-4 { background: #865e5e;}
-               &.scale-5 { background: #707070;}
-               &.scale-6 { background: #5e875e;}
-               &.scale-7 { background: #45a745;}
-               &.scale-8 { background: #2ac92a;}
-               &.scale-9 { background: #11ea11;}
-               &.scale-10 { background: #00fe00;}
-
-
-            }
-            a.journal-article-dot {
-               display:block;
-               height: 10px;
-               width: 10px;
-               border: 1px solid #000;
-               position: absolute;
-               background: #333;
-               opacity: .5;
-               .rounded(10px);
-            }
-         }
-      }
-
-   }
-
-
-
-
-   // dots graphic
-
-
-
-
-
-
-}
-
-
-
-
-div.articles-section {
-   clear:both;
-   h3 {
-      text-align: center;
-   }
-
-   ul.articles {
-      margin-left: none;
-      padding-left: none;
-   }
-
-   .article {
-      list-style-type: none;
-      padding-bottom: 30px;
-      clear: both;
-      .clearfix();
-
-      div.article-biblio {
-         width: 800px;
-         float: left;
-         span.title {
-            display:block;
-            font-size: 16px;
-         }
-         span.under-title {
-            color: #555;
-         }
-         span.journal {
-            font-style: italic;
-         }
-         a.linkout {
-            color: #555;
-            margin-left: 5px;
-         }
-      }
-
-      div.metrics {
-         float: left;
-         width: 100px;
-         text-align: right;
-         padding-right: 20px;
-         span.loading {
-            color: #999;
-            font-size: 20px;
-         }
-         .percentile {
-            font-size: 35px;
-            font-weight: bold;
-            color: #333;
-            float: right;
-            line-height: 1;
-
-            &.too-new {
-               color: #aaa;
-               font-size: 16px;
-               width: 55px;
-            }
-
-            &:hover {
-               text-decoration: none;
-            }
-            &.scale-0 { color: #ff0000;} // not used because we are doing ciel
-            &.scale-1 { color: #e91212;}
-            &.scale-2 { color: #ca2a2a;}
-            &.scale-3 { color: #a84545;}
-            &.scale-4 { color: #865e5e;}
-            &.scale-5 { color: #707070;}
-            &.scale-6 { color: #5e875e;}
-            &.scale-7 { color: #45a745;}
-            &.scale-8 { color: #2ac92a;}
-            &.scale-9 { color: #11ea11;}
-            &.scale-10 { color: #00fe00;}
-         }
-
-         span.scopus-small {
-            display:block;
-            font-size: 16px;
-            margin-right: 3px;
-            float: right; // to make tooltip point at the actual number
-            clear: both;
-            cursor: default;
-
-         }
-      }
-   }
-}
 
 
 ul {
@@ -425,4 +181,36 @@ ul {
   &:after {
     clear: both;
   }
+}
+
+
+
+
+/* Styling for the ngProgress itself */
+#ngProgress {
+    margin: 0;
+    padding: 0;
+    z-index: 99998;
+    background-color: orangered !important;
+    color: orangered !important;
+    box-shadow: 0 0 10px 0; /* Inherits the font color */
+    height: 2px;
+    opacity: 0;
+
+    /* Add CSS3 styles for transition smoothing */
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Styling for the ngProgress-container */
+#ngProgress-container {
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 99999;
 }

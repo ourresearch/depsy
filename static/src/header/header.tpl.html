@@ -1,0 +1,32 @@
+<div class="ti-header" ng-controller="headerCtrl">
+   <h1>
+      <a href="/">
+         depsy
+      </a>
+   </h1>
+
+
+
+
+   <div class="search-box">
+    <input type="text"
+           ng-model="asyncSelected"
+           placeholder="search packages, authors, and topics"
+           typeahead="result as result.name for result in doSearch($viewValue)"
+           typeahead-loading="loadingLocations"
+           typeahead-no-results="noResults"
+           typeahead-template-url="header/search-result.tpl.html"
+           class="form-control input-lg">
+   </div>
+
+
+   <div class="controls">
+      <span class="menu-button">
+         <i class="fa fa-bars"></i>
+      </span>
+   </div>
+</div>
+
+
+
+

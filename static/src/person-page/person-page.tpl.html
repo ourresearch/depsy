@@ -1,0 +1,26 @@
+<div class="person-page">
+   <div class="ti-page-header">
+      <h1>
+         <img ng-src="{{ person.icon }}" alt=""/>
+         <span class="text">
+            {{ person.name }}
+         </span>
+      </h1>
+   </div>
+
+
+   <div class="ti-page-body">
+
+      <div class="packages">
+         <div class="package-wrapper"
+              ng-repeat="contrib in person.contributions"
+              ng-include="'package-snippet/package-snippet.tpl.html'"></div>
+
+
+      </div>
+
+
+
+   </div>
+
+</div>

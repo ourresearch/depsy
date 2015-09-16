@@ -46,7 +46,7 @@
    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
 
    <!-- local angular libs -->
-   <!-- none currently -->
+   <script type="text/javascript" src="{{ url_for('static', filename='vendor/ng-progress.js') }}"></script>
 
 
 
@@ -57,8 +57,10 @@
 </head>
 <body>
 
-   <div ng-include="'header.tpl.html'"></div>
-   <div ng-view class="main-view container-fluid"></div>
+   <div ng-include="'header/header.tpl.html'"></div>
+   <div class="wrapper">
+      <div ng-view class="main-view container-fluid"></div>
+   </div>
 
 </body>
 </html>

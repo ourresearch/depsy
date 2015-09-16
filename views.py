@@ -9,6 +9,7 @@ from models.search import autocomplete
 
 from models.person import Person
 from models.package import Package
+from dummy_data import get_dummy_data
 
 from flask import make_response
 from flask import request
@@ -26,6 +27,7 @@ import jwt
 from jwt import DecodeError
 from jwt import ExpiredSignature
 from functools import wraps
+
 
 
 
@@ -160,13 +162,18 @@ def login_required(f):
 def api_test():
     return jsonify({"resp": "Hi, I'm Impactstory!"})
 
-@app.route("/api/u/<user_id>")
-@app.route("/api/u/<user_id>.json")
-def person(user_id):
-    person = Person.query.get(int(user_id))
+@app.route("/api/person/<person_id>")
+@app.route("/api/person/<person_id>.json")
+def person_endpoint(person_id):
+
+    #data = get_dummy_data("person")
+    #return json_resp_from_thing(data)
+
+    person = Person.query.get(int(person_id))
 
     if not person:
         abort_json(404, "This person's not in the database")
+
     return json_resp_from_thing(person.to_dict())
 
 
@@ -194,25 +201,13 @@ def package(host, project_name):
 
 @app.route("/api/search/<search_str>")
 def search(search_str):
-
-
     ret = autocomplete(search_str)
-
-    #ilike to make case insensitive
-    #command = "select * from project_names where name ilike '{str}%' limit 10".format(
-    #    str=search_str
-    #)
-    #res = db.session.connection().execute(sql.text(command))
-    #ret = []
-    #rows =  res.fetchall()
-    #for row in rows:
-    #    row_dict = dict(zip(['language', 'name', 'summary'], row))
-    #    ret.append(row_dict)
-    #
-    #print "i can json my str"
-    #print json.dumps(ret)
-
     return jsonify({"list": ret, "count": len(ret)})
+
+
+
+
+
 
 
 
@@ -220,3 +215,8 @@ def search(search_str):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5008))
     app.run(host='0.0.0.0', port=port, debug=True, threaded=True)
+
+
+
+
+

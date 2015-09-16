@@ -80,6 +80,28 @@ class Package(db.Model):
             name=self.id)
 
 
+    def to_dict(self, full=True):
+        ret = dict_from_dir(self, keys_to_ignore=[
+            "proxy_papers",
+            "github_contributors",
+            "bucket",
+            "requires_files",
+            "contributions",
+            "api_raw",
+            "setup_py",
+            "person",
+            "downloads"
+        ])
+        if full:
+            ret["api_raw"] = self.api_raw
+            ret["contributions"] = [c.to_dict() for c in self.contributions]
+
+        return ret
+
+    @property
+    def as_snippet(self):
+        raise NotImplementedError
+
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -452,18 +474,18 @@ class PypiPackage(Package):
         return self.sort_score
 
     @property
-    def as_search_result(self):
+    def as_snippet(self):
         try:
             summary = self.api_raw["info"]["summary"]
         except (TypeError, KeyError):
-            summary = None
+            summary = "A nifty project"
 
         ret = {
             "name": self.project_name,
-            "namespace": "pypi",
-            "type": "PypiPackage",
+            "host": "pypi",
             "sort_score": self.sort_score,
-            "summary": summary
+            "summary": summary,
+            "citations": len(self.pmc_mentions)
         }
         return ret
 
