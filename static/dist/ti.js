@@ -786,15 +786,15 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
   $templateCache.put("package-snippet/package-snippet.tpl.html",
     "<div class=\"package-snippet\" ng-controller=\"packageSnippetCtrl\">\n" +
     "   <div class=\"left-metrics\">\n" +
-    "      <span class=\"abolute\">{{ package.sort_score }}</span>\n" +
-    "      <span class=\"percentile\"></span>\n" +
+    "      <span class=\"absolute\">{{ package.use }}</span>\n" +
+    "      <span class=\"percentile\">{{ package.use_percentile }}</span>\n" +
     "   </div>\n" +
     "   <div class=\"metadata\">\n" +
     "      <span class=\"name\">{{ package.name }}</span>\n" +
     "      <span class=\"summary\">{{ package.summary }}</span>\n" +
     "   </div>\n" +
     "   <div class=\"badges\">\n" +
-    "      <span class=\"citation-badge ti-badge\">\n" +
+    "      <span class=\"citation-badge ti-badge\" ng-show=\"package.citations\">\n" +
     "         <span class=\"val\">{{ package.citations }}</span>\n" +
     "         <span class=\"descr\">citation</span>\n" +
     "      </span>\n" +

@@ -1,14 +1,14 @@
 <div class="package-snippet" ng-controller="packageSnippetCtrl">
    <div class="left-metrics">
-      <span class="abolute">{{ package.sort_score }}</span>
-      <span class="percentile"></span>
+      <span class="absolute">{{ package.use }}</span>
+      <span class="percentile">{{ package.use_percentile }}</span>
    </div>
    <div class="metadata">
       <span class="name">{{ package.name }}</span>
       <span class="summary">{{ package.summary }}</span>
    </div>
    <div class="badges">
-      <span class="citation-badge ti-badge">
+      <span class="citation-badge ti-badge" ng-show="package.citations">
          <span class="val">{{ package.citations }}</span>
          <span class="descr">citation</span>
       </span>
