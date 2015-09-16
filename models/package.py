@@ -231,9 +231,9 @@ class Package(db.Model):
             return None
 
         self.github_api_raw = github_api.get_repo_data(self.github_owner, self.github_repo_name)
-        if self.github_api_raw:
+        try:
             (self.github_owner, self.github_repo_name) = self.github_api_raw["full_name"].split("/")
-        else:
+        except KeyError:
             self.github_owner = None
             self.github_repo_name = None
 
