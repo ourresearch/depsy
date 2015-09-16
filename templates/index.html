@@ -58,7 +58,9 @@
 <body>
 
    <div ng-include="'header/header.tpl.html'"></div>
-   <div ng-view class="main-view container-fluid"></div>
+   <div class="wrapper">
+      <div ng-view class="main-view container-fluid"></div>
+   </div>
 
 </body>
 </html>

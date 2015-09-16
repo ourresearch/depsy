@@ -9,6 +9,7 @@ from models.search import autocomplete
 
 from models.person import Person
 from models.package import Package
+from dummy_data import get_dummy_data
 
 from flask import make_response
 from flask import request
@@ -26,6 +27,7 @@ import jwt
 from jwt import DecodeError
 from jwt import ExpiredSignature
 from functools import wraps
+
 
 
 
@@ -163,6 +165,10 @@ def api_test():
 @app.route("/api/person/<person_id>")
 @app.route("/api/person/<person_id>.json")
 def person_endpoint(person_id):
+
+    data = get_dummy_data("person")
+    return json_resp_from_thing(data)
+
     person = Person.query.get(int(person_id))
 
     if not person:
@@ -201,6 +207,16 @@ def search(search_str):
 
 
 
+
+
+
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5008))
     app.run(host='0.0.0.0', port=port, debug=True, threaded=True)
+
+
+
+
+

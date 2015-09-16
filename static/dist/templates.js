@@ -203,7 +203,7 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"person-page\">\n" +
-    "   <div class=\"page-header\">\n" +
+    "   <div class=\"ti-page-header\">\n" +
     "      <h1>\n" +
     "         <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
     "         <span class=\"text\">\n" +
