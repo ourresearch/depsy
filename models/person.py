@@ -207,3 +207,13 @@ update_registry.register(Update(
 ))
 
 
+q = db.session.query(Person.id)
+q = q.filter(Person.parsed_name == None)
+
+update_registry.register(Update(
+    job=Person.set_parsed_name,
+    query=q,
+    queue_id=8
+))
+
+
