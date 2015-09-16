@@ -53,6 +53,13 @@ class Package(db.Model):
     tags = db.Column(JSONB)
     pmc_mentions = db.Column(JSONB)
 
+    strength = db.Column(db.Float)  # delete after current run
+    use = db.Column(db.Float)
+    use_percentile = db.Column(db.Float)
+    download_percentile = db.Column(db.Float)
+    github_api_raw = deferred(db.Column(JSONB))
+
+
     contributions = db.relationship(
         'Contribution',
         lazy='subquery',
@@ -181,28 +188,28 @@ class Package(db.Model):
         if not self.github_owner:
             return None
 
-        pmc_api_url_template = "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query={query}&pageSize=1000&format=json&resulttype=idlist"
-
         # don't start with http:// for now because then can get urls that include www
-        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
-        url = pmc_api_url_template.format(query=github_url_query)
-        print "trying with", self.id
-        try:
-            r = requests.get(url)
-        except requests.exceptions.RequestException:
-            print "RequestException, failed on", url
-            return None
+        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)        
+        new_pmids_set = set(get_pmids_from_query(github_url_query))
 
-        results = r.json()
-        if results["hitCount"] == 0:
-            self.pmc_mentions = []
-        else:
-            self.pmc_mentions = [r["pmid"] for r in results["resultList"]["result"]]
-            print "found some!!!", self.pmc_mentions
+        self.pmc_mentions = pmc_mentions
         return self.pmc_mentions
 
+    def set_strength(self):
+        try:
+            strength = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
+            print "strength for {} is {}".format(self.project_name, strength)
+        except ValueError:
+            strength = 0
+            print "no strength found for {}".format(self.project_name)
+        self.strength = strength        
 
+    def refresh_github_ids(self):
+        if not self.github_owner:
+            return None
 
+        self.github_api_raw = github_api.get_repo_data(self.github_owner, self.github_repo_name)
+        (self.github_owner, self.github_repo_name) = self.github_api_raw["full_name"].split("/")
 
 
 
@@ -648,6 +655,34 @@ def test_me(limit=10, use_rq="rq"):
     enqueue_jobs(Package, "set_github_repo_ids", q, 6, use_rq)
 
 
+g = None
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.strength == None)   
+
+update_registry.register(Update(
+    job=PypiPackage.set_strength,
+    query=q,
+    queue_id=5
+))
+
+
+import igraph
+def run_igraph(limit=2):
+    global g
+
+    print "loading in igraph"
+    g = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
+    print "loaded, now getting strengths"
+    # g.vs.find("Django").strength(mode="OUT", weights="weight")
+
+    update = update_registry.get("PypiPackage.set_strength")
+    update.run(
+        no_rq=True,
+        obj_id=None,
+        num_jobs=limit,
+        chunk_size=100
+    )
 
 
 
@@ -728,7 +763,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(CranPackage.id)
-q = q.filter(~CranPackage.downloads.has_key('monthly_downloads'))
+q = q.filter(~CranPackage.downloads.has_key('last_month'))
 
 update_registry.register(Update(
     job=CranPackage.set_downloads_since,
@@ -751,7 +786,16 @@ update_registry.register(Update(
 
 
 
+# runs on all packages
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.github_api_raw == None)
 
+update_registry.register(Update(
+    job=Package.refresh_github_ids,
+    query=q,
+    queue_id=7
+))
 
 
 

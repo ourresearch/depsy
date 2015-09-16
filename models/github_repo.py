@@ -934,6 +934,15 @@ update_registry.register(Update(
 ))
 
 
+q = db.session.query(GithubRepo.id)
+q = q.filter(GithubRepo.api_raw == None)
+
+update_registry.register(Update(
+    job=GithubRepo.set_github_about,
+    query=q,
+    queue_id=4
+))
+
 
 
 
