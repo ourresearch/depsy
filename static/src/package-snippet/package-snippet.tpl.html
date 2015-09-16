@@ -1,19 +1,21 @@
-<div class="package-snippet" ng-controller="packageSnippetCtrl">
-   <div class="left-metrics">
-      <span class="absolute">{{ package.use }}</span>
-      <span class="percentile">{{ package.use_percentile }}</span>
-   </div>
-   <div class="metadata">
+<a class="package-snippet"
+   href="package/{{ package.language }}/{{ package.name }}"
+     ng-controller="packageSnippetCtrl">
+   <span class="left-metrics">
+      <span class="absolute" tooltip="Use (reverse dependencies, weighted by GitHub stars)">{{ floor(package.use) }}</span>
+      <span class="percentile" tooltip="Use percentile compared to all pacakges.">{{ package.use_percentile }}</span>
+   </span>
+   <span class="metadata">
       <span class="name">{{ package.name }}</span>
       <span class="summary">{{ package.summary }}</span>
-   </div>
-   <div class="badges">
+   </span>
+   <span class="badges">
       <span class="citation-badge ti-badge" ng-show="package.citations">
          <span class="val">{{ package.citations }}</span>
          <span class="descr">citation</span>
       </span>
-   </div>
+   </span>
 
-</div>
+</a>
 
 

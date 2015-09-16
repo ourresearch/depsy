@@ -132,28 +132,36 @@ div.person-page div.ti-page-header h1 img {
   -moz-border-radius: 40px;
   border-radius: 40px;
 }
-div.package-snippet div.left-metrics {
+a.package-snippet {
+  margin: 4px 0;
+  padding: 4px 0;
+  color: #333;
+  text-decoration: none;
+  display: inline-block;
+}
+a.package-snippet span.left-metrics {
   display: inline-block;
   width: 200px;
   text-align: right;
 }
-div.package-snippet div.left-metrics span.absolute {
+a.package-snippet span.left-metrics span.absolute {
   font-size: 14px;
 }
-div.package-snippet div.left-metrics span.percentile {
+a.package-snippet span.left-metrics span.percentile {
   width: 50px;
   font-size: 18px;
 }
-div.package-snippet div.metadata {
+a.package-snippet span.metadata {
   display: inline-block;
 }
-div.package-snippet div.metadata span.name {
+a.package-snippet span.metadata span.name {
   font-size: 18px;
+  padding: 0 10px 0 5px;
 }
-div.package-snippet div.metadata span.summary {
-  font-size: 14px;
+a.package-snippet span.metadata span.summary {
+  font-size: 12px;
 }
-div.package-snippet div.badges {
+a.package-snippet span.badges {
   display: inline-block;
 }
 ul {

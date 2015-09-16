@@ -319,6 +319,9 @@ angular.module('packageSnippet', [
 
   .controller("packageSnippetCtrl", function($scope){
     $scope.package = $scope.contrib.package
+    $scope.floor = function(num){
+      return Math.floor(num)
+    }
 
   })
 
@@ -784,23 +787,25 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
 
 angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-snippet/package-snippet.tpl.html",
-    "<div class=\"package-snippet\" ng-controller=\"packageSnippetCtrl\">\n" +
-    "   <div class=\"left-metrics\">\n" +
-    "      <span class=\"absolute\">{{ package.use }}</span>\n" +
-    "      <span class=\"percentile\">{{ package.use_percentile }}</span>\n" +
-    "   </div>\n" +
-    "   <div class=\"metadata\">\n" +
+    "<a class=\"package-snippet\"\n" +
+    "   href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
+    "     ng-controller=\"packageSnippetCtrl\">\n" +
+    "   <span class=\"left-metrics\">\n" +
+    "      <span class=\"absolute\" tooltip=\"Use (reverse dependencies, weighted by GitHub stars)\">{{ floor(package.use) }}</span>\n" +
+    "      <span class=\"percentile\" tooltip=\"Use percentile compared to all pacakges.\">{{ package.use_percentile }}</span>\n" +
+    "   </span>\n" +
+    "   <span class=\"metadata\">\n" +
     "      <span class=\"name\">{{ package.name }}</span>\n" +
     "      <span class=\"summary\">{{ package.summary }}</span>\n" +
-    "   </div>\n" +
-    "   <div class=\"badges\">\n" +
+    "   </span>\n" +
+    "   <span class=\"badges\">\n" +
     "      <span class=\"citation-badge ti-badge\" ng-show=\"package.citations\">\n" +
     "         <span class=\"val\">{{ package.citations }}</span>\n" +
     "         <span class=\"descr\">citation</span>\n" +
     "      </span>\n" +
-    "   </div>\n" +
+    "   </span>\n" +
     "\n" +
-    "</div>\n" +
+    "</a>\n" +
     "\n" +
     "\n" +
     "");

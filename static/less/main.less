@@ -163,8 +163,15 @@ div.person-page {
 }
 
 
-div.package-snippet {
-   div.left-metrics {
+a.package-snippet {
+   margin: 4px 0;
+   padding: 4px 0;
+   color: #333;
+   text-decoration: none;
+   display: inline-block;
+
+//   border: 1px solid #eee;
+   span.left-metrics {
       display: inline-block;
       width: 200px;
       text-align: right;
@@ -177,16 +184,17 @@ div.package-snippet {
       }
    }
 
-   div.metadata {
+   span.metadata {
       display: inline-block;
       span.name {
          font-size: 18px;
+         padding: 0 10px 0 5px;
       }
       span.summary {
-         font-size: 14px;
+         font-size: 12px;
       }
    }
-   div.badges {
+   span.badges {
       display: inline-block;
    }
 }
