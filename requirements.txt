@@ -13,7 +13,7 @@ futures==3.0.3
 gunicorn==17.5
 itsdangerous==0.24
 lxml==3.4.4
-nameparser=0.3.9
+nameparser==0.3.9
 newrelic==1.9.0.21
 pathlib==1.0.1
 psycopg2==2.4.6
