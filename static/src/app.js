@@ -11,6 +11,7 @@ angular.module('app', [
   'personPage',
   'articlePage',
   'header',
+  'packageSnippet',
 
   'resourcesModule',
   'pageService',

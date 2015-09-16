@@ -12,6 +12,7 @@ angular.module('app', [
   'personPage',
   'articlePage',
   'header',
+  'packageSnippet',
 
   'resourcesModule',
   'pageService',
@@ -311,6 +312,17 @@ angular.module('landingPage', [
 
 
 
+angular.module('packageSnippet', [
+  ])
+
+
+
+  .controller("packageSnippetCtrl", function($scope){
+    $scope.package = $scope.contrib.package
+
+  })
+
+
 angular.module('personPage', [
     'ngRoute',
     'profileService',
@@ -568,7 +580,7 @@ angular.module('profileService', [
 
 
   })
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'person-page/person-page.tpl.html', 'services/global-modal.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html', 'services/global-modal.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -770,6 +782,30 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
     "");
 }]);
 
+angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("package-snippet/package-snippet.tpl.html",
+    "<div class=\"package-snippet\" ng-controller=\"packageSnippetCtrl\">\n" +
+    "   <div class=\"left-metrics\">\n" +
+    "      <span class=\"abolute\">{{ package.sort_score }}</span>\n" +
+    "      <span class=\"percentile\"></span>\n" +
+    "   </div>\n" +
+    "   <div class=\"metadata\">\n" +
+    "      <span class=\"name\">{{ package.name }}</span>\n" +
+    "      <span class=\"summary\">{{ package.summary }}</span>\n" +
+    "   </div>\n" +
+    "   <div class=\"badges\">\n" +
+    "      <span class=\"citation-badge ti-badge\">\n" +
+    "         <span class=\"val\">{{ package.citations }}</span>\n" +
+    "         <span class=\"descr\">citation</span>\n" +
+    "      </span>\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "");
+}]);
+
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"person-page\">\n" +
@@ -781,8 +817,21 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         </span>\n" +
     "      </h1>\n" +
     "   </div>\n" +
-    "   <h1>\n" +
-    "   </h1>\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"ti-page-body\">\n" +
+    "\n" +
+    "      <div class=\"packages\">\n" +
+    "         <div class=\"package-wrapper\"\n" +
+    "              ng-repeat=\"contrib in person.contributions\"\n" +
+    "              ng-include=\"'package-snippet/package-snippet.tpl.html'\"></div>\n" +
+    "\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "   </div>\n" +
     "\n" +
     "</div>\n" +
     "");

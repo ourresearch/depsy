@@ -33,7 +33,7 @@ class Contribution(db.Model):
             "role": self.role,
             "quantity": self.quantity,
             "percent": self.percent,
-            "package": self.package.to_dict(full=False),
+            "package": self.package.as_snippet,
             "person": self.person.to_dict(full=False),
             "fractional_sort_score": self.fractional_sort_score
         }

@@ -91,6 +91,11 @@ class Package(db.Model):
 
         return ret
 
+    @property
+    def as_snippet(self):
+        raise NotImplementedError
+
+
     @classmethod
     def valid_package_names(cls, module_names):
         """
@@ -462,18 +467,18 @@ class PypiPackage(Package):
         return self.sort_score
 
     @property
-    def as_search_result(self):
+    def as_snippet(self):
         try:
             summary = self.api_raw["info"]["summary"]
         except (TypeError, KeyError):
-            summary = None
+            summary = "A nifty project"
 
         ret = {
             "name": self.project_name,
-            "namespace": "pypi",
-            "type": "PypiPackage",
+            "host": "pypi",
             "sort_score": self.sort_score,
-            "summary": summary
+            "summary": summary,
+            "citations": len(self.pmc_mentions)
         }
         return ret
 
