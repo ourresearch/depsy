@@ -136,6 +136,7 @@ def make_ratelimited_call(url):
     #    return make_ratelimited_call(url)
 
     # assuming rate limited calls will never time out
+    requests.packages.urllib3.disable_warnings()            
     r = requests.get(url, auth=(login, token))
 
     calls_remaining = r.headers["X-RateLimit-Remaining"]

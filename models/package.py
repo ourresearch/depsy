@@ -689,8 +689,8 @@ update_registry.register(Update(
 ))
 
 
-import igraph
 def run_igraph(limit=2):
+    import igraph
     global g
 
     print "loading in igraph"
