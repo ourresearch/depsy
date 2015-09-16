@@ -8,6 +8,7 @@ from jobs import Update
 from github_api import get_profile
 from util import dict_from_dir
 import hashlib
+from nameparser import HumanName
 
 
 """
@@ -34,6 +35,7 @@ class Person(db.Model):
     github_about = db.deferred(db.Column(JSONB))
     bucket = db.Column(JSONB)
     sort_score = db.Column(db.Float)
+    parsed_name = db.Column(JSONB)
 
     type = db.Column(db.Text)
 
@@ -88,6 +90,10 @@ class Person(db.Model):
             self.sort_score += contrib.fractional_sort_score
 
         return self.sort_score
+
+    def set_parsed_name(self):
+        name = HumanName(self.name)
+        self.parsed_name = name.as_dict()
 
     @property
     def is_academic(self):
@@ -168,6 +174,9 @@ def get_or_make_person(**kwargs):
                 res,
                 kwargs["email"]
             )
+
+    else:
+        pass
 
     if res is not None:
         return res
