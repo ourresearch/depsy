@@ -87,6 +87,20 @@ div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header {
   font-weight: 900;
   text-transform: uppercase;
 }
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header img {
+  width: 22px;
+  vertical-align: -5px;
+  margin-right: 2px;
+}
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header i.fa {
+  margin-right: 3px;
+}
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header i.fa.fa-user {
+  color: green;
+}
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header i.fa.fa-tag {
+  color: blueviolet;
+}
 div.ti-header div.controls {
   position: absolute;
   right: 20px;
@@ -299,114 +313,36 @@ div.article-page div.articles-infovis.journal-dots div.journal-articles-with-dot
   -moz-border-radius: 10px;
   border-radius: 10px;
 }
-div.articles-section {
-  clear: both;
-}
-div.articles-section h3 {
-  text-align: center;
-}
-div.articles-section ul.articles {
-  margin-left: none;
-  padding-left: none;
-}
-div.articles-section .article {
-  list-style-type: none;
-  padding-bottom: 30px;
-  clear: both;
-}
-div.articles-section .article:before,
-div.articles-section .article:after {
-  content: " ";
-  display: table;
-}
-div.articles-section .article:after {
-  clear: both;
-}
-div.articles-section .article div.article-biblio {
-  width: 800px;
-  float: left;
-}
-div.articles-section .article div.article-biblio span.title {
-  display: block;
-  font-size: 16px;
-}
-div.articles-section .article div.article-biblio span.under-title {
-  color: #555;
-}
-div.articles-section .article div.article-biblio span.journal {
-  font-style: italic;
-}
-div.articles-section .article div.article-biblio a.linkout {
-  color: #555;
-  margin-left: 5px;
-}
-div.articles-section .article div.metrics {
-  float: left;
-  width: 100px;
-  text-align: right;
-  padding-right: 20px;
-}
-div.articles-section .article div.metrics span.loading {
-  color: #999;
-  font-size: 20px;
-}
-div.articles-section .article div.metrics .percentile {
-  font-size: 35px;
-  font-weight: bold;
-  color: #333;
-  float: right;
-  line-height: 1;
-}
-div.articles-section .article div.metrics .percentile.too-new {
-  color: #aaa;
-  font-size: 16px;
-  width: 55px;
-}
-div.articles-section .article div.metrics .percentile:hover {
-  text-decoration: none;
-}
-div.articles-section .article div.metrics .percentile.scale-0 {
-  color: #ff0000;
-}
-div.articles-section .article div.metrics .percentile.scale-1 {
-  color: #e91212;
-}
-div.articles-section .article div.metrics .percentile.scale-2 {
-  color: #ca2a2a;
-}
-div.articles-section .article div.metrics .percentile.scale-3 {
-  color: #a84545;
-}
-div.articles-section .article div.metrics .percentile.scale-4 {
-  color: #865e5e;
-}
-div.articles-section .article div.metrics .percentile.scale-5 {
-  color: #707070;
-}
-div.articles-section .article div.metrics .percentile.scale-6 {
-  color: #5e875e;
-}
-div.articles-section .article div.metrics .percentile.scale-7 {
-  color: #45a745;
-}
-div.articles-section .article div.metrics .percentile.scale-8 {
-  color: #2ac92a;
-}
-div.articles-section .article div.metrics .percentile.scale-9 {
-  color: #11ea11;
-}
-div.articles-section .article div.metrics .percentile.scale-10 {
-  color: #00fe00;
-}
-div.articles-section .article div.metrics span.scopus-small {
-  display: block;
-  font-size: 16px;
-  margin-right: 3px;
-  float: right;
-  clear: both;
-  cursor: default;
-}
 ul {
   margin-left: 0;
   padding-left: 0;
+}
+/* Styling for the ngProgress itself */
+#ngProgress {
+  margin: 0;
+  padding: 0;
+  z-index: 99998;
+  background-color: orangered !important;
+  color: orangered !important;
+  box-shadow: 0 0 10px 0;
+  /* Inherits the font color */
+
+  height: 2px;
+  opacity: 0;
+  /* Add CSS3 styles for transition smoothing */
+
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+/* Styling for the ngProgress-container */
+#ngProgress-container {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
 }

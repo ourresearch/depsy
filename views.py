@@ -160,13 +160,14 @@ def login_required(f):
 def api_test():
     return jsonify({"resp": "Hi, I'm Impactstory!"})
 
-@app.route("/api/u/<user_id>")
-@app.route("/api/u/<user_id>.json")
-def person(user_id):
-    person = Person.query.get(int(user_id))
+@app.route("/api/person/<person_id>")
+@app.route("/api/person/<person_id>.json")
+def person_endpoint(person_id):
+    person = Person.query.get(int(person_id))
 
     if not person:
         abort_json(404, "This person's not in the database")
+
     return json_resp_from_thing(person.to_dict())
 
 

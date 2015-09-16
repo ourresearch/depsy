@@ -4,11 +4,12 @@ angular.module('app', [
   'ngRoute',
   'ngResource',
   'ui.bootstrap',
+  'ngProgress',
 
   'templates.app',  // this is how it accesses the cached templates in ti.js
 
   'landingPage',
-  'profilePage',
+  'personPage',
   'articlePage',
   'header',
 
@@ -33,7 +34,23 @@ angular.module('app').config(function ($routeProvider,
 angular.module('app').run(function($route,
                                    $rootScope,
                                    $timeout,
-                                   $location ) {
+                                   ngProgress,
+                                   $location) {
+
+
+
+  $rootScope.$on('$routeChangeStart', function(next, current){
+    console.log("route change start")
+    ngProgress.start()
+  })
+  $rootScope.$on('$routeChangeSuccess', function(next, current){
+    console.log("route change success")
+    ngProgress.complete()
+  })
+  $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
+    console.log("$routeChangeError")
+    ngProgress.complete()
+  });
 
   /*
   this lets you change the args of the URL without reloading the whole view. from
@@ -53,6 +70,9 @@ angular.module('app').run(function($route,
       }
       return original.apply($location, [path]);
   };
+
+
+
 
 });
 
@@ -82,9 +102,6 @@ angular.module('app').controller('AppCtrl', function(
   });
   */
 
-  $scope.$on('$routeChangeSuccess', function(next, current){
-    PageService.reset()
-  })
 
   $scope.$on('$locationChangeStart', function(event, next, current){
   })
@@ -292,7 +309,7 @@ angular.module('landingPage', [
 
 
 
-angular.module('profilePage', [
+angular.module('personPage', [
     'ngRoute',
     'profileService',
     "directives.languageIcon"
@@ -301,12 +318,12 @@ angular.module('profilePage', [
 
 
   .config(function($routeProvider) {
-    $routeProvider.when('/u/:slug', {
-      templateUrl: 'profile-page/profile.tpl.html',
-      controller: 'profilePageCtrl',
+    $routeProvider.when('/person/:person_id', {
+      templateUrl: 'person-page/person-page.tpl.html',
+      controller: 'personPageCtrl',
       resolve: {
-        profileResp: function($http, $route){
-          var url = "/api/u/" + $route.current.params.slug
+        personResp: function($http, $route){
+          var url = "/api/person/" + $route.current.params.person_id
           return $http.get(url)
         }
       }
@@ -315,16 +332,19 @@ angular.module('profilePage', [
 
 
 
-  .controller("profilePageCtrl", function($scope,
+  .controller("personPageCtrl", function($scope,
                                           $routeParams,
-                                          CurrentUser,
-                                          GlobalModal,
-                                          profileResp){
-    $scope.profile = profileResp.data
-    console.log("retrieved the profile", $scope.profile)
+                                          personResp){
+    $scope.person = personResp.data
+    console.log("retrieved the person", $scope.person)
+
+
+
+
 
 
   })
+
 
 
 
@@ -546,7 +566,7 @@ angular.module('profileService', [
 
 
   })
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'person-page/person-page.tpl.html', 'services/global-modal.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -681,32 +701,53 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
+    "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
     "      Python packages\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type cran-package\" ng-if=\"match.model.type=='cran_project'\">\n" +
+    "      <img src=\"static/img/r-logo.png\" alt=\"\"/>\n" +
     "      R packages\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type people\" ng-if=\"match.model.type=='person'\">\n" +
+    "      <i class=\"fa fa-user\"></i>\n" +
     "      People\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type tags\" ng-if=\"match.model.type=='tag'\">\n" +
+    "      <i class=\"fa fa-tag\"></i>\n" +
     "      Tags\n" +
     "   </span>\n" +
     "\n" +
     "</div>\n" +
-    "<a>\n" +
+    "<a ng-href=\"package/python/{{ match.model.name }}\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "   <span class=\"name\">\n" +
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "   <span  class=\"summary\">\n" +
     "      {{ match.model.summary }}\n" +
     "   </span>\n" +
-    "\n" +
-    "   <span class=\"tag summary\"  ng-if=\"match.model.type=='tag'\">\n" +
+    "</a>\n" +
+    "<a ng-href=\"package/r/{{ match.model.name }}\" ng-if=\"match.model.type=='cran_project'\">\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "   <span  class=\"summary\">\n" +
+    "      {{ match.model.summary }}\n" +
+    "   </span>\n" +
+    "</a>\n" +
+    "<a ng-href=\"person/{{ match.model.id }}\" ng-if=\"match.model.type=='person'\">\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "</a>\n" +
+    "<a ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "   <span class=\"tag summary\">\n" +
     "      {{ match.model.sort_score }} packages\n" +
     "   </span>\n" +
-    "\n" +
     "</a>\n" +
+    "\n" +
     "\n" +
     "");
 }]);
@@ -727,10 +768,10 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
     "");
 }]);
 
-angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("profile-page/profile.tpl.html",
+angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"profile-page\">\n" +
-    "   <h1>boom, profile page!</h1>\n" +
+    "   <h1>{{ person.name }}</h1>\n" +
     "\n" +
     "</div>\n" +
     "");

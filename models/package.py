@@ -73,6 +73,23 @@ class Package(db.Model):
             name=self.id)
 
 
+    def to_dict(self, full=True):
+        ret = dict_from_dir(self, keys_to_ignore=[
+            "proxy_papers",
+            "github_contributors",
+            "bucket",
+            "requires_files",
+            "contributions",
+            "api_raw",
+            "setup_py",
+            "person",
+            "downloads"
+        ])
+        if full:
+            ret["api_raw"] = self.api_raw
+            ret["contributions"] = [c.to_dict() for c in self.contributions]
+
+        return ret
 
     @classmethod
     def valid_package_names(cls, module_names):

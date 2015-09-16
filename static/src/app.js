@@ -3,11 +3,12 @@ angular.module('app', [
   'ngRoute',
   'ngResource',
   'ui.bootstrap',
+  'ngProgress',
 
   'templates.app',  // this is how it accesses the cached templates in ti.js
 
   'landingPage',
-  'profilePage',
+  'personPage',
   'articlePage',
   'header',
 
@@ -32,7 +33,23 @@ angular.module('app').config(function ($routeProvider,
 angular.module('app').run(function($route,
                                    $rootScope,
                                    $timeout,
-                                   $location ) {
+                                   ngProgress,
+                                   $location) {
+
+
+
+  $rootScope.$on('$routeChangeStart', function(next, current){
+    console.log("route change start")
+    ngProgress.start()
+  })
+  $rootScope.$on('$routeChangeSuccess', function(next, current){
+    console.log("route change success")
+    ngProgress.complete()
+  })
+  $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
+    console.log("$routeChangeError")
+    ngProgress.complete()
+  });
 
   /*
   this lets you change the args of the URL without reloading the whole view. from
@@ -52,6 +69,9 @@ angular.module('app').run(function($route,
       }
       return original.apply($location, [path]);
   };
+
+
+
 
 });
 
@@ -81,9 +101,6 @@ angular.module('app').controller('AppCtrl', function(
   });
   */
 
-  $scope.$on('$routeChangeSuccess', function(next, current){
-    PageService.reset()
-  })
 
   $scope.$on('$locationChangeStart', function(event, next, current){
   })

@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'profile-page/profile.tpl.html', 'services/global-modal.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'person-page/person-page.tpl.html', 'services/global-modal.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -133,32 +133,53 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
+    "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
     "      Python packages\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type cran-package\" ng-if=\"match.model.type=='cran_project'\">\n" +
+    "      <img src=\"static/img/r-logo.png\" alt=\"\"/>\n" +
     "      R packages\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type people\" ng-if=\"match.model.type=='person'\">\n" +
+    "      <i class=\"fa fa-user\"></i>\n" +
     "      People\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type tags\" ng-if=\"match.model.type=='tag'\">\n" +
+    "      <i class=\"fa fa-tag\"></i>\n" +
     "      Tags\n" +
     "   </span>\n" +
     "\n" +
     "</div>\n" +
-    "<a>\n" +
+    "<a ng-href=\"package/python/{{ match.model.name }}\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "   <span class=\"name\">\n" +
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "   <span  class=\"summary\">\n" +
     "      {{ match.model.summary }}\n" +
     "   </span>\n" +
-    "\n" +
-    "   <span class=\"tag summary\"  ng-if=\"match.model.type=='tag'\">\n" +
+    "</a>\n" +
+    "<a ng-href=\"package/r/{{ match.model.name }}\" ng-if=\"match.model.type=='cran_project'\">\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "   <span  class=\"summary\">\n" +
+    "      {{ match.model.summary }}\n" +
+    "   </span>\n" +
+    "</a>\n" +
+    "<a ng-href=\"person/{{ match.model.id }}\" ng-if=\"match.model.type=='person'\">\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "</a>\n" +
+    "<a ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
+    "   <span class=\"name\">\n" +
+    "      {{ match.model.name }}\n" +
+    "   </span>\n" +
+    "   <span class=\"tag summary\">\n" +
     "      {{ match.model.sort_score }} packages\n" +
     "   </span>\n" +
-    "\n" +
     "</a>\n" +
+    "\n" +
     "\n" +
     "");
 }]);
@@ -179,10 +200,10 @@ angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", funct
     "");
 }]);
 
-angular.module("profile-page/profile.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("profile-page/profile.tpl.html",
+angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"profile-page\">\n" +
-    "   <h1>boom, profile page!</h1>\n" +
+    "   <h1>{{ person.name }}</h1>\n" +
     "\n" +
     "</div>\n" +
     "");
