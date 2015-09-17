@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import deferred
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
+from sqlalchemy import sql
 from time import time
 import json
 from validate_email import validate_email
@@ -11,6 +12,7 @@ import zipfile
 import requests
 import hashlib
 from lxml import html
+from scipy import stats
 
 from models import github_api
 from models.person import Person
@@ -27,6 +29,14 @@ from util import dict_from_dir
 from util import truncate
 from python import parse_requirements_txt
 
+
+
+
+
+
+
+
+
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
@@ -34,31 +44,34 @@ class Package(db.Model):
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
+    github_api_raw = deferred(db.Column(JSONB))
+    github_contributors = db.deferred(db.Column(JSONB))
 
     api_raw = deferred(db.Column(JSONB))
-    downloads = db.Column(MutableDict.as_mutable(JSONB))
+    tags = db.Column(JSONB)
+    proxy_papers = db.Column(db.Text)
+
+    pmc_mentions = db.Column(JSONB)
+    host_reverse_deps = db.Column(JSONB)
 
     github_reverse_deps = db.Column(JSONB)
-    host_reverse_deps = db.Column(JSONB)
     dependencies = db.Column(JSONB)
-
-    proxy_papers = db.Column(db.Text)
-    github_contributors = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
-    sort_score = db.Column(db.Float)
-
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.Column(db.Text)
 
-    tags = db.Column(JSONB)
-    pmc_mentions = db.Column(JSONB)
-
-    strength = db.Column(db.Float)  # delete after current run
     use = db.Column(db.Float)
     use_percentile = db.Column(db.Float)
-    download_percentile = db.Column(db.Float)
-    github_api_raw = deferred(db.Column(JSONB))
+    downloads = db.Column(MutableDict.as_mutable(JSONB))    
+    downloads_percentile = db.Column(db.Float)
+    num_citations = db.Column(db.Integer)
+    num_citations_percentile = db.Column(db.Float)
+    stars = db.Column(db.Integer)
+    stars_percentile = db.Column(db.Float)
+
+    sort_score = db.Column(db.Float)
+
 
 
     contributions = db.relationship(
@@ -110,18 +123,13 @@ class Package(db.Model):
         except (TypeError, KeyError):
             summary = "A nifty project"
 
-        try:
-            num_citations = len(self.pmc_mentions)
-        except TypeError:
-            num_citations = 0
-
         ret = {
             "name": self.project_name,
             "language": None,
             "use": self.use,
             "use_percentile": self.use_percentile,
             "summary": summary,
-            "citations_count": num_citations
+            "citations_count": self.num_citations
         }
         return ret
 
@@ -138,6 +146,8 @@ class Package(db.Model):
 
     def test(self):
         print "{}: I'm a test!".format(self)
+
+
 
     def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
@@ -239,25 +249,79 @@ class Package(db.Model):
         self.pmc_mentions = pmc_mentions
         return self.pmc_mentions
 
-    def set_strength(self):
+    def set_use(self):
         try:
-            strength = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
-            print "strength for {} is {}".format(self.project_name, strength)
+            use = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
+            print "use for {} is {}".format(self.project_name, use)
         except ValueError:
-            strength = 0
-            print "no strength found for {}".format(self.project_name)
-        self.strength = strength        
+            use = 0
+            print "no use found for {}".format(self.project_name)
+        self.use = use        
 
     def refresh_github_ids(self):
         if not self.github_owner:
             return None
 
         self.github_api_raw = github_api.get_repo_data(self.github_owner, self.github_repo_name)
-        if self.github_api_raw:
+        try:
             (self.github_owner, self.github_repo_name) = self.github_api_raw["full_name"].split("/")
-        else:
+        except KeyError:
             self.github_owner = None
             self.github_repo_name = None
+
+
+    @classmethod
+    def _group_by_host(cls, rows):
+        ret = {
+            "pypi": sorted([row[1] for row in rows if row[0]=="pypi"]),
+            "cran": sorted([row[1] for row in rows if row[0]=="cran"])
+        }
+        return ret
+
+    @classmethod
+    def get_downloads_by_host(cls):
+        command = "select host, (downloads->>'last_month')::int from package"
+        res = db.session.connection().execute(sql.text(command))
+        rows = res.fetchall()
+        return cls._group_by_host(rows)
+
+    @classmethod
+    def get_uses_by_host(cls):
+        q = db.session.query(cls.host, cls.use)
+        rows = q.all()
+        return cls._group_by_host(rows)
+
+    @classmethod
+    def get_stars_by_host(cls):
+        q = db.session.query(cls.host, cls.stars)
+        rows = q.all()
+        return cls._group_by_host(rows)
+
+    @classmethod
+    def get_num_citations_by_host(cls):
+        q = db.session.query(cls.host, cls.num_citations)
+        rows = q.all()
+        return cls._group_by_host(rows)
+
+    def _calc_percentile(self, refset, var):
+        percentile = stats.percentileofscore(refset[self.host], self.stars, kind='weak')
+        return percentile
+
+    def set_downloads_percentile(self):
+        global downloads_refset
+        self.downloads_percentile = self._calc_percentile(downloads_refset, self.downloads["last_month"])
+
+    def set_use_percentile(self):
+        global uses_refset
+        self.use_percentile = self._calc_percentile(uses_refset, self.use)
+
+    def set_star_percentile(self):
+        global stars_refset
+        self.stars_percentile = self._calc_percentile(stars_refset, self.stars)
+
+    def set_num_citations_percentile(self):
+        global num_citations_refset
+        self.num_citations_percentile = self._calc_percentile(num_citations_refset, self.num_citations)
 
 
 
@@ -616,6 +680,12 @@ def prep_summary(str):
 
 
 
+
+
+
+
+
+
 def save_host_contributors_pypi(limit=10):
     # has to be run all in one go, db stores no indicator this has run.
     q = db.session.query(PypiPackage.id)
@@ -625,6 +695,7 @@ def save_host_contributors_pypi(limit=10):
     update_fn = make_update_fn(Package, "save_host_contributors")
     for row in q.all():
         update_fn(row[0])
+
 
 def save_host_contributors_cran(limit=10):
     # has to be run all in one go, db stores no indicator this has run.
@@ -637,9 +708,6 @@ def save_host_contributors_cran(limit=10):
         update_fn(row[0])
 
 
-
-
-
 def set_all_github_contributors(limit=10, use_rq="rq"):
     q = db.session.query(Package.id)
     q = q.filter(Package.github_repo_name != None)
@@ -649,18 +717,6 @@ def set_all_github_contributors(limit=10, use_rq="rq"):
 
     enqueue_jobs(Package, "set_github_contributors", q, 1, use_rq)
 
-
-
-
-# this is the one that works, make them like this from now on
-def test_package(limit=10, use_rq="rq"):
-
-    q = db.session.query(Package.id)
-    q = q.filter(Package.github_owner != None)
-    q = q.order_by(Package.project_name)
-    q = q.limit(limit)
-
-    enqueue_jobs(Package, "test", q, 1, use_rq)
 
 
 
@@ -712,13 +768,16 @@ def test_me(limit=10, use_rq="rq"):
     enqueue_jobs(Package, "set_github_repo_ids", q, 6, use_rq)
 
 
+
+
+######## igraph
 g = None
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.strength == None)   
+q = q.filter(PypiPackage.use == None)   
 
 update_registry.register(Update(
-    job=PypiPackage.set_strength,
+    job=PypiPackage.set_use,
     query=q,
     queue_id=5
 ))
@@ -730,10 +789,10 @@ def run_igraph(limit=2):
 
     print "loading in igraph"
     g = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
-    print "loaded, now getting strengths"
+    print "loaded, now getting uses"
     # g.vs.find("Django").strength(mode="OUT", weights="weight")
 
-    update = update_registry.get("PypiPackage.set_strength")
+    update = update_registry.get("PypiPackage.set_use")
     update.run(
         no_rq=True,
         obj_id=None,
@@ -856,9 +915,52 @@ update_registry.register(Update(
 
 
 
+##### get percentiles.  Needs stuff loaded into memory before they run
+
+# print "loading data into memory"
+# downloads_refset = Package.get_downloads_by_host()
+# uses_refset = Package.get_uses_by_host()
+# stars_refset = Package.get_stars_by_host()
+# num_citations_refset = Package.get_num_citations_by_host()
+# print "done loading data into memory"
 
 
+q = db.session.query(Package.id)
+q = q.filter(Package.downloads.has_key("last_month"))
+q = q.filter(Package.downloads_percentile == None)
+update_registry.register(Update(
+    job=Package.set_downloads_percentile,
+    query=q,
+    queue_id=8
+))
 
+
+# q = db.session.query(Package.id)
+# q = q.filter(Package.use != None)
+# q = q.filter(Package.use_percentile == None)
+# update_registry.register(Update(
+#     job=Package.set_use_percentile,
+#     query=q,
+#     queue_id=8
+# ))
+
+# q = db.session.query(Package.id)
+# q = q.filter(Package.stars != None)
+# q = q.filter(Package.stars_percentile == None)
+# update_registry.register(Update(
+#     job=Package.set_stars_percentile,
+#     query=q,
+#     queue_id=8
+# ))
+
+# q = db.session.query(Package.id)
+# q = q.filter(Package.num_citations != None)
+# q = q.filter(Package.num_citations_percentile == None)
+# update_registry.register(Update(
+#     job=Package.set_num_citations_percentile,
+#     query=q,
+#     queue_id=8
+# ))
 
 
 

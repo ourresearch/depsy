@@ -91,6 +91,10 @@ class Person(db.Model):
         return self.sort_score
 
     def set_parsed_name(self):
+        if not self.name:
+            self.parsed_name = None
+            return
+
         name = HumanName(self.name)
         self.parsed_name = name.as_dict()
 

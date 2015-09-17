@@ -4,6 +4,7 @@ select jsonb_array_elements_text(named_deps) as package, 'github:'||id as used_b
     from github_repo 
     where named_deps is not NULL 
     and language='python'
+    and api_raw->>'fork' = 'false'
     and id not in
         (select github_owner||':'||github_repo_name from package where host='pypi' and github_owner is not null)
 union    

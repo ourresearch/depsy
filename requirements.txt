@@ -22,6 +22,7 @@ python-dateutil==2.4.2
 redis==2.10.3
 requests==2.4.3
 rq==0.5.1
+scipy==0.16.0
 shortuuid==0.4.2
 subprocess32==3.2.6
 validate-email==1.3
