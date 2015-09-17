@@ -13,11 +13,12 @@
          </span>
       </span>
 
+
       <span class="use metric"
             popover-placement="top"
             popover-title="Use: {{ floor(package.use) }}"
             popover-trigger="mouseenter"
-            popover-html="'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{  }} packages.'">
+            popover-html="'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{ package.language }} packages.'">
          {{ nFormatter(package.use) }}
       </span>
 

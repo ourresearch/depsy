@@ -9,6 +9,7 @@ from github_api import get_profile
 from util import dict_from_dir
 import hashlib
 from nameparser import HumanName
+from collections import defaultdict
 
 
 """
@@ -54,16 +55,14 @@ class Person(db.Model):
     )
 
 
-
-
     def to_dict(self, full=True):
-        #full= False
-
         ret = dict_from_dir(self, keys_to_ignore=["contributions", "github_about"])
 
         if full:
-            ret["contributions"] = [c.to_dict() for c in self.contributions]
+            ret["packages"] = [p.to_dict() for p in self.person_packages]
         return ret
+
+
 
 
     def set_github_about(self):
@@ -121,6 +120,31 @@ class Person(db.Model):
     @property
     def icon_small(self):
         return self._make_gravatar_url(30)
+
+    @property
+    def person_packages(self):
+        person_packages = defaultdict(PersonPackage.set_role)
+        for contrib in self.contributions:
+            person_packages[contrib.package.id].set_role(contrib)
+
+        return person_packages.values()
+
+
+
+class PersonPackage():
+    def __init__(self):
+        self.package = None
+        self.roles = []
+
+    def set_role(self, contrib):
+        if not self.package:
+            self.package = contrib.package
+        self.roles.append(contrib.role)
+
+    def to_dict(self):
+        ret = self.package.as_snippet
+        ret["roles"] = self.roles
+        return ret
 
 
 

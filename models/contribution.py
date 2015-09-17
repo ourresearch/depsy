@@ -39,6 +39,16 @@ class Contribution(db.Model):
         }
         return ret
 
+
+    @property
+    def role(self):
+        return {
+            "name": self.role,
+            "quantity": self.quantity,
+            "percent": self.percent,
+            "credit": self.fractional_sort_score
+        }
+
     @property
     def fractional_sort_score(self):
         if self.percent:

@@ -217,11 +217,12 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "         </span>\n" +
     "      </span>\n" +
     "\n" +
+    "\n" +
     "      <span class=\"use metric\"\n" +
     "            popover-placement=\"top\"\n" +
     "            popover-title=\"Use: {{ floor(package.use) }}\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover-html=\"'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{  }} packages.'\">\n" +
+    "            popover-html=\"'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{ package.language }} packages.'\">\n" +
     "         {{ nFormatter(package.use) }}\n" +
     "      </span>\n" +
     "\n" +
