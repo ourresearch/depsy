@@ -12,6 +12,12 @@ body .wrapper {
   width: 1200px;
   margin: 0 auto;
 }
+body a {
+  color: orangered;
+}
+body a:hover {
+  color: orangered;
+}
 .tooltip {
   font-weight: 300;
   font-size: 14px;
@@ -132,37 +138,99 @@ div.person-page div.ti-page-header h1 img {
   -moz-border-radius: 40px;
   border-radius: 40px;
 }
-a.package-snippet {
+span.package-snippet {
   margin: 4px 0;
   padding: 4px 0;
   color: #333;
   text-decoration: none;
   display: inline-block;
 }
-a.package-snippet span.left-metrics {
+span.package-snippet span.left-metrics {
   display: inline-block;
   width: 200px;
   text-align: right;
+  font-weight: bold;
 }
-a.package-snippet span.left-metrics span.absolute {
+span.package-snippet span.left-metrics .metric {
+  cursor: default;
+}
+span.package-snippet span.left-metrics .metric.use {
+  font-size: 24px;
+}
+span.package-snippet span.left-metrics .metric.use.scale-0 {
+  color: #5b655b;
+}
+span.package-snippet span.left-metrics .metric.use.scale-1 {
+  color: #546c54;
+}
+span.package-snippet span.left-metrics .metric.use.scale-2 {
+  color: #4b754b;
+}
+span.package-snippet span.left-metrics .metric.use.scale-3 {
+  color: #417f41;
+}
+span.package-snippet span.left-metrics .metric.use.scale-4 {
+  color: #358b35;
+}
+span.package-snippet span.left-metrics .metric.use.scale-5 {
+  color: #2a962a;
+}
+span.package-snippet span.left-metrics .metric.use.scale-6 {
+  color: #1ea21e;
+}
+span.package-snippet span.left-metrics .metric.use.scale-7 {
+  color: #14ac14;
+}
+span.package-snippet span.left-metrics .metric.use.scale-8 {
+  color: #0cb40c;
+}
+span.package-snippet span.left-metrics .metric.use.scale-9 {
+  color: #04bc04;
+}
+span.package-snippet span.left-metrics .metric.use.scale-10 {
+  color: #00ca00;
+}
+span.package-snippet span.left-metrics .metric.citation {
+  background: dodgerblue;
+  padding: 1px 4px;
+  display: inline-block;
+  margin: 0 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 100;
+  color: #fff;
+  vertical-align: 4px;
+}
+span.package-snippet span.left-metrics .metric.citation span.fa {
+  margin-right: 2px;
+  font-size: 100%;
+}
+span.package-snippet span.left-metrics span.absolute {
   font-size: 14px;
 }
-a.package-snippet span.left-metrics span.percentile {
+span.package-snippet span.left-metrics span.percentile {
   width: 50px;
   font-size: 18px;
 }
-a.package-snippet span.metadata {
+span.package-snippet span.metadata {
   display: inline-block;
 }
-a.package-snippet span.metadata span.name {
-  font-size: 18px;
+span.package-snippet span.metadata span.name-container {
   padding: 0 10px 0 5px;
-}
-a.package-snippet span.metadata span.summary {
-  font-size: 12px;
-}
-a.package-snippet span.badges {
   display: inline-block;
+  min-width: 150px;
+}
+span.package-snippet span.metadata span.name-container a.name {
+  font-size: 18px;
+  color: #333;
+}
+span.package-snippet span.metadata span.name-container a.name:hover {
+  color: #333;
+}
+span.package-snippet span.metadata span.summary {
+  font-size: 12px;
 }
 ul {
   margin-left: 0;

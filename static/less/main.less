@@ -14,6 +14,13 @@ body {
       width: 1200px;
       margin: 0 auto;
    }
+   a {
+      color: orangered;
+      &:hover{
+         color: orangered;
+      }
+
+   }
 }
 
 
@@ -163,7 +170,7 @@ div.person-page {
 }
 
 
-a.package-snippet {
+span.package-snippet {
    margin: 4px 0;
    padding: 4px 0;
    color: #333;
@@ -172,9 +179,45 @@ a.package-snippet {
 
 //   border: 1px solid #eee;
    span.left-metrics {
+      .metric {
+         cursor: default;
+         &.use {
+            font-size: 24px;
+            &.scale-0 { color: #5b655b;}
+            &.scale-1 { color: #546c54;}
+            &.scale-2 { color: #4b754b;}
+            &.scale-3 { color: #417f41;}
+            &.scale-4 { color: #358b35;}
+            &.scale-5 { color: #2a962a;}
+            &.scale-6 { color: #1ea21e;}
+            &.scale-7 { color: #14ac14;}
+            &.scale-8 { color: #0cb40c;}
+            &.scale-9 { color: #04bc04;}
+
+            &.scale-10 { color: #00ca00;} // not used because we are doing ciel
+
+         }
+         &.citation {
+            background: dodgerblue;
+            padding: 1px 4px;
+            display: inline-block;
+            margin: 0 3px;
+            .rounded(3px);
+            font-size: 12px;
+            font-weight: 100;
+            color: #fff;
+            vertical-align: 4px;
+            span.fa {
+               margin-right: 2px;
+               font-size: 100%
+            }
+         }
+      }
+
       display: inline-block;
       width: 200px;
       text-align: right;
+      font-weight: bold;
       span.absolute {
          font-size: 14px;
       }
@@ -186,16 +229,22 @@ a.package-snippet {
 
    span.metadata {
       display: inline-block;
-      span.name {
-         font-size: 18px;
+      span.name-container {
          padding: 0 10px 0 5px;
+         display:inline-block;
+         min-width: 150px;
+         a.name {
+            font-size: 18px;
+            color: #333;
+            &:hover {
+               color: #333;
+            }
+         }
+
       }
       span.summary {
          font-size: 12px;
       }
-   }
-   span.badges {
-      display: inline-block;
    }
 }
 

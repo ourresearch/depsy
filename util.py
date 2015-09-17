@@ -93,6 +93,12 @@ def elapsed(since, round_places=2):
 
 
 
+def truncate(str, max=100):
+    if len(str) > max:
+        return str[0:max] + u"..."
+    else:
+        return str
+
 
 
 

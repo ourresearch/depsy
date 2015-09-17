@@ -1,21 +1,37 @@
-<a class="package-snippet"
-   href="package/{{ package.language }}/{{ package.name }}"
+<span class="package-snippet"
      ng-controller="packageSnippetCtrl">
    <span class="left-metrics">
-      <span class="absolute" tooltip="Use (reverse dependencies, weighted by GitHub stars)">{{ floor(package.use) }}</span>
-      <span class="percentile" tooltip="Use percentile compared to all pacakges.">{{ package.use_percentile }}</span>
-   </span>
-   <span class="metadata">
-      <span class="name">{{ package.name }}</span>
-      <span class="summary">{{ package.summary }}</span>
-   </span>
-   <span class="badges">
-      <span class="citation-badge ti-badge" ng-show="package.citations">
-         <span class="val">{{ package.citations }}</span>
-         <span class="descr">citation</span>
+      <span popover-title="Citations"
+            popover-trigger="hover"
+            popover="Package mentions in academic papers indexed by PubMed Central"
+            ng-show="package.citations_count"
+            class="citation metric">
+         <span class="fa fa-file-o"></span>
+         <span class="text">
+            {{ package.citations_count }}
+
+         </span>
       </span>
+
+      <span class="use metric scale-{{ floor(package.use_percentile / 10) }}"
+            popover-title="Use"
+            popover-trigger="hover"
+            popover="reverse dependencies, weighted by GitHub stars">
+         {{ floor(package.use) }}
+      </span>
+
+
    </span>
 
-</a>
+   <span class="metadata">
+      <span class="name-container">
+         <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
+            {{ package.name }}
+         </a>
+      </span>
+      <span class="summary">{{ package.summary }}</span>
+   </span>
+
+</span>
 
 

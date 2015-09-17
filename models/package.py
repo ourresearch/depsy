@@ -24,6 +24,7 @@ from jobs import update_registry
 from jobs import Update
 from util import elapsed
 from util import dict_from_dir
+from util import truncate
 from python import parse_requirements_txt
 
 class Package(db.Model):
@@ -105,9 +106,14 @@ class Package(db.Model):
     @property
     def _as_package_snippet(self):
         try:
-            summary = self.api_raw["info"]["summary"]
+            summary = prep_summary(self.api_raw["info"]["summary"])
         except (TypeError, KeyError):
             summary = "A nifty project"
+
+        try:
+            num_citations = len(self.pmc_mentions)
+        except TypeError:
+            num_citations = 0
 
         ret = {
             "name": self.project_name,
@@ -115,7 +121,7 @@ class Package(db.Model):
             "use": self.use,
             "use_percentile": self.use_percentile,
             "summary": summary,
-            "citations": len(self.pmc_mentions)
+            "citations_count": num_citations
         }
         return ret
 
@@ -588,6 +594,19 @@ class CranPackage(Package):
         ret = self._as_package_snippet
         ret["host"] = "r"
         return ret
+
+
+
+
+
+def prep_summary(str):
+    placeholder = "A nifty project."
+    if not str:
+        return placeholder
+    elif str == "UNKNOWN":
+        return placeholder
+    else:
+        return truncate(str)
 
 
 
