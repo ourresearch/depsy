@@ -205,28 +205,13 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "<span class=\"package-snippet\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\">\n" +
-    "      <span popover-title=\"Citations: {{ package.citations_count }}\"\n" +
-    "            popover-trigger=\"mouseenter\"\n" +
-    "            popover-html=\"'<em>Citations</em> counts mentions of this software in academic papers indexed by PubMed Central'\"\n" +
-    "            ng-show=\"package.citations_count\"\n" +
-    "            class=\"citation metric\">\n" +
-    "         <span class=\"fa fa-file-o\"></span>\n" +
-    "         <span class=\"text\">\n" +
-    "            {{ package.citations_count }}\n" +
-    "\n" +
-    "         </span>\n" +
-    "      </span>\n" +
-    "\n" +
-    "\n" +
-    "      <span class=\"use metric\"\n" +
+    "      <span class=\"one-metric\"\n" +
     "            popover-placement=\"top\"\n" +
     "            popover-title=\"Use: {{ floor(package.use) }}\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
     "            popover-html=\"'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{ package.language }} packages.'\">\n" +
     "         {{ nFormatter(package.use) }}\n" +
     "      </span>\n" +
-    "\n" +
-    "\n" +
     "   </span>\n" +
     "\n" +
     "   <span class=\"metadata\">\n" +
@@ -260,9 +245,10 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
     "      <div class=\"packages\">\n" +
-    "         <div class=\"package-wrapper\"\n" +
-    "              ng-repeat=\"contrib in person.contributions\"\n" +
-    "              ng-include=\"'package-snippet/package-snippet.tpl.html'\"></div>\n" +
+    "         <div class=\"person-package\" ng-repeat=\"contrib in person.contributions\">\n" +
+    "            <span class=\"roles\">my roles</span>\n" +
+    "            <span class=\"package-snippet-wrapper\" ng-include=\"'package-snippet/package-snippet.tpl.html'\"></span>\n" +
+    "         </div>\n" +
     "\n" +
     "\n" +
     "      </div>\n" +

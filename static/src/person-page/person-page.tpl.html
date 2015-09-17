@@ -12,9 +12,10 @@
    <div class="ti-page-body">
 
       <div class="packages">
-         <div class="package-wrapper"
-              ng-repeat="contrib in person.contributions"
-              ng-include="'package-snippet/package-snippet.tpl.html'"></div>
+         <div class="person-package" ng-repeat="contrib in person.contributions">
+            <span class="roles">my roles</span>
+            <span class="package-snippet-wrapper" ng-include="'package-snippet/package-snippet.tpl.html'"></span>
+         </div>
 
 
       </div>

@@ -32,7 +32,7 @@ class Contribution(db.Model):
         ret = {
             "role": self.role,
             "quantity": self.quantity,
-            "percent": self.percent,
+            "percent": self.get_percent(),
             "package": self.package.as_snippet,
             "person": self.person.to_dict(full=False),
             "fractional_sort_score": self.fractional_sort_score
@@ -41,20 +41,20 @@ class Contribution(db.Model):
 
 
     @property
-    def role(self):
+    def role_dict(self):
         return {
             "name": self.role,
             "quantity": self.quantity,
-            "percent": self.percent,
-            "credit": self.fractional_sort_score
+            "percent": self.get_percent(),
+            "fractional_sort_score": self.fractional_sort_score
         }
 
     @property
     def fractional_sort_score(self):
         if self.percent:
-            fraction = self.percent / 100
+            fraction = self.percent / 100.0
         else:
-            fraction = 100
+            fraction = 1.0
 
         try:
             return self.package.sort_score * fraction
@@ -64,6 +64,11 @@ class Contribution(db.Model):
             # no package, this is an orphan contribution
             return 0
 
+    def get_percent(self):
+        if self.percent is None:
+            return 100
+        else:
+            return self.percent
 
 
 

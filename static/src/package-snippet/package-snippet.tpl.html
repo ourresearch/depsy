@@ -1,28 +1,13 @@
 <span class="package-snippet"
      ng-controller="packageSnippetCtrl">
    <span class="left-metrics">
-      <span popover-title="Citations: {{ package.citations_count }}"
-            popover-trigger="mouseenter"
-            popover-html="'<em>Citations</em> counts mentions of this software in academic papers indexed by PubMed Central'"
-            ng-show="package.citations_count"
-            class="citation metric">
-         <span class="fa fa-file-o"></span>
-         <span class="text">
-            {{ package.citations_count }}
-
-         </span>
-      </span>
-
-
-      <span class="use metric"
+      <span class="one-metric"
             popover-placement="top"
             popover-title="Use: {{ floor(package.use) }}"
             popover-trigger="mouseenter"
             popover-html="'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{ package.language }} packages.'">
          {{ nFormatter(package.use) }}
       </span>
-
-
    </span>
 
    <span class="metadata">

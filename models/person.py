@@ -127,7 +127,7 @@ class Person(db.Model):
 
     @property
     def person_packages(self):
-        person_packages = defaultdict(PersonPackage.set_role)
+        person_packages = defaultdict(PersonPackage)
         for contrib in self.contributions:
             person_packages[contrib.package.id].set_role(contrib)
 
@@ -143,11 +143,20 @@ class PersonPackage():
     def set_role(self, contrib):
         if not self.package:
             self.package = contrib.package
-        self.roles.append(contrib.role)
+        self.roles.append(contrib.role_dict)
+
+    @property
+    def credit_points(self):
+        ret = 0
+        for role in self.roles:
+            ret += role["fractional_sort_score"]
+        return ret
+
 
     def to_dict(self):
         ret = self.package.as_snippet
         ret["roles"] = self.roles
+        ret["credit_points"] = self.credit_points
         return ret
 
 

@@ -12,7 +12,7 @@ import zipfile
 import requests
 import hashlib
 from lxml import html
-from scipy import stats
+#from scipy import stats
 
 from models import github_api
 from models.person import Person
@@ -126,10 +126,22 @@ class Package(db.Model):
         ret = {
             "name": self.project_name,
             "language": None,
+
+            "sort_score": self.sort_score,
+
             "use": self.use,
             "use_percentile": self.use_percentile,
-            "summary": summary,
-            "citations_count": self.num_citations
+
+            "downloads": self.downloads,
+            "downloads_percentile": self.downloads_percentile,
+
+            "stars": self.downloads_percentile,
+            "stars_percentile": self.downloads_percentile,
+
+            "citations": self.num_citations,
+            "citations_percentile": self.num_citations_percentile,
+
+            "summary": summary
         }
         return ret
 
