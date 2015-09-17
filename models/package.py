@@ -12,7 +12,8 @@ import zipfile
 import requests
 import hashlib
 from lxml import html
-from scipy import stats
+import numpy
+import os
 
 from models import github_api
 from models.person import Person
@@ -323,6 +324,7 @@ class Package(db.Model):
         global num_citations_refset
         self.num_citations_percentile = self._calc_percentile(num_citations_refset, self.num_citations)
 
+    def set_all_percentiles(self):
 
 
 class PypiPackage(Package):
@@ -917,12 +919,13 @@ update_registry.register(Update(
 
 ##### get percentiles.  Needs stuff loaded into memory before they run
 
-# print "loading data into memory"
-# downloads_refset = Package.get_downloads_by_host()
-# uses_refset = Package.get_uses_by_host()
-# stars_refset = Package.get_stars_by_host()
-# num_citations_refset = Package.get_num_citations_by_host()
-# print "done loading data into memory"
+if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
+    print "loading data from db into memory"
+    downloads_refset = Package.get_downloads_by_host()
+    uses_refset = Package.get_uses_by_host()
+    stars_refset = Package.get_stars_by_host()
+    num_citations_refset = Package.get_num_citations_by_host()
+    print "done loading data into memory"
 
 
 q = db.session.query(Package.id)
@@ -934,6 +937,13 @@ update_registry.register(Update(
     queue_id=8
 ))
 
+
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.set_all_percentiles,
+    query=q,
+    queue_id=8
+))
 
 # q = db.session.query(Package.id)
 # q = q.filter(Package.use != None)
