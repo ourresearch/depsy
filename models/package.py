@@ -26,6 +26,7 @@ from jobs import update_registry
 from jobs import Update
 from util import elapsed
 from util import dict_from_dir
+from util import truncate
 from python import parse_requirements_txt
 
 
@@ -106,6 +107,27 @@ class Package(db.Model):
     def as_snippet(self):
         raise NotImplementedError
 
+    @property
+    def _as_package_snippet(self):
+        try:
+            summary = prep_summary(self.api_raw["info"]["summary"])
+        except (TypeError, KeyError):
+            summary = "A nifty project"
+
+        try:
+            num_citations = len(self.pmc_mentions)
+        except TypeError:
+            num_citations = 0
+
+        ret = {
+            "name": self.project_name,
+            "language": None,
+            "use": self.use,
+            "use_percentile": self.use_percentile,
+            "summary": summary,
+            "citations_count": num_citations
+        }
+        return ret
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -497,18 +519,8 @@ class PypiPackage(Package):
 
     @property
     def as_snippet(self):
-        try:
-            summary = self.api_raw["info"]["summary"]
-        except (TypeError, KeyError):
-            summary = "A nifty project"
-
-        ret = {
-            "name": self.project_name,
-            "host": "pypi",
-            "sort_score": self.sort_score,
-            "summary": summary,
-            "citations": len(self.pmc_mentions)
-        }
+        ret = self._as_package_snippet
+        ret["language"] = "python"
         return ret
 
 
@@ -598,6 +610,25 @@ class CranPackage(Package):
                 download_sum += download_dict["downloads"]
 
         self.downloads["last_month"] = download_sum
+
+    @property
+    def as_snippet(self):
+        ret = self._as_package_snippet
+        ret["host"] = "r"
+        return ret
+
+
+
+
+
+def prep_summary(str):
+    placeholder = "A nifty project."
+    if not str:
+        return placeholder
+    elif str == "UNKNOWN":
+        return placeholder
+    else:
+        return truncate(str)
 
 
 

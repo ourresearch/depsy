@@ -14,6 +14,13 @@ body {
       width: 1200px;
       margin: 0 auto;
    }
+   a {
+      color: orangered;
+      &:hover{
+         color: orangered;
+      }
+
+   }
 }
 
 
@@ -163,7 +170,71 @@ div.person-page {
 }
 
 
+span.package-snippet {
+   margin: 4px 0;
+   padding: 4px 0;
+   color: #333;
+   text-decoration: none;
+   display: inline-block;
 
+//   border: 1px solid #eee;
+   span.left-metrics {
+      .metric {
+         cursor: default;
+         &.use {
+            font-size: 24px;
+
+         }
+         &.citation {
+            background: dodgerblue;
+            padding: 1px 4px;
+            display: inline-block;
+            margin: 0 3px;
+            .rounded(3px);
+            font-size: 12px;
+            font-weight: 100;
+            color: #fff;
+            vertical-align: 4px;
+            span.fa {
+               margin-right: 2px;
+               font-size: 100%
+            }
+         }
+      }
+
+      display: inline-block;
+      width: 200px;
+      text-align: right;
+      font-weight: bold;
+      span.absolute {
+         font-size: 14px;
+      }
+      span.percentile {
+         width: 50px;
+         font-size: 18px;
+      }
+   }
+
+   span.metadata {
+      display: inline-block;
+      span.name-container {
+         padding: 0 10px 0 5px;
+         display:inline-block;
+         min-width: 150px;
+         a.name {
+            font-size: 18px;
+            color: #333;
+            &:hover {
+               color: #333;
+            }
+         }
+
+      }
+      span.summary {
+         font-size: 12px;
+      }
+   }
+}
 
 
 

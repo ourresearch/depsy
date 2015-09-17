@@ -1,5 +1,5 @@
 from sqlalchemy import sql
-
+from package import prep_summary
 
 from app import db
 
@@ -58,19 +58,6 @@ def autocomplete(search_str):
 
    
 
-
-def truncate(str, max=100):
-    if len(str) > max:
-        return str[0:max] + u"..."
-    else:
-        return str
-
-def prep_summary(str):
-    if not str:
-        return "an awesome project"
-    else:
-
-        return truncate(str)
 
 
 
