@@ -69,6 +69,9 @@ class Package(db.Model):
 
     sort_score = db.Column(db.Float)
 
+    num_commiters = db.Column(db.Integer)
+    num_commits = db.Column(db.Integer)
+    num_authors = db.Column(db.Integer)
 
 
     contributions = db.relationship(
