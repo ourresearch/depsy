@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html', 'services/global-modal.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -205,9 +205,9 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "<span class=\"package-snippet\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\">\n" +
-    "      <span popover-title=\"Citations\"\n" +
-    "            popover-trigger=\"hover\"\n" +
-    "            popover=\"Package mentions in academic papers indexed by PubMed Central\"\n" +
+    "      <span popover-title=\"Citations: {{ package.citations_count }}\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover-html=\"'<em>Citations</em> counts mentions of this software in academic papers indexed by PubMed Central'\"\n" +
     "            ng-show=\"package.citations_count\"\n" +
     "            class=\"citation metric\">\n" +
     "         <span class=\"fa fa-file-o\"></span>\n" +
@@ -217,11 +217,12 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "         </span>\n" +
     "      </span>\n" +
     "\n" +
-    "      <span class=\"use metric scale-{{ floor(package.use_percentile / 10) }}\"\n" +
-    "            popover-title=\"Use\"\n" +
-    "            popover-trigger=\"hover\"\n" +
-    "            popover=\"reverse dependencies, weighted by GitHub stars\">\n" +
-    "         {{ floor(package.use) }}\n" +
+    "      <span class=\"use metric\"\n" +
+    "            popover-placement=\"top\"\n" +
+    "            popover-title=\"Use: {{ floor(package.use) }}\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover-html=\"'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{  }} packages.'\">\n" +
+    "         {{ nFormatter(package.use) }}\n" +
     "      </span>\n" +
     "\n" +
     "\n" +
@@ -269,24 +270,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "   </div>\n" +
     "\n" +
-    "</div>\n" +
-    "");
-}]);
-
-angular.module("services/global-modal.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("services/global-modal.tpl.html",
-    "<div class=\"global-modal\">\n" +
-    "   <div class=\"modal-body\">\n" +
-    "      <h2 class=\"msg\">\n" +
-    "         <i class=\"fa fa-circle-o-notch fa-spin\"></i>\n" +
-    "         <span>\n" +
-    "            {{ GlobalModal.getMsg() }}\n" +
-    "         </span>\n" +
-    "      </h2>\n" +
-    "      <div class=\"sub-msg\">\n" +
-    "         {{ GlobalModal.getSubMsg() }}\n" +
-    "      </div>\n" +
-    "   </div>\n" +
     "</div>\n" +
     "");
 }]);

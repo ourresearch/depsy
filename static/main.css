@@ -157,39 +157,6 @@ span.package-snippet span.left-metrics .metric {
 span.package-snippet span.left-metrics .metric.use {
   font-size: 24px;
 }
-span.package-snippet span.left-metrics .metric.use.scale-0 {
-  color: #5b655b;
-}
-span.package-snippet span.left-metrics .metric.use.scale-1 {
-  color: #546c54;
-}
-span.package-snippet span.left-metrics .metric.use.scale-2 {
-  color: #4b754b;
-}
-span.package-snippet span.left-metrics .metric.use.scale-3 {
-  color: #417f41;
-}
-span.package-snippet span.left-metrics .metric.use.scale-4 {
-  color: #358b35;
-}
-span.package-snippet span.left-metrics .metric.use.scale-5 {
-  color: #2a962a;
-}
-span.package-snippet span.left-metrics .metric.use.scale-6 {
-  color: #1ea21e;
-}
-span.package-snippet span.left-metrics .metric.use.scale-7 {
-  color: #14ac14;
-}
-span.package-snippet span.left-metrics .metric.use.scale-8 {
-  color: #0cb40c;
-}
-span.package-snippet span.left-metrics .metric.use.scale-9 {
-  color: #04bc04;
-}
-span.package-snippet span.left-metrics .metric.use.scale-10 {
-  color: #00ca00;
-}
 span.package-snippet span.left-metrics .metric.citation {
   background: dodgerblue;
   padding: 1px 4px;

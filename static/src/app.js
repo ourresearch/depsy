@@ -4,6 +4,7 @@ angular.module('app', [
   'ngResource',
   'ui.bootstrap',
   'ngProgress',
+  'ngSanitize',
 
   'templates.app',  // this is how it accesses the cached templates in ti.js
 
@@ -14,8 +15,7 @@ angular.module('app', [
   'packageSnippet',
 
   'resourcesModule',
-  'pageService',
-  'globalModal'
+  'pageService'
 
 ]);
 
@@ -82,12 +82,24 @@ angular.module('app').controller('AppCtrl', function(
   $scope,
   $location,
   $sce,
-  PageService,
-  GlobalModal){
+  PageService){
 
 
 
   $scope.page = PageService
+
+  $scope.nFormatter = function(num){
+      // from http://stackoverflow.com/a/14994860/226013
+      if (num >= 1000000) {
+          return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+      }
+      if (num >= 1000) {
+          return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+      }
+      return Math.floor(num);
+  }
+
+
 
   $scope.trustHtml = function(str){
     console.log("trusting html:", str)

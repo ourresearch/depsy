@@ -430,13 +430,13 @@ person = """
             "role": "github_contributor"
         },
         {
-            "fractional_sort_score": 136.66523999999998,
+            "fractional_sort_score": 1136.66523999999998,
             "package": {
                 "citations_count": 0,
                 "language": "python",
                 "name": "Quokka-Themes",
                 "summary": "Provides infrastructure for theming Quokka applications",
-                "use": 111.8,
+                "use": 1111.8,
                 "use_percentile": 96.0
             },
             "percent": 22.892,
