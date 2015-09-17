@@ -34,10 +34,6 @@ from python import parse_requirements_txt
 
 
 
-
-
-
-
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
@@ -234,8 +230,14 @@ class Package(db.Model):
         raise NotImplementedError
 
     def set_sort_score(self):
-        # override in subclass
-        raise NotImplementedError
+        scores = [
+            self.downloads_percentile,
+            self.stars_percentile, 
+            self.num_citations_percentile, 
+            self.use_percentile]
+        non_null_scores = [s for s in scores if s!=None]
+        self.sort_score = numpy.mean(non_null_scores)
+        print "sort score for {} is {}".format(self.id, self.sort_score)
 
     def set_pmc_mentions(self):
 
@@ -274,9 +276,10 @@ class Package(db.Model):
     @classmethod
     def _group_by_host(cls, rows):
         ret = {
-            "pypi": sorted([row[1] for row in rows if row[0]=="pypi"]),
-            "cran": sorted([row[1] for row in rows if row[0]=="cran"])
+            "pypi": sorted([row[1] for row in rows if row[0]=="pypi" and row[1]!=None]),
+            "cran": sorted([row[1] for row in rows if row[0]=="cran" and row[1]!=None])
         }
+
         return ret
 
     @classmethod
@@ -305,8 +308,16 @@ class Package(db.Model):
         return cls._group_by_host(rows)
 
     def _calc_percentile(self, refset, var):
-        percentile = stats.percentileofscore(refset[self.host], self.stars, kind='weak')
-        return percentile
+        if var==None:  # distinguish between that and zero
+            return None
+
+        percentiles = range(1, 100)
+        percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
+        percentile_lookup = zip(percentile_cutoffs, percentiles)
+        for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
+            if cutoff > var:
+                return percentile
+        return 99
 
     def set_downloads_percentile(self):
         global downloads_refset
@@ -325,6 +336,11 @@ class Package(db.Model):
         self.num_citations_percentile = self._calc_percentile(num_citations_refset, self.num_citations)
 
     def set_all_percentiles(self):
+        self.set_downloads_percentile()
+        self.set_use_percentile()
+        self.set_star_percentile()
+        self.set_num_citations_percentile()
+        self.set_sort_score()
 
 
 class PypiPackage(Package):
@@ -556,14 +572,6 @@ class PypiPackage(Package):
 
         return self.tags
 
-    def set_sort_score(self):
-        # this is super temp, to help jason on UI dev
-        try:
-            self.sort_score = self.api_raw["info"]["downloads"]["last_month"]
-        except (TypeError, KeyError):
-            self.sort_score = 0
-
-        return self.sort_score
 
     @property
     def as_snippet(self):
@@ -586,15 +594,6 @@ class CranPackage(Package):
         all_authors = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
-
-    def set_sort_score(self):
-        # this is super temp, to help jason on UI dev
-        try:
-            self.sort_score = self.downloads["total_downloads"]
-        except KeyError:
-            self.sort_score = 0
-
-        return self.sort_score
 
         #if not author:
         #    return False
