@@ -317,7 +317,6 @@ class Package(db.Model):
         percentiles = range(0, 100)
         percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
         percentile_lookup = zip(percentile_cutoffs, percentiles)
-        print percentile_lookup
         for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
             if cutoff >= value:
                 return percentile
