@@ -1,4 +1,4 @@
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'landing-page/landing.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html']);
+angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top-packages.tpl.html']);
 
 angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("article-page/article-page.tpl.html",
@@ -118,10 +118,22 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "   </div>\n" +
     "\n" +
     "\n" +
-    "   <div class=\"controls\">\n" +
-    "      <span class=\"menu-button\">\n" +
-    "         <i class=\"fa fa-bars\"></i>\n" +
+    "   <div class=\"ti-menu\">\n" +
+    "      <span dropdown>\n" +
+    "\n" +
+    "         <a class=\"menu-link\" id=\"leaders-menu-link\" dropdown-toggle>\n" +
+    "            leaderboard\n" +
+    "         </a>\n" +
+    "         <ul class=\"dropdown-menu\" role=\"menu\" aria-labelledby=\"leaders-menu-link\">\n" +
+    "           <li role=\"menuitem\"><a href=\"packages/top\">Packages</a></li>\n" +
+    "           <li role=\"menuitem\"><a href=\"people/top\">People</a></li>\n" +
+    "           <li role=\"menuitem\"><a href=\"packages/top\">Tags</a></li>\n" +
+    "         </ul>\n" +
+    "\n" +
     "      </span>\n" +
+    "      <a class=\"menu-link\">\n" +
+    "         about\n" +
+    "      </a>\n" +
     "   </div>\n" +
     "</div>\n" +
     "\n" +
@@ -174,7 +186,7 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "</a>\n" +
-    "<span ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
+    "<a ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
     "   <span class=\"name\">\n" +
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
@@ -182,22 +194,6 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "      {{ match.model.sort_score }} packages\n" +
     "   </span>\n" +
     "</a>\n" +
-    "\n" +
-    "\n" +
-    "");
-}]);
-
-angular.module("landing-page/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("landing-page/landing.tpl.html",
-    "<div class=\"landing\">\n" +
-    "   <div class=\"tagline\">\n" +
-    "      Find the impact of software libraries for Python and R.\n" +
-    "   </div>\n" +
-    "\n" +
-    "\n" +
-    "</div>\n" +
-    "\n" +
-    "\n" +
     "\n" +
     "\n" +
     "");
@@ -268,4 +264,56 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "</div>\n" +
     "");
+}]);
+
+angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("static-pages/landing.tpl.html",
+    "<div class=\"landing\">\n" +
+    "   <div class=\"tagline\">\n" +
+    "      Find the impact of software packages for Python and R.\n" +
+    "   </div>\n" +
+    "\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "");
+}]);
+
+angular.module("top/top-packages.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("top/top-packages.tpl.html",
+    "<div class=\"top-packages top-page page sidebar-page\">\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"sidebar\">\n" +
+    "      foo\n" +
+    "   </div>\n" +
+    "\n" +
+    "   <div class=\"main\">\n" +
+    "\n" +
+    "      <div class=\"ti-page-header\">\n" +
+    "         <h1>\n" +
+    "            <i class=\"fa fa-arrow-circle-up\"></i>\n" +
+    "            <span class=\"text\">\n" +
+    "               Top packages\n" +
+    "            </span>\n" +
+    "         </h1>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"content\">\n" +
+    "         <div class=\"list-items\">\n" +
+    "            <div class=\"package\" ng-repeat=\"package in packages\">\n" +
+    "\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "</div>");
 }]);

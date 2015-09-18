@@ -8,14 +8,16 @@ angular.module('app', [
 
   'templates.app',  // this is how it accesses the cached templates in ti.js
 
-  'landingPage',
+  'staticPages',
   'personPage',
   'articlePage',
   'header',
   'packageSnippet',
 
   'resourcesModule',
-  'pageService'
+  'pageService',
+
+  'top'
 
 ]);
 

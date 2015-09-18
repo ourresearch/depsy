@@ -10,21 +10,21 @@ def autocomplete(search_str):
     where host='pypi'
     and project_name ilike '{str}%'
     order by sort_score desc
-    limit 4)
+    limit 3)
     union
     (select project_name, sort_score, api_raw->>'Title' as summary, 'cran_project' as type, 2 as first_sort, id
     from package
     where host='cran'
     and project_name ilike '{str}%'
     order by sort_score desc
-    limit 4)
+    limit 3)
     union
     (select name, sort_score, github_about->>'company' as summary, 'person' as type, 3 as first_sort, id::text as id
     from person
     where name ilike '{str}%'
     or name ilike '% {str}%'
     order by sort_score desc
-    limit 4)
+    limit 3)
     union
     (select name, "count" as sort_score, null as summary, 'tag' as type, 4 as first_sort, id
     from tags
@@ -32,7 +32,7 @@ def autocomplete(search_str):
     or name ilike '% {str}%'
     or name ilike '/{str}%'
     order by sort_score desc
-    limit 4)
+    limit 3)
     order by first_sort, sort_score desc""".format(str=search_str)
 
     res = db.session.connection().execute(sql.text(command))
