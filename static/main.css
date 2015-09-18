@@ -73,6 +73,7 @@ div.ti-header div.search-box ul.dropdown-menu li > a {
   font-size: 16px;
   padding-top: 5px;
   padding-bottom: 5px;
+  display: inline-block;
 }
 div.ti-header div.search-box ul.dropdown-menu li > a:before,
 div.ti-header div.search-box ul.dropdown-menu li > a:after {
@@ -154,32 +155,9 @@ span.package-snippet span.left-metrics {
 span.package-snippet span.left-metrics .metric {
   cursor: default;
 }
-span.package-snippet span.left-metrics .metric.use {
+span.package-snippet span.left-metrics .metric.metric {
   font-size: 24px;
-}
-span.package-snippet span.left-metrics .metric.citation {
-  background: dodgerblue;
-  padding: 1px 4px;
-  display: inline-block;
-  margin: 0 3px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 100;
-  color: #fff;
-  vertical-align: 4px;
-}
-span.package-snippet span.left-metrics .metric.citation span.fa {
-  margin-right: 2px;
-  font-size: 100%;
-}
-span.package-snippet span.left-metrics span.absolute {
-  font-size: 14px;
-}
-span.package-snippet span.left-metrics span.percentile {
-  width: 50px;
-  font-size: 18px;
+  color: #ff0000;
 }
 span.package-snippet span.metadata {
   display: inline-block;
