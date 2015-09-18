@@ -7,6 +7,8 @@
 
 
 @linkColor: #ff3000;
+@sidebar-width: 300px;
+
 
 body {
    font-family: lato, helvetica, arial, sans-serif;
@@ -67,6 +69,9 @@ div.ti-header {
       font-weight: 900;
       a {
          color: orangered;
+         &:hover {
+            text-decoration: none;
+         }
          img {
             width: 150px;
          }
@@ -133,16 +138,23 @@ div.ti-header {
    }
 
 
-   div.controls {
+   div.ti-menu {
       position: absolute;
-      right: 20px;
-      top: @header-padding-top + 10px;
-      .menu-button {
-         font-size: 30px;
-         color: #555;
+      right: 30px;
+      bottom: 20px;
+      a.menu-link {
+         color: #999;
+         font-weight: 100;
+         font-size: 16px;
+         display:inline-block;
+         padding: 2px 10px;
          cursor: pointer;
-         &.on-dark-bg {
-            color: #fff;
+         i {
+            margin-right: 3px;
+         }
+         &:hover {
+            text-decoration: none;
+            color: #555;
          }
       }
    }
@@ -169,6 +181,36 @@ div.person-page {
       }
    }
 }
+
+
+div.top-page {
+   div.sidebar {
+
+   }
+   div.main {
+
+   }
+}
+
+div.page {
+   &.sidebar-page {
+      .sidebar {
+         width: @sidebar-width;
+         background: #fff;
+         border-right: 1px solid #ddd;
+         position: fixed;
+         top: 69px;
+         left: 0;
+         bottom: 0;
+         padding: 30px;
+      }
+      .main {
+         margin-left: @sidebar-width + 30px;
+      }
+   }
+}
+
+
 
 
 span.package-snippet {

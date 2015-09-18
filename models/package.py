@@ -108,7 +108,6 @@ class Package(db.Model):
             "downloads"
         ])
         if full:
-            ret["api_raw"] = self.api_raw
             ret["contributions"] = [c.to_dict() for c in self.contributions]
 
         return ret
@@ -134,7 +133,7 @@ class Package(db.Model):
             "use": self.use,
             "use_percentile": self.use_percentile,
 
-            "downloads": self.downloads,
+            "downloads": self.downloads["last_month"],
             "downloads_percentile": self.downloads_percentile,
 
             "stars": self.downloads_percentile,
@@ -732,7 +731,12 @@ def prep_summary(str):
 
 
 
+def get_packages(sort, filters):
+    q = db.session.query(Package)
 
+    q = q.limit(2)
+
+    return q.all()
 
 
 

@@ -1,13 +1,12 @@
-angular.module('landingPage', [
-    'ngRoute',
-    'profileService'
+angular.module('staticPages', [
+    'ngRoute'
   ])
 
 
 
   .config(function($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: 'landing-page/landing.tpl.html',
+      templateUrl: 'static-pages/landing.tpl.html',
       controller: 'landingPageCtrl'
     })
   })

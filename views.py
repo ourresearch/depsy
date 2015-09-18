@@ -1,38 +1,23 @@
-from app import app, db
-from sqlalchemy import sql
+from app import app
 
-from models.profile import Profile
-from models.profile import create_profile
-from models.repo import create_repo
-from models.repo import Repo
 from models.search import autocomplete
-
+from util import elapsed
 from models.person import Person
 from models.package import Package
+from models.package import get_packages
 from dummy_data import get_dummy_data
 
 from flask import make_response
 from flask import request
 from flask import abort
 from flask import jsonify
-from flask import g
 from flask import render_template
 
+from time import time
 
 import os
 import json
-from datetime import datetime
-from datetime import timedelta
-import jwt
-from jwt import DecodeError
-from jwt import ExpiredSignature
-from functools import wraps
 
-
-
-
-import requests
-from urlparse import parse_qsl
 
 import logging
 
@@ -101,57 +86,6 @@ def index_view(path="index", page=""):
 
 
 
-###########################################################################
-# from satellizer.
-# move to another file later
-###########################################################################
-
-def create_token(profile):
-    return create_token_from_username(profile.username)
-
-def create_token_from_username(username):  # j added this one.
-    payload = {
-        'sub': username,
-        'iat': datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(days=14)
-    }
-    key = app.config['SECRET_KEY']
-    logger.info('creating a token using this username: ' + username)
-    token = jwt.encode(payload, key)
-    return token.decode('unicode_escape')
-
-
-def parse_token(req):
-    token = req.headers.get('Authorization').split()[1]
-    return jwt.decode(token, app.config['SECRET_KEY'])
-
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not request.headers.get('Authorization'):
-            response = jsonify(message='Missing authorization header')
-            response.status_code = 401
-            return response
-
-        try:
-            payload = parse_token(request)
-        except DecodeError:
-            response = jsonify(message='Token is invalid')
-            response.status_code = 401
-            return response
-        except ExpiredSignature:
-            response = jsonify(message='Token has expired')
-            response.status_code = 401
-            return response
-
-        g.current_user_username = payload['sub']
-
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-
 
 
 
@@ -193,6 +127,28 @@ def package(host, project_name):
 
     resp_dict = my_package.to_dict()
     return json_resp_from_thing(resp_dict)
+
+
+
+@app.route("/api/packages")
+@app.route("/api/packages.json")
+def packages_endpoint():
+
+    sort = request.args.get("sort", "sort_score")
+    filter_strings = request.args.get("filters", "").split(",")
+    filters = dict([s.split(":") for s in filter_strings if s])
+
+    start = time()
+    packages = get_packages(sort, filters)
+    elapsed_time = elapsed(start)
+
+    return json_resp_from_thing({
+        "packages": [p.as_snippet for p in packages],
+        "elapsed": elapsed_time
+    })
+
+
+
 
 
 
