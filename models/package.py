@@ -45,6 +45,7 @@ class Package(db.Model):
     github_contributors = db.deferred(db.Column(JSONB))
 
     api_raw = deferred(db.Column(JSONB))
+    downloads = db.Column(MutableDict.as_mutable(JSONB))        
     tags = db.Column(JSONB)
     proxy_papers = db.Column(db.Text)
 
@@ -60,7 +61,7 @@ class Package(db.Model):
 
     use = db.Column(db.Float)
     use_percentile = db.Column(db.Float)
-    downloads = db.Column(MutableDict.as_mutable(JSONB))    
+    downloads_count = db.Column(db.Integer)
     downloads_percentile = db.Column(db.Float)
     num_citations = db.Column(db.Integer)
     num_citations_percentile = db.Column(db.Float)
@@ -287,9 +288,8 @@ class Package(db.Model):
 
     @classmethod
     def get_downloads_by_host(cls):
-        command = "select host, (downloads->>'last_month')::int from package"
-        res = db.session.connection().execute(sql.text(command))
-        rows = res.fetchall()
+        q = db.session.query(cls.host, cls.downloads_count)
+        rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
@@ -324,7 +324,7 @@ class Package(db.Model):
 
     def set_downloads_percentile(self):
         global downloads_refset
-        self.downloads_percentile = self._calc_percentile(downloads_refset, self.downloads["last_month"])
+        self.downloads_percentile = self._calc_percentile(downloads_refset, self.downloads_count)
 
     def set_use_percentile(self):
         global uses_refset
@@ -593,10 +593,44 @@ class CranPackage(Package):
         return u'<CranPackage {name}>'.format(
             name=self.id)
 
+    def _return_clean_author_string(self, all_authors):
+        halt_patterns = ["punt", "adapted", "comply"]
+        for pattern in halt_patterns:
+            if pattern in all_authors:
+                return None
+
+        remove_patterns = [
+            "\(.*\)", 
+            "\[.*\]",
+            "with.*$",
+            "assistance.*$",
+            "contributions.*$",
+            "under.*$",
+            "and others.*$",
+            "and many others.*$",
+            "and authors.*$",
+            "assisted.*$",
+            "\..*$",
+        ]
+        for pattern in all_patterns:
+            all_authors = re.sub(pattern, "", all_authors)
+        all_authors = all_authors.replace("<U+000a>", " ")
+        all_authors = all_authors.replace("\n", " ")
+        all_authors = all_authors.replace("&", ",")
+        all_authors = all_authors.replace("and", ",")
+        return all_authors
+
     def save_host_contributors(self):
         all_authors = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
+        clean_author_string = self._return_clean_author_string(all_authors)
+        author_parts = clean_author_string.split(",")
+        for part in author_parts:
+            match = re.findall("(.*)(\<.*\>)?", part)
+            # if match and len(match)
+            #     name = match[0]
+            #     email = match[1]
 
         #if not author:
         #    return False
@@ -607,6 +641,9 @@ class CranPackage(Package):
         #    person = get_or_make_person(name=author)
         #
         #self._save_contribution(person, "author")
+
+
+
 
 
 
@@ -931,7 +968,7 @@ if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.downloads.has_key("last_month"))
+q = q.filter(Package.downloads_count != None)
 q = q.filter(Package.downloads_percentile == None)
 update_registry.register(Update(
     job=Package.set_downloads_percentile,
