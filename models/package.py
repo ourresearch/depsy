@@ -45,7 +45,8 @@ class Package(db.Model):
     github_contributors = db.deferred(db.Column(JSONB))
 
     api_raw = deferred(db.Column(JSONB))
-    downloads = db.Column(MutableDict.as_mutable(JSONB))        
+    downloads = db.Column(MutableDict.as_mutable(JSONB)) 
+    all_r_reverse_deps = deferred(db.Column(JSONB))       
     tags = db.Column(JSONB)
     proxy_papers = db.Column(db.Text)
 
@@ -713,6 +714,11 @@ class CranPackage(Package):
         return ret
 
 
+    def set_host_reverse_deps(self):
+        self.host_reverse_deps = []
+        for dep_kind in ["reverse_depends", "reverse_imports"]:
+            if dep_kind in self.all_r_reverse_deps:
+                self.host_reverse_deps += self.all_r_reverse_deps[dep_kind]
 
 
 
@@ -996,6 +1002,15 @@ update_registry.register(Update(
     query=q,
     queue_id=8
 ))
+
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_host_reverse_deps,
+    query=q,
+    queue_id=8
+))
+
 
 # q = db.session.query(Package.id)
 # q = q.filter(Package.use != None)

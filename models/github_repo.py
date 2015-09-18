@@ -47,6 +47,10 @@ class GithubRepo(db.Model):
     setup_py = db.Column(db.Text)
     setup_py_hash = db.Column(db.Text)
 
+    dep_lines = deferred(db.Column(db.Text))
+    lib_matches_raw = deferred(db.Column(JSONB))
+    lib_matches_final = deferred(db.Column(JSONB))
+
     # old, and removed from current database.  only in backups of database.
     # requirements = db.Column(JSONB)
     # reqs_file = deferred(db.Column(db.Text))
@@ -54,7 +58,6 @@ class GithubRepo(db.Model):
     # zip_filenames = deferred(db.Column(JSONB))
     # zip_filenames_tried = db.Column(db.Boolean)
     # pypi_in_formal_only = db.Column(JSONB)
-    # dependency_lines = deferred(db.Column(db.Text))
     # zip_download_elapsed = db.Column(db.Float)
     # zip_download_size = db.Column(db.Integer)
     # zip_download_error = db.Column(db.Text)
@@ -379,48 +382,54 @@ class GithubRepo(db.Model):
         """
         start_time = time()
         self.cran_dependencies = []
-        if not self.dependency_lines:
+        if not self.dep_lines:
             return []
 
-        lines = self.dependency_lines.split("\n")
-        print lines
+        lines = self.dep_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
-        library_or_require_re = re.compile("[library|require]\((.*?)(?:,.*)*", re.IGNORECASE)
+        library_or_require_re = re.compile(ur'(?:library|require)\((.*?)[\)|,|\s]', re.IGNORECASE)
 
 
         for line in import_lines:
-            # print u"\nchecking this line: {}".format(line)
-            clean_line = line.strip()
-            clean_line = clean_line.replace("'", "")
-            clean_line = clean_line.replace('"', "")
-            clean_line = clean_line.replace(' ', "")
-            clean_line = clean_line.replace('library.dynam', "library")
-            if clean_line.startswith("#"):
-                print "skipping, is a comment"
-                pass # is a comment
-            else:
-                modules = library_or_require_re.findall(clean_line)
-                for module in modules:
-                    modules_imported.add(module)
-                if modules:
-                    # print "found modules", modules
-                    pass
+            for clause in line.split(";"):
+                # print u"\nchecking this line: {}".format(clause)
+                clean_line = clause.strip()
+                clean_line = clean_line.replace("'", "")
+                clean_line = clean_line.replace('"', "")
+                clean_line = clean_line.replace(' ', "")
+                clean_line = clean_line.replace('library.dynam', "library")
+                clean_line = clean_line.replace('install.packages', "library")
+                clean_line = clean_line.replace('require.package', "require")
+                if clean_line.startswith("#"):
+                    # print "skipping, is a comment"
+                    pass # is a comment
                 else:
-                    print "NO MODULES found in ", clean_line 
+                    modules = library_or_require_re.findall(clean_line)
+                    for module in modules:
+                        modules_imported.add(module)
+                    if modules:
+                        # print "found modules", modules
+                        pass
+                    else:
+                        print "NO MODULES found in ", clean_line 
         print "all modules found:", modules_imported
 
+        self.lib_matches_raw = list(modules_imported)
+
+        from models.package import CranPackage
         matching_cran_packages = set(CranPackage.valid_package_names(modules_imported))
-        print "and here are the ones that match cran!", matching_cran_packages
-        print "here are the ones that didn't match", modules_imported - matching_cran_packages
-        self.cran_dependencies = list(matching_cran_packages)
+
+        # print "and here are the ones that match cran!", matching_cran_packages
+        # print "*********here are the ones that didn't match", modules_imported - matching_cran_packages
+        self.lib_matches_final = list(matching_cran_packages)
 
         print "done finding cran deps for {}: {} (took {}sec)".format(
             self.full_name,
-            self.cran_dependencies,
+            self.lib_matches_final,
             elapsed(start_time, 4)
         )
-        return self.cran_dependencies
+        return self.lib_matches_final
 
 
     def set_setup_py_no_forks(self):
@@ -943,6 +952,15 @@ update_registry.register(Update(
     queue_id=4
 ))
 
+
+q = db.session.query(GithubRepo.id)
+q = q.filter(GithubRepo.language == 'r')
+q = q.filter(GithubRepo.dep_lines != None)
+update_registry.register(Update(
+    job=GithubRepo.set_cran_dependencies,
+    query=q,
+    queue_id=6
+))
 
 
 
