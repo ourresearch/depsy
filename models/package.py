@@ -60,14 +60,14 @@ class Package(db.Model):
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.Column(db.Text)
 
-    use = db.Column(db.Float)
-    use_percentile = db.Column(db.Float)
-    downloads_count = db.Column(db.Integer)
-    downloads_percentile = db.Column(db.Float)
+    depended_on = db.Column(db.Float)
+    num_depended_on = db.Column(db.Float)
+    num_downloads = db.Column(db.Integer)
+    num_downloads_percentile = db.Column(db.Float)
     num_citations = db.Column(db.Integer)
     num_citations_percentile = db.Column(db.Float)
-    stars = db.Column(db.Integer)
-    stars_percentile = db.Column(db.Float)
+    num_stars = db.Column(db.Integer)
+    num_stars_percentile = db.Column(db.Float)
     summary = db.Column(db.Text)
 
     sort_score = db.Column(db.Float)
@@ -127,10 +127,10 @@ class Package(db.Model):
             #"sort_score": self.sort_score,
             "sort_score": self.downloads_percentile,
 
-            "use": self.use,
-            "use_percentile": self.use_percentile,
+            "num_depended_on": self.num_depended_on,
+            "num_depended_on_percentile": self.num_depended_on_percentile,
 
-            "downloads": self.downloads_count,
+            "downloads": self.num_depended_on_percentile,
             "downloads_percentile": self.downloads_percentile,
 
             "stars": self.downloads_percentile,
@@ -245,9 +245,9 @@ class Package(db.Model):
     def set_sort_score(self):
         scores = [
             self.downloads_percentile,
-            self.stars_percentile, 
-            self.num_citations_percentile, 
-            self.use_percentile]
+            self.stars_percentile,
+            self.num_citations_percentile,
+            self.num_depended_on_percentile]
         non_null_scores = [s for s in scores if s!=None]
         self.sort_score = numpy.mean(non_null_scores)
         print "sort score for {} is {}".format(self.id, self.sort_score)
@@ -259,7 +259,7 @@ class Package(db.Model):
             return None
 
         # don't start with http:// for now because then can get urls that include www
-        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)        
+        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
         new_pmids_set = set(get_pmids_from_query(github_url_query))
 
         self.pmc_mentions = pmc_mentions
@@ -267,12 +267,12 @@ class Package(db.Model):
 
     def set_use(self):
         try:
-            use = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
-            print "use for {} is {}".format(self.project_name, use)
+            num_depended_on = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
+            print "num_depended_on for {} is {}".format(self.project_name, num_depended_on)
         except ValueError:
-            use = 0
-            print "no use found for {}".format(self.project_name)
-        self.use = use        
+            num_depended_on = 0
+            print "no num_depended_on found for {}".format(self.project_name)
+        self.num_depended_on = num_depended_on
 
     def refresh_github_ids(self):
         if not self.github_owner:
@@ -297,13 +297,13 @@ class Package(db.Model):
 
     @classmethod
     def get_downloads_by_host(cls):
-        q = db.session.query(cls.host, cls.downloads_count)
+        q = db.session.query(cls.host, cls.num_depended_on_percentile)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_uses_by_host(cls):
-        q = db.session.query(cls.host, cls.use)
+        q = db.session.query(cls.host, cls.num_depended_on)
         rows = q.all()
         return cls._group_by_host(rows)
 
@@ -333,11 +333,11 @@ class Package(db.Model):
 
     def set_downloads_percentile(self):
         global downloads_refset
-        self.downloads_percentile = self._calc_percentile(downloads_refset, self.downloads_count)
+        self.downloads_percentile = self._calc_percentile(downloads_refset, self.num_depended_on_percentile)
 
     def set_use_percentile(self):
         global uses_refset
-        self.use_percentile = self._calc_percentile(uses_refset, self.use)
+        self.num_depended_on_percentile = self._calc_percentile(uses_refset, self.num_depended_on)
 
     def set_star_percentile(self):
         global stars_refset
@@ -390,9 +390,9 @@ class PypiPackage(Package):
                                     return url_dict["url"]
 
             if "download_url" in self.api_raw["info"] and self.api_raw["info"]["download_url"]:
-                if self.api_raw["info"]["download_url"].startswith("http"):                
+                if self.api_raw["info"]["download_url"].startswith("http"):
                     return self.api_raw["info"]["download_url"]
-                   
+
         return None
 
 
@@ -609,7 +609,7 @@ class CranPackage(Package):
                 return None
 
         remove_patterns = [
-            "\(.*\)", 
+            "\(.*\)",
             "\[.*\]",
             "with.*$",
             "assistance.*$",
@@ -733,7 +733,13 @@ def prep_summary(str):
 
 
 
-def get_packages(sort, filters):
+def get_packages(sort="sort_score", filters=None):
+    allowed_sorts = [
+        "sort_score",
+        "citations"
+    ]
+
+
     q = db.session.query(Package)
 
     q = q.limit(25)
@@ -834,7 +840,7 @@ def test_me(limit=10, use_rq="rq"):
 g = None
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.use == None)   
+q = q.filter(PypiPackage.num_depended_on == None)
 
 update_registry.register(Update(
     job=PypiPackage.set_use,
@@ -872,7 +878,7 @@ def run_igraph(limit=2):
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.requires_files != None)   
+q = q.filter(PypiPackage.requires_files != None)
 
 update_registry.register(Update(
     job=PypiPackage.set_host_reverse_deps,
@@ -882,7 +888,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.requires_files == None)   
+q = q.filter(PypiPackage.requires_files == None)
 
 update_registry.register(Update(
     job=PypiPackage.set_requires_files,
@@ -987,7 +993,7 @@ if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.downloads_count != None)
+q = q.filter(Package.num_depended_on_percentile != None)
 q = q.filter(Package.downloads_percentile == None)
 update_registry.register(Update(
     job=Package.set_downloads_percentile,
@@ -1013,8 +1019,8 @@ update_registry.register(Update(
 
 
 # q = db.session.query(Package.id)
-# q = q.filter(Package.use != None)
-# q = q.filter(Package.use_percentile == None)
+# q = q.filter(Package.num_depended_on != None)
+# q = q.filter(Package.num_depended_on_percentile == None)
 # update_registry.register(Update(
 #     job=Package.set_use_percentile,
 #     query=q,
