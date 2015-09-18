@@ -14,9 +14,11 @@ angular.module('header', [
 
     $rootScope.$on('$routeChangeSuccess', function(next, current){
       $scope.searchResultSelected = ''
+      document.getElementById("search-box").blur()
     })
     $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
       $scope.searchResultSelected = ''
+      document.getElementById("search-box").blur()
     });
 
 

@@ -260,9 +260,11 @@ angular.module('header', [
 
     $rootScope.$on('$routeChangeSuccess', function(next, current){
       $scope.searchResultSelected = ''
+      document.getElementById("search-box").blur()
     })
     $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
       $scope.searchResultSelected = ''
+      document.getElementById("search-box").blur()
     });
 
 
@@ -664,6 +666,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "\n" +
     "   <div class=\"search-box\">\n" +
     "    <input type=\"text\"\n" +
+    "           id=\"search-box\"\n" +
     "           ng-model=\"searchResultSelected\"\n" +
     "           placeholder=\"Search packages, authors, and topics\"\n" +
     "           typeahead=\"result as result.name for result in doSearch($viewValue)\"\n" +

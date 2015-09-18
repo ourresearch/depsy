@@ -10,6 +10,7 @@
 
    <div class="search-box">
     <input type="text"
+           id="search-box"
            ng-model="searchResultSelected"
            placeholder="Search packages, authors, and topics"
            typeahead="result as result.name for result in doSearch($viewValue)"
