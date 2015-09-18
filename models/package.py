@@ -67,6 +67,7 @@ class Package(db.Model):
     num_citations_percentile = db.Column(db.Float)
     stars = db.Column(db.Integer)
     stars_percentile = db.Column(db.Float)
+    summary = db.Column(db.Text)
 
     sort_score = db.Column(db.Float)
 
@@ -118,11 +119,6 @@ class Package(db.Model):
 
     @property
     def _as_package_snippet(self):
-        try:
-            summary = prep_summary(self.api_raw["info"]["summary"])
-        except (TypeError, KeyError):
-            summary = "A nifty project"
-
         ret = {
             "name": self.project_name,
             "language": None,
@@ -142,7 +138,7 @@ class Package(db.Model):
             "citations": self.num_citations,
             "citations_percentile": self.num_citations_percentile,
 
-            "summary": summary
+            "summary": prep_summary(self.summary)
         }
         return ret
 
@@ -734,7 +730,7 @@ def prep_summary(str):
 def get_packages(sort, filters):
     q = db.session.query(Package)
 
-    q = q.limit(1)
+    q = q.limit(25)
 
     return q.all()
 
