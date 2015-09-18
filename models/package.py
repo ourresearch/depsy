@@ -12,7 +12,8 @@ import zipfile
 import requests
 import hashlib
 from lxml import html
-#from scipy import stats
+import numpy
+import os
 
 from models import github_api
 from models.person import Person
@@ -33,10 +34,6 @@ from python import parse_requirements_txt
 
 
 
-
-
-
-
 class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
@@ -48,6 +45,7 @@ class Package(db.Model):
     github_contributors = db.deferred(db.Column(JSONB))
 
     api_raw = deferred(db.Column(JSONB))
+    downloads = db.Column(MutableDict.as_mutable(JSONB))        
     tags = db.Column(JSONB)
     proxy_papers = db.Column(db.Text)
 
@@ -63,7 +61,7 @@ class Package(db.Model):
 
     use = db.Column(db.Float)
     use_percentile = db.Column(db.Float)
-    downloads = db.Column(MutableDict.as_mutable(JSONB))    
+    downloads_count = db.Column(db.Integer)
     downloads_percentile = db.Column(db.Float)
     num_citations = db.Column(db.Integer)
     num_citations_percentile = db.Column(db.Float)
@@ -72,6 +70,9 @@ class Package(db.Model):
 
     sort_score = db.Column(db.Float)
 
+    num_committers = db.Column(db.Integer)
+    num_commits = db.Column(db.Integer)
+    num_authors = db.Column(db.Integer)
 
 
     contributions = db.relationship(
@@ -246,8 +247,14 @@ class Package(db.Model):
         raise NotImplementedError
 
     def set_sort_score(self):
-        # override in subclass
-        raise NotImplementedError
+        scores = [
+            self.downloads_percentile,
+            self.stars_percentile, 
+            self.num_citations_percentile, 
+            self.use_percentile]
+        non_null_scores = [s for s in scores if s!=None]
+        self.sort_score = numpy.mean(non_null_scores)
+        print "sort score for {} is {}".format(self.id, self.sort_score)
 
     def set_pmc_mentions(self):
 
@@ -286,16 +293,16 @@ class Package(db.Model):
     @classmethod
     def _group_by_host(cls, rows):
         ret = {
-            "pypi": sorted([row[1] for row in rows if row[0]=="pypi"]),
-            "cran": sorted([row[1] for row in rows if row[0]=="cran"])
+            "pypi": sorted([row[1] for row in rows if row[0]=="pypi" and row[1]!=None]),
+            "cran": sorted([row[1] for row in rows if row[0]=="cran" and row[1]!=None])
         }
+
         return ret
 
     @classmethod
     def get_downloads_by_host(cls):
-        command = "select host, (downloads->>'last_month')::int from package"
-        res = db.session.connection().execute(sql.text(command))
-        rows = res.fetchall()
+        q = db.session.query(cls.host, cls.downloads_count)
+        rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
@@ -316,13 +323,21 @@ class Package(db.Model):
         rows = q.all()
         return cls._group_by_host(rows)
 
-    def _calc_percentile(self, refset, var):
-        percentile = stats.percentileofscore(refset[self.host], self.stars, kind='weak')
-        return percentile
+    def _calc_percentile(self, refset, value):
+        if value == None:  # distinguish between that and zero
+            return None
+
+        percentiles = range(0, 100)
+        percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
+        percentile_lookup = zip(percentile_cutoffs, percentiles)
+        for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
+            if cutoff >= value:
+                return percentile
+        return 99
 
     def set_downloads_percentile(self):
         global downloads_refset
-        self.downloads_percentile = self._calc_percentile(downloads_refset, self.downloads["last_month"])
+        self.downloads_percentile = self._calc_percentile(downloads_refset, self.downloads_count)
 
     def set_use_percentile(self):
         global uses_refset
@@ -336,6 +351,12 @@ class Package(db.Model):
         global num_citations_refset
         self.num_citations_percentile = self._calc_percentile(num_citations_refset, self.num_citations)
 
+    def set_all_percentiles(self):
+        self.set_downloads_percentile()
+        self.set_use_percentile()
+        self.set_star_percentile()
+        self.set_num_citations_percentile()
+        self.set_sort_score()
 
 
 class PypiPackage(Package):
@@ -567,14 +588,6 @@ class PypiPackage(Package):
 
         return self.tags
 
-    def set_sort_score(self):
-        # this is super temp, to help jason on UI dev
-        try:
-            self.sort_score = self.api_raw["info"]["downloads"]["last_month"]
-        except (TypeError, KeyError):
-            self.sort_score = 0
-
-        return self.sort_score
 
     @property
     def as_snippet(self):
@@ -593,19 +606,44 @@ class CranPackage(Package):
         return u'<CranPackage {name}>'.format(
             name=self.id)
 
+    def _return_clean_author_string(self, all_authors):
+        halt_patterns = ["punt", "adapted", "comply"]
+        for pattern in halt_patterns:
+            if pattern in all_authors:
+                return None
+
+        remove_patterns = [
+            "\(.*\)", 
+            "\[.*\]",
+            "with.*$",
+            "assistance.*$",
+            "contributions.*$",
+            "under.*$",
+            "and others.*$",
+            "and many others.*$",
+            "and authors.*$",
+            "assisted.*$",
+            "\..*$",
+        ]
+        for pattern in all_patterns:
+            all_authors = re.sub(pattern, "", all_authors)
+        all_authors = all_authors.replace("<U+000a>", " ")
+        all_authors = all_authors.replace("\n", " ")
+        all_authors = all_authors.replace("&", ",")
+        all_authors = all_authors.replace("and", ",")
+        return all_authors
+
     def save_host_contributors(self):
         all_authors = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
-
-    def set_sort_score(self):
-        # this is super temp, to help jason on UI dev
-        try:
-            self.sort_score = self.downloads["total_downloads"]
-        except KeyError:
-            self.sort_score = 0
-
-        return self.sort_score
+        clean_author_string = self._return_clean_author_string(all_authors)
+        author_parts = clean_author_string.split(",")
+        for part in author_parts:
+            match = re.findall("(.*)(\<.*\>)?", part)
+            # if match and len(match)
+            #     name = match[0]
+            #     email = match[1]
 
         #if not author:
         #    return False
@@ -616,6 +654,9 @@ class CranPackage(Package):
         #    person = get_or_make_person(name=author)
         #
         #self._save_contribution(person, "author")
+
+
+
 
 
 
@@ -930,16 +971,17 @@ update_registry.register(Update(
 
 ##### get percentiles.  Needs stuff loaded into memory before they run
 
-# print "loading data into memory"
-# downloads_refset = Package.get_downloads_by_host()
-# uses_refset = Package.get_uses_by_host()
-# stars_refset = Package.get_stars_by_host()
-# num_citations_refset = Package.get_num_citations_by_host()
-# print "done loading data into memory"
+if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
+    print "loading data from db into memory"
+    downloads_refset = Package.get_downloads_by_host()
+    uses_refset = Package.get_uses_by_host()
+    stars_refset = Package.get_stars_by_host()
+    num_citations_refset = Package.get_num_citations_by_host()
+    print "done loading data into memory"
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.downloads.has_key("last_month"))
+q = q.filter(Package.downloads_count != None)
 q = q.filter(Package.downloads_percentile == None)
 update_registry.register(Update(
     job=Package.set_downloads_percentile,
@@ -947,6 +989,13 @@ update_registry.register(Update(
     queue_id=8
 ))
 
+
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.set_all_percentiles,
+    query=q,
+    queue_id=8
+))
 
 # q = db.session.query(Package.id)
 # q = q.filter(Package.use != None)
