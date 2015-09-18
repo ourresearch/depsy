@@ -2,6 +2,8 @@ import os
 
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask_debugtoolbar import DebugToolbarExtension
+
 from sqlalchemy import exc
 from sqlalchemy import event
 from sqlalchemy.pool import Pool
@@ -58,6 +60,18 @@ redis_rq_conn = redis.from_url(
 )
 # database stuff
 db = SQLAlchemy(app)
+
+
+# set up Flask-DebugToolbar
+if (os.getenv("FLASK_DEBUG", False) == "True"):
+    logger.info("Setting app.debug=True; Flask-DebugToolbar will display")
+    app.debug = True
+    app.config['DEBUG'] = True
+    app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
+    app.config["SQLALCHEMY_RECORD_QUERIES"] = True
+    toolbar = DebugToolbarExtension(app)
+
+
 
 
 ti_queues = []
