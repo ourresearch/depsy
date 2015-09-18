@@ -1,6 +1,5 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import deferred
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from sqlalchemy import sql
@@ -41,24 +40,24 @@ class Package(db.Model):
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
-    github_api_raw = deferred(db.Column(JSONB))
+    github_api_raw = db.deferred(db.Column(JSONB))
     github_contributors = db.deferred(db.Column(JSONB))
 
-    api_raw = deferred(db.Column(JSONB))
-    downloads = db.Column(MutableDict.as_mutable(JSONB)) 
-    all_r_reverse_deps = deferred(db.Column(JSONB))       
-    tags = db.Column(JSONB)
-    proxy_papers = db.Column(db.Text)
+    api_raw = db.deferred(db.Column(JSONB))
+    downloads = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    all_r_reverse_deps = db.deferred(db.Column(JSONB))       
+    tags = db.deferred(db.Column(JSONB))
+    proxy_papers = db.deferred(db.Column(db.Text))
 
     pmc_mentions = db.Column(JSONB)
-    host_reverse_deps = db.Column(JSONB)
+    host_reverse_deps = db.deferred(db.Column(JSONB))
 
-    github_reverse_deps = db.Column(JSONB)
-    dependencies = db.Column(JSONB)
+    github_reverse_deps = db.deferred(db.Column(JSONB))
+    dependencies = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     setup_py = db.deferred(db.Column(db.Text))
-    setup_py_hash = db.Column(db.Text)
+    setup_py_hash = db.deferred(db.Column(db.Text))
 
     num_depended_on = db.Column(db.Float)
     num_depended_on_percentile = db.Column(db.Float)
@@ -77,12 +76,12 @@ class Package(db.Model):
     num_authors = db.Column(db.Integer)
 
 
-    contributions = db.relationship(
-        'Contribution',
-        lazy='subquery',
-        cascade="all, delete-orphan",
-        backref="package"
-    )
+    # contributions = db.relationship(
+    #     'Contribution',
+    #     lazy='subquery',
+    #     cascade="all, delete-orphan",
+    #     backref="package"
+    # )
 
 
 
@@ -741,10 +740,10 @@ def get_packages(sort="sort_score", filters=None):
 
     q = db.session.query(Package)
 
-    q = q.limit(25)
+    q = q.limit(100)
 
-    return q.all()
-
+    ret = q.all()
+    return ret
 
 
 
