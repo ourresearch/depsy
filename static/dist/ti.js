@@ -251,19 +251,19 @@ angular.module('header', [
 
   .controller("headerCtrl", function($scope,
                                      $location,
+                                     $rootScope,
                                      $http){
 
 
 
+    $scope.searchResultSelected = ''
 
-//    $rootScope.$on('$routeChangeSuccess', function(next, current){
-//      console.log("route change success")
-//      ngProgress.complete()
-//    })
-//    $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
-//      console.log("$routeChangeError")
-//      ngProgress.complete()
-//    });
+    $rootScope.$on('$routeChangeSuccess', function(next, current){
+      $scope.searchResultSelected = ''
+    })
+    $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
+      $scope.searchResultSelected = ''
+    });
 
 
     $scope.onSelect = function(item ){
@@ -664,7 +664,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "\n" +
     "   <div class=\"search-box\">\n" +
     "    <input type=\"text\"\n" +
-    "           ng-model=\"asyncSelected\"\n" +
+    "           ng-model=\"searchResultSelected\"\n" +
     "           placeholder=\"Search packages, authors, and topics\"\n" +
     "           typeahead=\"result as result.name for result in doSearch($viewValue)\"\n" +
     "           typeahead-loading=\"loadingLocations\"\n" +

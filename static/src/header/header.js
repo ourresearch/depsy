@@ -5,19 +5,19 @@ angular.module('header', [
 
   .controller("headerCtrl", function($scope,
                                      $location,
+                                     $rootScope,
                                      $http){
 
 
 
+    $scope.searchResultSelected = ''
 
-//    $rootScope.$on('$routeChangeSuccess', function(next, current){
-//      console.log("route change success")
-//      ngProgress.complete()
-//    })
-//    $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
-//      console.log("$routeChangeError")
-//      ngProgress.complete()
-//    });
+    $rootScope.$on('$routeChangeSuccess', function(next, current){
+      $scope.searchResultSelected = ''
+    })
+    $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
+      $scope.searchResultSelected = ''
+    });
 
 
     $scope.onSelect = function(item ){
