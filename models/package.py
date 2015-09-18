@@ -60,8 +60,8 @@ class Package(db.Model):
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.Column(db.Text)
 
-    depended_on = db.Column(db.Float)
     num_depended_on = db.Column(db.Float)
+    num_depended_on_percentile = db.Column(db.Float)
     num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
     num_citations = db.Column(db.Integer)
@@ -124,20 +124,19 @@ class Package(db.Model):
             "name": self.project_name,
             "language": None,
 
-            #"sort_score": self.sort_score,
-            "sort_score": self.downloads_percentile,
+            "sort_score": self.sort_score,
 
             "num_depended_on": self.num_depended_on,
             "num_depended_on_percentile": self.num_depended_on_percentile,
 
-            "downloads": self.num_depended_on_percentile,
-            "downloads_percentile": self.downloads_percentile,
+            "num_downloads": self.num_downloads,
+            "num_downloads_percentile": self.num_downloads_percentile,
 
-            "stars": self.downloads_percentile,
-            "stars_percentile": self.downloads_percentile,
+            "num_stars": self.num_stars,
+            "num_stars_percentile": self.num_stars_percentile,
 
-            "citations": self.num_citations,
-            "citations_percentile": self.num_citations_percentile,
+            "num_citations": self.num_citations,
+            "num_citations_percentile": self.num_citations_percentile,
 
             "summary": prep_summary(self.summary)
         }
@@ -244,8 +243,8 @@ class Package(db.Model):
 
     def set_sort_score(self):
         scores = [
-            self.downloads_percentile,
-            self.stars_percentile,
+            self.num_downloads_percentile,
+            self.num_stars_percentile,
             self.num_citations_percentile,
             self.num_depended_on_percentile]
         non_null_scores = [s for s in scores if s!=None]
@@ -297,7 +296,7 @@ class Package(db.Model):
 
     @classmethod
     def get_downloads_by_host(cls):
-        q = db.session.query(cls.host, cls.num_depended_on_percentile)
+        q = db.session.query(cls.host, cls.num_downloads)
         rows = q.all()
         return cls._group_by_host(rows)
 
@@ -309,7 +308,7 @@ class Package(db.Model):
 
     @classmethod
     def get_stars_by_host(cls):
-        q = db.session.query(cls.host, cls.stars)
+        q = db.session.query(cls.host, cls.num_stars)
         rows = q.all()
         return cls._group_by_host(rows)
 
@@ -331,26 +330,26 @@ class Package(db.Model):
                 return percentile
         return 99
 
-    def set_downloads_percentile(self):
-        global downloads_refset
-        self.downloads_percentile = self._calc_percentile(downloads_refset, self.num_depended_on_percentile)
+    def set_num_downloads_percentile(self):
+        global num_downloads_refset
+        self.num_downloads_percentile = self._calc_percentile(num_downloads_refset, self.num_downloads)
 
-    def set_use_percentile(self):
-        global uses_refset
-        self.num_depended_on_percentile = self._calc_percentile(uses_refset, self.num_depended_on)
+    def set_num_depended_on_percentile(self):
+        global num_depended_on_refset
+        self.num_depended_on_percentile = self._calc_percentile(num_depended_on_refset, self.num_depended_on)
 
-    def set_star_percentile(self):
-        global stars_refset
-        self.stars_percentile = self._calc_percentile(stars_refset, self.stars)
+    def set_num_star_percentile(self):
+        global num_stars_refset
+        self.num_stars_percentile = self._calc_percentile(num_stars_refset, self.num_stars)
 
     def set_num_citations_percentile(self):
         global num_citations_refset
         self.num_citations_percentile = self._calc_percentile(num_citations_refset, self.num_citations)
 
     def set_all_percentiles(self):
-        self.set_downloads_percentile()
-        self.set_use_percentile()
-        self.set_star_percentile()
+        self.set_num_downloads_percentile()
+        self.set_num_depended_on_percentile()
+        self.set_num_star_percentile()
         self.set_num_citations_percentile()
         self.set_sort_score()
 
@@ -691,12 +690,12 @@ class CranPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
-    def set_downloads_since(self):
+    def set_num_downloads_since(self):
 
         ### hacky!  hard code this
         get_downloads_since_date = "2015-07-25"
 
-        if not self.downloads:
+        if not self.num_downloads:
             return None
 
         download_sum = 0
@@ -948,7 +947,7 @@ q = db.session.query(CranPackage.id)
 q = q.filter(~CranPackage.downloads.has_key('last_month'))
 
 update_registry.register(Update(
-    job=CranPackage.set_downloads_since,
+    job=CranPackage.set_num_downloads_since,
     query=q,
     queue_id=7
 ))
@@ -985,18 +984,18 @@ update_registry.register(Update(
 
 if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
     print "loading data from db into memory"
-    downloads_refset = Package.get_downloads_by_host()
-    uses_refset = Package.get_uses_by_host()
-    stars_refset = Package.get_stars_by_host()
+    num_downloads_refset = Package.get_downloads_by_host()
+    num_depended_on_refset = Package.get_uses_by_host()
+    num_stars_refset = Package.get_stars_by_host()
     num_citations_refset = Package.get_num_citations_by_host()
     print "done loading data into memory"
 
 
 q = db.session.query(Package.id)
 q = q.filter(Package.num_depended_on_percentile != None)
-q = q.filter(Package.downloads_percentile == None)
+q = q.filter(Package.num_downloads_percentile == None)
 update_registry.register(Update(
-    job=Package.set_downloads_percentile,
+    job=Package.set_num_downloads_percentile,
     query=q,
     queue_id=8
 ))
@@ -1022,14 +1021,14 @@ update_registry.register(Update(
 # q = q.filter(Package.num_depended_on != None)
 # q = q.filter(Package.num_depended_on_percentile == None)
 # update_registry.register(Update(
-#     job=Package.set_use_percentile,
+#     job=Package.set_num_depended_on_percentile,
 #     query=q,
 #     queue_id=8
 # ))
 
 # q = db.session.query(Package.id)
-# q = q.filter(Package.stars != None)
-# q = q.filter(Package.stars_percentile == None)
+# q = q.filter(Package.num_stars != None)
+# q = q.filter(Package.num_stars_percentile == None)
 # update_registry.register(Update(
 #     job=Package.set_stars_percentile,
 #     query=q,

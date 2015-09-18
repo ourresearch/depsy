@@ -69,6 +69,7 @@ if (os.getenv("FLASK_DEBUG", False) == "True"):
     app.config['DEBUG'] = True
     app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
     app.config["SQLALCHEMY_RECORD_QUERIES"] = True
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     toolbar = DebugToolbarExtension(app)
 
 
