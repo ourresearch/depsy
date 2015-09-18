@@ -310,15 +310,16 @@ class Package(db.Model):
         rows = q.all()
         return cls._group_by_host(rows)
 
-    def _calc_percentile(self, refset, var):
-        if var==None:  # distinguish between that and zero
+    def _calc_percentile(self, refset, value):
+        if value == None:  # distinguish between that and zero
             return None
 
-        percentiles = range(1, 100)
+        percentiles = range(0, 100)
         percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
         percentile_lookup = zip(percentile_cutoffs, percentiles)
+        print percentile_lookup
         for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
-            if cutoff > var:
+            if cutoff >= value:
                 return percentile
         return 99
 

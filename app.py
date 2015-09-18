@@ -72,10 +72,10 @@ from models import github_repo
 from models import profile
 from models import repo
 from models import github_user
-#from models import pypi_project
 from models import cran_project
 from models import person
 from models import contribution
+from models import package
 
 db.create_all()
 db.session.commit()
