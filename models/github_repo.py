@@ -399,6 +399,8 @@ class GithubRepo(db.Model):
                 clean_line = clean_line.replace('"', "")
                 clean_line = clean_line.replace(' ', "")
                 clean_line = clean_line.replace('library.dynam', "library")
+                clean_line = clean_line.replace('install.packages', "library")
+                clean_line = clean_line.replace('require.package', "require")
                 if clean_line.startswith("#"):
                     # print "skipping, is a comment"
                     pass # is a comment
