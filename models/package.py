@@ -133,7 +133,7 @@ class Package(db.Model):
             "use": self.use,
             "use_percentile": self.use_percentile,
 
-            "downloads": self.downloads["last_month"],
+            "downloads": self.downloads_count,
             "downloads_percentile": self.downloads_percentile,
 
             "stars": self.downloads_percentile,
@@ -734,7 +734,7 @@ def prep_summary(str):
 def get_packages(sort, filters):
     q = db.session.query(Package)
 
-    q = q.limit(2)
+    q = q.limit(1)
 
     return q.all()
 

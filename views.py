@@ -140,12 +140,13 @@ def packages_endpoint():
 
     start = time()
     packages = get_packages(sort, filters)
-    elapsed_time = elapsed(start)
 
-    return json_resp_from_thing({
-        "packages": [p.as_snippet for p in packages],
-        "elapsed": elapsed_time
+    ret = json_resp_from_thing({
+        "packages": [p.as_snippet for p in packages]
     })
+    elapsed_time = elapsed(start)
+    ret.headers["x-elapsed"] = elapsed_time
+    return ret
 
 
 
