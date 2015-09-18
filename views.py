@@ -166,8 +166,8 @@ def api_test():
 @app.route("/api/person/<person_id>.json")
 def person_endpoint(person_id):
 
-    #data = get_dummy_data("person")
-    #return json_resp_from_thing(data)
+    data = get_dummy_data("person")
+    return json_resp_from_thing(data)
 
     person = Person.query.get(int(person_id))
 

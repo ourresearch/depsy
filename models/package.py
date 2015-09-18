@@ -127,7 +127,8 @@ class Package(db.Model):
             "name": self.project_name,
             "language": None,
 
-            "sort_score": self.sort_score,
+            #"sort_score": self.sort_score,
+            "sort_score": self.downloads_percentile,
 
             "use": self.use,
             "use_percentile": self.use_percentile,

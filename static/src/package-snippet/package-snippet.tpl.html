@@ -1,12 +1,12 @@
 <span class="package-snippet"
      ng-controller="packageSnippetCtrl">
    <span class="left-metrics">
-      <span class="one-metric"
+      <span class="one-metric metric"
             popover-placement="top"
-            popover-title="Use: {{ floor(package.use) }}"
+            popover-title="Sort score"
             popover-trigger="mouseenter"
-            popover-html="'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{ package.language }} packages.'">
-         {{ nFormatter(package.use) }}
+            popover-html="'this is my sort score!'">
+         {{ floor(package.sort_score) }}
       </span>
    </span>
 

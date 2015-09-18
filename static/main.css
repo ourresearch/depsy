@@ -73,6 +73,7 @@ div.ti-header div.search-box ul.dropdown-menu li > a {
   font-size: 16px;
   padding-top: 5px;
   padding-bottom: 5px;
+  display: inline-block;
 }
 div.ti-header div.search-box ul.dropdown-menu li > a:before,
 div.ti-header div.search-box ul.dropdown-menu li > a:after {

@@ -11,11 +11,13 @@
    <div class="search-box">
     <input type="text"
            ng-model="asyncSelected"
-           placeholder="search packages, authors, and topics"
+           placeholder="Search packages, authors, and topics"
            typeahead="result as result.name for result in doSearch($viewValue)"
            typeahead-loading="loadingLocations"
            typeahead-no-results="noResults"
            typeahead-template-url="header/search-result.tpl.html"
+           typeahead-focus-first="false"
+           typeahead-on-select="onSelect($item)"
            class="form-control input-lg">
    </div>
 

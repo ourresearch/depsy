@@ -12,8 +12,14 @@
    <div class="ti-page-body">
 
       <div class="packages">
-         <div class="person-package" ng-repeat="contrib in person.contributions">
-            <span class="roles">my roles</span>
+         <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'!credit_points'">
+            <span class="roles" ng-repeat="role in package.roles">
+               <span class="role author" ng-if="role.name=='author'">auth</span>
+               <span class="role github-contrib" ng-if="role.name=='github_contributor'">contrib</span>
+               <span class="role owner" ng-if="role.name=='github_owner'">owner</span>
+
+
+            </span>
             <span class="package-snippet-wrapper" ng-include="'package-snippet/package-snippet.tpl.html'"></span>
          </div>
 

@@ -250,11 +250,40 @@ angular.module('header', [
 
 
   .controller("headerCtrl", function($scope,
+                                     $location,
                                      $http){
 
 
 
+
+//    $rootScope.$on('$routeChangeSuccess', function(next, current){
+//      console.log("route change success")
+//      ngProgress.complete()
+//    })
+//    $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
+//      console.log("$routeChangeError")
+//      ngProgress.complete()
+//    });
+
+
+    $scope.onSelect = function(item ){
+      console.log("select!", item)
+      if (item.type=='pypi_project') {
+        $location.path("package/python/" + item.name)
+      }
+      else if (item.type=='cran_project') {
+        $location.path("package/r/" + item.name)
+      }
+      else if (item.type=='person') {
+        $location.path("person/" + item.id)
+      }
+      else if (item.type=='tag') {
+        $location.path("tag/" + item.name)
+      }
+    }
+
     $scope.doSearch = function(val){
+      console.log("doing search")
       return $http.get("/api/search/" + val)
         .then(
           function(resp){
@@ -330,7 +359,8 @@ angular.module('packageSnippet', [
 
 
   .controller("packageSnippetCtrl", function($scope){
-    $scope.package = $scope.contrib.package
+//    $scope.package = $scope.contrib.package
+
     $scope.floor = function(num){
       return Math.floor(num)
     }
@@ -635,11 +665,13 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "   <div class=\"search-box\">\n" +
     "    <input type=\"text\"\n" +
     "           ng-model=\"asyncSelected\"\n" +
-    "           placeholder=\"search packages, authors, and topics\"\n" +
+    "           placeholder=\"Search packages, authors, and topics\"\n" +
     "           typeahead=\"result as result.name for result in doSearch($viewValue)\"\n" +
     "           typeahead-loading=\"loadingLocations\"\n" +
     "           typeahead-no-results=\"noResults\"\n" +
     "           typeahead-template-url=\"header/search-result.tpl.html\"\n" +
+    "           typeahead-focus-first=\"false\"\n" +
+    "           typeahead-on-select=\"onSelect($item)\"\n" +
     "           class=\"form-control input-lg\">\n" +
     "   </div>\n" +
     "\n" +
@@ -700,7 +732,7 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "</a>\n" +
-    "<a ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
+    "<span ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
     "   <span class=\"name\">\n" +
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
@@ -734,12 +766,12 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "<span class=\"package-snippet\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\">\n" +
-    "      <span class=\"one-metric\"\n" +
+    "      <span class=\"one-metric metric\"\n" +
     "            popover-placement=\"top\"\n" +
-    "            popover-title=\"Use: {{ floor(package.use) }}\"\n" +
+    "            popover-title=\"Sort score\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover-html=\"'<em>Use</em> counts reverse dependencies, weighted by GitHub stars. {{ package.use }} is in the {{ package.use_percentile }} percentile compared to other {{ package.language }} packages.'\">\n" +
-    "         {{ nFormatter(package.use) }}\n" +
+    "            popover-html=\"'this is my sort score!'\">\n" +
+    "         {{ floor(package.sort_score) }}\n" +
     "      </span>\n" +
     "   </span>\n" +
     "\n" +
@@ -774,8 +806,14 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
     "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"contrib in person.contributions\">\n" +
-    "            <span class=\"roles\">my roles</span>\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'!credit_points'\">\n" +
+    "            <span class=\"roles\" ng-repeat=\"role in package.roles\">\n" +
+    "               <span class=\"role author\" ng-if=\"role.name=='author'\">auth</span>\n" +
+    "               <span class=\"role github-contrib\" ng-if=\"role.name=='github_contributor'\">contrib</span>\n" +
+    "               <span class=\"role owner\" ng-if=\"role.name=='github_owner'\">owner</span>\n" +
+    "\n" +
+    "\n" +
+    "            </span>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'package-snippet/package-snippet.tpl.html'\"></span>\n" +
     "         </div>\n" +
     "\n" +

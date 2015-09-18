@@ -59,7 +59,7 @@ class Person(db.Model):
         ret = dict_from_dir(self, keys_to_ignore=["contributions", "github_about"])
 
         if full:
-            ret["packages"] = [p.to_dict() for p in self.person_packages]
+            ret["person_packages"] = [p.to_dict() for p in self.person_packages]
         return ret
 
 
