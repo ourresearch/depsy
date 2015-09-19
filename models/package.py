@@ -267,7 +267,7 @@ class Package(db.Model):
 
     def set_depended_on(self):
         try:
-            num_depended_on = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
+            num_depended_on = g.vs.find(self.project_name).strength(mode="OUT")
             print "num_depended_on for {} is {}".format(self.project_name, num_depended_on)
         except ValueError:
             num_depended_on = 0
@@ -862,7 +862,7 @@ def run_igraph(host="cran", limit=2):
     print "loading in igraph"
     g = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
     print "loaded, now getting uses"
-    # g.vs.find("Django").strength(mode="OUT", weights="weight")
+    # g.vs.find("Django").strength(mode="OUT")
 
     method_name = "{}Package.set_depended_on".format(host.title())
     update = update_registry.get(method_name)
@@ -992,10 +992,10 @@ update_registry.register(Update(
 
 if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
     print "loading data from db into memory"
-    num_downloads_refset = Package.get_downloads_by_host()
-    num_depended_on_refset = Package.get_uses_by_host()
-    num_stars_refset = Package.get_stars_by_host()
-    num_citations_refset = Package.get_num_citations_by_host()
+    num_downloads_refset = Package.get_refset(Package.num_downloads)
+    num_depended_on_refset = Package.get_refset(Package.num_downloads)
+    num_stars_refset = Package.get_refset(Package.num_downloads)
+    num_citations_refset = Package.get_refset(Package.num_downloads)
     print "done loading data into memory"
 
 
