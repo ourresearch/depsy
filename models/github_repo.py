@@ -535,13 +535,11 @@ class GithubRepo(db.Model):
 
 
     def set_r_named_deps(self):
-        if language != "r":
-            return
-
-        self.named_deps = []
-        for dep_kind in ["reverse_depends", "reverse_imports"]:
-            if dep_kind in self.lib_matches_final:
-                self.named_deps += self.lib_matches_final[dep_kind]
+        if self.language == "r":
+            self.named_deps = []
+            for dep_kind in ["reverse_depends", "reverse_imports"]:
+                if dep_kind in self.lib_matches_final:
+                    self.named_deps += self.lib_matches_final[dep_kind]
 
 
 
