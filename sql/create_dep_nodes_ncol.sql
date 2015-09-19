@@ -11,7 +11,6 @@ union
 select jsonb_array_elements_text(host_reverse_deps) as package, project_name as used_by
     from package where host_reverse_deps is not NULL 
     and host='cran' 
-    and inactive is null
 ) 
 
 
@@ -28,14 +27,7 @@ union
 select jsonb_array_elements_text(host_reverse_deps) as package, project_name as used_by
     from package where host_reverse_deps is not NULL 
     and host='pypi' 
-    and inactive is null    
 ) 
 
 
 select * from dep_nodes_ncol_pypi limit 1000
-
-{"reverse_depends": [], 
-"reverse_imports": [], 
-"all_reverse_deps": ["htmlTable"], 
-"reverse_enhances": [], 
-"reverse_suggests": ["htmlTable"]}
