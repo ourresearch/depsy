@@ -327,7 +327,7 @@ class Package(db.Model):
         if value == None:  # distinguish between that and zero
             return None
 
-        percentiles = [i/100.0 for i in range(0, 10000)]
+        percentiles = [i/10000.0 for i in range(0, 100*10000)]
         percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
         percentile_lookup = zip(percentile_cutoffs, percentiles)
         for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
