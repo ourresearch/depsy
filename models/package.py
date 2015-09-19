@@ -265,7 +265,7 @@ class Package(db.Model):
         self.pmc_mentions = pmc_mentions
         return self.pmc_mentions
 
-    def set_use(self):
+    def set_depended_on(self):
         try:
             num_depended_on = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
             print "num_depended_on for {} is {}".format(self.project_name, num_depended_on)
@@ -298,28 +298,24 @@ class Package(db.Model):
     @classmethod
     def get_downloads_by_host(cls):
         q = db.session.query(cls.host, cls.num_downloads)
-        q = q.filter(cls.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_uses_by_host(cls):
         q = db.session.query(cls.host, cls.num_depended_on)
-        q = q.filter(cls.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_stars_by_host(cls):
         q = db.session.query(cls.host, cls.num_stars)
-        q = q.filter(cls.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_num_citations_by_host(cls):
         q = db.session.query(cls.host, cls.num_citations)
-        q = q.filter(cls.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
@@ -845,15 +841,21 @@ g = None
 
 q = db.session.query(PypiPackage.id)
 q = q.filter(PypiPackage.num_depended_on == None)
-
 update_registry.register(Update(
-    job=PypiPackage.set_use,
+    job=PypiPackage.set_depended_on,
     query=q,
     queue_id=5
 ))
 
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.num_depended_on == None)
+update_registry.register(Update(
+    job=CranPackage.set_depended_on,
+    query=q,
+    queue_id=5
+))
 
-def run_igraph(limit=2):
+def run_igraph(host="cran", limit=2):
     import igraph
     global g
 
@@ -862,7 +864,8 @@ def run_igraph(limit=2):
     print "loaded, now getting uses"
     # g.vs.find("Django").strength(mode="OUT", weights="weight")
 
-    update = update_registry.get("PypiPackage.set_use")
+    method_name = "{}Package.set_depended_on".format(host.title())
+    update = update_registry.get(method_name)
     update.run(
         no_rq=True,
         obj_id=None,
@@ -1007,7 +1010,6 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.inactive == None)
 update_registry.register(Update(
     job=Package.set_all_percentiles,
     query=q,
