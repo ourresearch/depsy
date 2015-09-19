@@ -67,6 +67,7 @@ class Package(db.Model):
     num_citations_percentile = db.Column(db.Float)
     num_stars = db.Column(db.Integer)
     num_stars_percentile = db.Column(db.Float)
+    pagerank = db.Column(db.Float)
     summary = db.Column(db.Text)
 
     sort_score = db.Column(db.Float)
@@ -276,6 +277,21 @@ class Package(db.Model):
             num_depended_on = 0
             print "no num_depended_on found for {}".format(self.project_name)
         self.num_depended_on = num_depended_on
+
+
+    def set_pagerank(self):
+        global our_graph
+
+        try:
+            this_vertex = our_graph.vs.find(self.project_name)
+            pagerank = our_graph.personalized_pagerank(vertices=this_vertex)
+            print "pagerank for {} is {}".format(self.project_name, pagerank)
+        except ValueError:
+            pagerank = 0
+            print "no pagerank found for {}".format(self.project_name)
+        self.pagerank = pagerank
+
+
 
     def refresh_github_ids(self):
         if not self.github_owner:
@@ -843,17 +859,17 @@ def test_me(limit=10, use_rq="rq"):
 our_graph = None
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.num_depended_on == None)
+q = q.filter(PypiPackage.pagerank == None)
 update_registry.register(Update(
-    job=PypiPackage.set_depended_on,
+    job=PypiPackage.set_pagerank,
     query=q,
     queue_id=5
 ))
 
 q = db.session.query(CranPackage.id)
-q = q.filter(CranPackage.num_depended_on == None)
+q = q.filter(CranPackage.pagerank == None)
 update_registry.register(Update(
-    job=CranPackage.set_depended_on,
+    job=CranPackage.set_pagerank,
     query=q,
     queue_id=5
 ))
@@ -867,7 +883,7 @@ def run_igraph(host="cran", limit=2):
     print "loaded, now getting uses"
     # our_graph.vs.find("Django").strength(mode="OUT")
 
-    method_name = "{}Package.set_depended_on".format(host.title())
+    method_name = "{}Package.set_pagerank".format(host.title())
     update = update_registry.get(method_name)
     update.run(
         no_rq=True,
