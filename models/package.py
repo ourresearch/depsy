@@ -266,8 +266,11 @@ class Package(db.Model):
         return self.pmc_mentions
 
     def set_depended_on(self):
+        global our_graph
+
         try:
-            num_depended_on = g.vs.find(self.project_name).strength(mode="OUT")
+            this_vertex = our_graph.vs.find(self.project_name)
+            num_depended_on = our_graph.neighborhood_size(this_vertex, mode="OUT", order=999999)
             print "num_depended_on for {} is {}".format(self.project_name, num_depended_on)
         except ValueError:
             num_depended_on = 0
@@ -837,7 +840,7 @@ def test_me(limit=10, use_rq="rq"):
 
 
 ######## igraph
-g = None
+our_graph = None
 
 q = db.session.query(PypiPackage.id)
 q = q.filter(PypiPackage.num_depended_on == None)
@@ -857,12 +860,12 @@ update_registry.register(Update(
 
 def run_igraph(host="cran", limit=2):
     import igraph
-    global g
+    global our_graph
 
     print "loading in igraph"
-    g = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
+    our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
     print "loaded, now getting uses"
-    # g.vs.find("Django").strength(mode="OUT")
+    # our_graph.vs.find("Django").strength(mode="OUT")
 
     method_name = "{}Package.set_depended_on".format(host.title())
     update = update_registry.get(method_name)
@@ -992,10 +995,10 @@ update_registry.register(Update(
 
 if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
     print "loading data from db into memory"
-    num_downloads_refset = Package.get_refset(Package.num_downloads)
-    num_depended_on_refset = Package.get_refset(Package.num_downloads)
-    num_stars_refset = Package.get_refset(Package.num_downloads)
-    num_citations_refset = Package.get_refset(Package.num_downloads)
+    # num_downloads_refset = Package.get_downloads_refset(Package.num_downloads)
+    # num_depended_on_refset = Package.get_num_dependerefset(Package.num_downloads)
+    # num_stars_refset = Package.get_refset(Package.num_downloads)
+    # num_citations_refset = Package.get_refset(Package.num_downloads)
     print "done loading data into memory"
 
 
