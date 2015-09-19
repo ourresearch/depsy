@@ -499,7 +499,7 @@ class PypiPackage(Package):
             self.api_raw = {"error": "no_json"}
 
 
-    def set_host_reverse_deps(self):
+    def set_host_deps(self):
         core_requirement_lines = ""
 
         if "METADATA" in self.requires_files:
@@ -531,26 +531,26 @@ class PypiPackage(Package):
                 core_requirement_list += [line]
             core_requirement_lines = "\n".join(core_requirement_list)
 
-        reverse_deps = parse_requirements_txt(core_requirement_lines)
+        deps = parse_requirements_txt(core_requirement_lines)
 
-        print "found requirements={}\n\n".format(reverse_deps)
-        if not reverse_deps:
-            self.host_reverse_deps = []
+        print "found requirements={}\n\n".format(deps)
+        if not deps:
+            self.host_deps = []
             return None
 
         # see if is in pypi, case insensitively, getting normalized case
-        reverse_deps_in_pypi = []
-        for dep in reverse_deps:
+        deps_in_pypi = []
+        for dep in deps:
             if dep.lower() in pypi_package_names:
                 pypi_package_normalized_case = pypi_package_names[dep.lower()]
-                reverse_deps_in_pypi.append(pypi_package_normalized_case)
+                deps_in_pypi.append(pypi_package_normalized_case)
 
-        if len(reverse_deps_in_pypi) != len(reverse_deps):
-            print "some reverse deps not in pypi for {}:{}".format(
-                self.id, set(reverse_deps) - set(reverse_deps_in_pypi))
-            print reverse_deps
-            print reverse_deps_in_pypi
-        self.host_reverse_deps = reverse_deps_in_pypi
+        if len(deps_in_pypi) != len(deps):
+            print "some deps not in pypi for {}:{}".format(
+                self.id, set(deps) - set(deps_in_pypi))
+            print deps
+            print deps_in_pypi
+        self.host_deps = deps_in_pypi
 
 
     def set_tags(self):
@@ -891,7 +891,7 @@ q = db.session.query(PypiPackage.id)
 q = q.filter(PypiPackage.requires_files != None)
 
 update_registry.register(Update(
-    job=PypiPackage.set_host_reverse_deps,
+    job=PypiPackage.set_host_deps,
     query=q,
     queue_id=5
 ))
