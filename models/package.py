@@ -298,24 +298,28 @@ class Package(db.Model):
     @classmethod
     def get_downloads_by_host(cls):
         q = db.session.query(cls.host, cls.num_downloads)
+        q = q.filter(Package.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_uses_by_host(cls):
         q = db.session.query(cls.host, cls.num_depended_on)
+        q = q.filter(Package.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_stars_by_host(cls):
         q = db.session.query(cls.host, cls.num_stars)
+        q = q.filter(Package.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
     @classmethod
     def get_num_citations_by_host(cls):
         q = db.session.query(cls.host, cls.num_citations)
+        q = q.filter(Package.inactive == None)
         rows = q.all()
         return cls._group_by_host(rows)
 
