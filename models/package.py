@@ -75,13 +75,15 @@ class Package(db.Model):
     num_commits = db.Column(db.Integer)
     num_authors = db.Column(db.Integer)
 
+    inactive = db.Column(db.Text)
 
-    # contributions = db.relationship(
-    #     'Contribution',
-    #     lazy='subquery',
-    #     cascade="all, delete-orphan",
-    #     backref="package"
-    # )
+
+    contributions = db.relationship(
+        'Contribution',
+        lazy='immediate',
+        cascade="all, delete-orphan",
+        backref="package"
+    )
 
 
 
@@ -321,13 +323,13 @@ class Package(db.Model):
         if value == None:  # distinguish between that and zero
             return None
 
-        percentiles = range(0, 100)
+        percentiles = [i/100.0 for i in range(0, 10000)]
         percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
         percentile_lookup = zip(percentile_cutoffs, percentiles)
         for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
             if cutoff >= value:
                 return percentile
-        return 99
+        return 99.99
 
     def set_num_downloads_percentile(self):
         global num_downloads_refset
@@ -1001,6 +1003,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
+q = q.filter(Package.inactive == None)
 update_registry.register(Update(
     job=Package.set_all_percentiles,
     query=q,
