@@ -1,0 +1,62 @@
+<div class="top-packages top-page page sidebar-page">
+
+
+   <div class="sidebar">
+
+      <div class="leader-type-select facet">
+         <h3></h3>
+         <ul>
+            <li class="leader-type"><a href="top/packages">Packages</a></li>
+            <li class="leader-type"><a href="top/people">People</a></li>
+            <li class="leader-type"><a href="top/tags">Tags</a></li>
+         </ul>
+
+      </div>
+
+      <div class="sort-select facet">
+         <ul class="sort-select">
+            <li><a>Sort Score</a></li>
+            <li><a>Citations</a></li>
+            <li><a>Community</a></li>
+         </ul>
+
+      </div>
+
+
+      <ul class="filters-select facet">
+
+      </ul>
+
+   </div>
+
+   <div class="main">
+
+      <div class="ti-page-header">
+         <h2>
+            <span class="text">
+               Top <span class="leaders-type">{{ leaders.type }}</span>
+               <span class="sort">
+                  , sorted by <span class="val">{{ leaders.sort }}</span>
+               </span>
+               <span class="filters" ng-show="leaders.filters.length">
+
+               </span>
+            </span>
+         </h2>
+      </div>
+
+
+      <div class="content">
+         <div class="list-items">
+            <div class="leader" ng-repeat="leader in leaders.list">
+               <div class="package-snippet-wrapper"  ng-include="'package-snippet/package-snippet.tpl.html'"></div>
+            </div>
+         </div>
+      </div>
+
+   </div>
+
+
+
+
+</div>

@@ -753,8 +753,9 @@ def get_packages(sort="sort_score", filters=None):
 
     q = db.session.query(Package)
     q = q.order_by(sort_property.desc())
+    q = q.order_by(Package.num_downloads.desc())
 
-    q = q.limit(100)
+    q = q.limit(25)
 
     ret = q.all()
     return ret

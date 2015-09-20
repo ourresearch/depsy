@@ -170,20 +170,53 @@ span.package-snippet {
   display: inline-block;
 }
 span.package-snippet span.left-metrics {
+  vertical-align: -2px;
   display: inline-block;
   width: 200px;
   text-align: right;
   font-weight: bold;
+}
+span.package-snippet span.left-metrics span.vis {
+  display: inline-block;
+  background: #eee;
+  width: 80px;
+  height: 20px;
+  text-align: right;
+}
+span.package-snippet span.left-metrics span.vis span.vis-bar {
+  display: inline-block;
+  height: 100%;
+  text-align: right;
+}
+span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore {
+  background: red;
+  display: inline-block;
+  height: 100%;
+}
+span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_citations_percentile {
+  background: #984ea3;
+}
+span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_depended_on_percentile {
+  background: #4daf4a;
+}
+span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_downloads_percentile {
+  background: #377eb8;
+}
+span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_stars_percentile {
+  background: #e41a1c;
 }
 span.package-snippet span.left-metrics .metric {
   cursor: default;
 }
 span.package-snippet span.left-metrics .metric.metric {
   font-size: 24px;
-  color: #ff0000;
+  color: #333;
 }
 span.package-snippet span.metadata {
   display: inline-block;
+}
+span.package-snippet span.metadata i.github.github-false {
+  opacity: .4;
 }
 span.package-snippet span.metadata span.name-container {
   padding: 0 10px 0 5px;
