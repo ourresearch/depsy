@@ -1053,6 +1053,8 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
+q = q.filter(Package.sort_score == None)
+
 update_registry.register(Update(
     job=Package.set_all_percentiles,
     query=q,
