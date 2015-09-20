@@ -284,10 +284,17 @@ class Package(db.Model):
 
     def set_pagerank(self):
         global our_igraph_data
-        self.pagerank = our_igraph_data[self.project_name]["pagerank"]
-        self.neighborhood_size = our_igraph_data[self.project_name]["neighborhood_size"]
-        self.indegree = our_igraph_data[self.project_name]["indegree"]
-        print "pagerank of {} is {}".format(self.project_name, self.pagerank)
+
+        try:
+            self.pagerank = our_igraph_data[self.project_name]["pagerank"]
+            self.neighborhood_size = our_igraph_data[self.project_name]["neighborhood_size"]
+            self.indegree = our_igraph_data[self.project_name]["indegree"]
+            print "pagerank of {} is {}".format(self.project_name, self.pagerank)
+        except KeyError:
+            print "pagerank of {} is not defined".format(self.project_name)
+            self.pagerank = 0
+            self.neighborhood_size = 0
+            self.indegree = 0
 
         self.num_depended_on = self.pagerank
         self.set_all_percentiles()
@@ -1021,7 +1028,6 @@ update_registry.register(Update(
 
 ##### get percentiles.  Needs stuff loaded into memory before they run
 
-refsets = None
 if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
     print "loading data from db into memory"
     refsets = Package.get_refsets()
