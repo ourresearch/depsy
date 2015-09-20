@@ -864,7 +864,7 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "            popover-title=\"Sort score\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
     "            popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
-    "         {{ floor(package.sort_score * 100) }}\n" +
+    "         {{ floor(package.sort_score * 10000) }}\n" +
     "      </span>\n" +
     "   </span>\n" +
     "\n" +
