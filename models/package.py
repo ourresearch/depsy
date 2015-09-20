@@ -13,6 +13,7 @@ import hashlib
 from lxml import html
 import numpy
 import os
+from collections import defaultdict
 
 from models import github_api
 from models.person import Person
@@ -67,6 +68,9 @@ class Package(db.Model):
     num_citations_percentile = db.Column(db.Float)
     num_stars = db.Column(db.Integer)
     num_stars_percentile = db.Column(db.Float)
+    pagerank = db.Column(db.Float)
+    neighborhood_size = db.Column(db.Float)
+    indegree = db.Column(db.Float)
     summary = db.Column(db.Text)
 
     sort_score = db.Column(db.Float)
@@ -75,13 +79,15 @@ class Package(db.Model):
     num_commits = db.Column(db.Integer)
     num_authors = db.Column(db.Integer)
 
+    inactive = db.Column(db.Text)
 
-    # contributions = db.relationship(
-    #     'Contribution',
-    #     lazy='subquery',
-    #     cascade="all, delete-orphan",
-    #     backref="package"
-    # )
+
+    contributions = db.relationship(
+        'Contribution',
+        lazy='immediate',
+        cascade="all, delete-orphan",
+        backref="package"
+    )
 
 
 
@@ -263,14 +269,36 @@ class Package(db.Model):
         self.pmc_mentions = pmc_mentions
         return self.pmc_mentions
 
-    def set_use(self):
+    def set_depended_on(self):
+        global our_graph
+
         try:
-            num_depended_on = g.vs.find(self.project_name).strength(mode="OUT", weights="weight")
+            this_vertex = our_graph.vs.find(self.project_name)
+            num_depended_on = our_graph.neighborhood_size(this_vertex, mode="OUT", order=999999)
             print "num_depended_on for {} is {}".format(self.project_name, num_depended_on)
         except ValueError:
             num_depended_on = 0
             print "no num_depended_on found for {}".format(self.project_name)
         self.num_depended_on = num_depended_on
+
+
+    def set_pagerank(self):
+        global our_igraph_data
+
+        try:
+            self.pagerank = our_igraph_data[self.project_name]["pagerank"]
+            self.neighborhood_size = our_igraph_data[self.project_name]["neighborhood_size"]
+            self.indegree = our_igraph_data[self.project_name]["indegree"]
+            print "pagerank of {} is {}".format(self.project_name, self.pagerank)
+        except KeyError:
+            print "pagerank of {} is not defined".format(self.project_name)
+            self.pagerank = 0
+            self.neighborhood_size = 0
+            self.indegree = 0
+
+        self.num_depended_on = self.pagerank
+        self.set_all_percentiles()
+
 
     def refresh_github_ids(self):
         if not self.github_owner:
@@ -285,65 +313,73 @@ class Package(db.Model):
 
 
     @classmethod
-    def _group_by_host(cls, rows):
+    def _group_by_host(cls, rows, col_number):
         ret = {
-            "pypi": sorted([row[1] for row in rows if row[0]=="pypi" and row[1]!=None]),
-            "cran": sorted([row[1] for row in rows if row[0]=="cran" and row[1]!=None])
+            "pypi": [row[col_number] for row in rows if row[0]=="pypi" and row[col_number]!=None],
+            "cran": [row[col_number] for row in rows if row[0]=="cran" and row[col_number]!=None]
         }
 
         return ret
 
     @classmethod
-    def get_downloads_by_host(cls):
-        q = db.session.query(cls.host, cls.num_downloads)
+    def get_refsets(cls):
+        q = db.session.query(
+                cls.host, 
+                cls.num_downloads, 
+                cls.num_depended_on,
+                cls.num_stars,
+                cls.num_citations)
         rows = q.all()
-        return cls._group_by_host(rows)
 
-    @classmethod
-    def get_uses_by_host(cls):
-        q = db.session.query(cls.host, cls.num_depended_on)
-        rows = q.all()
-        return cls._group_by_host(rows)
+        all_values = {}
+        all_values["num_downloads"] = cls._group_by_host(rows, 1)
+        all_values["num_depended_on"] = cls._group_by_host(rows, 2)
+        all_values["num_stars"] = cls._group_by_host(rows, 3)
+        all_values["num_citations"] = cls._group_by_host(rows, 4)
 
-    @classmethod
-    def get_stars_by_host(cls):
-        q = db.session.query(cls.host, cls.num_stars)
-        rows = q.all()
-        return cls._group_by_host(rows)
+        refsets = defaultdict(dict)
+        for refset_type in all_values:
+            for host in all_values[refset_type]:
+                values = all_values[refset_type][host]
+                distinct_values = sorted(list(set(values)))
+                num_distinct_values = len(distinct_values)
+                percentiles = [float(i)/num_distinct_values for (i, value) in enumerate(distinct_values)]
+                this_refset = zip(distinct_values, percentiles)
+                refsets[refset_type][host] = this_refset
+        return refsets
 
-    @classmethod
-    def get_num_citations_by_host(cls):
-        q = db.session.query(cls.host, cls.num_citations)
-        rows = q.all()
-        return cls._group_by_host(rows)
 
     def _calc_percentile(self, refset, value):
         if value == None:  # distinguish between that and zero
             return None
 
-        percentiles = range(0, 100)
-        percentile_cutoffs = numpy.percentile(refset[self.host], percentiles)
-        percentile_lookup = zip(percentile_cutoffs, percentiles)
-        for (cutoff, percentile) in zip(percentile_cutoffs, percentiles):
+        # print "using refset of length", len(refset[self.host])
+        # print "using refset last value", refset[self.host][len(refset[self.host]) - 1]
+        # print "looking up", value
+        for (cutoff, percentile) in refset[self.host]:
             if cutoff >= value:
+                # print "hit it! at cutoff", cutoff
                 return percentile
-        return 99
+        # print "didn't find anything"
+        return 99.9999
 
     def set_num_downloads_percentile(self):
-        global num_downloads_refset
-        self.num_downloads_percentile = self._calc_percentile(num_downloads_refset, self.num_downloads)
+        global refsets
+        print "here in download percentile"
+        self.num_downloads_percentile = self._calc_percentile(refsets["num_downloads"], self.num_downloads)
+        print "that's all folks"
 
     def set_num_depended_on_percentile(self):
-        global num_depended_on_refset
-        self.num_depended_on_percentile = self._calc_percentile(num_depended_on_refset, self.num_depended_on)
+        global refsets
+        self.num_depended_on_percentile = self._calc_percentile(refsets["num_depended_on"], self.num_depended_on)
 
     def set_num_star_percentile(self):
-        global num_stars_refset
-        self.num_stars_percentile = self._calc_percentile(num_stars_refset, self.num_stars)
+        global refsets
+        self.num_stars_percentile = self._calc_percentile(refsets["num_stars"], self.num_stars)
 
     def set_num_citations_percentile(self):
-        global num_citations_refset
-        self.num_citations_percentile = self._calc_percentile(num_citations_refset, self.num_citations)
+        global refsets
+        self.num_citations_percentile = self._calc_percentile(refsets["num_citations"], self.num_citations)
 
     def set_all_percentiles(self):
         self.set_num_downloads_percentile()
@@ -494,7 +530,7 @@ class PypiPackage(Package):
             self.api_raw = {"error": "no_json"}
 
 
-    def set_host_reverse_deps(self):
+    def set_host_deps(self):
         core_requirement_lines = ""
 
         if "METADATA" in self.requires_files:
@@ -526,26 +562,26 @@ class PypiPackage(Package):
                 core_requirement_list += [line]
             core_requirement_lines = "\n".join(core_requirement_list)
 
-        reverse_deps = parse_requirements_txt(core_requirement_lines)
+        deps = parse_requirements_txt(core_requirement_lines)
 
-        print "found requirements={}\n\n".format(reverse_deps)
-        if not reverse_deps:
-            self.host_reverse_deps = []
+        print "found requirements={}\n\n".format(deps)
+        if not deps:
+            self.host_deps = []
             return None
 
         # see if is in pypi, case insensitively, getting normalized case
-        reverse_deps_in_pypi = []
-        for dep in reverse_deps:
+        deps_in_pypi = []
+        for dep in deps:
             if dep.lower() in pypi_package_names:
                 pypi_package_normalized_case = pypi_package_names[dep.lower()]
-                reverse_deps_in_pypi.append(pypi_package_normalized_case)
+                deps_in_pypi.append(pypi_package_normalized_case)
 
-        if len(reverse_deps_in_pypi) != len(reverse_deps):
-            print "some reverse deps not in pypi for {}:{}".format(
-                self.id, set(reverse_deps) - set(reverse_deps_in_pypi))
-            print reverse_deps
-            print reverse_deps_in_pypi
-        self.host_reverse_deps = reverse_deps_in_pypi
+        if len(deps_in_pypi) != len(deps):
+            print "some deps not in pypi for {}:{}".format(
+                self.id, set(deps) - set(deps_in_pypi))
+            print deps
+            print deps_in_pypi
+        self.host_deps = deps_in_pypi
 
 
     def set_tags(self):
@@ -850,33 +886,52 @@ def test_me(limit=10, use_rq="rq"):
 
 
 ######## igraph
-g = None
+our_igraph_data = None
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.num_depended_on == None)
-
+q = q.filter(PypiPackage.pagerank == None)
 update_registry.register(Update(
-    job=PypiPackage.set_use,
+    job=PypiPackage.set_pagerank,
     query=q,
     queue_id=5
 ))
 
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.pagerank == None)
+update_registry.register(Update(
+    job=CranPackage.set_pagerank,
+    query=q,
+    queue_id=5
+))
 
-def run_igraph(limit=2):
+def run_igraph(host="cran", limit=2):
     import igraph
-    global g
 
     print "loading in igraph"
-    g = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
-    print "loaded, now getting uses"
-    # g.vs.find("Django").strength(mode="OUT", weights="weight")
+    our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
+    print "loaded, now calculating"
+    our_vertice_names = our_graph.vs()["name"]
+    our_pageranks = our_graph.pagerank(implementation="prpack")
+    our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
+    our_indegree = our_graph.vs().indegree()
 
-    update = update_registry.get("PypiPackage.set_use")
+    print "now saving"
+    global our_igraph_data    
+    our_igraph_data = {}
+    for (i, name) in enumerate(our_vertice_names):
+        our_igraph_data[name] = {
+            "pagerank": our_pageranks[i],
+            "neighborhood_size": our_neighbourhood_size[i],
+            "indegree": our_indegree[i]
+        }
+
+    method_name = "{}Package.set_pagerank".format(host.title())
+    update = update_registry.get(method_name)
     update.run(
         no_rq=True,
         obj_id=None,
         num_jobs=limit,
-        chunk_size=100
+        chunk_size=1000
     )
 
 
@@ -894,7 +949,7 @@ q = db.session.query(PypiPackage.id)
 q = q.filter(PypiPackage.requires_files != None)
 
 update_registry.register(Update(
-    job=PypiPackage.set_host_reverse_deps,
+    job=PypiPackage.set_host_deps,
     query=q,
     queue_id=5
 ))
@@ -998,10 +1053,7 @@ update_registry.register(Update(
 
 if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
     print "loading data from db into memory"
-    num_downloads_refset = Package.get_downloads_by_host()
-    num_depended_on_refset = Package.get_uses_by_host()
-    num_stars_refset = Package.get_stars_by_host()
-    num_citations_refset = Package.get_num_citations_by_host()
+    refsets = Package.get_refsets()
     print "done loading data into memory"
 
 
@@ -1016,6 +1068,8 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
+q = q.filter(Package.sort_score == None)
+
 update_registry.register(Update(
     job=Package.set_all_percentiles,
     query=q,

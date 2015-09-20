@@ -534,6 +534,13 @@ class GithubRepo(db.Model):
         print "self.named_deps", self.named_deps
 
 
+    def set_r_named_deps(self):
+        if self.language == "r":
+            self.named_deps = []
+            for dep_kind in ["reverse_depends", "reverse_imports"]:
+                if dep_kind in self.lib_matches_final:
+                    self.named_deps += self.lib_matches_final[dep_kind]
+
 
 
 """
@@ -963,6 +970,14 @@ update_registry.register(Update(
 ))
 
 
+q = db.session.query(GithubRepo.id)
+q = q.filter(GithubRepo.language == 'r')
+q = q.filter(GithubRepo.lib_matches_final != None)
+update_registry.register(Update(
+    job=GithubRepo.set_r_named_deps,
+    query=q,
+    queue_id=6
+))
 
 
 
