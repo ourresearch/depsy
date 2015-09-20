@@ -49,15 +49,23 @@ class Person(db.Model):
 
     contributions = db.relationship(
         'Contribution',
-        lazy='subquery',
+        lazy='select',
         cascade="all, delete-orphan",
         backref="person"
     )
 
 
     def to_dict(self, full=True):
-        ret = dict_from_dir(self, keys_to_ignore=["contributions", "github_about"])
-
+        ret = {
+            "id": self.id, 
+            "name": self.name, 
+            "github_login": self.github_login, 
+            "sort_score": self.sort_score, 
+            "icon": self.icon, 
+            "icon_small": self.icon_small, 
+            "is_academic": self.is_academic, 
+            "id": self.id
+        }
         if full:
             ret["person_packages"] = [p.to_dict() for p in self.person_packages]
         return ret

@@ -84,7 +84,7 @@ class Package(db.Model):
 
     contributions = db.relationship(
         'Contribution',
-        lazy='immediate',
+        lazy='select',
         cascade="all, delete-orphan",
         backref="package"
     )
@@ -103,19 +103,34 @@ class Package(db.Model):
 
 
     def to_dict(self, full=True):
-        ret = dict_from_dir(self, keys_to_ignore=[
-            "proxy_papers",
-            "github_contributors",
-            "bucket",
-            "requires_files",
-            "contributions",
-            "api_raw",
-            "setup_py",
-            "person",
-            "downloads"
-        ])
-        if full:
-            ret["contributions"] = [c.to_dict() for c in self.contributions]
+        ret = {
+            "as_snippet": self.as_snippet,
+            "contributions": [c.to_dict() for c in self.contributions],
+            "github_owner": self.github_owner,
+            "github_repo_name": self.github_repo_name,
+            "host": self.host,
+            "indegree": self.indegree,
+            "neighborhood_size": self.neighborhood_size,
+            "num_authors": self.num_authors,
+            "num_citations": self.num_citations,
+            "num_citations_percentile": self.num_citations_percentile,
+            "num_commits": self.num_commits,
+            "num_committers": self.num_committers,
+            "num_depended_on": self.num_depended_on,
+            "num_depended_on_percentile": self.num_depended_on_percentile,
+            "num_downloads_percentile": self.num_downloads_percentile,
+            "num_stars": self.num_stars,
+            "num_stars_percentile": self.num_stars_percentile,
+            "sort_score": self.sort_score,
+
+            # current implementation requires api_raw, so slows down db because deferred
+            # "source_url": self.source_url,  
+
+            "summary": self.summary,
+            "tags": self.tags
+        }
+        # if full:
+        #     ret["contributions"] = [c.to_dict() for c in self.contributions]
 
         return ret
 
