@@ -315,8 +315,8 @@ class Package(db.Model):
     @classmethod
     def _group_by_host(cls, rows, col_number):
         ret = {
-            "pypi": sorted([row[col_number] for row in rows if row[0]=="pypi" and row[col_number]!=None]),
-            "cran": sorted([row[col_number] for row in rows if row[0]=="cran" and row[col_number]!=None])
+            "pypi": [row[col_number] for row in rows if row[0]=="pypi" and row[col_number]!=None],
+            "cran": [row[col_number] for row in rows if row[0]=="cran" and row[col_number]!=None]
         }
 
         return ret
@@ -342,8 +342,8 @@ class Package(db.Model):
             for host in all_values[refset_type]:
                 values = all_values[refset_type][host]
                 distinct_values = sorted(list(set(values)))
-                num_distinct_values = float(len(distinct_values))
-                percentiles = [value/num_distinct_values for value in distinct_values]
+                num_distinct_values = len(distinct_values)
+                percentiles = [float(i)/num_distinct_values for (i, value) in enumerate(distinct_values)]
                 this_refset = zip(distinct_values, percentiles)
                 refsets[refset_type][host] = this_refset
         return refsets
@@ -352,14 +352,22 @@ class Package(db.Model):
     def _calc_percentile(self, refset, value):
         if value == None:  # distinguish between that and zero
             return None
+
+        # print "using refset of length", len(refset[self.host])
+        # print "using refset last value", refset[self.host][len(refset[self.host]) - 1]
+        # print "looking up", value
         for (cutoff, percentile) in refset[self.host]:
             if cutoff >= value:
+                # print "hit it! at cutoff", cutoff
                 return percentile
+        # print "didn't find anything"
         return 99.9999
 
     def set_num_downloads_percentile(self):
         global refsets
+        print "here in download percentile"
         self.num_downloads_percentile = self._calc_percentile(refsets["num_downloads"], self.num_downloads)
+        print "that's all folks"
 
     def set_num_depended_on_percentile(self):
         global refsets
