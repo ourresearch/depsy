@@ -165,6 +165,7 @@ class PersonPackage():
         ret = self.package.as_snippet
         ret["roles"] = self.roles
         ret["credit_points"] = self.credit_points
+        ret["num_github_contributors"] = self.package.num_github_contributors
         return ret
 
 
