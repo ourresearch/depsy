@@ -84,7 +84,7 @@ class Package(db.Model):
 
     contributions = db.relationship(
         'Contribution',
-        lazy='select',
+        # lazy='subquery',
         cascade="all, delete-orphan",
         backref="package"
     )

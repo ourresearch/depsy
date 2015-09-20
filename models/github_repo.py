@@ -8,9 +8,7 @@ from models import github_api
 from models.github_api import login_and_repo_name_from_url
 from models.github_api import github_zip_getter_factory
 from models.pypi_project import pypi_package_names
-from models.pypi_project import PypiProject
 from models.pypi_project import PythonStandardLibs
-from models.cran_project import CranProject
 
 from models import python
 

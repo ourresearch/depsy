@@ -6,6 +6,7 @@ from models.person import Person
 from models.package import Package
 from models.package import get_packages
 from dummy_data import get_dummy_data
+from sqlalchemy import orm
 
 from flask import make_response
 from flask import request
@@ -103,12 +104,13 @@ def person_endpoint(person_id):
     # data = get_dummy_data("person")
     # return json_resp_from_thing(data)
 
-    person = Person.query.get(int(person_id))
+    from models.contribution import Contribution
+    my_person = Person.query.options(orm.subqueryload_all(Person.contributions, Contribution.package)).get(int(person_id))
 
-    if not person:
+    if not my_person:
         abort_json(404, "This person's not in the database")
 
-    return json_resp_from_thing(person.to_dict())
+    return json_resp_from_thing(my_person.to_dict())
 
 
 @app.route("/api/p/<host>/<project_name>")
@@ -116,11 +118,12 @@ def person_endpoint(person_id):
 def package(host, project_name):
 
     if host.lower() == "python":
-        id = "pypi:" + project_name
+        my_id = "pypi:" + project_name
     elif host.lower() == "r":
-        id = "cran:" + project_name
+        my_id = "cran:" + project_name
 
-    my_package = Package.query.get(id)
+    from models.contribution import Contribution
+    my_package = Package.query.options(orm.subqueryload_all(Package.contributions, Contribution.person)).get(my_id)
 
     if not my_package:
         abort_json(404, "This person's not in the database")

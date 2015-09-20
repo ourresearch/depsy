@@ -49,7 +49,7 @@ class Person(db.Model):
 
     contributions = db.relationship(
         'Contribution',
-        lazy='select',
+        # lazy='select',
         cascade="all, delete-orphan",
         backref="person"
     )

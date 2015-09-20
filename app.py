@@ -48,6 +48,7 @@ app.debug = True
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_POOL_SIZE"] = 60
 app.config['GITHUB_SECRET'] = os.getenv("GITHUB_SECRET")
+app.config['SQLALCHEMY_ECHO'] = (os.getenv("SQLALCHEMY_ECHO", False) == "True")
 
 my_redis = redis.from_url(
     os.getenv("REDIS_URL", "redis://127.0.0.1:6379"),
@@ -83,17 +84,13 @@ for i in range(0, 10):
 
 
 # these imports are needed so that tables will get auto-created.
-from models import github_repo
-from models import profile
-from models import repo
-from models import github_user
-from models import cran_project
-from models import person
-from models import contribution
-from models import package
+# from models import github_repo
+# from models import person
+# from models import contribution
+# from models import package
 
-db.create_all()
-db.session.commit()
+# db.create_all()
+# db.session.commit()
 
 
 
