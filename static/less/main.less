@@ -9,6 +9,11 @@
 @linkColor: #ff3000;
 @sidebar-width: 300px;
 
+@citationsColor: #984ea3;
+@dependedOnColor: #4daf4a;
+@downloadsColor: #377eb8;
+@starsColor: #e41a1c;
+
 
 body {
    font-family: lato, helvetica, arial, sans-serif;
@@ -220,13 +225,46 @@ span.package-snippet {
    text-decoration: none;
    display: inline-block;
 
-//   border: 1px solid #eee;
+
    span.left-metrics {
+      vertical-align: -2px;
+      span.vis {
+         display: inline-block;
+         background: #eee;
+         width: 50px;
+         height: 10px;
+         text-align: right;
+         span.vis-bar {
+            display: inline-block;
+            height: 100%;
+            text-align: right;
+            span.subscore {
+               background: red;
+               display: inline-block;
+               height: 100%;
+               &.subscore-num_citations_percentile {
+                  background: @citationsColor;
+               }
+               &.subscore-num_depended_on_percentile {
+                  background: @dependedOnColor;
+               }
+               &.subscore-num_downloads_percentile {
+                  background: @downloadsColor;
+               }
+               &.subscore-num_stars_percentile {
+                  background: @starsColor;
+               }
+
+            }
+         }
+      }
+
+
       .metric {
          cursor: default;
          &.metric {
             font-size: 24px;
-            color: #ff0000;
+            color: #333;
 
          }
       }
@@ -239,6 +277,11 @@ span.package-snippet {
 
    span.metadata {
       display: inline-block;
+      i.github {
+         &.github-false {
+            opacity: .4;
+         }
+      }
       span.name-container {
          padding: 0 10px 0 5px;
          display:inline-block;
@@ -257,6 +300,12 @@ span.package-snippet {
       }
    }
 }
+#sort-score-popover {
+   background: red;
+   color: red;
+}
+
+
 
 
 

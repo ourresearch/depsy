@@ -151,6 +151,33 @@ def packages_endpoint():
     ret.headers["x-elapsed"] = elapsed_time
     return ret
 
+@app.route("/api/leaders/<type>")
+@app.route("/api/leaders/<type>.json")
+def get_ranked_list(type):
+
+    sort = request.args.get("sort", "sort_score")
+    filter_strings = request.args.get("filters", "").split(",")
+    filters = [s.split(":") for s in filter_strings if s]
+
+    start = time()
+    leaders_list = []
+    if type == "packages":
+        packages = get_packages(sort, filters)
+        leaders_list = [p.as_snippet for p in packages]
+    else:
+        raise NotImplementedError("we can only rank packages right now...")
+
+    ret = json_resp_from_thing({
+        "list": leaders_list,
+        "type": type,
+        "sort": sort,
+        "filters": filters
+    })
+
+    elapsed_time = elapsed(start)
+    ret.headers["x-elapsed"] = elapsed_time
+    return ret
+
 
 
 

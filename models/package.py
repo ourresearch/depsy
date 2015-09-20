@@ -759,7 +759,7 @@ class CranPackage(Package):
     @property
     def as_snippet(self):
         ret = self._as_package_snippet
-        ret["host"] = "r"
+        ret["language"] = "r"
         return ret
 
 
@@ -783,15 +783,30 @@ def prep_summary(str):
 
 
 def get_packages(sort="sort_score", filters=None):
+
+    if not sort.startswith("num_") and not sort == "sort_score":
+        sort = "num_" + sort
+
     allowed_sorts = [
         "sort_score",
-        "citations"
+        "num_depended_on",
+        "num_downloads",
+        "num_stars",
+        "num_citations"
     ]
+
+    if sort not in allowed_sorts:
+        raise ValueError("'sort' arg is something we can't sort by.")
+
+    sort_property = getattr(Package, sort)
+
 
 
     q = db.session.query(Package)
+    q = q.order_by(sort_property.desc())
+    q = q.order_by(Package.num_downloads.desc())
 
-    q = q.limit(100)
+    q = q.limit(25)
 
     ret = q.all()
     return ret
