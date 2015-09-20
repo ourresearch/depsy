@@ -197,7 +197,7 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\">\n" +
     "      <span class=\"vis\">\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.sort_score }}%;\">\n" +
+    "         <span class=\"vis-bar\" style=\"width: {{ package.sort_score * 100 }}%;\">\n" +
     "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
     "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
     "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
@@ -208,8 +208,8 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "            popover-placement=\"top\"\n" +
     "            popover-title=\"Sort score\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover-html=\"'this is my sort score!'\">\n" +
-    "         {{ floor(package.sort_score) }}\n" +
+    "            popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
+    "         {{ floor(package.sort_score * 100) }}\n" +
     "      </span>\n" +
     "   </span>\n" +
     "\n" +
@@ -231,15 +231,10 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
 
 angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-snippet/sort-score-popover.tpl.html",
-    "<!DOCTYPE html>\n" +
-    "<html>\n" +
-    "<head>\n" +
-    "   <title></title>\n" +
-    "</head>\n" +
-    "<body>\n" +
+    "<div id=\"sort-score-popover\">\n" +
     "\n" +
-    "</body>\n" +
-    "</html>");
+    "\n" +
+    "</div>");
 }]);
 
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {

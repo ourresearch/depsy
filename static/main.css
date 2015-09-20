@@ -179,8 +179,8 @@ span.package-snippet span.left-metrics {
 span.package-snippet span.left-metrics span.vis {
   display: inline-block;
   background: #eee;
-  width: 80px;
-  height: 20px;
+  width: 50px;
+  height: 10px;
   text-align: right;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar {
@@ -232,6 +232,10 @@ span.package-snippet span.metadata span.name-container a.name:hover {
 }
 span.package-snippet span.metadata span.summary {
   font-size: 12px;
+}
+#sort-score-popover {
+  background: red;
+  color: red;
 }
 ul {
   margin-left: 0;
