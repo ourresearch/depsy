@@ -43,7 +43,6 @@ class Package(db.Model):
     github_repo_name = db.Column(db.Text)
     github_api_raw = db.deferred(db.Column(JSONB))
     github_contributors = db.deferred(db.Column(JSONB))
-    num_github_committers = db.Column(db.Integer)
 
     api_raw = db.deferred(db.Column(JSONB))
     downloads = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))

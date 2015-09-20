@@ -165,7 +165,8 @@ class PersonPackage():
         ret = self.package.as_snippet
         ret["roles"] = self.roles
         ret["credit_points"] = self.credit_points
-        ret["num_github_contributors"] = self.package.num_github_contributors
+        ret["num_committers"] = self.package.num_committers
+        ret["num_commits"] = self.package.num_commits
         return ret
 
 
