@@ -698,8 +698,10 @@ class CranPackage(Package):
         clean_author_string = self._return_clean_author_string(all_authors)
         if not clean_author_string:
             return None
-            
+
         author_parts = clean_author_string.split(",")
+        author_name = None
+        author_email = None
         for clean_part in author_parts:
             # print "clean_part", clean_part
             if "<" in clean_part:
@@ -711,7 +713,6 @@ class CranPackage(Package):
                     print u"no email match on", clean_part
             else:
                 author_name = clean_part
-                author_email = None
 
             if author_name:
                 author_name = author_name.strip()
