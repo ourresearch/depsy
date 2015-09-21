@@ -223,37 +223,52 @@ div.page {
 
 
 span.package-snippet {
-   margin: 4px 0;
+   margin: 10px 0;
    padding: 4px 0;
    color: #333;
    text-decoration: none;
    display: inline-block;
 
 
+   span.left-icons {
+      display: inline-block;
+   }
+
+
    span.left-metrics {
-      vertical-align: -2px;
+      vertical-align: middle;
+      display: inline-block;
+      width: 75px;
+      text-align: right;
+      font-weight: bold;
+
       span.vis {
          display: inline-block;
          background: #eee;
-         width: 50px;
-         height: 10px;
+         width: 58px;
+         height: 7px;
          text-align: right;
+         margin-right: 3px;
          span.vis-bar {
             display: inline-block;
             height: 100%;
             text-align: right;
+            .rounded(30px);
             span.subscore {
-               background: red;
                display: inline-block;
                height: 100%;
+//               border-left: 1px solid #fff;
+//               margin-left: -1px;
                &.subscore-num_citations_percentile {
                   background: @citationsColor;
                }
                &.subscore-pagerank_percentile {
                   background: @pagerankColor;
+                  .border-radius(5px, 5px, 0, 0);
                }
                &.subscore-num_downloads_percentile {
                   background: @downloadsColor;
+                  .border-radius(0, 0, 5px, 5px);
                }
                &.subscore-num_stars_percentile {
                   background: @starsColor;
@@ -264,34 +279,53 @@ span.package-snippet {
       }
 
 
-      .metric {
+      .one-metric {
          cursor: default;
-         &.metric {
-            font-size: 24px;
-            color: #333;
-
+         font-size: 24px;
+         color: #333;
+         font-weight: 100;
+         span.percent {
+            font-size: 50%;
+            margin-left: 0px;
          }
       }
 
-      display: inline-block;
-      width: 200px;
-      text-align: right;
-      font-weight: bold;
+
    }
 
    span.metadata {
       display: inline-block;
-      img.language-icon {
+      span.language-icon {
+         margin-right: 4px;
+         font-weight: 100;
+         text-align: center;
+         vertical-align: 3px;
+         margin-left: 3px;
+         background: #777;
+         padding: 0;
          width: 16px;
-         vertical-align: -2px;
+         display: inline-block;
+         color: #fff;
+         font-size: 10px;
+
+         border: 1px solid #777;
+         color: #777;
+         background: none;
+
+
+         &.r {
+            .rounded(15px);
+         }
       }
 
       span.name-container {
          padding: 0 10px 0 5px;
          display:inline-block;
-         min-width: 150px;
+         vertical-align: middle;
+         min-width: 165px;
          a.name {
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: bold;
             color: #333;
             &:hover {
                color: #333;
@@ -301,33 +335,37 @@ span.package-snippet {
       }
       span.summary {
          font-size: 12px;
+         display: inline-block;
+         width: 300px;
+         vertical-align: middle;
       }
    }
 }
 #sort-score-popover {
-   div.head {
-      border-bottom: 1px solid #ddd;
-      padding: 5px 0;
-      margin: 5px 0;
-      .clearfix();
-      span.name {
-         font-size: 18px;
-         text-align: right;
-         padding-right: 20px;
-         font-weight: 900;
-      }
-      span.val {
-         span.small {
-            font-size: 12px;
-         }
-         font-size: 18px;
-
-      }
-   }
    div.metric {
       font-size: 14px;
       .clearfix();
-      margin-top: 10px;
+      margin: 10px 0 0;
+      line-height: 1.2;
+      &.head {
+         border-bottom: 1px solid #ddd;
+         padding: 0 0 5px 0;
+         margin: 0 0 5px 0;
+         .clearfix();
+         span.name {
+            font-size: 18px;
+            text-align: right;
+            padding-right: 20px;
+            font-weight: 900;
+         }
+         span.val {
+            span.small {
+               font-size: 12px;
+            }
+            font-size: 18px;
+
+         }
+      }
 
       &.citations {
          color: @citationsColor;
@@ -356,8 +394,8 @@ span.package-snippet {
          float: left;
          width: 100px;
          span.val {
-            display: block;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: bold;
          }
          span.paren {
             font-size: 12px;

@@ -144,6 +144,36 @@ angular.module('app').controller('AppCtrl', function(
     return Math.floor(num)
   }
 
+  $scope.round = function(num, places){
+    if (!places){
+      places = 0
+    }
+
+    if (!num){
+      num = 0
+    }
+
+    var ret = num.toFixed(places)
+
+    // super hack
+    if (ret == "100.0") {
+      ret = "99.9"
+    }
+    else if (ret == "100") {
+      ret = "99"
+    }
+    return ret
+
+
+    var multiplier = Math.pow(10, places)
+    var rounded = Math.round(num * multiplier)  / multiplier
+    if (rounded == 100) {
+      console.log("rounded", rounded)
+      rounded = 99.9999999
+    }
+    return rounded.toFixed(places)
+  }
+
 
   $scope.trustHtml = function(str){
     console.log("trusting html:", str)

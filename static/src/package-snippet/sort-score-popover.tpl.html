@@ -15,7 +15,7 @@
          </span>
          <span class="descr">
             <span class="val">{{ package.num_citations }}</span>
-            <span class="paren">({{ toPercentile(package.num_citations_percentile) }} percentile)</span>
+            <span class="paren">({{ round(package.num_citations_percentile * 100) }}%)</span>
          </span>
       </div>
 
@@ -26,7 +26,7 @@
          </span>
          <span class="descr">
             <span class="val">{{ nFormatter(package.pagerank) }} </span>
-            <span class="paren">({{ toPercentile(package.pagerank_percentile )}} percentile)</span>
+            <span class="paren">({{ round(package.pagerank_percentile * 100 )}}%)</span>
          </span>
       </div>
 
@@ -37,7 +37,7 @@
          </span>
          <span class="descr">
             <span class="val">{{ nFormatter(package.num_downloads)}}</span>
-            <span class="paren">({{ toPercentile(package.num_downloads_percentile) }} percentile)</span>
+            <span class="paren">({{ round(package.num_downloads_percentile * 100) }}%)</span>
          </span>
       </div>
 
@@ -48,7 +48,7 @@
          </span>
          <span class="descr">
             <span class="val">{{ nFormatter( package.num_stars ) }} </span>
-            <span class="paren">({{ toPercentile(package.num_stars_percentile) }} percentile)</span>
+            <span class="paren">({{ round(package.num_stars_percentile * 100) }}%)</span>
          </span>
       </div>
 
