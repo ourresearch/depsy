@@ -163,7 +163,7 @@ div.page.sidebar-page .main {
   margin-left: 330px;
 }
 span.package-snippet {
-  margin: 10px 0;
+  margin: 15px 0 15px 50px;
   padding: 4px 0;
   color: #333;
   text-decoration: none;
@@ -178,6 +178,7 @@ span.package-snippet span.left-metrics {
   width: 75px;
   text-align: right;
   font-weight: bold;
+  float: left;
 }
 span.package-snippet span.left-metrics span.vis {
   display: inline-block;
@@ -204,39 +205,9 @@ span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subsc
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-pagerank_percentile {
   background: #4daf4a;
-  -webkit-border-top-right-radius: 5px;
-  -webkit-border-bottom-right-radius: 5px;
-  -webkit-border-bottom-left-radius: 0;
-  -webkit-border-top-left-radius: 0;
-  -moz-border-radius-topright: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -moz-border-radius-bottomleft: 0;
-  -moz-border-radius-topleft: 0;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
-  -moz-background-clip: padding-box;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_downloads_percentile {
   background: #377eb8;
-  -webkit-border-top-right-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-  -webkit-border-bottom-left-radius: 5px;
-  -webkit-border-top-left-radius: 5px;
-  -moz-border-radius-topright: 0;
-  -moz-border-radius-bottomright: 0;
-  -moz-border-radius-bottomleft: 5px;
-  -moz-border-radius-topleft: 5px;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
-  -moz-background-clip: padding-box;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_stars_percentile {
   background: #e41a1c;
@@ -253,15 +224,19 @@ span.package-snippet span.left-metrics .one-metric span.percent {
 }
 span.package-snippet span.metadata {
   display: inline-block;
+  float: left;
+  width: 300px;
+  margin-left: 15px;
 }
-span.package-snippet span.metadata span.language-icon {
-  margin-left: 6px;
+span.package-snippet span.metadata span.name-container {
+  float: left;
+  min-width: 165px;
+}
+span.package-snippet span.metadata span.name-container span.language-icon {
   margin-right: 4px;
   font-weight: 100;
   text-align: center;
-  vertical-align: 3px;
   background: #777;
-  padding: 0;
   width: 16px;
   display: inline-block;
   color: #fff;
@@ -270,30 +245,26 @@ span.package-snippet span.metadata span.language-icon {
   color: #777;
   background: none;
 }
-span.package-snippet span.metadata span.language-icon.r {
+span.package-snippet span.metadata span.name-container span.language-icon.r {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
-}
-span.package-snippet span.metadata span.name-container {
-  padding: 0 10px 0 5px;
-  display: inline-block;
-  vertical-align: middle;
-  min-width: 165px;
 }
 span.package-snippet span.metadata span.name-container a.name {
   font-size: 20px;
   font-weight: bold;
   color: #333;
+  vertical-align: middle;
 }
 span.package-snippet span.metadata span.name-container a.name:hover {
   color: #333;
 }
 span.package-snippet span.metadata span.summary {
-  font-size: 12px;
+  float: left;
+  margin-left: 1px;
+  font-size: 13px;
   display: inline-block;
-  width: 300px;
-  vertical-align: middle;
+  width: 400px;
 }
 #sort-score-popover div.metric {
   font-size: 14px;
