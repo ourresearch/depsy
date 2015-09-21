@@ -696,6 +696,9 @@ class CranPackage(Package):
 
         print "starting with all_authors", all_authors
         clean_author_string = self._return_clean_author_string(all_authors)
+        if not clean_author_string:
+            return None
+            
         author_parts = clean_author_string.split(",")
         for clean_part in author_parts:
             # print "clean_part", clean_part
