@@ -667,8 +667,8 @@ class CranPackage(Package):
                 return None
 
         remove_patterns = [
-            "\(.*\)",
-            "\[.*\]",
+            "\(.*?\)",
+            "\[.*?\]",
             "with.*$",
             "assistance.*$",
             "contributions.*$",
@@ -680,6 +680,7 @@ class CranPackage(Package):
         ]
         for pattern in remove_patterns:
             all_authors = re.sub(pattern, "", all_authors)
+            # print pattern, all_authors
 
         all_authors = all_authors.replace("<U+000a>", " ")
         all_authors = all_authors.replace("\n", " ")
@@ -712,7 +713,7 @@ class CranPackage(Package):
                    person = get_or_make_person(name=author_name, email=author_email)
                 else:
                    person = get_or_make_person(name=author_name)
-                print u"saving person", person   
+                print u"saving person {}".format(person)
                 # self._save_contribution(person, "author")
 
 
