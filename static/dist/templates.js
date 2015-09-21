@@ -195,27 +195,41 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
   $templateCache.put("package-snippet/package-snippet.tpl.html",
     "<span class=\"package-snippet\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
-    "   <span class=\"left-metrics\">\n" +
+    "   <span class=\"left-metrics\"\n" +
+    "         popover-placement=\"top\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
+    "\n" +
+    "      <span class=\"one-metric metric\">\n" +
+    "         {{ round(package.impact, 1) }}<span class=\"percent\">%</span>\n" +
+    "      </span>\n" +
+    "\n" +
+    "\n" +
     "      <span class=\"vis\">\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.sort_score * 100 }}%;\">\n" +
+    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
     "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
     "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
     "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
     "         </span>\n" +
     "\n" +
     "      </span>\n" +
-    "      <span class=\"one-metric metric\"\n" +
-    "            popover-placement=\"top\"\n" +
-    "            popover-title=\"Sort score\"\n" +
-    "            popover-trigger=\"mouseenter\"\n" +
-    "            popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
-    "         {{ floor(package.sort_score * 10000) }}\n" +
-    "      </span>\n" +
+    "\n" +
     "   </span>\n" +
     "\n" +
     "   <span class=\"metadata\">\n" +
     "      <span class=\"name-container\">\n" +
-    "         <i class=\"fa github fa-github-alt github-{{ package.num_stars !== null }}\"></i>\n" +
+    "\n" +
+    "         <span class=\"language-icon r\"\n" +
+    "               ng-if=\"package.language=='r'\"\n" +
+    "              tooltip=\"R package\">\n" +
+    "            R\n" +
+    "         </span>\n" +
+    "         <span class=\"language-icon python\"\n" +
+    "               ng-if=\"package.language=='python'\"\n" +
+    "              tooltip=\"Python package\">\n" +
+    "            py\n" +
+    "         </span>\n" +
+    "\n" +
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
@@ -232,8 +246,61 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
 angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-snippet/sort-score-popover.tpl.html",
     "<div id=\"sort-score-popover\">\n" +
+    "   <div class=\"head metric\">\n" +
+    "      <span class=\"name\">Impact:</span>\n" +
+    "      <span class=\"descr\">\n" +
+    "         <span class=\"val\">{{ floor(package.impact) }}<span class=\"small\">/10k</span></span>\n" +
+    "      </span>\n" +
+    "   </div>\n" +
+    "\n" +
+    "   <div class=\"sort_scores\">\n" +
+    "\n" +
+    "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-file-text-o\"></i>\n" +
+    "            Citations\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ package.num_citations }}</span>\n" +
+    "            <span class=\"paren\">({{ round(package.num_citations_percentile * 100) }}%)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score pagerank metric\" ng-show=\"package.pagerank\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-exchange\"></i>\n" +
+    "            Dependency PageRank\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter(package.pagerank) }} </span>\n" +
+    "            <span class=\"paren\">({{ round(package.pagerank_percentile * 100 )}}%)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-download\"></i>\n" +
+    "            Downloads\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter(package.num_downloads)}}</span>\n" +
+    "            <span class=\"paren\">({{ round(package.num_downloads_percentile * 100) }}%)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score stars metric\" ng-show=\"package.num_stars\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-star-o\"></i>\n" +
+    "            Github stars\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter( package.num_stars ) }} </span>\n" +
+    "            <span class=\"paren\">({{ round(package.num_stars_percentile * 100) }}%)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
     "\n" +
     "\n" +
+    "   </div>\n" +
     "</div>");
 }]);
 

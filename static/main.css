@@ -163,40 +163,47 @@ div.page.sidebar-page .main {
   margin-left: 330px;
 }
 span.package-snippet {
-  margin: 4px 0;
+  margin: 15px 0 15px 50px;
   padding: 4px 0;
   color: #333;
   text-decoration: none;
   display: inline-block;
 }
-span.package-snippet span.left-metrics {
-  vertical-align: -2px;
+span.package-snippet span.left-icons {
   display: inline-block;
-  width: 200px;
+}
+span.package-snippet span.left-metrics {
+  vertical-align: middle;
+  display: inline-block;
+  width: 75px;
   text-align: right;
   font-weight: bold;
+  float: left;
 }
 span.package-snippet span.left-metrics span.vis {
   display: inline-block;
   background: #eee;
-  width: 50px;
-  height: 10px;
+  width: 58px;
+  height: 8px;
   text-align: right;
+  margin-right: 3px;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar {
   display: inline-block;
   height: 100%;
   text-align: right;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore {
-  background: red;
   display: inline-block;
   height: 100%;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_citations_percentile {
   background: #984ea3;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_depended_on_percentile {
+span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-pagerank_percentile {
   background: #4daf4a;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_downloads_percentile {
@@ -205,37 +212,128 @@ span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subsc
 span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_stars_percentile {
   background: #e41a1c;
 }
-span.package-snippet span.left-metrics .metric {
+span.package-snippet span.left-metrics .one-metric {
   cursor: default;
-}
-span.package-snippet span.left-metrics .metric.metric {
   font-size: 24px;
   color: #333;
+  font-weight: 100;
+}
+span.package-snippet span.left-metrics .one-metric span.percent {
+  font-size: 50%;
+  margin-left: 0px;
 }
 span.package-snippet span.metadata {
   display: inline-block;
-}
-span.package-snippet span.metadata i.github.github-false {
-  opacity: .4;
+  float: left;
+  width: 300px;
+  margin-left: 15px;
 }
 span.package-snippet span.metadata span.name-container {
-  padding: 0 10px 0 5px;
+  float: left;
+  min-width: 165px;
+}
+span.package-snippet span.metadata span.name-container span.language-icon {
+  margin-right: 4px;
+  font-weight: 100;
+  text-align: center;
+  background: #777;
+  width: 16px;
   display: inline-block;
-  min-width: 150px;
+  color: #fff;
+  font-size: 10px;
+  border: 1px solid #777;
+  color: #777;
+  background: none;
+}
+span.package-snippet span.metadata span.name-container span.language-icon.r {
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
 }
 span.package-snippet span.metadata span.name-container a.name {
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
   color: #333;
+  vertical-align: middle;
 }
 span.package-snippet span.metadata span.name-container a.name:hover {
   color: #333;
 }
 span.package-snippet span.metadata span.summary {
+  float: left;
+  margin-left: 1px;
+  font-size: 13px;
+  display: inline-block;
+  width: 400px;
+}
+#sort-score-popover div.metric {
+  font-size: 14px;
+  margin: 10px 0 0;
+  line-height: 1.2;
+}
+#sort-score-popover div.metric:before,
+#sort-score-popover div.metric:after {
+  content: " ";
+  display: table;
+}
+#sort-score-popover div.metric:after {
+  clear: both;
+}
+#sort-score-popover div.metric.head {
+  border-bottom: 1px solid #ddd;
+  padding: 0 0 5px 0;
+  margin: 0 0 5px 0;
+}
+#sort-score-popover div.metric.head:before,
+#sort-score-popover div.metric.head:after {
+  content: " ";
+  display: table;
+}
+#sort-score-popover div.metric.head:after {
+  clear: both;
+}
+#sort-score-popover div.metric.head span.name {
+  font-size: 18px;
+  text-align: right;
+  padding-right: 20px;
+  font-weight: 900;
+}
+#sort-score-popover div.metric.head span.val {
+  font-size: 18px;
+}
+#sort-score-popover div.metric.head span.val span.small {
   font-size: 12px;
 }
-#sort-score-popover {
-  background: red;
-  color: red;
+#sort-score-popover div.metric.citations {
+  color: #984ea3;
+}
+#sort-score-popover div.metric.pagerank {
+  color: #4daf4a;
+}
+#sort-score-popover div.metric.downloads {
+  color: #377eb8;
+}
+#sort-score-popover div.metric.stars {
+  color: #e41a1c;
+}
+#sort-score-popover div.metric span.name {
+  display: inline-block;
+  width: 100px;
+  float: left;
+  margin: 0 0px 0 17px;
+  text-indent: -10px;
+  font-weight: bold;
+}
+#sort-score-popover div.metric span.descr {
+  float: left;
+  width: 100px;
+}
+#sort-score-popover div.metric span.descr span.val {
+  font-size: 18px;
+  font-weight: bold;
+}
+#sort-score-popover div.metric span.descr span.paren {
+  font-size: 12px;
 }
 ul {
   margin-left: 0;

@@ -11,6 +11,10 @@
 
 @citationsColor: #984ea3;
 @dependedOnColor: #4daf4a;
+@pagerankColor: #4daf4a;
+
+
+
 @downloadsColor: #377eb8;
 @starsColor: #e41a1c;
 
@@ -219,37 +223,54 @@ div.page {
 
 
 span.package-snippet {
-   margin: 4px 0;
+   margin: 15px 0 15px 50px;
    padding: 4px 0;
    color: #333;
    text-decoration: none;
    display: inline-block;
 
 
+
+   span.left-icons {
+      display: inline-block;
+   }
+
+
    span.left-metrics {
-      vertical-align: -2px;
+      vertical-align: middle;
+      display: inline-block;
+      width: 75px;
+      text-align: right;
+      font-weight: bold;
+      float: left;
+
       span.vis {
          display: inline-block;
          background: #eee;
-         width: 50px;
-         height: 10px;
+         width: 58px;
+         height: 8px;
          text-align: right;
+         margin-right: 3px;
          span.vis-bar {
             display: inline-block;
             height: 100%;
             text-align: right;
+            .rounded(30px);
             span.subscore {
-               background: red;
                display: inline-block;
                height: 100%;
+//               border-left: 1px solid #fff;
+//               margin-left: -1px;
                &.subscore-num_citations_percentile {
                   background: @citationsColor;
                }
-               &.subscore-num_depended_on_percentile {
-                  background: @dependedOnColor;
+               &.subscore-pagerank_percentile {
+                  background: @pagerankColor;
+//                  .border-radius(5px, 5px, 0, 0);
                }
                &.subscore-num_downloads_percentile {
                   background: @downloadsColor;
+//                  .border-radius(0, 0, 5px, 5px);
                }
                &.subscore-num_stars_percentile {
                   background: @starsColor;
@@ -260,35 +281,55 @@ span.package-snippet {
       }
 
 
-      .metric {
+      .one-metric {
          cursor: default;
-         &.metric {
-            font-size: 24px;
-            color: #333;
-
+         font-size: 24px;
+         color: #333;
+         font-weight: 100;
+         span.percent {
+            font-size: 50%;
+            margin-left: 0px;
          }
       }
 
-      display: inline-block;
-      width: 200px;
-      text-align: right;
-      font-weight: bold;
+
    }
 
    span.metadata {
       display: inline-block;
-      i.github {
-         &.github-false {
-            opacity: .4;
-         }
-      }
+      float: left;
+      width: 300px;
+      margin-left: 15px;
+
       span.name-container {
-         padding: 0 10px 0 5px;
-         display:inline-block;
-         min-width: 150px;
+         float: left;
+         min-width: 165px;
+         span.language-icon {
+            margin-right: 4px;
+            font-weight: 100;
+            text-align: center;
+            background: #777;
+            width: 16px;
+            display: inline-block;
+            color: #fff;
+            font-size: 10px;
+
+            border: 1px solid #777;
+            color: #777;
+            background: none;
+
+            &.r {
+               .rounded(15px);
+            }
+         }
+
+
+
          a.name {
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: bold;
             color: #333;
+            vertical-align: middle;
             &:hover {
                color: #333;
             }
@@ -296,13 +337,78 @@ span.package-snippet {
 
       }
       span.summary {
-         font-size: 12px;
+         float: left;
+         margin-left: 1px;
+         font-size: 13px;
+         display: inline-block;
+         width: 400px;
+//         vertical-align: middle;
       }
    }
 }
 #sort-score-popover {
-   background: red;
-   color: red;
+   div.metric {
+      font-size: 14px;
+      .clearfix();
+      margin: 10px 0 0;
+      line-height: 1.2;
+      &.head {
+         border-bottom: 1px solid #ddd;
+         padding: 0 0 5px 0;
+         margin: 0 0 5px 0;
+         .clearfix();
+         span.name {
+            font-size: 18px;
+            text-align: right;
+            padding-right: 20px;
+            font-weight: 900;
+         }
+         span.val {
+            span.small {
+               font-size: 12px;
+            }
+            font-size: 18px;
+
+         }
+      }
+
+      &.citations {
+         color: @citationsColor;
+      }
+      &.pagerank {
+         color: @pagerankColor;
+      }
+      &.downloads {
+         color: @downloadsColor;
+      }
+      &.stars {
+         color: @starsColor;
+      }
+
+
+      span.name {
+         display: inline-block;
+         width: 100px;
+         float:left;
+         margin: 0 0px 0 17px;
+         text-indent: -10px;
+         font-weight: bold;
+
+      }
+      span.descr {
+         float: left;
+         width: 100px;
+         span.val {
+            font-size: 18px;
+            font-weight: bold;
+         }
+         span.paren {
+            font-size: 12px;
+         }
+
+      }
+
+   }
 }
 
 

@@ -1,26 +1,40 @@
 <span class="package-snippet"
      ng-controller="packageSnippetCtrl">
-   <span class="left-metrics">
+   <span class="left-metrics"
+         popover-placement="top"
+         popover-trigger="mouseenter"
+         popover-template="'package-snippet/sort-score-popover.tpl.html'">
+
+      <span class="one-metric metric">
+         {{ round(package.impact, 1) }}<span class="percent">%</span>
+      </span>
+
+
       <span class="vis">
-         <span class="vis-bar" style="width: {{ package.sort_score * 100 }}%;">
+         <span class="vis-bar" style="width: {{ package.impact }}%;">
             <span ng-repeat="subScoreRatio in subScoreRatios"
                   class="subscore subscore-{{ subScoreRatio.name }}"
                   style="width: {{ subScoreRatio.val * 100 }}%;"></span>
          </span>
 
       </span>
-      <span class="one-metric metric"
-            popover-placement="top"
-            popover-title="Sort score"
-            popover-trigger="mouseenter"
-            popover-template="'package-snippet/sort-score-popover.tpl.html'">
-         {{ floor(package.sort_score * 10000) }}
-      </span>
+
    </span>
 
    <span class="metadata">
       <span class="name-container">
-         <i class="fa github fa-github-alt github-{{ package.num_stars !== null }}"></i>
+
+         <span class="language-icon r"
+               ng-if="package.language=='r'"
+              tooltip="R package">
+            R
+         </span>
+         <span class="language-icon python"
+               ng-if="package.language=='python'"
+              tooltip="Python package">
+            py
+         </span>
+
          <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
             {{ package.name }}
          </a>
