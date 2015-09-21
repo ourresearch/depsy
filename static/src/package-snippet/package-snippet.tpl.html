@@ -11,7 +11,6 @@
       </span>
       <span class="one-metric metric"
             popover-placement="top"
-            popover-title="Sort score"
             popover-trigger="mouseenter"
             popover-template="'package-snippet/sort-score-popover.tpl.html'">
          {{ floor(package.sort_score * 10000) }}
@@ -20,7 +19,15 @@
 
    <span class="metadata">
       <span class="name-container">
-         <i class="fa github fa-github-alt github-{{ package.num_stars !== null }}"></i>
+         <img class="language-icon python"
+              ng-if="package.language=='python'"
+              tooltip="Python package"
+              src="static/img/python.png" alt=""/>
+         <img class="language-icon r"
+              ng-if="package.language=='r'"
+              tooltip="R package"
+              src="static/img/r.png" alt=""/>
+
          <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
             {{ package.name }}
          </a>

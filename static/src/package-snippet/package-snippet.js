@@ -40,11 +40,5 @@ angular.module('packageSnippet', [
 
 
 
-
-
-    $scope.floor = function(num){
-      return Math.floor(num)
-    }
-
   })
 

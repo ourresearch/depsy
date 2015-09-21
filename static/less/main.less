@@ -11,6 +11,10 @@
 
 @citationsColor: #984ea3;
 @dependedOnColor: #4daf4a;
+@pagerankColor: #4daf4a;
+
+
+
 @downloadsColor: #377eb8;
 @starsColor: #e41a1c;
 
@@ -245,8 +249,8 @@ span.package-snippet {
                &.subscore-num_citations_percentile {
                   background: @citationsColor;
                }
-               &.subscore-num_depended_on_percentile {
-                  background: @dependedOnColor;
+               &.subscore-pagerank_percentile {
+                  background: @pagerankColor;
                }
                &.subscore-num_downloads_percentile {
                   background: @downloadsColor;
@@ -277,11 +281,11 @@ span.package-snippet {
 
    span.metadata {
       display: inline-block;
-      i.github {
-         &.github-false {
-            opacity: .4;
-         }
+      img.language-icon {
+         width: 16px;
+         vertical-align: -2px;
       }
+
       span.name-container {
          padding: 0 10px 0 5px;
          display:inline-block;
@@ -301,8 +305,67 @@ span.package-snippet {
    }
 }
 #sort-score-popover {
-   background: red;
-   color: red;
+   div.head {
+      border-bottom: 1px solid #ddd;
+      padding: 5px 0;
+      margin: 5px 0;
+      .clearfix();
+      span.name {
+         font-size: 18px;
+         text-align: right;
+         padding-right: 20px;
+         font-weight: 900;
+      }
+      span.val {
+         span.small {
+            font-size: 12px;
+         }
+         font-size: 18px;
+
+      }
+   }
+   div.metric {
+      font-size: 14px;
+      .clearfix();
+      margin-top: 10px;
+
+      &.citations {
+         color: @citationsColor;
+      }
+      &.pagerank {
+         color: @pagerankColor;
+      }
+      &.downloads {
+         color: @downloadsColor;
+      }
+      &.stars {
+         color: @starsColor;
+      }
+
+
+      span.name {
+         display: inline-block;
+         width: 100px;
+         float:left;
+         margin: 0 0px 0 17px;
+         text-indent: -10px;
+         font-weight: bold;
+
+      }
+      span.descr {
+         float: left;
+         width: 100px;
+         span.val {
+            display: block;
+            font-size: 16px;
+         }
+         span.paren {
+            font-size: 12px;
+         }
+
+      }
+
+   }
 }
 
 

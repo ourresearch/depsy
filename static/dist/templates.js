@@ -206,7 +206,6 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "      </span>\n" +
     "      <span class=\"one-metric metric\"\n" +
     "            popover-placement=\"top\"\n" +
-    "            popover-title=\"Sort score\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
     "            popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
     "         {{ floor(package.sort_score * 10000) }}\n" +
@@ -215,7 +214,15 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "\n" +
     "   <span class=\"metadata\">\n" +
     "      <span class=\"name-container\">\n" +
-    "         <i class=\"fa github fa-github-alt github-{{ package.num_stars !== null }}\"></i>\n" +
+    "         <img class=\"language-icon python\"\n" +
+    "              ng-if=\"package.language=='python'\"\n" +
+    "              tooltip=\"Python package\"\n" +
+    "              src=\"static/img/python.png\" alt=\"\"/>\n" +
+    "         <img class=\"language-icon r\"\n" +
+    "              ng-if=\"package.language=='r'\"\n" +
+    "              tooltip=\"R package\"\n" +
+    "              src=\"static/img/r.png\" alt=\"\"/>\n" +
+    "\n" +
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
@@ -232,8 +239,61 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
 angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-snippet/sort-score-popover.tpl.html",
     "<div id=\"sort-score-popover\">\n" +
+    "   <div class=\"head metric\">\n" +
+    "      <span class=\"name\">Impact:</span>\n" +
+    "      <span class=\"descr\">\n" +
+    "         <span class=\"val\">{{ floor(package.impact) }}<span class=\"small\">/10k</span></span>\n" +
+    "      </span>\n" +
+    "   </div>\n" +
+    "\n" +
+    "   <div class=\"sort_scores\">\n" +
+    "\n" +
+    "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-file-text-o\"></i>\n" +
+    "            Citations\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ package.num_citations }}</span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.num_citations_percentile) }} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score pagerank metric\" ng-show=\"package.pagerank\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-exchange\"></i>\n" +
+    "            Dependency PageRank\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter(package.pagerank) }} </span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.pagerank_percentile )}} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-download\"></i>\n" +
+    "            Downloads\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter(package.num_downloads)}}</span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.num_downloads_percentile) }} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score stars metric\" ng-show=\"package.num_stars\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-star-o\"></i>\n" +
+    "            Github stars\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter( package.num_stars ) }} </span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.num_stars_percentile) }} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
     "\n" +
     "\n" +
+    "   </div>\n" +
     "</div>");
 }]);
 

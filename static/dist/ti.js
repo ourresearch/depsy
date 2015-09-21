@@ -55,6 +55,17 @@ angular.module('app').run(function($route,
     ngProgress.complete()
   });
 
+
+  // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
+  (function(o) {
+    Number.getOrdinalFor = function(intNum, includeNumber) {
+      return (includeNumber ? intNum : "")
+        + (o[((intNum = Math.abs(intNum % 100)) - 20) % 10] || o[intNum] || "th");
+    };
+  })([,"st","nd","rd"]);
+
+
+
   /*
   this lets you change the args of the URL without reloading the whole view. from
      - https://github.com/angular/angular.js/issues/1699#issuecomment-59283973
@@ -93,15 +104,46 @@ angular.module('app').controller('AppCtrl', function(
 
   $scope.nFormatter = function(num){
       // from http://stackoverflow.com/a/14994860/226013
+      if (num === null){
+        return 0
+      }
+
       if (num >= 1000000) {
           return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
       }
       if (num >= 1000) {
           return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
       }
+
+      if (num < .01) {
+        return num.toExponential(1)
+      }
+      if (num < 1) {
+        return Math.round(num * 100) / 100
+      }
+
       return Math.floor(num);
   }
 
+
+  function toRoundedSciNotation(n){
+
+  }
+
+  // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
+  $scope.getOrdinal = function(n) {
+    var s=["th","st","nd","rd"],
+      v=n%100;
+    return n+(s[(v-20)%10]||s[v]||s[0]);
+  }
+
+  $scope.toPercentile = function(proportion){
+    return $scope.getOrdinal(Math.floor(proportion * 100))
+  }
+
+  $scope.floor = function(num){
+    return Math.floor(num)
+  }
 
 
   $scope.trustHtml = function(str){
@@ -363,12 +405,6 @@ angular.module('packageSnippet', [
 
 
 
-
-
-
-    $scope.floor = function(num){
-      return Math.floor(num)
-    }
 
   })
 
@@ -861,7 +897,6 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "      </span>\n" +
     "      <span class=\"one-metric metric\"\n" +
     "            popover-placement=\"top\"\n" +
-    "            popover-title=\"Sort score\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
     "            popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
     "         {{ floor(package.sort_score * 10000) }}\n" +
@@ -870,7 +905,15 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "\n" +
     "   <span class=\"metadata\">\n" +
     "      <span class=\"name-container\">\n" +
-    "         <i class=\"fa github fa-github-alt github-{{ package.num_stars !== null }}\"></i>\n" +
+    "         <img class=\"language-icon python\"\n" +
+    "              ng-if=\"package.language=='python'\"\n" +
+    "              tooltip=\"Python package\"\n" +
+    "              src=\"static/img/python.png\" alt=\"\"/>\n" +
+    "         <img class=\"language-icon r\"\n" +
+    "              ng-if=\"package.language=='r'\"\n" +
+    "              tooltip=\"R package\"\n" +
+    "              src=\"static/img/r.png\" alt=\"\"/>\n" +
+    "\n" +
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
@@ -887,8 +930,61 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
 angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-snippet/sort-score-popover.tpl.html",
     "<div id=\"sort-score-popover\">\n" +
+    "   <div class=\"head metric\">\n" +
+    "      <span class=\"name\">Impact:</span>\n" +
+    "      <span class=\"descr\">\n" +
+    "         <span class=\"val\">{{ floor(package.impact) }}<span class=\"small\">/10k</span></span>\n" +
+    "      </span>\n" +
+    "   </div>\n" +
+    "\n" +
+    "   <div class=\"sort_scores\">\n" +
+    "\n" +
+    "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-file-text-o\"></i>\n" +
+    "            Citations\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ package.num_citations }}</span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.num_citations_percentile) }} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score pagerank metric\" ng-show=\"package.pagerank\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-exchange\"></i>\n" +
+    "            Dependency PageRank\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter(package.pagerank) }} </span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.pagerank_percentile )}} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-download\"></i>\n" +
+    "            Downloads\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter(package.num_downloads)}}</span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.num_downloads_percentile) }} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score stars metric\" ng-show=\"package.num_stars\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-star-o\"></i>\n" +
+    "            Github stars\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ nFormatter( package.num_stars ) }} </span>\n" +
+    "            <span class=\"paren\">({{ toPercentile(package.num_stars_percentile) }} percentile)</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
     "\n" +
     "\n" +
+    "   </div>\n" +
     "</div>");
 }]);
 

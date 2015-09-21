@@ -122,6 +122,7 @@ class Package(db.Model):
             "num_stars": self.num_stars,
             "num_stars_percentile": self.num_stars_percentile,
             "sort_score": self.sort_score,
+            "impact": self.sort_score * 10000,
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
@@ -145,9 +146,12 @@ class Package(db.Model):
             "language": None,
 
             "sort_score": self.sort_score,
+            "impact": self.sort_score * 10000,
 
-            "num_depended_on": self.num_depended_on,
-            "num_depended_on_percentile": self.num_depended_on_percentile,
+            "pagerank": self.pagerank,
+
+            # horrible name bug
+            "pagerank_percentile": self.num_depended_on_percentile,
 
             "num_downloads": self.num_downloads,
             "num_downloads_percentile": self.num_downloads_percentile,
