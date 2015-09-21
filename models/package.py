@@ -700,9 +700,12 @@ class CranPackage(Package):
         for clean_part in author_parts:
             # print "clean_part", clean_part
             if "<" in clean_part:
-                match = re.search("(.+)(?: \<(.*)\>)", clean_part)
-                author_name = match.group(0)
-                author_email = match.group(1)
+                match = re.search(ur"(.*)(?:\w*\<(.*)\>)", clean_part)
+                if match:
+                    author_name = match.group(0)
+                    author_email = match.group(1)
+                else:
+                    print u"no email match on", clean_part
             else:
                 author_name = clean_part
                 author_email = None
