@@ -13,6 +13,7 @@ import hashlib
 from lxml import html
 import numpy
 import os
+import re
 from collections import defaultdict
 
 from models import github_api
@@ -216,7 +217,7 @@ class Package(db.Model):
             return False
 
         person = get_or_make_person(github_login=self.github_owner)
-        self._save_contribution(person,  "github_owner")
+        self._save_contribution(person, "github_owner")
 
 
     def _save_contribution(self, person, role, quantity=None, percent=None):
@@ -654,7 +655,9 @@ class CranPackage(Package):
             name=self.id)
 
     def _return_clean_author_string(self, all_authors):
-        halt_patterns = ["punt", "adapted", "comply"]
+        # print "all authors before:", all_authors
+
+        halt_patterns = [" punt ", " adapted ", " comply "]
         for pattern in halt_patterns:
             if pattern in all_authors:
                 return None
@@ -669,38 +672,44 @@ class CranPackage(Package):
             "and others.*$",
             "and many others.*$",
             "and authors.*$",
-            "assisted.*$",
-            "\..*$",
+            "assisted.*$"
         ]
-        for pattern in all_patterns:
+        for pattern in remove_patterns:
             all_authors = re.sub(pattern, "", all_authors)
+
         all_authors = all_authors.replace("<U+000a>", " ")
         all_authors = all_authors.replace("\n", " ")
-        all_authors = all_authors.replace("&", ",")
-        all_authors = all_authors.replace("and", ",")
+        all_authors = all_authors.replace(" & ", ",")
+        all_authors = all_authors.replace(" and ", ",")
+        all_authors.strip(" .")
+        # print "all authors after:", all_authors
         return all_authors
 
     def save_host_contributors(self):
         all_authors = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
+        print "starting with all_authors", all_authors
         clean_author_string = self._return_clean_author_string(all_authors)
         author_parts = clean_author_string.split(",")
-        for part in author_parts:
-            match = re.findall("(.*)(\<.*\>)?", part)
-            # if match and len(match)
-            #     name = match[0]
-            #     email = match[1]
+        for clean_part in author_parts:
+            # print "clean_part", clean_part
+            if "<" in clean_part:
+                match = re.search("(.+)(?: \<(.*)\>)", clean_part)
+                author_name = match.group(0)
+                author_email = match.group(1)
+            else:
+                author_name = clean_part
+                author_email = None
 
-        #if not author:
-        #    return False
-        #
-        #if author_email and validate_email(author_email):
-        #    person = get_or_make_person(name=author, email=author_email)
-        #else:
-        #    person = get_or_make_person(name=author)
-        #
-        #self._save_contribution(person, "author")
+            if author_name:
+                author_name = author_name.strip()
+                if author_email and validate_email(author_email):
+                   person = get_or_make_person(name=author_name, email=author_email)
+                else:
+                   person = get_or_make_person(name=author_name)
+                print u"saving person", person   
+                # self._save_contribution(person, "author")
 
 
 
@@ -813,91 +822,6 @@ def get_packages(sort="sort_score", filters=None):
     ret = q.all()
     return ret
 
-
-
-
-
-
-def save_host_contributors_pypi(limit=10):
-    # has to be run all in one go, db stores no indicator this has run.
-    q = db.session.query(PypiPackage.id)
-    q = q.order_by(Package.project_name)
-    q = q.limit(limit)
-
-    update_fn = make_update_fn(Package, "save_host_contributors")
-    for row in q.all():
-        update_fn(row[0])
-
-
-def save_host_contributors_cran(limit=10):
-    # has to be run all in one go, db stores no indicator this has run.
-    q = db.session.query(CranPackage.id)
-    q = q.order_by(Package.project_name)
-    q = q.limit(limit)
-
-    update_fn = make_update_fn(Package, "save_host_contributors")
-    for row in q.all():
-        update_fn(row[0])
-
-
-def set_all_github_contributors(limit=10, use_rq="rq"):
-    q = db.session.query(Package.id)
-    q = q.filter(Package.github_repo_name != None)
-    q = q.filter(Package.github_contributors == None)
-    q = q.order_by(Package.project_name)
-    q = q.limit(limit)
-
-    enqueue_jobs(Package, "set_github_contributors", q, 1, use_rq)
-
-
-
-
-
-
-
-def set_all_pypi_github_repo_ids(limit=10, use_rq="rq", chunk_size=1000):
-
-    q = db.session.query(PypiPackage.id)
-    q = q.filter(PypiPackage.github_repo_name == None)
-    q = q.order_by(PypiPackage.project_name)
-    q = q.limit(limit)
-
-    enqueue_jobs(PypiPackage, "set_github_repo_ids", q, 1, use_rq, chunk_size)
-
-
-
-
-
-def set_all_cran_github_repo_ids(limit=10, use_rq="rq", chunk_size=1000):
-
-    q = db.session.query(CranPackage.id)
-    q = q.filter(CranPackage.github_repo_name == None)
-    q = q.order_by(CranPackage.project_name)
-    q = q.limit(limit)
-
-    enqueue_jobs(CranPackage, "set_github_repo_ids", q, 1, use_rq, chunk_size)
-
-
-
-
-
-def make_persons_from_github_owner_and_contribs(limit=10, use_rq="rq"):
-    q = db.session.query(Package.id)
-    q = q.filter(Package.github_repo_name != None)
-    q = q.filter(Package.bucket.contains({"matched_from_github_metadata": True}))
-    q = q.order_by(Package.id)
-    q = q.limit(limit)
-
-    enqueue_jobs(Package, "save_github_owners_and_contributors", q, 1, use_rq)
-
-
-def test_me(limit=10, use_rq="rq"):
-    q = db.session.query(Package.id)
-    q = q.order_by(Package.id)
-    q = q.limit(limit)
-
-    # doesn't matter what this is now, because update function overwritten
-    enqueue_jobs(Package, "set_github_repo_ids", q, 6, use_rq)
 
 
 
@@ -1102,32 +1026,12 @@ update_registry.register(Update(
 ))
 
 
-# q = db.session.query(Package.id)
-# q = q.filter(Package.num_depended_on != None)
-# q = q.filter(Package.num_depended_on_percentile == None)
-# update_registry.register(Update(
-#     job=Package.set_num_depended_on_percentile,
-#     query=q,
-#     queue_id=8
-# ))
-
-# q = db.session.query(Package.id)
-# q = q.filter(Package.num_stars != None)
-# q = q.filter(Package.num_stars_percentile == None)
-# update_registry.register(Update(
-#     job=Package.set_stars_percentile,
-#     query=q,
-#     queue_id=8
-# ))
-
-# q = db.session.query(Package.id)
-# q = q.filter(Package.num_citations != None)
-# q = q.filter(Package.num_citations_percentile == None)
-# update_registry.register(Update(
-#     job=Package.set_num_citations_percentile,
-#     query=q,
-#     queue_id=8
-# ))
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.save_host_contributors,
+    query=q,
+    queue_id=8
+))
 
 
 

@@ -12,20 +12,6 @@ from nameparser import HumanName
 from collections import defaultdict
 
 
-"""
-this file in progress. i think should have:
-
-Person table
-id
-email
-name
-other names jsonb
-has_github bool
-github login
-github about
-"""
-
-
 class Person(db.Model):
     __tablename__ = 'person'
     id = db.Column(db.Integer, primary_key=True)
