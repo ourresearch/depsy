@@ -721,7 +721,7 @@ class CranPackage(Package):
                 else:
                    person = get_or_make_person(name=author_name)
                 print u"saving person {}".format(person)
-                # self._save_contribution(person, "author")
+                self._save_contribution(person, "author")
 
 
 

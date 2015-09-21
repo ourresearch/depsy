@@ -217,6 +217,8 @@ def get_or_make_person(**kwargs):
 
     else:
         new_person = Person(**kwargs)
+        new_person.set_parsed_name()
+        
         db.session.add(new_person)
 
         # we can probably get rid of this commit
