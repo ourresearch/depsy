@@ -61,15 +61,14 @@ class Package(db.Model):
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.deferred(db.Column(db.Text))
 
-    num_depended_on = db.Column(db.Float)
-    num_depended_on_percentile = db.Column(db.Float)
     num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
     num_citations = db.Column(db.Integer)
     num_citations_percentile = db.Column(db.Float)
     num_stars = db.Column(db.Integer)
-    num_stars_percentile = db.Column(db.Float)
     pagerank = db.Column(db.Float)
+    pagerank_percentile = db.Column(db.Float)
+
     neighborhood_size = db.Column(db.Float)
     indegree = db.Column(db.Float)
     summary = db.Column(db.Text)
@@ -113,15 +112,15 @@ class Package(db.Model):
             "indegree": self.indegree,
             "neighborhood_size": self.neighborhood_size,
             "num_authors": self.num_authors,
-            "num_citations": self.num_citations,
-            "num_citations_percentile": self.num_citations_percentile,
             "num_commits": self.num_commits,
             "num_committers": self.num_committers,
-            "num_depended_on": self.num_depended_on,
-            "num_depended_on_percentile": self.num_depended_on_percentile,
+            "num_citations": self.num_citations,
+            "num_citations_percentile": self.num_citations_percentile,
+            "pagerank": self.pagerank,
+            "pagerank_percentile": self.pagerank_percentile,
+            "num_downloads": self.num_downloads,
             "num_downloads_percentile": self.num_downloads_percentile,
             "num_stars": self.num_stars,
-            "num_stars_percentile": self.num_stars_percentile,
             "sort_score": self.sort_score,
             "impact": self.sort_score * 100,
 
@@ -150,15 +149,10 @@ class Package(db.Model):
             "impact": self.sort_score * 100,
 
             "pagerank": self.pagerank,
-
-            #  name bug
-            "pagerank_percentile": self.num_depended_on_percentile,
+            "pagerank_percentile": self.pagerank_percentile,
 
             "num_downloads": self.num_downloads,
             "num_downloads_percentile": self.num_downloads_percentile,
-
-            "num_stars": self.num_stars,
-            "num_stars_percentile": self.num_stars_percentile,
 
             "num_citations": self.num_citations,
             "num_citations_percentile": self.num_citations_percentile,
@@ -271,9 +265,9 @@ class Package(db.Model):
     def set_sort_score(self):
         scores = [
             self.num_downloads_percentile,
-            self.num_stars_percentile,
             self.num_citations_percentile,
-            self.num_depended_on_percentile]
+            self.pagerank_percentile
+            ]
         non_null_scores = [s for s in scores if s!=None]
         self.sort_score = numpy.mean(non_null_scores)
         print "sort score for {} is {}".format(self.id, self.sort_score)
@@ -291,18 +285,6 @@ class Package(db.Model):
         self.pmc_mentions = pmc_mentions
         return self.pmc_mentions
 
-    def set_depended_on(self):
-        global our_graph
-
-        try:
-            this_vertex = our_graph.vs.find(self.project_name)
-            num_depended_on = our_graph.neighborhood_size(this_vertex, mode="OUT", order=999999)
-            print "num_depended_on for {} is {}".format(self.project_name, num_depended_on)
-        except ValueError:
-            num_depended_on = 0
-            print "no num_depended_on found for {}".format(self.project_name)
-        self.num_depended_on = num_depended_on
-
 
     def set_pagerank(self):
         global our_igraph_data
@@ -318,8 +300,8 @@ class Package(db.Model):
             self.neighborhood_size = 0
             self.indegree = 0
 
-        self.num_depended_on = self.pagerank
-        self.set_all_percentiles()
+        self.pagerank = self.pagerank
+        # self.set_all_percentiles()
 
 
     def refresh_github_ids(self):
@@ -334,79 +316,52 @@ class Package(db.Model):
             self.github_repo_name = None
 
 
-    @classmethod
-    def _group_by_host(cls, rows, col_number):
-        ret = {
-            "pypi": [row[col_number] for row in rows if row[0]=="pypi" and row[col_number]!=None],
-            "cran": [row[col_number] for row in rows if row[0]=="cran" and row[col_number]!=None]
-        }
 
-        return ret
 
     @classmethod
-    def get_refsets(cls):
-        q = db.session.query(
-                cls.host, 
-                cls.num_downloads, 
-                cls.num_depended_on,
-                cls.num_stars,
-                cls.num_citations)
-        rows = q.all()
+    def get_ref_list(cls):
+        ref_list = defaultdict(dict)
+        for host_class in [PypiPackage, CranPackage]:
+            host_name = host_class.__name__
+            q = db.session.query(
+                    host_class.num_downloads, 
+                    host_class.pagerank,
+                    host_class.num_citations
+                    )
+            rows = q.all()
 
-        all_values = {}
-        all_values["num_downloads"] = cls._group_by_host(rows, 1)
-        all_values["num_depended_on"] = cls._group_by_host(rows, 2)
-        all_values["num_stars"] = cls._group_by_host(rows, 3)
-        all_values["num_citations"] = cls._group_by_host(rows, 4)
+            ref_list["num_downloads"][host_name] = sorted([row[0] for row in rows if row[0] != None])
+            ref_list["pagerank"][host_name] = sorted([row[1] for row in rows if row[1] != None])
+            ref_list["num_citations"][host_name] = sorted([row[2] for row in rows if row[2] != None])
 
-        refsets = defaultdict(dict)
-        for refset_type in all_values:
-            for host in all_values[refset_type]:
-                values = all_values[refset_type][host]
-                distinct_values = sorted(list(set(values)))
-                num_distinct_values = len(distinct_values)
-                percentiles = [float(i)/num_distinct_values for (i, value) in enumerate(distinct_values)]
-                this_refset = zip(distinct_values, percentiles)
-                refsets[refset_type][host] = this_refset
-        return refsets
+        return ref_list
 
 
-    def _calc_percentile(self, refset, value):
+    def _calc_percentile(self, ref_list, value):
         if value == None:  # distinguish between that and zero
             return None
+         
+        my_ref_list = ref_list[self.__class__.__name__]  #ideally put this in subclasses so don't need this hack
+        matching_index = my_ref_list.index(value)
+        percentile = float(matching_index) / len(my_ref_list)
+        return percentile
 
-        # print "using refset of length", len(refset[self.host])
-        # print "using refset last value", refset[self.host][len(refset[self.host]) - 1]
-        # print "looking up", value
-        for (cutoff, percentile) in refset[self.host]:
-            if cutoff >= value:
-                # print "hit it! at cutoff", cutoff
-                return percentile
-        # print "didn't find anything"
-        return 99.9999
 
     def set_num_downloads_percentile(self):
-        global refsets
-        print "here in download percentile"
-        self.num_downloads_percentile = self._calc_percentile(refsets["num_downloads"], self.num_downloads)
-        print "that's all folks"
+        global ref_lists
+        self.num_downloads_percentile = self._calc_percentile(ref_lists["num_downloads"], self.num_downloads)
 
-    def set_num_depended_on_percentile(self):
-        global refsets
-        self.num_depended_on_percentile = self._calc_percentile(refsets["num_depended_on"], self.num_depended_on)
-
-    def set_num_star_percentile(self):
-        global refsets
-        self.num_stars_percentile = self._calc_percentile(refsets["num_stars"], self.num_stars)
+    def set_pagerank_percentile(self):
+        global ref_lists
+        self.pagerank_percentile = self._calc_percentile(ref_lists["pagerank"], self.pagerank)
 
     def set_num_citations_percentile(self):
-        global refsets
-        self.num_citations_percentile = self._calc_percentile(refsets["num_citations"], self.num_citations)
+        global ref_lists
+        self.num_citations_percentile = self._calc_percentile(ref_lists["num_citations"], self.num_citations)
 
     def set_all_percentiles(self):
         self.set_num_downloads_percentile()
-        self.set_num_depended_on_percentile()
-        self.set_num_star_percentile()
+        self.set_pagerank_percentile()
         self.set_num_citations_percentile()
         self.set_sort_score()
 
@@ -812,9 +767,8 @@ def get_packages(sort="sort_score", filters=None):
 
     allowed_sorts = [
         "sort_score",
-        "num_depended_on",
+        "pagerank",
         "num_downloads",
-        "num_stars",
         "num_citations"
     ]
 
@@ -1006,12 +960,12 @@ update_registry.register(Update(
 
 if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
     print "loading data from db into memory"
-    refsets = Package.get_refsets()
+    ref_lists = Package.get_ref_list()
     print "done loading data into memory"
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.num_depended_on_percentile != None)
+q = q.filter(Package.pagerank_percentile != None)
 q = q.filter(Package.num_downloads_percentile == None)
 update_registry.register(Update(
     job=Package.set_num_downloads_percentile,
@@ -1021,7 +975,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.sort_score == None)
+# q = q.filter(Package.sort_score == None)
 
 update_registry.register(Update(
     job=Package.set_all_percentiles,
