@@ -1,5 +1,7 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import sql
+
 from time import time
 from validate_email import validate_email
 import re
@@ -159,6 +161,33 @@ class CranPackage(Package):
 
 
 
+    def set_rev_deps_tree(self, rev_deps_pairs):
+        print "CranPackage.set_rev_deps_tree() got {} some pairs".format(
+            len(rev_deps_pairs)
+        )
+
+
+
+
+
+
+
+
+
+
+########################################################################
+
+# shortcut functions
+
+########################################################################
+
+def shortcut_rev_deps_pairs():
+
+    command = "select * from dep_nodes_ncol_cran_reverse"
+
+    res = db.session.connection().execute(sql.text(command))
+    rows = res.fetchall()
+    return rows
 
 
 
@@ -175,6 +204,16 @@ class CranPackage(Package):
 # update functions
 
 ########################################################################
+
+
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_rev_deps_tree,
+    query=q,
+    shortcut_fn=shortcut_rev_deps_pairs
+))
+
 
 
 q = db.session.query(CranPackage.id)
@@ -206,6 +245,11 @@ update_registry.register(Update(
     query=q,
     queue_id=8
 ))
+
+
+
+
+
 
 
 

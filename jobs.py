@@ -4,15 +4,13 @@ from app import db
 from util import elapsed
 from app import ti_queues
 from sqlalchemy.dialects import postgresql
-import argparse
-from sqlalchemy import sql
 
 from util import chunks
 
 
 
 
-def update_fn(cls, method_name, obj_id_list):
+def update_fn(cls, method_name, obj_id_list, shortcut_data=None):
 
     # we are in a fork!  dispose of our engine.
     # will get a new one automatically
@@ -42,7 +40,10 @@ def update_fn(cls, method_name, obj_id_list):
         #    method_name=method_name
         #)
 
-        method_to_run()
+        if shortcut_data:
+            method_to_run(shortcut_data)
+        else:
+            method_to_run()
 
         print u"finished {repr}.{method_name}(). took {elapsed}sec".format(
             repr=obj,
@@ -56,13 +57,28 @@ def update_fn(cls, method_name, obj_id_list):
 
 
 
-def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_size=10):
+def enqueue_jobs(cls,
+         method,
+         ids_q_or_list,
+         queue_number,
+         use_rq="rq",
+         chunk_size=10,
+         shortcut_fn=None
+    ):
     """
     Takes sqlalchemy query with (login, repo_name) IDs, runs fn on those repos.
     """
 
+    shortcut_data = None
     if use_rq == "rq":
         empty_queue(queue_number)
+        if shortcut_fn:
+            raise ValueError("you can't use RQ with a shortcut_fn")
+
+    else:
+        if shortcut_fn:
+            shortcut_data = shortcut_fn()
+
     chunk_size = int(chunk_size)
 
 
@@ -86,7 +102,10 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
 
     # iterate through chunks of IDs like [[id1, id2], [id3, id4], ...  ]
     object_ids_chunk = []
+
+
     for object_ids_chunk in chunks(object_ids, chunk_size):
+
         update_fn_args = [cls, method, object_ids_chunk]
 
         if use_rq == "rq":
@@ -99,6 +118,7 @@ def enqueue_jobs(cls, method, ids_q_or_list, queue_number, use_rq="rq", chunk_si
             job.meta["object_ids_chunk"] = object_ids_chunk
             job.save()
         else:
+            update_fn_args.append(shortcut_data)
             update_fn(*update_fn_args)
 
         if index % 1000 == 0 and index != 0:
@@ -138,13 +158,14 @@ update_registry = UpdateRegistry()
 
 
 class Update():
-    def __init__(self, job, query, queue_id, chunk_size_default=10):
+    def __init__(self, job, query, queue_id=None, chunk_size_default=10, shortcut_fn=None):
 
         self.queue_id = queue_id
         self.job = job
         self.method = job
         self.cls = job.im_class
         self.chunk_size_default = chunk_size_default
+        self.shortcut_fn = shortcut_fn
 
         self.name = "{}.{}".format(self.cls.__name__, self.method.__name__)
         self.query = query.order_by(self.cls.id)
@@ -156,8 +177,11 @@ class Update():
 
         if no_rq == False:
             use_rq = "rq"
+            if self.queue_id is None:
+                raise ValueError("you need a queue number to use RQ")
         else:
             use_rq = "you should not use RQ, computer."
+
 
         if chunk_size is None:
             chunk_size = self.chunk_size_default
@@ -174,7 +198,8 @@ class Update():
             query,
             self.queue_id,
             use_rq,
-            chunk_size
+            chunk_size,
+            self.shortcut_fn
         )
 
 

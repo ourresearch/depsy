@@ -5,6 +5,8 @@ from jobs import update_registry
 from util import elapsed
 
 from models import package
+from models import cran_package
+from models import pypi_package
 from models import github_repo
 from models import person
 
