@@ -1,5 +1,7 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import sql
+
 from time import time
 from validate_email import validate_email
 import re
@@ -10,7 +12,7 @@ from models.person import get_or_make_person
 from models.package import Package
 from models.github_repo import GithubRepo
 from util import elapsed
-
+from collections import defaultdict
 
 class CranPackage(Package):
     __mapper_args__ = {
@@ -158,7 +160,95 @@ class CranPackage(Package):
 
 
 
+    def set_rev_deps_tree(self, rev_deps_lookup):
+        print "CranPackage.set_rev_deps_tree() got {} some pairs".format(
+            len(rev_deps_lookup)
+        )
 
+        outbox = set()
+        inbox = [self.project_name]
+        while len(inbox):
+            my_package_name = inbox.pop()
+            my_package_rev_deps = rev_deps_lookup[my_package_name]
+            for rev_dep_name, rev_dep_pagerank in my_package_rev_deps.iteritems():
+                if rev_dep_name.startswith("github:"):
+                    # this is a leaf node, no need to keep looking for rev deps
+                    pass
+                else:
+                    print "adding this to the inbox", rev_dep_name
+                    inbox.append(rev_dep_name)
+
+                node = (
+                    my_package_name,
+                    rev_dep_name,
+                    rev_dep_pagerank
+                )
+
+                print "adding this to the outbox", node
+
+                # dict key just for de-duping
+                outbox.add(node)
+
+        self.rev_deps_tree = list(outbox)
+        print "found reverse dependency tree!"
+        for node in self.rev_deps_tree:
+            print node
+
+        return self.rev_deps_tree
+
+
+
+
+
+
+
+
+
+
+
+
+########################################################################
+
+# shortcut functions
+
+########################################################################
+
+def shortcut_rev_deps_pairs():
+
+    command = """SELECT package, used_by, pagerank
+        FROM dep_nodes_ncol_cran_reverse
+        LEFT OUTER JOIN package
+        ON dep_nodes_ncol_cran_reverse.used_by = package.project_name
+        and package.host = 'cran'
+        """
+
+    rev_deps_by_package = defaultdict(list)
+    res = db.session.connection().execute(sql.text(command))
+    rows = res.fetchall()
+
+    pageranks = [row[2] for row in rows if row[2] is not None]
+    min_pagerank = min(pageranks)
+
+    for row in rows:
+        my_pagerank = row[2]
+        if my_pagerank is None:
+            my_pagerank = min_pagerank
+
+        rev_deps_by_package[row[0]].append([
+            row[1],
+            my_pagerank
+        ])
+
+    ret = defaultdict(dict)
+    for package_name, package_rev_deps in rev_deps_by_package.iteritems():
+
+        # sort in place by pagerank
+        package_rev_deps.sort(key=lambda x: x[1], reverse=True)
+
+        best_rev_deps = package_rev_deps[0:2]  # top 2
+        ret[package_name] = dict(best_rev_deps)
+
+    return ret
 
 
 
@@ -175,6 +265,16 @@ class CranPackage(Package):
 # update functions
 
 ########################################################################
+
+
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_rev_deps_tree,
+    query=q,
+    shortcut_fn=shortcut_rev_deps_pairs
+))
+
 
 
 q = db.session.query(CranPackage.id)
@@ -206,6 +306,11 @@ update_registry.register(Update(
     query=q,
     queue_id=8
 ))
+
+
+
+
+
 
 
 

@@ -327,6 +327,7 @@ q = q.filter(PypiPackage.tags == None)
 
 update_registry.register(Update(
     job=PypiPackage.set_tags,
+
     query=q,
     queue_id=2
 ))

@@ -63,6 +63,8 @@ class Package(db.Model):
 
     inactive = db.Column(db.Text)
 
+    rev_deps_tree = db.Column(JSONB)
+
 
     contributions = db.relationship(
         'Contribution',
