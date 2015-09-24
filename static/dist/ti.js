@@ -356,7 +356,10 @@ angular.module('packagePage', [
 
         // Sets chart options.
         var options = {
-          width: 600
+          width: 600,
+          sankey: {
+            iterations: 10000
+          }
         };
 
         // Instantiates and draws our chart, passing in some options.
@@ -830,7 +833,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "      <h2>package stuff goes here!</h2>\n" +
     "\n" +
     "\n" +
-    "      <div id=\"sankey_basic\" style=\"width: 900px; height: 300px;\"></div>\n" +
+    "      <div id=\"sankey_basic\" style=\"width: 900px; height: 600px;\"></div>\n" +
     "\n" +
     "\n" +
     "   </div>\n" +

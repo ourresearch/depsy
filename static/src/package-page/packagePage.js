@@ -39,7 +39,10 @@ angular.module('packagePage', [
 
         // Sets chart options.
         var options = {
-          width: 600
+          width: 600,
+          sankey: {
+            iterations: 10000
+          }
         };
 
         // Instantiates and draws our chart, passing in some options.
