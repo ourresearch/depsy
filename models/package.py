@@ -23,6 +23,7 @@ from models.contribution import Contribution
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
 from models.pypi_project import pypi_package_names
+from models.person_name import PersonName
 from jobs import enqueue_jobs
 from jobs import update_registry
 from jobs import Update
@@ -613,84 +614,17 @@ class CranPackage(Package):
         return u'<CranPackage {name}>'.format(
             name=self.id)
 
-    def _return_clean_author_string(self, all_authors):
-        # print "all authors before:", all_authors
-
-        halt_patterns = [" punt ", " adapted ", " comply "]
-        for pattern in halt_patterns:
-            if pattern in all_authors:
-                return None
-
-        remove_patterns = [
-            "\(.*?\)",
-            "\[.*?\]",
-            "with.*$",
-            "assistance.*$",
-            "contributions.*$",
-            "under.*$",
-            "and others.*$",
-            "and many others.*$",
-            "and authors.*$",
-            "assisted.*$"
-        ]
-        for pattern in remove_patterns:
-            all_authors = re.sub(pattern, "", all_authors)
-            # print pattern, all_authors
-
-        all_authors = all_authors.replace("<U+000a>", " ")
-        all_authors = all_authors.replace("\n", " ")
-        all_authors = all_authors.replace(" & ", ",")
-        all_authors = all_authors.replace(" and ", ",")
-        all_authors.strip(" .")
-        # print "all authors after:", all_authors
-        return all_authors
 
     def save_host_contributors(self):
-        all_authors = self.api_raw["Author"]
+        raw_authors_byline = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
-        print "starting with all_authors", all_authors
-        clean_author_string = self._return_clean_author_string(all_authors)
-        if not clean_author_string:
-            return None
+        person_name_list = PersonName.extract_names_from_raw_string(raw_authors_byline)
 
-        author_parts = clean_author_string.split(",")
-        author_name = None
-        author_email = None
-        for clean_part in author_parts:
-            # print "clean_part", clean_part
-            if "<" in clean_part:
-                match = re.search(ur"(.*)(?:\w*\<(.*)\>)", clean_part)
-                if match:
-                    author_name = match.group(0)
-                    author_email = match.group(1)
-                else:
-                    print u"no email match on", clean_part
-            else:
-                author_name = clean_part
-
-            if author_name:
-                author_name = author_name.strip()
-                if author_email and validate_email(author_email):
-                   person = get_or_make_person(name=author_name, email=author_email)
-                else:
-                   person = get_or_make_person(name=author_name)
-                print u"saving person {}".format(person)
-                self._save_contribution(person, "author")
-
-
-
-
-
-
-    def _remove_all_authors_cruft(self, all_authors):
-        return all_authors
-
-    def _extract_author_strings(self, all_authors):
-        return []
-
-    def _name_and_email_from_author_str(self, author_str):
-        return [None, None]
+        for person_name in person_name_list:                
+            person = get_or_make_person(person_name.as_dict())
+            print u"saving person {}".format(person)
+            self._save_contribution(person, "author")
 
 
     def set_github_repo_ids(self):

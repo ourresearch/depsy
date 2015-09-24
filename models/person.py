@@ -28,7 +28,7 @@ class Person(db.Model):
 
 
     def __repr__(self):
-        return u'<Person names "{name}" ({id})>'.format(
+        return u'<Person "{name}" ({id})>'.format(
             name=self.name,
             id=self.id
         )
@@ -208,6 +208,28 @@ def get_or_make_person(**kwargs):
                 kwargs["email"]
             )
 
+    elif "name" in kwargs:
+        parsed_name = HumanName(kwargs["name"])
+        dict_for_matching = {
+            "first": parsed_name.first,
+            "last": parsed_name.last
+            }
+
+        rows = db.session.query(Person).filter(
+            Person.parsed_name.contains(dict_for_matching)
+        ).all()
+
+        for row in rows:
+            # check middle initials
+            # if find a compatible middle initial
+            if row.parsed_name.middle = row.parsed_name.middle:
+                res = row
+                print u"we matched a person ({}) based on email {}".format(
+                    res,
+                    kwargs["email"]
+                )
+            # do more kinds of checks here for approx matches
+
     else:
         pass
 
@@ -218,7 +240,7 @@ def get_or_make_person(**kwargs):
     else:
         new_person = Person(**kwargs)
         new_person.set_parsed_name()
-        
+
         db.session.add(new_person)
 
         # we can probably get rid of this commit
