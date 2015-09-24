@@ -21,6 +21,8 @@ from python import parse_requirements_txt
 
 
 class PypiPackage(Package):
+    class_host = "pypi"
+
     __mapper_args__ = {
         'polymorphic_identity': 'pypi'
     }
