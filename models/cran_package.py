@@ -161,35 +161,33 @@ class CranPackage(Package):
 
 
     def set_rev_deps_tree(self, rev_deps_lookup):
-        print "CranPackage.set_rev_deps_tree() got {} some pairs".format(
-            len(rev_deps_lookup)
-        )
-
         outbox = set()
-        inbox = [self.project_name]
+        depth = 1
+        inbox = [(self.project_name, depth)]
         while len(inbox):
-            my_package_name = inbox.pop()
+            (my_package_name, depth) = inbox.pop()
             my_package_rev_deps = rev_deps_lookup[my_package_name]
-            for rev_dep_name, rev_dep_pagerank in my_package_rev_deps.iteritems():
-                if rev_dep_name.startswith("github:"):
+            for rev_dep_dict in my_package_rev_deps:
+
+                if rev_dep_dict["used_by"].startswith("github:"):
                     # this is a leaf node, no need to keep looking for rev deps
                     pass
                 else:
-                    print "adding this to the inbox", rev_dep_name
-                    inbox.append(rev_dep_name)
+                    # print "adding this to the inbox", rev_dep_dict["used_by"]
+                    inbox.append((rev_dep_dict["used_by"], depth+1))
 
                 node = (
+                    depth,
                     my_package_name,
-                    rev_dep_name,
-                    rev_dep_pagerank
+                    rev_dep_dict["used_by"],
+                    rev_dep_dict["pagerank"], 
+                    rev_dep_dict["stars"]
                 )
-
-                print "adding this to the outbox", node
-
-                # dict key just for de-duping
                 outbox.add(node)
 
         self.rev_deps_tree = list(outbox)
+        self.rev_deps_tree.sort(key=lambda x: (x[0], x[1].lower(), x[2].lower())) #by depth
+
         print "found reverse dependency tree!"
         for node in self.rev_deps_tree:
             print node
@@ -215,12 +213,16 @@ class CranPackage(Package):
 
 def shortcut_rev_deps_pairs():
 
-    command = """SELECT package, used_by, pagerank
-        FROM dep_nodes_ncol_cran_reverse
-        LEFT OUTER JOIN package
-        ON dep_nodes_ncol_cran_reverse.used_by = package.project_name
-        and package.host = 'cran'
-        """
+    command = """select package, 
+                    used_by, 
+                    pagerank, 
+                    (COALESCE((github_repo.api_raw->>'stargazers_count')::int, 0) 
+                        + COALESCE(package.num_stars, 0)) as num_stars
+                from dep_nodes_ncol_cran_reverse
+                left outer join github_repo 
+                    on dep_nodes_ncol_cran_reverse.used_by = 'github:' || github_repo.id
+                left outer join package 
+                    on dep_nodes_ncol_cran_reverse.used_by = package.project_name"""
 
     rev_deps_by_package = defaultdict(list)
     res = db.session.connection().execute(sql.text(command))
@@ -230,23 +232,27 @@ def shortcut_rev_deps_pairs():
     min_pagerank = min(pageranks)
 
     for row in rows:
+        package_name = row[0]
+        used_by = row[1]
         my_pagerank = row[2]
+        my_stars = row[3]
+
         if my_pagerank is None:
             my_pagerank = min_pagerank
 
-        rev_deps_by_package[row[0]].append([
-            row[1],
-            my_pagerank
-        ])
+        rev_deps_by_package[package_name].append({
+            "used_by": used_by,
+            "pagerank": my_pagerank,
+            "stars": my_stars
+        })
 
     ret = defaultdict(dict)
     for package_name, package_rev_deps in rev_deps_by_package.iteritems():
 
         # sort in place by pagerank
-        package_rev_deps.sort(key=lambda x: x[1], reverse=True)
-
+        package_rev_deps.sort(key=lambda x: (x["pagerank"], x["stars"]), reverse=True)
         best_rev_deps = package_rev_deps[0:2]  # top 2
-        ret[package_name] = dict(best_rev_deps)
+        ret[package_name] = best_rev_deps
 
     return ret
 
