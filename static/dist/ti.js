@@ -330,8 +330,6 @@ angular.module('packagePage', [
           return PackageResource.get({
             namespace: $route.current.params.language,
             name: $route.current.params.package_name
-          }, function(resp){
-            console.log("got a resp in packageResp", resp)
           }).$promise
         }
       }
@@ -344,10 +342,29 @@ angular.module('packagePage', [
                                           $routeParams,
                                           packageResp){
     $scope.package = packageResp
-    console.log("retrieved the package!", $scope.package)
+    console.log("retrieved the package revdepstree!", packageResp.rev_deps_tree)
 
 
 
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'From');
+        data.addColumn('string', 'To');
+        data.addColumn('number', 'Weight');
+        data.addRows(packageResp.rev_deps_tree);
+
+        // Sets chart options.
+        var options = {
+          width: 600
+        };
+
+        // Instantiates and draws our chart, passing in some options.
+        var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+        chart.draw(data, options);
+      }
+
+    drawChart()
 
 
 
@@ -813,6 +830,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "      <h2>package stuff goes here!</h2>\n" +
     "\n" +
     "\n" +
+    "      <div id=\"sankey_basic\" style=\"width: 900px; height: 300px;\"></div>\n" +
     "\n" +
     "\n" +
     "   </div>\n" +

@@ -110,6 +110,7 @@ class Package(db.Model):
             "num_stars": self.num_stars,
             "sort_score": self.sort_score,
             "impact": self.sort_score * 100,
+            "rev_deps_tree": [[x[1], x[2], x[3]] for x in self.rev_deps_tree],
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
