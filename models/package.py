@@ -350,6 +350,7 @@ class Package(db.Model):
 
     @classmethod
     def shortcut_rev_deps_pairs(cls):
+        NUM_NODES_PER_GENERATION = 2
 
         command = """select package, 
                         used_by, 
@@ -367,7 +368,7 @@ class Package(db.Model):
         res = db.session.connection().execute(sql.text(command))
         rows = res.fetchall()
 
-        pageranks = [row[2] for row in rows if row[2] is not None]
+        pageranks = [row[2] for row in rows if row[2]]
         min_pagerank = min(pageranks)
 
         for row in rows:
@@ -390,10 +391,32 @@ class Package(db.Model):
 
             # sort in place by pagerank
             package_rev_deps.sort(key=lambda x: (x["pagerank"], x["stars"]), reverse=True)
-            best_rev_deps = package_rev_deps[0:2]  # top 2
+            num_rev_deps = len(package_rev_deps)
+            if num_rev_deps <= NUM_NODES_PER_GENERATION:
+                # the rev deps are what you've got.  simple!
+                best_rev_deps = package_rev_deps
+            else:
+                # start with the top N rev deps to add
+                best_rev_deps = package_rev_deps[0:NUM_NODES_PER_GENERATION] 
+
+                # now add an "other" node with its own name...
+                num_other_nodes = num_rev_deps - NUM_NODES_PER_GENERATION
+                other_node_name = "+{num}\n({package_name})".format(
+                    num=num_rev_deps, package_name=package_name)
+
+                # ... and pagerank.  other pagerank is sum of all other pageranks
+                total_pagerank = sum([rev_dep["pagerank"] for rev_dep in package_rev_deps])
+                other_pagerank = sum([rev_dep["pagerank"] for rev_dep in package_rev_deps[NUM_NODES_PER_GENERATION:]])
+                best_rev_deps.append({
+                        "used_by": other_node_name,
+                        "pagerank": other_pagerank,
+                        "stars": 0                    
+                })
+
             ret[package_name] = best_rev_deps
 
         return ret
+
 
     def set_rev_deps_tree(self, rev_deps_lookup):
         outbox = set()
@@ -423,9 +446,9 @@ class Package(db.Model):
         self.rev_deps_tree = list(outbox)
         self.rev_deps_tree.sort(key=lambda x: (x[0], x[1].lower(), x[2].lower())) #by depth
 
-        print "found reverse dependency tree!"
-        for node in self.rev_deps_tree:
-            print node
+        # print "found reverse dependency tree!"
+        # for node in self.rev_deps_tree:
+        #     print node
 
         return self.rev_deps_tree
 
