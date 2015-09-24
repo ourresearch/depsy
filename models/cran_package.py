@@ -12,7 +12,7 @@ from models.person import get_or_make_person
 from models.package import Package
 from models.github_repo import GithubRepo
 from util import elapsed
-
+from collections import defaultdict
 
 class CranPackage(Package):
     __mapper_args__ = {
@@ -183,11 +183,40 @@ class CranPackage(Package):
 
 def shortcut_rev_deps_pairs():
 
-    command = "select * from dep_nodes_ncol_cran_reverse"
+    command = """SELECT package, used_by, pagerank
+        FROM dep_nodes_ncol_cran_reverse
+        LEFT OUTER JOIN package
+        ON dep_nodes_ncol_cran_reverse.used_by = package.project_name
+        and package.host = 'cran'
+        """
 
+    rev_deps_by_package = defaultdict(list)
     res = db.session.connection().execute(sql.text(command))
     rows = res.fetchall()
-    return rows
+
+    pageranks = [row[2] for row in rows if row[2] is not None]
+    min_pagerank = min(pageranks)
+
+    for row in rows:
+        my_pagerank = row[2]
+        if my_pagerank is None:
+            my_pagerank = min_pagerank
+
+        rev_deps_by_package[row[0]].append([
+            row[1],
+            my_pagerank
+        ])
+
+    ret = defaultdict(dict)
+    for package_name, package_rev_deps in rev_deps_by_package.iteritems():
+
+        # sort in place by pagerank
+        package_rev_deps.sort(key=lambda x: x[1])
+
+        best_rev_deps = package_rev_deps[0:1]  # top 2
+        ret[package_name] = dict(best_rev_deps)
+
+    return ret
 
 
 

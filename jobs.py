@@ -77,7 +77,12 @@ def enqueue_jobs(cls,
 
     else:
         if shortcut_fn:
+            shortcut_data_start = time()
+            print "Getting shortcut data..."
             shortcut_data = shortcut_fn()
+            print "Got shortcut data in {}sec".format(
+                elapsed(shortcut_data_start)
+            )
 
     chunk_size = int(chunk_size)
 
