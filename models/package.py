@@ -90,6 +90,7 @@ class Package(db.Model):
 
     def to_dict(self, full=True):
         ret = {
+            "name": self.project_name,
             "as_snippet": self.as_snippet,
             "contributions": [c.to_dict() for c in self.contributions],
             "github_owner": self.github_owner,
@@ -463,6 +464,26 @@ def prep_summary(str):
         return placeholder
     else:
         return truncate(str)
+
+
+def make_id(namespace, name):
+    """
+    pass a language name or host in with a name, get a Package.id str
+    """
+
+    namespace = namespace.lower()
+
+    if namespace in ["cran", "pypi"]:
+        return namespace + ":" + "name"
+
+    elif namespace == "python":
+        return "pypi:" + name
+
+    elif namespace == "r":
+        return "cran:" + name
+
+    else:
+        raise ValueError("Invalid namespace for package id")
 
 
 
