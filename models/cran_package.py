@@ -55,6 +55,10 @@ class CranPackage(Package):
         # print "all authors after:", all_authors
         return all_authors
 
+    @property
+    def language(self):
+        return "r"
+
     def save_host_contributors(self):
         all_authors = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
@@ -144,11 +148,6 @@ class CranPackage(Package):
 
         self.downloads["last_month"] = download_sum
 
-    @property
-    def as_snippet(self):
-        ret = self._as_package_snippet
-        ret["language"] = "r"
-        return ret
 
 
     def set_host_reverse_deps(self):

@@ -30,6 +30,11 @@ class PypiPackage(Package):
             name=self.id)
 
     @property
+    def language(self):
+        return "python"
+
+
+    @property
     def source_url(self):
         if not self.api_raw:
             return None
@@ -249,12 +254,6 @@ class PypiPackage(Package):
 
         return self.tags
 
-
-    @property
-    def as_snippet(self):
-        ret = self._as_package_snippet
-        ret["language"] = "python"
-        return ret
 
 
 
