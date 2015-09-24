@@ -160,11 +160,43 @@ class CranPackage(Package):
 
 
 
-
-    def set_rev_deps_tree(self, rev_deps_pairs):
+    def set_rev_deps_tree(self, rev_deps_lookup):
         print "CranPackage.set_rev_deps_tree() got {} some pairs".format(
-            len(rev_deps_pairs)
+            len(rev_deps_lookup)
         )
+
+        outbox = set()
+        inbox = [self.project_name]
+        while len(inbox):
+            my_package_name = inbox.pop()
+            my_package_rev_deps = rev_deps_lookup[my_package_name]
+            for rev_dep_name, rev_dep_pagerank in my_package_rev_deps.iteritems():
+                if rev_dep_name.startswith("github:"):
+                    # this is a leaf node, no need to keep looking for rev deps
+                    pass
+                else:
+                    print "adding this to the inbox", rev_dep_name
+                    inbox.append(rev_dep_name)
+
+                node = (
+                    my_package_name,
+                    rev_dep_name,
+                    rev_dep_pagerank
+                )
+
+                print "adding this to the outbox", node
+
+                # dict key just for de-duping
+                outbox.add(node)
+
+        self.rev_deps_tree = list(outbox)
+        print "found reverse dependency tree!"
+        for node in self.rev_deps_tree:
+            print node
+
+        return self.rev_deps_tree
+
+
 
 
 
@@ -211,9 +243,9 @@ def shortcut_rev_deps_pairs():
     for package_name, package_rev_deps in rev_deps_by_package.iteritems():
 
         # sort in place by pagerank
-        package_rev_deps.sort(key=lambda x: x[1])
+        package_rev_deps.sort(key=lambda x: x[1], reverse=True)
 
-        best_rev_deps = package_rev_deps[0:1]  # top 2
+        best_rev_deps = package_rev_deps[0:2]  # top 2
         ret[package_name] = dict(best_rev_deps)
 
     return ret
