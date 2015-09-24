@@ -119,15 +119,12 @@ class Package(db.Model):
 
         return ret
 
-    @property
-    def as_snippet(self):
-        raise NotImplementedError
 
     @property
-    def _as_package_snippet(self):
+    def as_snippet(self):
         ret = {
             "name": self.project_name,
-            "language": None,
+            "language": self.language,
 
             "sort_score": self.sort_score,
             "impact": self.sort_score * 100,
@@ -365,28 +362,10 @@ def prep_summary(str):
 
 def get_packages(sort="sort_score", filters=None):
 
-    # not implemented yet
-    return []
-
-    if not sort.startswith("num_") and not sort == "sort_score":
-        sort = "num_" + sort
-
-    allowed_sorts = [
-        "sort_score",
-        "pagerank",
-        "num_downloads",
-        "num_citations"
-    ]
-
-    if sort not in allowed_sorts:
-        raise ValueError("'sort' arg is something we can't sort by.")
-
-    sort_property = getattr(Package, sort)
-
 
 
     q = db.session.query(Package)
-    q = q.order_by(sort_property.desc())
+    q = q.order_by(Package.pagerank.desc())
     q = q.order_by(Package.num_downloads.desc())
 
     q = q.limit(25)

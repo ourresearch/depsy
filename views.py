@@ -4,7 +4,7 @@ from models.search import autocomplete
 from util import elapsed
 from models.person import Person
 from models.package import Package
-from models.package import get_packages
+from models.package_jobs import get_packages
 from dummy_data import get_dummy_data
 from sqlalchemy import orm
 
@@ -155,14 +155,12 @@ def packages_endpoint():
 @app.route("/api/leaders/<type>.json")
 def get_ranked_list(type):
 
-    sort = request.args.get("sort", "sort_score")
     filter_strings = request.args.get("filters", "").split(",")
     filters = [s.split(":") for s in filter_strings if s]
 
     start = time()
-    leaders_list = []
     if type == "packages":
-        packages = get_packages(sort, filters)
+        packages = get_packages(filters)
         leaders_list = [p.as_snippet for p in packages]
     else:
         raise NotImplementedError("we can only rank packages right now...")
@@ -170,7 +168,6 @@ def get_ranked_list(type):
     ret = json_resp_from_thing({
         "list": leaders_list,
         "type": type,
-        "sort": sort,
         "filters": filters
     })
 
