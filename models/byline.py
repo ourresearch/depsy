@@ -18,11 +18,18 @@ class Byline:
                 print "has a halt pattern, so skipping this byline"
                 return None
 
+        # do these before the remove_pattern matching
+        clean_byline = clean_byline.replace("<U+000a>", " ")
+        clean_byline = clean_byline.replace("\n", " ")
+
         remove_patterns = [
             "\(.*?\)",
             "\[.*?\]",
             "with.*$",
             "assistance.*$",
+            "derived from.*$",
+            "uses.*$",
+            "as represented by.*$",
             "contributions.*$",
             "under.*$",
             "and others.*$",
@@ -31,13 +38,11 @@ class Byline:
             "assisted.*$"
         ]
         for pattern in remove_patterns:
-            clean_byline = re.sub(pattern, "", clean_byline)
+            clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE)
             # print pattern, all_authors
 
-        clean_byline = clean_byline.replace("<U+000a>", " ")
-        clean_byline = clean_byline.replace("\n", " ")
         clean_byline = clean_byline.replace(" & ", ",")
-        clean_byline = clean_byline.replace(" and ", ",")
+        clean_byline = re.sub(" and ", ",", clean_byline, re.IGNORECASE)
         clean_byline.strip(" .")
         self.clean_byline = clean_byline
         return clean_byline  
@@ -61,9 +66,11 @@ class Byline:
                 author_name = one_author
 
             if author_name:
-                author_name = author_name.strip()
+                author_name = author_name.strip(" .'")
+                author_name = author_name.strip('"')
 
-            responses.append({"name":author_name, "email":author_email})
+            if author_name or author_email:
+                responses.append({"name":author_name, "email":author_email})
 
         return responses
         

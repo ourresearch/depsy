@@ -224,7 +224,7 @@ def get_or_make_person(**kwargs):
     if res is not None:
         return res
     else:
-        print u"\nmaking a NEW person using {}".format(kwargs)
+        print u"minting a new person using {}".format(kwargs)
         new_person = Person(**kwargs)
         new_person.set_parsed_name()
         db.session.add(new_person)
