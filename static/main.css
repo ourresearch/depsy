@@ -159,6 +159,7 @@ div.package-page div.dep-nodes-tree div.dep-node {
   margin: -1px;
   padding: 0;
   color: #999;
+  position: relative;
 }
 div.package-page div.dep-nodes-tree div.dep-node:before,
 div.package-page div.dep-nodes-tree div.dep-node:after {
@@ -177,8 +178,12 @@ div.package-page div.dep-nodes-tree div.dep-node.is-package-true {
 div.package-page div.dep-nodes-tree div.dep-node div.about {
   padding-right: 5px;
   padding: 5px;
-  width: 150px;
+  min-width: 100px;
   float: left;
+}
+div.package-page div.dep-nodes-tree div.dep-node div.about span.about {
+  display: table-cell;
+  vertical-align: middle;
 }
 div.package-page div.dep-nodes-tree div.dep-node div.about span.pagerank {
   font-weight: bold;

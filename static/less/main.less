@@ -218,6 +218,7 @@ div.package-page {
          margin: -1px;
          padding: 0;
          color: #999;
+         position: relative;
 
          &.is-rollup-true {
             font-style: italic;
@@ -230,8 +231,12 @@ div.package-page {
          div.about {
             padding-right: 5px;
             padding: 5px;
-            width: 150px;
+            min-width: 100px;
             float: left;
+            span.about {
+               display: table-cell;
+               vertical-align: middle;
+            }
             span.pagerank {
                font-weight: bold;
                font-style: normal;
