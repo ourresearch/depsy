@@ -12,7 +12,7 @@ class Byline:
     def _clean_byline(self):
         clean_byline = self.raw_byline
 
-        halt_patterns = [" port ", " adapted ", " comply "]
+        halt_patterns = [" port", " adapted ", " comply "]
         for pattern in halt_patterns:
             if pattern in clean_byline:
                 print "has a halt pattern, so skipping this byline"
@@ -23,7 +23,9 @@ class Byline:
         clean_byline = clean_byline.replace("\n", " ")
 
         remove_patterns = [
+            "\(.*?\)",   # here so can get before comma split.  but will only remove first hit :)
             "with.*$",
+            "based on.*$",
             "assistance.*$",
             "derived from.*$",
             "uses.*$",
@@ -57,7 +59,6 @@ class Byline:
             author_email = None
 
             clause_replace_patterns = [
-                "\(.*?\)", 
                 "\[.*?\]",
                 "\[.*?$"
                 ]
@@ -76,7 +77,7 @@ class Byline:
                 author_name = author_clause
 
             if author_name:
-                author_name = author_name.strip("\t .'")
+                author_name = author_name.strip("\t .'(")
                 author_name = author_name.strip('"')
 
             if author_name or author_email:
