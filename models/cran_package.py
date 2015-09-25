@@ -121,13 +121,13 @@ def get_tags(package_name):
 
     requests.packages.urllib3.disable_warnings()  
     response = requests.get(url)
+    tags = []
     if "views" in response.text:
         page = response.text
         page = page.replace("&nbsp;", " ")  # otherwise starts-with for lxml doesn't work
         tree = html.fromstring(page)
         data = {}
         tags_raw = tree.xpath('//tr[(starts-with(td[1], "In views"))]/td[2]/a/text()')
-        tags = []
         for tag in tags_raw:
             tag = tag.strip()
             tag = tag.strip('"')
