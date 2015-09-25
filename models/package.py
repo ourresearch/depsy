@@ -361,7 +361,7 @@ class Package(db.Model):
 
     @classmethod
     def shortcut_rev_deps_pairs(cls):
-        NUM_NODES_PER_GENERATION = 2
+        NUM_TOP_NODES = 2
 
         command = """select package, 
                         used_by, 
@@ -379,8 +379,8 @@ class Package(db.Model):
         res = db.session.connection().execute(sql.text(command))
         rows = res.fetchall()
 
-        pageranks = [row[2] for row in rows if row[2]]
-        min_pagerank = min(pageranks)
+        non_zero_pageranks = [row[2] for row in rows if row[2]]
+        min_pagerank = min(non_zero_pageranks)
 
         for row in rows:
             package_name = row[0]
@@ -388,7 +388,7 @@ class Package(db.Model):
             my_pagerank = row[2]
             my_stars = row[3]
 
-            if my_pagerank is None:
+            if not my_pagerank:
                 my_pagerank = min_pagerank
 
             rev_deps_by_package[package_name].append({
@@ -403,24 +403,30 @@ class Package(db.Model):
             # sort in place by pagerank
             package_rev_deps.sort(key=lambda x: (x["pagerank"], x["stars"]), reverse=True)
             num_rev_deps = len(package_rev_deps)
-            if num_rev_deps <= NUM_NODES_PER_GENERATION:
+            if num_rev_deps <= NUM_TOP_NODES:
                 # the rev deps are what you've got.  simple!
                 best_rev_deps = package_rev_deps
             else:
                 # start with the top N rev deps to add
-                best_rev_deps = package_rev_deps[0:NUM_NODES_PER_GENERATION] 
+                best_rev_deps = package_rev_deps[0:NUM_TOP_NODES] 
 
                 # now add an "other" node with its own name...
-                num_other_nodes = num_rev_deps - NUM_NODES_PER_GENERATION
+                num_other_nodes = num_rev_deps - NUM_TOP_NODES
                 other_node_name = "+{num}\n({package_name})".format(
                     num=num_rev_deps, package_name=package_name)
 
                 # ... and pagerank.  other pagerank is sum of all other pageranks
+                # print "for node ", package_name
                 total_pagerank = sum([rev_dep["pagerank"] for rev_dep in package_rev_deps])
-                other_pagerank = sum([rev_dep["pagerank"] for rev_dep in package_rev_deps[NUM_NODES_PER_GENERATION:]])
+                # print "total_pagerank", total_pagerank
+                best_nodes_pagerank = sum([rev_dep["pagerank"] for rev_dep in best_rev_deps])
+                # print "best_nodes_pagerank", best_nodes_pagerank
+                # print "best_rev_deps", best_rev_deps
+                remaining_pagerank = total_pagerank - best_nodes_pagerank
+                # print "remaining_pagerank", remaining_pagerank
                 best_rev_deps.append({
                         "used_by": other_node_name,
-                        "pagerank": other_pagerank,
+                        "pagerank": remaining_pagerank,
                         "stars": 0                    
                 })
 
