@@ -149,6 +149,44 @@ div.person-page div.ti-page-header h1 img {
   -moz-border-radius: 40px;
   border-radius: 40px;
 }
+div.package-page div.ti-page-header h1 span.indegree {
+  font-size: 16px;
+  font-weight: 100;
+  padding-left: 20px;
+}
+div.package-page div.dep-nodes-tree div.dep-node {
+  border: 1px solid #ddd;
+  margin: -1px;
+  padding: 0;
+  color: #999;
+}
+div.package-page div.dep-nodes-tree div.dep-node:before,
+div.package-page div.dep-nodes-tree div.dep-node:after {
+  content: " ";
+  display: table;
+}
+div.package-page div.dep-nodes-tree div.dep-node:after {
+  clear: both;
+}
+div.package-page div.dep-nodes-tree div.dep-node.is-rollup-true {
+  font-style: italic;
+}
+div.package-page div.dep-nodes-tree div.dep-node.is-package-true {
+  color: #333;
+}
+div.package-page div.dep-nodes-tree div.dep-node div.about {
+  padding-right: 5px;
+  padding: 5px;
+  width: 150px;
+  float: left;
+}
+div.package-page div.dep-nodes-tree div.dep-node div.about span.pagerank {
+  font-weight: bold;
+  font-style: normal;
+}
+div.package-page div.dep-nodes-tree div.dep-node div.children {
+  float: left;
+}
 div.page.sidebar-page .sidebar {
   width: 300px;
   background: #fff;

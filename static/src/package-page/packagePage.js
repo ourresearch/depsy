@@ -25,8 +25,7 @@ angular.module('packagePage', [
                                           $routeParams,
                                           packageResp){
     $scope.package = packageResp
-    $scope.depNode = packageResp.rev_dep_nodes
-    console.log("retrieved the package revdepstree!", packageResp.rev_deps_tree)
+    $scope.depNode = packageResp.rev_deps_tree
 
 
 

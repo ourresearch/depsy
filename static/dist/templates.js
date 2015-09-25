@@ -111,14 +111,15 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
 
 angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/dep-node.tpl.html",
-    "<div class=\"dep-node level-{{ depNode.level }} is-rollup-{{ depNode.is_rollup }} is-package-{{ depNode.is_package }}\">\n" +
+    "<div class=\"dep-node is-rollup-{{ depNode.is_rollup }} is-package-{{ depNode.is_package }}\">\n" +
     "   <div class=\"about\">\n" +
-    "      <span class=\"name\">{{ depNode.name }}</span>\n" +
+    "      <a class=\"name\" ng-if=\"!depNode.is_rollup && depNode.is_package\" href=\"package/r/{{ depNode.name }}\">{{ depNode.name }}</a>\n" +
+    "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\" class=\"name\">{{ depNode.name }}</span>\n" +
     "      <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
     "   </div>\n" +
     "   <div class=\"children\">\n" +
     "      <div class=\"dep-node-container\"\n" +
-    "           ng-repeat=\"node in node.used_by_nodes\"\n" +
+    "           ng-repeat=\"depNode in depNode.children | orderBy: '-sort_score'\"\n" +
     "           ng-include=\"'package-page/dep-node.tpl.html'\"></div>\n" +
     "   </div>\n" +
     "</div>");
@@ -126,12 +127,13 @@ angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", func
 
 angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/package-page.tpl.html",
-    "<div class=\"person-page\">\n" +
+    "<div class=\"package-page\">\n" +
     "   <div class=\"ti-page-header\">\n" +
     "      <h1>\n" +
     "         <span class=\"text\">\n" +
     "            {{ package.name }}\n" +
     "         </span>\n" +
+    "         <span class=\"indegree\">{{ package.indegree }} direct reverse dependencies</span>\n" +
     "      </h1>\n" +
     "   </div>\n" +
     "\n" +
