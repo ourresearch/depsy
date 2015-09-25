@@ -23,8 +23,6 @@ class Byline:
         clean_byline = clean_byline.replace("\n", " ")
 
         remove_patterns = [
-            "\(.*?\)",
-            "\[.*?\]",
             "with.*$",
             "assistance.*$",
             "derived from.*$",
@@ -39,34 +37,46 @@ class Byline:
         ]
         for pattern in remove_patterns:
             clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE)
-            # print pattern, all_authors
 
         clean_byline = clean_byline.replace(" & ", ",")
         clean_byline = re.sub(" and ", ",", clean_byline, re.IGNORECASE)
-        clean_byline.strip(" .")
         self.clean_byline = clean_byline
         return clean_byline  
 
 
 
     def author_email_pairs(self):
+        print "start:", self.raw_byline
         clean_byline = self._clean_byline()
         if not clean_byline:
             return None
 
         responses = []
-        for one_author in clean_byline.split(","):
+        for author_clause in clean_byline.split(","):
+            author_name = None
             author_email = None
-            if "<" in one_author:
-                (author_name, author_email) = one_author.split("<", 1)
+
+            clause_replace_patterns = [
+                "\(.*?\)", 
+                "\[.*?\]",
+                "\[.*?$"
+                ]
+            for pattern in clause_replace_patterns:
+                author_clause = re.sub(pattern, "", author_clause, re.IGNORECASE)
+
+            if not author_clause or (len(author_clause) < 6):
+                return None
+
+            if "<" in author_clause:
+                (author_name, author_email) = author_clause.split("<", 1)
                 author_email = re.sub("(>.*)", "", author_email)
                 if not validate_email(author_email):
                     author_email = None
             else:
-                author_name = one_author
+                author_name = author_clause
 
             if author_name:
-                author_name = author_name.strip(" .'")
+                author_name = author_name.strip("\t .'")
                 author_name = author_name.strip('"')
 
             if author_name or author_email:

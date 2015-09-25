@@ -25,7 +25,7 @@ class TestByline(unittest.TestCase):
 
     def test_clean_byline_string(self):
         byline = Byline(self.test_bylines[2])
-        expected = "        Corentin M Barbu , Sebastian Gibb "
+        expected = '        Corentin M Barbu [aut, cre], Sebastian Gibb [ctb]'
         assert_equals(byline._clean_byline(), expected)
 
     def test_author_email_pairs(self):
@@ -36,6 +36,15 @@ class TestByline(unittest.TestCase):
 
     def test_author_halt(self):
         test_string = """Fortran code by H. Akima<U+000a>R port by Albrecht Gebhardt <albrecht.gebhardt@uni-klu.ac.at><U+000a>aspline function by Thomas Petzoldt <thomas.petzoldt@tu-dresden.de><U+000a>interp2xyz, enhancements and corrections by Martin Maechler <maechler@stat.math.ethz.ch>"""
+        byline = Byline(test_string)
+        response = byline.author_email_pairs()
+        expected = None
+        assert_equals(response, expected)
+
+    def test_author_square_brackets(self):
+        test_string = """Jie (Kate) Hu [aut, cre],
+            Norman Breslow [aut],
+            Gary Chan [aut]"""
         byline = Byline(test_string)
         response = byline.author_email_pairs()
         expected = None
