@@ -13,12 +13,12 @@ from models.github_repo import add_all_github_about
 from models.github_repo import add_github_dependency_lines
 from models.github_repo import add_all_github_dependency_lines
 
-from models.pypi_project import *
 from models.github_api import *
-from models.cran_project import *
 from models.github_repo import *
 from models.person import *
 from models.package import *
+from models.pypi_package import *
+from models.cran_package import *
 from models.contribution import *
 from jobs import *
 

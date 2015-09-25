@@ -7,9 +7,8 @@ from sqlalchemy.orm import deferred
 from models import github_api
 from models.github_api import login_and_repo_name_from_url
 from models.github_api import github_zip_getter_factory
-from models.pypi_project import pypi_package_names
-from models.pypi_project import PythonStandardLibs
-
+from models.pypi_package import pypi_package_names
+from models.python import PythonStandardLibs
 from models import python
 
 from jobs import enqueue_jobs

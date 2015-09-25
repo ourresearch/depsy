@@ -108,3 +108,34 @@ def parse_setup_py(contents):
     return sorted(ret)
 
 
+class PythonStandardLibs():
+    url = "https://docs.python.org/2.7/py-modindex.html"
+    data_dir = Path(__file__, "../../data").resolve()
+    pickle_path = Path(data_dir, "python_standard_libs.pickle")
+
+    @classmethod
+    def save_from_web(cls):  
+        # only needs to be used once ever, here for tidiness
+        # checked the result into source control as python_standard_libs.pickle
+        html = requests.get(cls.url).text
+        exp = r'<tt class="xref">([^<]+)'
+        matches = re.findall(exp, html)
+        libs = [m for m in matches if '.' not in m]
+
+        with open(str(cls.pickle_path), "w") as f:
+            pickle.dump(libs, f)
+
+        print "saved these to file: {}".format(libs)
+
+    @classmethod
+    def get(cls):
+        with open(str(cls.pickle_path), "r") as f:
+            return pickle.load(f)
+
+
+def save_python_standard_libs():
+    PythonStandardLibs.save_from_web()
+
+    # to show the thing works
+    print "got these from pickled file: {}".format(PythonStandardLibs.get())
+
