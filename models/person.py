@@ -1,15 +1,14 @@
-from app import db
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import text
-from models.contribution import Contribution
-from jobs import update_registry
-from jobs import Update
+import hashlib
+from collections import defaultdict
 
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import or_
+from nameparser import HumanName
+
+from app import db
+from models.contribution import Contribution
 from github_api import get_profile
 from util import dict_from_dir
-import hashlib
-from nameparser import HumanName
-from collections import defaultdict
 
 
 class Person(db.Model):
@@ -156,18 +155,29 @@ class PersonPackage():
         return ret
 
 
+def find_best_match(persons, **kwargs):
+    # get them in this priority order
+    for person in persons:
+        if "github_login" in kwargs and kwargs["github_login"]:
+            if person.github_login == kwargs["github_login"]:
+                print "\n matched on github_login"
+                return person
 
-def get_github_about_for_all_persons(limit=10):
-    q = db.session.query(Person.id)
-    q = q.filter(Person.github_about == text("'null'"))  # jsonb null, not sql NULL
-    q = q.order_by(Person.id)
-    q = q.limit(limit)
+    for person in persons:
+        if "email" in kwargs and kwargs["email"]:
+            if person.email == kwargs["email"]:
+                print "\n matched on email"
+                return person
 
-    update_fn = make_update_fn(Person, "set_github_about")
-
-    for row in q.all():
-        update_fn(row[0])
-
+    for person in persons:
+        if "name" in kwargs and kwargs["name"]:
+            normalized_person_name = person.name.replace(".", "")
+            normalized_match_name = kwargs["name"].replace(".", "")
+            if normalized_person_name == normalized_match_name:
+                print "\n matched on exact name"
+                return person
+    
+    return None
 
 
 def get_or_make_person(**kwargs):
@@ -191,86 +201,40 @@ def get_or_make_person(**kwargs):
     if res is not None:
         return res
 
+    or_filters = []
 
+    if "github_login" in kwargs and kwargs["github_login"]:
+        or_filters.append(Person.github_login == kwargs["github_login"])
 
-    if "github_login" in kwargs:
-        res = db.session.query(Person).filter(
-            Person.github_login == kwargs["github_login"]
-        ).first()
+    elif "email" in kwargs and kwargs["email"]:
+        or_filters.append(Person.email == kwargs["email"])
 
-    elif "email" in kwargs:
-        res = db.session.query(Person).filter(
-            Person.email == kwargs["email"]
-        ).first()
-        if res is not None:
-            print u"we matched a person ({}) based on email {}".format(
-                res,
-                kwargs["email"]
-            )
-
-    elif "name" in kwargs:
-        parsed_name = HumanName(kwargs["name"])
+    elif "name" in kwargs and kwargs["name"]:
+        incoming_parsed_name = HumanName(kwargs["name"])
         dict_for_matching = {
-            "first": parsed_name.first,
-            "last": parsed_name.last
-            }
+            "first": incoming_parsed_name.first,
+            "last": incoming_parsed_name.last}
+        or_filters.append(Person.parsed_name.contains(dict_for_matching))
 
-        rows = db.session.query(Person).filter(
-            Person.parsed_name.contains(dict_for_matching)
-        ).all()
-
-        for row in rows:
-            # check middle initials
-            # if find a compatible middle initial
-            if row.parsed_name.middle = row.parsed_name.middle:
-                res = row
-                print u"we matched a person ({}) based on email {}".format(
-                    res,
-                    kwargs["email"]
-                )
-            # do more kinds of checks here for approx matches
-
-    else:
-        pass
+    if or_filters:
+        query = db.session.query(Person).filter(or_(*or_filters))
+        persons = query.all()
+        res = find_best_match(persons, **kwargs)
 
     if res is not None:
         return res
-
-
     else:
+        print u"\nmaking a NEW person using {}".format(kwargs)
         new_person = Person(**kwargs)
         new_person.set_parsed_name()
-
         db.session.add(new_person)
 
-        # we can probably get rid of this commit
-        db.session.commit()
-
+        #need this commit to handle matching people added previously in this chunk
+        db.session.commit()  
         return new_person
 
 
 
 
-
-# i do not understand why, but this does not work in RQ, you must run in
-# a single dyno with --no-rq flag set...takes a good 30min :/
-q = db.session.query(Person.id)
-q = q.filter(Person.sort_score == None)
-
-update_registry.register(Update(
-    job=Person.set_sort_score,
-    query=q,
-    queue_id=3
-))
-
-
-q = db.session.query(Person.id)
-q = q.filter(Person.parsed_name == None)
-
-update_registry.register(Update(
-    job=Person.set_parsed_name,
-    query=q,
-    queue_id=8
-))
 
 

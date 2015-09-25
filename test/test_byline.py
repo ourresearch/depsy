@@ -1,4 +1,5 @@
 from models.byline import Byline
+from models.person import Person
 
 import unittest
 from nose.tools import assert_equals
@@ -32,5 +33,16 @@ class TestByline(unittest.TestCase):
             byline = Byline(byline_string)
             print "\n{}\n{}\n".format(byline.author_email_pairs(), byline_string)
         # assert_equals(byline.author_email_pairs(), "hi")        
+
+    def test_author_Randall(self):
+        test_string = """Kevin M. Middleton <middletonk@missouri.edu>, Randall Pruim
+<rpruim@calvin.edu>"""
+        byline = Byline(test_string)
+        response = byline.author_email_pairs()
+        expected = [{'name': 'Kevin M. Middleton', 'email': 'middletonk@missouri.edu'}, {'name': 'Randall Pruim', 'email': 'rpruim@calvin.edu'}]
+        assert_items_equal(response, expected)
+
+        person = Person(**expected[1])
+        assert_equals(person.name, "hi")
 
 

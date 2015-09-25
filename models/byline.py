@@ -41,6 +41,8 @@ class Byline:
         self.clean_byline = clean_byline
         return clean_byline  
 
+
+
     def author_email_pairs(self):
         self._clean_byline()
 
@@ -58,7 +60,7 @@ class Byline:
             if author_name:
                 author_name = author_name.strip()
 
-            responses.append({"author_name":author_name, "author_email":author_email})
+            responses.append({"name":author_name, "email":author_email})
 
         return responses
         

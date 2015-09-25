@@ -27,38 +27,6 @@ class CranPackage(Package):
         return u'<CranPackage {name}>'.format(
             name=self.id)
 
-    def _return_clean_author_string(self, all_authors):
-        # print "all authors before:", all_authors
-
-        halt_patterns = [" punt ", " adapted ", " comply "]
-        for pattern in halt_patterns:
-            if pattern in all_authors:
-                return None
-
-        remove_patterns = [
-            "\(.*?\)",
-            "\[.*?\]",
-            "with.*$",
-            "assistance.*$",
-            "contributions.*$",
-            "under.*$",
-            "and others.*$",
-            "and many others.*$",
-            "and authors.*$",
-            "assisted.*$"
-        ]
-        for pattern in remove_patterns:
-            all_authors = re.sub(pattern, "", all_authors)
-            # print pattern, all_authors
-
-        all_authors = all_authors.replace("<U+000a>", " ")
-        all_authors = all_authors.replace("\n", " ")
-        all_authors = all_authors.replace(" & ", ",")
-        all_authors = all_authors.replace(" and ", ",")
-        all_authors.strip(" .")
-        # print "all authors after:", all_authors
-        return all_authors
-
     @property
     def language(self):
         return "r"
@@ -70,8 +38,8 @@ class CranPackage(Package):
         print "starting with all_authors", raw_byline_string
         byline = Byline(raw_byline_string)
 
-        for (author_name, email) in byline.author_email_pairs():
-            person = get_or_make_person(name=author_name, email=author_email)
+        for kwargs_dict in byline.author_email_pairs():
+            person = get_or_make_person(**kwargs_dict)
             print u"saving person {}".format(person)
             self._save_contribution(person, "author")
 
@@ -135,77 +103,6 @@ class CranPackage(Package):
         for dep_kind in ["reverse_depends", "reverse_imports"]:
             if dep_kind in self.all_r_reverse_deps:
                 self.host_reverse_deps += self.all_r_reverse_deps[dep_kind]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-########################################################################
-
-# update functions
-
-########################################################################
-
-
-
-
-q = db.session.query(CranPackage.id)
-q = q.filter(~CranPackage.downloads.has_key('last_month'))
-
-update_registry.register(Update(
-    job=CranPackage.set_num_downloads_since,
-    query=q,
-    queue_id=7
-))
-
-
-
-
-
-
-
-q = db.session.query(CranPackage.id)
-update_registry.register(Update(
-    job=CranPackage.set_host_reverse_deps,
-    query=q,
-    queue_id=8
-))
-
-
-q = db.session.query(CranPackage.id)
-update_registry.register(Update(
-    job=CranPackage.save_host_contributors,
-    query=q,
-    queue_id=8
-))
-
-
-
-
-
-
-
-
 
 
 
