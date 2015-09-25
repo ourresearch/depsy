@@ -35,12 +35,12 @@ class CranPackage(Package):
         raw_byline_string = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
-        print "starting with all_authors", raw_byline_string
+        print "starting with raw_byline_string", raw_byline_string
         byline = Byline(raw_byline_string)
 
         for kwargs_dict in byline.author_email_pairs():
             person = get_or_make_person(**kwargs_dict)
-            print u"saving person {}".format(person)
+            print u"building contribution with person {}".format(person)
             self._save_contribution(person, "author")
 
 

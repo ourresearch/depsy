@@ -35,10 +35,10 @@ def update_fn(cls, method_name, obj_id_list, shortcut_data=None):
 
         method_to_run = getattr(obj, method_name)
 
-        #print u"running {repr}.{method_name}() method".format(
-        #    repr=obj,
-        #    method_name=method_name
-        #)
+        print u"starting {repr}.{method_name}() method".format(
+           repr=obj,
+           method_name=method_name
+        )
 
         if shortcut_data:
             method_to_run(shortcut_data)

@@ -12,9 +12,10 @@ class Byline:
     def _clean_byline(self):
         clean_byline = self.raw_byline
 
-        halt_patterns = [" punt ", " adapted ", " comply "]
+        halt_patterns = [" port ", " adapted ", " comply "]
         for pattern in halt_patterns:
             if pattern in clean_byline:
+                print "has a halt pattern, so skipping this byline"
                 return None
 
         remove_patterns = [
@@ -44,13 +45,15 @@ class Byline:
 
 
     def author_email_pairs(self):
-        self._clean_byline()
+        clean_byline = self._clean_byline()
+        if not clean_byline:
+            return None
 
         responses = []
-        for one_author in self.clean_byline.split(","):
+        for one_author in clean_byline.split(","):
             author_email = None
             if "<" in one_author:
-                (author_name, author_email) = one_author.split("<")
+                (author_name, author_email) = one_author.split("<", 1)
                 author_email = re.sub("(>.*)", "", author_email)
                 if not validate_email(author_email):
                     author_email = None

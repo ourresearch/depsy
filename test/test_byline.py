@@ -34,15 +34,11 @@ class TestByline(unittest.TestCase):
             print "\n{}\n{}\n".format(byline.author_email_pairs(), byline_string)
         # assert_equals(byline.author_email_pairs(), "hi")        
 
-    def test_author_Randall(self):
-        test_string = """Kevin M. Middleton <middletonk@missouri.edu>, Randall Pruim
-<rpruim@calvin.edu>"""
+    def test_author_halt(self):
+        test_string = """Fortran code by H. Akima<U+000a>R port by Albrecht Gebhardt <albrecht.gebhardt@uni-klu.ac.at><U+000a>aspline function by Thomas Petzoldt <thomas.petzoldt@tu-dresden.de><U+000a>interp2xyz, enhancements and corrections by Martin Maechler <maechler@stat.math.ethz.ch>"""
         byline = Byline(test_string)
         response = byline.author_email_pairs()
-        expected = [{'name': 'Kevin M. Middleton', 'email': 'middletonk@missouri.edu'}, {'name': 'Randall Pruim', 'email': 'rpruim@calvin.edu'}]
-        assert_items_equal(response, expected)
-
-        person = Person(**expected[1])
-        assert_equals(person.name, "hi")
+        expected = None
+        assert_equals(response, expected)
 
 
