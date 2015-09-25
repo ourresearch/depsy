@@ -25,29 +25,11 @@ angular.module('packagePage', [
                                           $routeParams,
                                           packageResp){
     $scope.package = packageResp
-    console.log("retrieved the package revdepstree!", packageResp.rev_deps_tree)
+    $scope.depNode = packageResp.rev_deps_tree
 
 
 
 
-      function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'From');
-        data.addColumn('string', 'To');
-        data.addColumn('number', 'Weight');
-        data.addRows(packageResp.rev_deps_tree);
-
-        // Sets chart options.
-        var options = {
-          width: 600
-        };
-
-        // Instantiates and draws our chart, passing in some options.
-        var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
-        chart.draw(data, options);
-      }
-
-    drawChart()
 
 
 

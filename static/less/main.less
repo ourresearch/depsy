@@ -200,6 +200,57 @@ div.top-page {
    }
 }
 
+
+div.package-page {
+   div.ti-page-header {
+      h1 {
+         span.indegree {
+            font-size: 16px;
+            font-weight: 100;
+            padding-left: 20px;
+         }
+      }
+   }
+   div.dep-nodes-tree {
+      div.dep-node {
+         .clearfix();
+         border: 1px solid #ddd;
+         margin: -1px;
+         padding: 0;
+         color: #999;
+         position: relative;
+
+         &.is-rollup-true {
+            font-style: italic;
+         }
+         &.is-package-true {
+            color: #333;
+         }
+
+
+         div.about {
+            padding-right: 5px;
+            padding: 5px;
+            min-width: 100px;
+            float: left;
+            span.about {
+               display: table-cell;
+               vertical-align: middle;
+            }
+            span.pagerank {
+               font-weight: bold;
+               font-style: normal;
+            }
+
+         }
+         div.children {
+            float: left;
+
+         }
+      }
+   }
+}
+
 div.page {
    &.sidebar-page {
       .sidebar {

@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/package-page.tpl.html', 'package-snippet/package-snippet.tpl.html', 'package-snippet/sort-score-popover.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'package-snippet/package-snippet.tpl.html', 'package-snippet/sort-score-popover.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -109,26 +109,39 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "");
 }]);
 
+angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("package-page/dep-node.tpl.html",
+    "<div class=\"dep-node is-rollup-{{ depNode.is_rollup }} is-package-{{ depNode.is_package }}\">\n" +
+    "   <div class=\"about\">\n" +
+    "      <a class=\"name\" ng-if=\"!depNode.is_rollup && depNode.is_package\" href=\"package/r/{{ depNode.name }}\">{{ depNode.name }}</a>\n" +
+    "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\" class=\"name\">{{ depNode.name }}</span>\n" +
+    "      <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
+    "   </div>\n" +
+    "   <div class=\"children\">\n" +
+    "      <div class=\"dep-node-container\"\n" +
+    "           ng-repeat=\"depNode in depNode.children | orderBy: '-sort_score'\"\n" +
+    "           ng-include=\"'package-page/dep-node.tpl.html'\"></div>\n" +
+    "   </div>\n" +
+    "</div>");
+}]);
+
 angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/package-page.tpl.html",
-    "<div class=\"person-page\">\n" +
+    "<div class=\"package-page\">\n" +
     "   <div class=\"ti-page-header\">\n" +
     "      <h1>\n" +
     "         <span class=\"text\">\n" +
     "            {{ package.name }}\n" +
     "         </span>\n" +
+    "         <span class=\"indegree\">{{ package.indegree }} direct reverse dependencies</span>\n" +
     "      </h1>\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
-    "      <h2>package stuff goes here!</h2>\n" +
-    "\n" +
-    "\n" +
-    "      <div id=\"sankey_basic\" style=\"width: 900px; height: 300px;\"></div>\n" +
-    "\n" +
-    "\n" +
+    "      <div class=\"dep-nodes-tree\" ng-include=\"'package-page/dep-node.tpl.html'\">\n" +
+    "      </div>\n" +
     "   </div>\n" +
     "\n" +
     "</div>\n" +

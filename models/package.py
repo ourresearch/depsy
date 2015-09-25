@@ -11,6 +11,7 @@ from app import db
 from models import github_api
 from models.person import get_or_make_person
 from models.contribution import Contribution
+from models.rev_dep_node import RevDepNode
 from jobs import update_registry
 from jobs import Update
 from util import truncate
@@ -110,7 +111,7 @@ class Package(db.Model):
             "num_stars": self.num_stars,
             "sort_score": self.sort_score,
             "impact": self.sort_score * 100,
-            "rev_deps_tree": [[x[1], x[2], x[3]] for x in self.rev_deps_tree],
+            "rev_deps_tree": self.tree,
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
@@ -122,6 +123,14 @@ class Package(db.Model):
         #     ret["contributions"] = [c.to_dict() for c in self.contributions]
 
         return ret
+
+
+    @property
+    def tree(self):
+        #return {"hello": "world"}
+        parent = RevDepNode(None, self.project_name, self.pagerank)
+        parent.add_children(self.rev_deps_tree)
+        return parent.to_dict()
 
 
     @property
