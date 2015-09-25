@@ -141,3 +141,14 @@ update_registry.register(Update(
 ))
 
 
+
+
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.tags == None)
+update_registry.register(Update(
+    job=CranPackage.set_tags,
+    query=q,
+    queue_id=8
+))
+
+
