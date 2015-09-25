@@ -11,7 +11,7 @@ angular.module('app', [
 
   'staticPages',
   'personPage',
-  'articlePage',
+  'packagePage',
   'header',
   'packageSnippet',
 
@@ -197,85 +197,6 @@ angular.module('app').controller('AppCtrl', function(
 });
 
 
-angular.module('articlePage', [
-    'ngRoute',
-    'articleService'
-  ])
-
-
-
-  .config(function($routeProvider) {
-    $routeProvider.when('/article/:pmid', {
-      templateUrl: 'article-page/article-page.tpl.html',
-      controller: 'articlePageCtrl'
-    })
-  })
-
-
-
-  .controller("articlePageCtrl", function($scope,
-                                          $http,
-                                          $routeParams,
-                                          ArticleService){
-
-    console.log("article page!", $routeParams)
-
-    ArticleService.getArticle($routeParams.pmid)
-
-    $scope.ArticleService = ArticleService
-
-    $scope.barHorizPos = function(scopusScalingFactor){
-      return (scopusScalingFactor * 100) + "%;"
-    }
-
-    $scope.barHeight = function(){
-
-    }
-
-
-    $scope.dotPosition = function(pmid, plotMax, scopus){
-      if (scopus > plotMax) {
-        return "display: none;"
-      }
-
-      var scalingFactorPercent = (scopus / plotMax) * 100
-
-      var verticalJitter = randomPlusOrMinus(2, pmid)
-      scalingFactorPercent += randomPlusOrMinus(0.5,pmid.substring(0, 7))
-
-      var ret = "left: " + scalingFactorPercent + "%;"
-      ret += "top:" + verticalJitter + "px;"
-      return ret
-    }
-
-    $scope.medianPosition = function(plotMax, medianScopusCount){
-
-      var medianPos = (medianScopusCount / plotMax * 100) + "%"
-      return "left: " + medianPos + ";"
-    }
-
-
-    // not using this right now
-    function rand(seed) {
-        var x = Math.sin(seed) * 10000;
-        return x - Math.floor(x);
-    }
-
-    function randomPlusOrMinus(range, seed){
-
-      Math.seedrandom(seed)
-
-      var pick = range * Math.random()
-      pick *= (Math.random() > .5 ? -1 : 1)
-
-      return pick
-    }
-
-
-  })  
-
-
-
 angular.module("directives.languageIcon", [])
 .directive("languageIcon", function(){
 
@@ -394,6 +315,64 @@ angular.module('header', [
 
 
 
+angular.module('packagePage', [
+    'ngRoute'
+  ])
+
+
+
+  .config(function($routeProvider) {
+    $routeProvider.when('/package/:language/:package_name', {
+      templateUrl: 'package-page/package-page.tpl.html',
+      controller: 'PackagePageCtrl',
+      resolve: {
+        packageResp: function($http, $route, PackageResource){
+          return PackageResource.get({
+            namespace: $route.current.params.language,
+            name: $route.current.params.package_name
+          }).$promise
+        }
+      }
+    })
+  })
+
+
+
+  .controller("PackagePageCtrl", function($scope,
+                                          $routeParams,
+                                          packageResp){
+    $scope.package = packageResp
+    console.log("retrieved the package revdepstree!", packageResp.rev_deps_tree)
+
+
+
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'From');
+        data.addColumn('string', 'To');
+        data.addColumn('number', 'Weight');
+        data.addRows(packageResp.rev_deps_tree);
+
+        // Sets chart options.
+        var options = {
+          width: 600
+        };
+
+        // Instantiates and draws our chart, passing in some options.
+        var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+        chart.draw(data, options);
+      }
+
+    drawChart()
+
+
+
+  })
+
+
+
+
 angular.module('packageSnippet', [
   ])
 
@@ -485,7 +464,11 @@ angular.module('resourcesModule', [])
 
   .factory('UserResource', function($resource) {
     return $resource('/api/me')
-  });
+  })
+
+  .factory('PackageResource', function($resource) {
+    return $resource('/api/package/:namespace/:name')
+  })
 angular.module('articleService', [
   ])
 
@@ -719,89 +702,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['article-page/article-page.tpl.html', 'directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-snippet/package-snippet.tpl.html', 'package-snippet/sort-score-popover.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
-
-angular.module("article-page/article-page.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("article-page/article-page.tpl.html",
-    "<div class=\"article-page\">\n" +
-    "   <div class=\"header\">\n" +
-    "      <div class=\"articles-section\">\n" +
-    "         <div class=\"article\" ng-show=\"ArticleService.data.article\">\n" +
-    "            <div class=\"metrics\">\n" +
-    "               <a href=\"/article/{{ ArticleService.data.article.pmid }}\"\n" +
-    "                  tooltip-placement=\"left\"\n" +
-    "                  tooltip=\"Citation percentile. Click to see comparison set.\"\n" +
-    "                  class=\"percentile scale-{{ colorClass(ArticleService.data.article.percentile) }}\">\n" +
-    "                  <span class=\"val\" ng-show=\"article.percentile !== null\">\n" +
-    "                     {{ ArticleService.data.article.percentile }}\n" +
-    "                  </span>\n" +
-    "               </a>\n" +
-    "               <span class=\"scopus scopus-small\"\n" +
-    "                     tooltip-placement=\"left\"\n" +
-    "                     tooltip=\"{{ article.citations }} citations via Scopus\">\n" +
-    "                  {{ ArticleService.data.article.citations }}\n" +
-    "               </span>\n" +
-    "               <span class=\"loading\" ng-show=\"article.percentile === null\">\n" +
-    "                  <i class=\"fa fa-refresh fa-spin\"></i>\n" +
-    "               </span>\n" +
-    "            </div>\n" +
-    "\n" +
-    "            <div class=\"article-biblio\">\n" +
-    "               <span class=\"title\">{{ ArticleService.data.article.biblio.title }}</span>\n" +
-    "               <span class=\"under-title\">\n" +
-    "                  <span class=\"year\">({{ ArticleService.data.article.biblio.year }})</span>\n" +
-    "                  <span class=\"authors\">{{ ArticleService.data.article.biblio.author_string }}</span>\n" +
-    "                  <span class=\"journal\">{{ ArticleService.data.article.biblio.journal }}</span>\n" +
-    "                  <a class=\"linkout\"\n" +
-    "                     href=\"http://www.ncbi.nlm.nih.gov/pubmed/{{ ArticleService.data.article.biblio.pmid }}\">\n" +
-    "                        <i class=\"fa fa-external-link\"></i>\n" +
-    "                     </a>\n" +
-    "               </span>\n" +
-    "            </div>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
-    "   </div>\n" +
-    "\n" +
-    "   <div class=\"articles-infovis journal-dots\">\n" +
-    "\n" +
-    "      <ul class=\"journal-lines\">\n" +
-    "         <li class=\"single-journal-line\" ng-repeat=\"journal in ArticleService.data.article.refset.journals.list\">\n" +
-    "            <span class=\"journal-name\">\n" +
-    "               {{ journal.name }}\n" +
-    "               <span class=\"article-count\">\n" +
-    "                  ({{ journal.num_articles }})\n" +
-    "               </span>\n" +
-    "            </span>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "            <div class=\"journal-articles-with-dots\">\n" +
-    "               <a class=\"journal-article-dot\"\n" +
-    "                  ng-repeat=\"article in journal.articles\"\n" +
-    "                  style=\"{{ dotPosition(article.biblio.pmid, ArticleService.data.article.refset.journals.scopus_max_for_plot, article.scopus) }}\"\n" +
-    "                  target=\"_blank\"\n" +
-    "                  tooltip=\"{{ article.scopus }}: {{ article.biblio.title }}\"\n" +
-    "                  href=\"http://www.ncbi.nlm.nih.gov/pubmed/{{ article.biblio.pmid }}\">\n" +
-    "                  </a>\n" +
-    "               <div class=\"median\"\n" +
-    "                    tooltip=\"Median {{ journal.scopus_median }} citations\"\n" +
-    "                    style=\"{{ medianPosition(ArticleService.data.article.refset.journals.scopus_max_for_plot, journal.scopus_median) }}\"></div>\n" +
-    "               <div style=\"{{ medianPosition(ArticleService.data.article.refset.journals.scopus_max_for_plot, ArticleService.data.article.citations) }}\"\n" +
-    "                    class=\"owner-article-scopus scale-{{ colorClass(ArticleService.data.article.percentile) }}\">\n" +
-    "\n" +
-    "               </div>\n" +
-    "\n" +
-    "            </div>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "         </li>\n" +
-    "         <div class=\"fake-journal\">\n" +
-    "         </div>\n" +
-    "      </ul>\n" +
-    "   </div>\n" +
-    "</div>");
-}]);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/package-page.tpl.html', 'package-snippet/package-snippet.tpl.html', 'package-snippet/sort-score-popover.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -909,6 +810,32 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "</a>\n" +
     "\n" +
     "\n" +
+    "");
+}]);
+
+angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("package-page/package-page.tpl.html",
+    "<div class=\"person-page\">\n" +
+    "   <div class=\"ti-page-header\">\n" +
+    "      <h1>\n" +
+    "         <span class=\"text\">\n" +
+    "            {{ package.name }}\n" +
+    "         </span>\n" +
+    "      </h1>\n" +
+    "   </div>\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"ti-page-body\">\n" +
+    "\n" +
+    "      <h2>package stuff goes here!</h2>\n" +
+    "\n" +
+    "\n" +
+    "      <div id=\"sankey_basic\" style=\"width: 900px; height: 300px;\"></div>\n" +
+    "\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>\n" +
     "");
 }]);
 

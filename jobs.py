@@ -1,12 +1,12 @@
 from time import time
 from time import sleep
-from app import db
-from util import elapsed
-from app import ti_queues
+
 from sqlalchemy.dialects import postgresql
 
+from app import db
+from app import ti_queues
+from util import elapsed
 from util import chunks
-
 
 
 

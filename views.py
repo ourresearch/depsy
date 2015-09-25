@@ -3,8 +3,9 @@ from app import app
 from models.search import autocomplete
 from util import elapsed
 from models.person import Person
+from models import package
 from models.package import Package
-from models.package import get_packages
+from models.package_jobs import get_packages
 from dummy_data import get_dummy_data
 from sqlalchemy import orm
 
@@ -113,20 +114,19 @@ def person_endpoint(person_id):
     return json_resp_from_thing(my_person.to_dict())
 
 
-@app.route("/api/p/<host>/<project_name>")
-@app.route("/api/p/<host>/<project_name>.json")
-def package(host, project_name):
+@app.route("/api/package/<host_or_language>/<project_name>")
+@app.route("/api/package/<host_or_language>/<project_name>.json")
+def package_endpoint(host_or_language, project_name):
 
-    if host.lower() == "python":
-        my_id = "pypi:" + project_name
-    elif host.lower() == "r":
-        my_id = "cran:" + project_name
+    my_id = package.make_id(host_or_language, project_name)
 
     from models.contribution import Contribution
-    my_package = Package.query.options(orm.subqueryload_all(Package.contributions, Contribution.person)).get(my_id)
+    my_package = Package.query.options(
+        orm.subqueryload_all(Package.contributions, Contribution.person)
+    ).get(my_id)
 
     if not my_package:
-        abort_json(404, "This person's not in the database")
+        abort_json(404, "This package is not in the database")
 
     resp_dict = my_package.to_dict()
     return json_resp_from_thing(resp_dict)
@@ -136,33 +136,12 @@ def package(host, project_name):
 @app.route("/api/packages")
 @app.route("/api/packages.json")
 def packages_endpoint():
-
-    sort = request.args.get("sort", "sort_score")
-    filter_strings = request.args.get("filters", "").split(",")
-    filters = dict([s.split(":") for s in filter_strings if s])
-
-    start = time()
-    packages = get_packages(sort, filters)
-
-    ret = json_resp_from_thing({
-        "packages": [p.as_snippet for p in packages]
-    })
-    elapsed_time = elapsed(start)
-    ret.headers["x-elapsed"] = elapsed_time
-    return ret
-
-@app.route("/api/leaders/<type>")
-@app.route("/api/leaders/<type>.json")
-def get_ranked_list(type):
-
-    sort = request.args.get("sort", "sort_score")
     filter_strings = request.args.get("filters", "").split(",")
     filters = [s.split(":") for s in filter_strings if s]
 
     start = time()
-    leaders_list = []
     if type == "packages":
-        packages = get_packages(sort, filters)
+        packages = get_packages(filters)
         leaders_list = [p.as_snippet for p in packages]
     else:
         raise NotImplementedError("we can only rank packages right now...")
@@ -170,19 +149,12 @@ def get_ranked_list(type):
     ret = json_resp_from_thing({
         "list": leaders_list,
         "type": type,
-        "sort": sort,
         "filters": filters
     })
 
     elapsed_time = elapsed(start)
     ret.headers["x-elapsed"] = elapsed_time
     return ret
-
-
-
-
-
-
 
 
 

@@ -21,6 +21,8 @@ from python import parse_requirements_txt
 
 
 class PypiPackage(Package):
+    class_host = "pypi"
+
     __mapper_args__ = {
         'polymorphic_identity': 'pypi'
     }
@@ -28,6 +30,11 @@ class PypiPackage(Package):
     def __repr__(self):
         return u'<PypiPackage {name}>'.format(
             name=self.id)
+
+    @property
+    def language(self):
+        return "python"
+
 
     @property
     def source_url(self):
@@ -249,12 +256,6 @@ class PypiPackage(Package):
 
         return self.tags
 
-
-    @property
-    def as_snippet(self):
-        ret = self._as_package_snippet
-        ret["language"] = "python"
-        return ret
 
 
 

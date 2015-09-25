@@ -10,7 +10,7 @@ angular.module('app', [
 
   'staticPages',
   'personPage',
-  'articlePage',
+  'packagePage',
   'header',
   'packageSnippet',
 

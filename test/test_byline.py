@@ -23,13 +23,14 @@ class TestByline(unittest.TestCase):
         """.split("\n")
 
     def test_clean_byline_string(self):
-        byline = Byline(self.test_bylines[0])
-        assert_equals(byline.clean(), "hi")
+        byline = Byline(self.test_bylines[2])
+        expected = "        Corentin M Barbu , Sebastian Gibb "
+        assert_equals(byline._clean_byline(), expected)
 
     def test_author_email_pairs(self):
         for byline_string in self.test_bylines:
             byline = Byline(byline_string)
             print "\n{}\n{}\n".format(byline.author_email_pairs(), byline_string)
-        assert_equals(byline.author_email_pairs(), "hi")        
+        # assert_equals(byline.author_email_pairs(), "hi")        
 
 

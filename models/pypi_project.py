@@ -40,6 +40,7 @@ class PypiProject(db.Model):
     def language(self):
         return "python"
 
+
     def set_github_contributors(self):
         self.github_contributors = github_api.get_repo_contributors(
             self.github_owner,
