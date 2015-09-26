@@ -241,6 +241,7 @@ def get_or_make_person(**kwargs):
                print "trying github call again, mabye api keys refreshed?".format(url)
 
         new_person.set_parsed_name()
+
         db.session.add(new_person)
 
         #need this commit to handle matching people added previously in this chunk

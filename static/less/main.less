@@ -6,7 +6,7 @@
 
 
 
-@linkColor: #ff3000;
+@linkColor: #00aeef;
 @sidebar-width: 300px;
 
 @citationsColor: #984ea3;
@@ -30,6 +30,25 @@ body {
          color: orangered;
       }
 
+   }
+}
+
+body.coming-soon {
+   background: @linkColor;
+   text-align: center;
+   padding-top: 180px;
+   font-family: lato, helvetica, arial, sans-serif;
+
+   div.logo {
+      img {
+         width:300px;
+      }
+   }
+   div.tagline {
+      font-size: 30px;
+      font-weight: 100;
+      color: #fff;
+      margin-top: 30px;
    }
 }
 
@@ -70,8 +89,8 @@ div.ti-header {
    margin: 0;
    position: relative;
    width: 100%;
-   padding: @header-padding-top 0 20px;
-   background: #ddd;
+   padding: @header-padding-top 0 10px;
+   background: #00aeef;
    h1 {
       margin: 0 20px;
       font-weight: 900;
@@ -81,7 +100,9 @@ div.ti-header {
             text-decoration: none;
          }
          img {
-            width: 150px;
+            margin: 0px 0 -20px;
+            width: 100px;
+//            test
          }
       }
    }
@@ -96,6 +117,7 @@ div.ti-header {
       margin-left: -0.5 * @search-box-width;
       padding-top: @header-padding-top;
       input {
+         border: none;
          width: 100%;
          font-size: 20px;
       }
@@ -149,11 +171,11 @@ div.ti-header {
    div.ti-menu {
       position: absolute;
       right: 30px;
-      bottom: 20px;
+      bottom: 15px;
       a.menu-link {
-         color: #999;
+         color: #fff;
          font-weight: 100;
-         font-size: 16px;
+         font-size: 15px;
          display:inline-block;
          padding: 2px 10px;
          cursor: pointer;

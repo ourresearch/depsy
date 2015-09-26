@@ -700,7 +700,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "<div class=\"ti-header\" ng-controller=\"headerCtrl\">\n" +
     "   <h1>\n" +
     "      <a href=\"/\">\n" +
-    "         depsy\n" +
+    "         <img src=\"static/img/logo-circle.png\" alt=\"\"/>\n" +
     "      </a>\n" +
     "   </h1>\n" +
     "\n" +

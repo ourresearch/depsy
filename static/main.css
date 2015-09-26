@@ -18,6 +18,21 @@ body a {
 body a:hover {
   color: orangered;
 }
+body.coming-soon {
+  background: #00aeef;
+  text-align: center;
+  padding-top: 180px;
+  font-family: lato, helvetica, arial, sans-serif;
+}
+body.coming-soon div.logo img {
+  width: 300px;
+}
+body.coming-soon div.tagline {
+  font-size: 30px;
+  font-weight: 100;
+  color: #fff;
+  margin-top: 30px;
+}
 .tooltip {
   font-weight: 300;
   font-size: 14px;
@@ -41,8 +56,8 @@ div.ti-header {
   margin: 0;
   position: relative;
   width: 100%;
-  padding: 10px 0 20px;
-  background: #ddd;
+  padding: 10px 0 10px;
+  background: #00aeef;
 }
 div.ti-header h1 {
   margin: 0 20px;
@@ -55,7 +70,8 @@ div.ti-header h1 a:hover {
   text-decoration: none;
 }
 div.ti-header h1 a img {
-  width: 150px;
+  margin: 0px 0 -20px;
+  width: 100px;
 }
 div.ti-header div.search-box {
   text-align: center;
@@ -67,6 +83,7 @@ div.ti-header div.search-box {
   padding-top: 10px;
 }
 div.ti-header div.search-box input {
+  border: none;
   width: 100%;
   font-size: 20px;
 }
@@ -118,12 +135,12 @@ div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header i.fa.fa
 div.ti-header div.ti-menu {
   position: absolute;
   right: 30px;
-  bottom: 20px;
+  bottom: 15px;
 }
 div.ti-header div.ti-menu a.menu-link {
-  color: #999;
+  color: #fff;
   font-weight: 100;
-  font-size: 16px;
+  font-size: 15px;
   display: inline-block;
   padding: 2px 10px;
   cursor: pointer;
