@@ -227,6 +227,7 @@ def get_or_make_person(**kwargs):
         print u"minting a new person using {}".format(kwargs)
         new_person = Person(**kwargs)
         new_person.set_parsed_name()
+
         db.session.add(new_person)
 
         #need this commit to handle matching people added previously in this chunk
