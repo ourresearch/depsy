@@ -164,10 +164,14 @@ def packages_endpoint():
     filter_strings = request.args.get("filters", "").split(",")
     filters = [s.split(":") for s in filter_strings if s]
 
+    # not sure how this is supposed to work.  adding this for now
+    type = "packages"
+
+
     start = time()
     if type == "packages":
         packages = get_packages(filters)
-        leaders_list = [p.as_snippet for p in packages]
+        leaders_list = [p.as_snippet_with_people for p in packages]
     else:
         raise NotImplementedError("we can only rank packages right now...")
 

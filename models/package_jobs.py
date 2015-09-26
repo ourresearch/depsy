@@ -1,18 +1,22 @@
 from sqlalchemy import text
+from sqlalchemy import orm
 
 from app import db
 from models.package import Package
 from models.pypi_package import PypiPackage
 from models.cran_package import CranPackage
 from models.person import Person
+from models.contribution import Contribution
 from jobs import update_registry
 from jobs import Update
 
 
 
 def get_packages(sort="sort_score", filters=None):
-    
-    q = db.session.query(Package)
+
+    q = Package.query.options(
+        orm.subqueryload_all(Package.contributions, Contribution.person)
+    )
     q = q.order_by(Package.pagerank.desc())
     q = q.order_by(Package.num_downloads.desc())
 

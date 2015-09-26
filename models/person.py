@@ -97,7 +97,7 @@ class Person(db.Model):
     def is_academic(self):
         try:
             return self.bucket["is_academic"]
-        except KeyError:
+        except (KeyError, TypeError):
             return False
 
     def _make_gravatar_url(self, size):

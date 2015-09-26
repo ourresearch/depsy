@@ -88,6 +88,9 @@ class Package(db.Model):
         return u'<Package {name}>'.format(
             name=self.id)
 
+    @property
+    def language(self):
+        return "unknown"
 
     def to_dict(self, full=True):
         ret = {
@@ -154,6 +157,15 @@ class Package(db.Model):
             "summary": prep_summary(self.summary)
         }
         return ret
+
+    @property
+    def as_snippet_with_people(self):
+        ret = self.as_snippet
+
+        distinct_people = set([c.person.name for c in self.contributions])
+        ret["people"] = list([name for name in distinct_people if name])
+        return ret
+
 
     @classmethod
     def valid_package_names(cls, module_names):
@@ -503,20 +515,6 @@ def make_id(namespace, name):
     else:
         raise ValueError("Invalid namespace for package id")
 
-
-
-def get_packages(sort="sort_score", filters=None):
-
-
-
-    q = db.session.query(Package)
-    q = q.order_by(Package.pagerank.desc())
-    q = q.order_by(Package.num_downloads.desc())
-
-    q = q.limit(25)
-
-    ret = q.all()
-    return ret
 
 
 

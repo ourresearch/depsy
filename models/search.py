@@ -26,11 +26,11 @@ def autocomplete(search_str):
     order by sort_score desc
     limit 3)
     union
-    (select name, "count" as sort_score, null as summary, 'tag' as type, 4 as first_sort, id
+    (select unique_tag, "count" as sort_score, null as summary, 'tag' as type, 4 as first_sort, id
     from tags
-    where name ilike '{str}%'
-    or name ilike '% {str}%'
-    or name ilike '/{str}%'
+    where unique_tag ilike '{str}%'
+    or unique_tag ilike '% {str}%'
+    or unique_tag ilike '/{str}%'
     order by sort_score desc
     limit 3)
     order by first_sort, sort_score desc""".format(str=search_str)
