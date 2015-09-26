@@ -37,7 +37,6 @@ class CranPackage(Package):
         raw_byline_string = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
-        print "starting with raw_byline_string", raw_byline_string
         byline = Byline(raw_byline_string)
 
         extracted_name_dicts = byline.author_email_pairs()

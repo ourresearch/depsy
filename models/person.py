@@ -1,5 +1,6 @@
 import hashlib
 from collections import defaultdict
+from time import sleep
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import or_
@@ -7,6 +8,7 @@ from nameparser import HumanName
 
 from app import db
 from models.contribution import Contribution
+from models.github_api import GithubRateLimitException
 from github_api import get_profile
 from util import dict_from_dir
 
@@ -183,7 +185,6 @@ def find_best_match(persons, **kwargs):
 def get_or_make_person(**kwargs):
     res = None
 
-
     if 'name' in kwargs and kwargs["name"] == "UNKNOWN":
         # pypi sets unknown people to have the name "UNKNOWN"
         # we don't want to make tons of these, it's just one 'person'.
@@ -226,9 +227,19 @@ def get_or_make_person(**kwargs):
     else:
         print u"minting a new person using {}".format(kwargs)
         new_person = Person(**kwargs)
+        # do person attrib setting now so that can use them to detect dedups later this run
+        # set_github_about sets name so has to go before parsed name
 
-        # do these things now so that can use them to detect dedups later this run
-        new_person.set_github_about_()  # also sets name so has to go first
+        keep_trying_github_call = True
+        while keep_trying_github_call:
+            try:
+               new_person.set_github_about() 
+               keep_trying_github_call = False
+            except GithubRateLimitException:
+               print "all github keys maxed out. sleeping...."
+               sleep(5 * 60)
+               print "trying github call again, mabye api keys refreshed?".format(url)
+
         new_person.set_parsed_name()
         db.session.add(new_person)
 

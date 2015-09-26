@@ -123,18 +123,6 @@ def make_ratelimited_call(url):
 
     login, token = keyring.get()
 
-    #try:
-    #    login, token = keyring.get()
-    #except GithubRateLimitException:
-    #
-    #    # wait a bit and try again, forever
-    #    print "{}: our github keys have all reached their rate limits. sleeping....".format(
-    #        url
-    #    )
-    #    sleep(5 * 60)
-    #    print "make_ratelimited_call({}) trying again, mabye api keys refreshed?".format(url)
-    #    return make_ratelimited_call(url)
-
     # assuming rate limited calls will never time out
     requests.packages.urllib3.disable_warnings()            
     r = requests.get(url, auth=(login, token))

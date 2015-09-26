@@ -111,6 +111,19 @@ update_registry.register(Update(
     queue_id=8
 ))
 
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.save_host_contributors,
+    query=q,
+    queue_id=8
+))
+
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.save_all_people,
+    query=q,
+    queue_id=8
+))
 
 
 # i do not understand why, but this does not work in RQ, you must run in

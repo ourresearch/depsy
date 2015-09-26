@@ -15,7 +15,7 @@ class Byline:
         halt_patterns = [" port", " adapted ", " comply "]
         for pattern in halt_patterns:
             if pattern in clean_byline:
-                print "has a halt pattern, so skipping this byline"
+                # print "has a halt pattern, so skipping this byline"
                 return None
 
         # do these before the remove_pattern matching
@@ -48,7 +48,6 @@ class Byline:
 
 
     def author_email_pairs(self):
-        print "start:", self.raw_byline
         clean_byline = self._clean_byline()
         if not clean_byline:
             return None

@@ -169,7 +169,9 @@ class Package(db.Model):
     def test(self):
         print "{}: I'm a test!".format(self)
 
-
+    def save_all_people(self):
+        self.save_github_owners_and_contributors()
+        self.save_host_contributors()
 
     def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
