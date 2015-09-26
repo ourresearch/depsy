@@ -18,6 +18,21 @@ body a {
 body a:hover {
   color: orangered;
 }
+body.coming-soon {
+  background: #00aeef;
+  text-align: center;
+  padding-top: 180px;
+  font-family: lato, helvetica, arial, sans-serif;
+}
+body.coming-soon div.logo img {
+  width: 300px;
+}
+body.coming-soon div.tagline {
+  font-size: 30px;
+  font-weight: 100;
+  color: #fff;
+  margin-top: 30px;
+}
 .tooltip {
   font-weight: 300;
   font-size: 14px;
