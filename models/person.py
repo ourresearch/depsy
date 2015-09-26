@@ -226,6 +226,9 @@ def get_or_make_person(**kwargs):
     else:
         print u"minting a new person using {}".format(kwargs)
         new_person = Person(**kwargs)
+
+        # do these things now so that can use them to detect dedups later this run
+        new_person.set_github_about_()  # also sets name so has to go first
         new_person.set_parsed_name()
 
         db.session.add(new_person)

@@ -50,17 +50,6 @@ class CranPackage(Package):
             self._save_contribution(person, "author")
 
 
-
-    def _remove_all_authors_cruft(self, all_authors):
-        return all_authors
-
-    def _extract_author_strings(self, all_authors):
-        return []
-
-    def _name_and_email_from_author_str(self, author_str):
-        return [None, None]
-
-
     def set_github_repo_ids(self):
         q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
         q = q.filter(GithubRepo.language == 'r')

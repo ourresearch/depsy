@@ -15,9 +15,6 @@ class Contribution(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
     package_id = db.Column(db.Text, db.ForeignKey("package.id"))
 
-    #person = db.relationship("Person", backref="contributions")
-    #package = db.relationship("Package", backref="contributions")
-
     role = db.Column(db.Text)
     quantity = db.Column(db.Integer)
     percent = db.Column(db.Float)
