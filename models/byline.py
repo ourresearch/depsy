@@ -16,7 +16,7 @@ class Byline:
 
         halt_patterns = [" port", " adapted ", " comply "]
         for pattern in halt_patterns:
-            if pattern in clean_byline:
+            if pattern in clean_byline.lower():
                 # print "has a halt pattern, so skipping this byline"
                 return None
 
@@ -43,6 +43,7 @@ class Byline:
             clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE)
 
         clean_byline = clean_byline.replace(" & ", ",")
+        clean_byline = clean_byline.replace(";", ",")
         clean_byline = re.sub(" and ", ",", clean_byline, re.IGNORECASE)
         self.clean_byline = clean_byline
         return clean_byline  
