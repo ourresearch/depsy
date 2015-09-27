@@ -227,6 +227,7 @@ class Package(db.Model):
 
 
     def _save_contribution(self, person, role, quantity=None, percent=None):
+        print u"saving contribution {} for {}".format(role, person)
         extant_contrib = self.get_contribution(person.id, role)
         if extant_contrib is None:
 

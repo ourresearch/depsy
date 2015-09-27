@@ -82,7 +82,6 @@ class PypiPackage(Package):
 
         for kwargs_dict in extracted_name_dicts:
             person = get_or_make_person(**kwargs_dict)
-            print u"building contribution with person {}".format(person)
             self._save_contribution(person, "author")
 
 
