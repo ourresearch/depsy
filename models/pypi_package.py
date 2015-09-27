@@ -75,10 +75,6 @@ class PypiPackage(Package):
         byline = Byline(raw_byline_string)
 
         extracted_name_dicts = byline.author_email_pairs()
-        print "extracted_name_dicts", extracted_name_dicts
-
-        if not extracted_name_dicts:
-            return None
         
         # use the author email field only if only one name
         if len(extracted_name_dicts)==1:

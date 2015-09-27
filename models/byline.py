@@ -52,7 +52,7 @@ class Byline:
     def author_email_pairs(self):
         clean_byline = self._clean_byline()
         if not clean_byline:
-            return None
+            return [{"name": "UNKNOWN", "email": None}]
 
         responses = []
         for author_clause in clean_byline.split(","):
