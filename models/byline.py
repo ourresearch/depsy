@@ -48,11 +48,13 @@ class Byline:
         return clean_byline  
 
 
-
+    # should return unknown_author_response if no good pairs found
     def author_email_pairs(self):
+        unknown_author_response = [{"name": "UNKNOWN", "email": None}]
+
         clean_byline = self._clean_byline()
         if not clean_byline:
-            return [{"name": "UNKNOWN", "email": None}]
+            return unknown_author_response
 
         responses = []
         for author_clause in clean_byline.split(","):
@@ -68,7 +70,7 @@ class Byline:
                 author_clause = re.sub(pattern, "", author_clause, re.IGNORECASE)
 
             if not author_clause or (len(author_clause) < 6):
-                return None
+                return unknown_author_response
 
             if "<" in author_clause:
                 (author_name, author_email) = author_clause.split("<", 1)
