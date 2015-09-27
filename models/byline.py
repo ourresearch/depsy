@@ -11,6 +11,8 @@ class Byline:
 
     def _clean_byline(self):
         clean_byline = self.raw_byline
+        if not clean_byline:
+            return None
 
         halt_patterns = [" port", " adapted ", " comply "]
         for pattern in halt_patterns:
