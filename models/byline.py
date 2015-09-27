@@ -23,7 +23,7 @@ class Byline:
         clean_byline = clean_byline.replace("\n", " ")
 
         remove_patterns = [
-            "\(.*?\)",   # here so can get before comma split.  but will only remove first hit :)
+            "\(.*?\)",   # here so can get before comma split
             "with.*$",
             "based on.*$",
             "assistance.*$",
@@ -58,6 +58,7 @@ class Byline:
             author_email = None
 
             clause_replace_patterns = [
+                "\(.*?\)",   # here so can get before comma split            
                 "\[.*?\]",
                 "\[.*?$"
                 ]

@@ -14,6 +14,7 @@ import hashlib
 from models.person import get_or_make_person
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
+from models.byline import Byline
 from util import elapsed
 from python import parse_requirements_txt
 
@@ -68,18 +69,25 @@ class PypiPackage(Package):
 
 
     def save_host_contributors(self):
-        author = self.api_raw["info"]["author"]
+        raw_byline_string = self.api_raw["info"]["author"]
         author_email = self.api_raw["info"]["author_email"]
 
-        if not author:
-            return False
+        byline = Byline(raw_byline_string)
 
-        if author_email and validate_email(author_email):
-            person = get_or_make_person(name=author, email=author_email)
-        else:
-            person = get_or_make_person(name=author)
+        extracted_name_dicts = byline.author_email_pairs()
+        print "extracted_name_dicts", extracted_name_dicts
 
-        self._save_contribution(person, "author")
+        if not extracted_name_dicts:
+            return None
+        
+        # use the author email field only if only one name
+        if len(extracted_name_dicts)==1:
+            extracted_name_dicts[0]["email"] = author_email
+
+        for kwargs_dict in extracted_name_dicts:
+            person = get_or_make_person(**kwargs_dict)
+            print u"building contribution with person {}".format(person)
+            self._save_contribution(person, "author")
 
 
     def set_github_repo_ids(self):

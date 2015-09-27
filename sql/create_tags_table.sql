@@ -8,5 +8,8 @@ select jsonb_array_elements_text(tags)::text as unique_tag,
  	
 alter table tags add column id text
 update tags set id=(namespace||':'||unique_tag)
-	
+
+CREATE INDEX tags_unique_tag_idx 
+	ON tags (unique_tag)
+
 select * from tags
