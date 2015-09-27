@@ -164,6 +164,11 @@ class Package(db.Model):
 
         distinct_people = set([c.person.name for c in self.contributions])
         ret["people"] = list([name for name in distinct_people if name])
+
+        ret["contributions"] = []
+        for c in self.contributions:
+            ret["contributions"].append(c.role_dict)
+
         return ret
 
 
@@ -227,6 +232,7 @@ class Package(db.Model):
 
 
     def _save_contribution(self, person, role, quantity=None, percent=None):
+        print u"saving contribution {} for {}".format(role, person)
         extant_contrib = self.get_contribution(person.id, role)
         if extant_contrib is None:
 

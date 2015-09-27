@@ -139,23 +139,6 @@ def package_endpoint(host_or_language, project_name):
     return json_resp_from_thing(resp_dict)
 
 
-@app.route("/api/package/<host_or_language>/<project_name>/rev-deps-tree")
-@app.route("/api/package/<host_or_language>/<project_name>/rev-deps-tree.json")
-def package_tree_endpoint(host_or_language, project_name):
-
-    my_id = package.make_id(host_or_language, project_name)
-
-    from models.contribution import Contribution
-    my_package = Package.query.options(
-        orm.subqueryload_all(Package.contributions, Contribution.person)
-    ).get(my_id)
-
-    if not my_package:
-        abort_json(404, "This package is not in the database")
-
-    resp_dict = my_package.tree
-    return json_resp_from_thing(resp_dict)
-
 
 
 @app.route("/api/packages")

@@ -40,7 +40,8 @@ class Contribution(db.Model):
     @property
     def role_dict(self):
         return {
-            "name": self.role,
+            "role": self.role,
+            "name": self.person.name,
             "quantity": self.quantity,
             "percent": self.get_percent(),
             "fractional_sort_score": self.fractional_sort_score

@@ -11,10 +11,12 @@ class Byline:
 
     def _clean_byline(self):
         clean_byline = self.raw_byline
+        if not clean_byline:
+            return None
 
         halt_patterns = [" port", " adapted ", " comply "]
         for pattern in halt_patterns:
-            if pattern in clean_byline:
+            if pattern in clean_byline.lower():
                 # print "has a halt pattern, so skipping this byline"
                 return None
 
@@ -23,7 +25,7 @@ class Byline:
         clean_byline = clean_byline.replace("\n", " ")
 
         remove_patterns = [
-            "\(.*?\)",   # here so can get before comma split.  but will only remove first hit :)
+            "\(.*?\)",   # here so can get before comma split
             "with.*$",
             "based on.*$",
             "assistance.*$",
@@ -41,16 +43,19 @@ class Byline:
             clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE)
 
         clean_byline = clean_byline.replace(" & ", ",")
+        clean_byline = clean_byline.replace(";", ",")
         clean_byline = re.sub(" and ", ",", clean_byline, re.IGNORECASE)
         self.clean_byline = clean_byline
         return clean_byline  
 
 
-
+    # should return unknown_author_response if no good pairs found
     def author_email_pairs(self):
+        unknown_author_response = [{"name": "UNKNOWN", "email": None}]
+
         clean_byline = self._clean_byline()
         if not clean_byline:
-            return None
+            return unknown_author_response
 
         responses = []
         for author_clause in clean_byline.split(","):
@@ -58,6 +63,7 @@ class Byline:
             author_email = None
 
             clause_replace_patterns = [
+                "\(.*?\)",   # here so can get before comma split            
                 "\[.*?\]",
                 "\[.*?$"
                 ]
@@ -65,7 +71,7 @@ class Byline:
                 author_clause = re.sub(pattern, "", author_clause, re.IGNORECASE)
 
             if not author_clause or (len(author_clause) < 6):
-                return None
+                return unknown_author_response
 
             if "<" in author_clause:
                 (author_name, author_email) = author_clause.split("<", 1)

@@ -12,14 +12,17 @@ from jobs import Update
 
 
 
-def get_packages(sort="sort_score", filters=None):
+def get_packages(filters=None):
 
     q = Package.query.options(
         orm.subqueryload_all(Package.contributions, Contribution.person)
     )
+    for (filter_attribute, filter_value) in filters:
+        attr = getattr(Package, filter_attribute)
+        q = q.filter(attr==filter_value)        
+
     q = q.order_by(Package.pagerank.desc())
     q = q.order_by(Package.num_downloads.desc())
-
     q = q.limit(25)
 
     ret = q.all()
@@ -167,5 +170,15 @@ update_registry.register(Update(
     query=q,
     queue_id=8
 ))
+
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.github_contributors == None)
+update_registry.register(Update(
+    job=Package.set_github_contributors,
+    query=q,
+    queue_id=8
+))
+
 
 
