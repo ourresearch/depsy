@@ -54,7 +54,7 @@ class PypiPackage(Package):
                 versions #give up sorting, just go for it
 
             # trying these in priority order
-            valid_type = ["bdist_egg", "sdist", "bdist_dumb", "bdist_wheel"]
+            valid_type = ["sdist", "bdist_dumb", "bdist_wheel", "bdist_egg"]
             for packagetype in valid_type:
                 for version in versions:
                     release_dict = self.api_raw["releases"][version]
