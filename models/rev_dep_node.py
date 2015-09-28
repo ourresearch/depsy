@@ -16,7 +16,7 @@ class RevDepNode():
 
     @property
     def display_pagerank(self):
-        return round(self.pagerank * 100000, 2)
+        return round(self.pagerank * 1000000, 0)
 
     @property
     def is_rollup(self):

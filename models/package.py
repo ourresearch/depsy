@@ -387,7 +387,7 @@ class Package(db.Model):
 
     @classmethod
     def shortcut_rev_deps_pairs(cls):
-        NUM_TOP_NODES = 2
+        NUM_TOP_NODES = 1000
 
         command = """select package, 
                         used_by, 
