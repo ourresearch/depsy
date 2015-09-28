@@ -35,6 +35,9 @@ class PypiPackage(Package):
     def language(self):
         return "python"
 
+    @property
+    def host_url(self):
+        return "https://pypi.python.org/pypi/{}".format(self.project_name)
 
     @property
     def source_url(self):

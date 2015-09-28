@@ -139,6 +139,7 @@ class Package(db.Model):
     @property
     def as_snippet(self):
         ret = {
+            "_host_url": self.host_url,
             "name": self.project_name,
             "language": self.language,
 
@@ -165,9 +166,14 @@ class Package(db.Model):
         distinct_people = set([c.person.name for c in self.contributions])
         ret["people"] = list([name for name in distinct_people if name])
 
-        ret["contributions"] = []
+        ret["contributions"] = defaultdict(list)
         for c in self.contributions:
-            ret["contributions"].append(c.role_dict)
+            ret["contributions"][c.role].append(u"{}: {}".format(
+                c.percent, c.person.name))
+
+        for role in ret["contributions"]:
+            ret["contributions"][role].sort(reverse=True)
+
 
         return ret
 
