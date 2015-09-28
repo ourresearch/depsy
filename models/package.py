@@ -24,6 +24,7 @@ class Package(db.Model):
     id = db.Column(db.Text, primary_key=True)
     host = db.Column(db.Text)
     project_name = db.Column(db.Text)
+    import_name = db.Column(db.Text)
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
