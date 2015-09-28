@@ -14,12 +14,6 @@ class Byline:
         if not clean_byline:
             return None
 
-        halt_patterns = [" port", " adapted ", " comply "]
-        for pattern in halt_patterns:
-            if pattern in clean_byline.lower():
-                # print "has a halt pattern, so skipping this byline"
-                return None
-
         # do these before the remove_pattern matching
         clean_byline = clean_byline.replace("<U+000a>", " ")
         clean_byline = clean_byline.replace("\n", " ")
@@ -43,10 +37,17 @@ class Byline:
         for pattern in remove_patterns:
             clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE | re.MULTILINE)
 
+        halt_patterns = [" port", " adapted ", " comply "]
+        for pattern in halt_patterns:
+            if pattern in clean_byline.lower():
+                print "has a halt pattern, so skipping this byline"
+                return None
+
         clean_byline = clean_byline.replace(" & ", ",")
         clean_byline = clean_byline.replace(";", ",")
         clean_byline = re.sub(" and ", ",", clean_byline, re.IGNORECASE)
         self.clean_byline = clean_byline
+        print "clean byline", clean_byline
         return clean_byline  
 
 
@@ -72,7 +73,7 @@ class Byline:
                 author_clause = re.sub(pattern, "", author_clause, re.IGNORECASE)
 
             if not author_clause or (len(author_clause) < 6):
-                return unknown_author_response
+                pass
 
             if "<" in author_clause:
                 (author_name, author_email) = author_clause.split("<", 1)
@@ -88,6 +89,9 @@ class Byline:
 
             if author_name or author_email:
                 responses.append({"name":author_name, "email":author_email})
+
+        if not responses:
+            responses = unknown_author_response
 
         return responses
         
