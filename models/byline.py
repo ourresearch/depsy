@@ -25,22 +25,23 @@ class Byline:
         clean_byline = clean_byline.replace("\n", " ")
 
         remove_patterns = [
-            "\(.*?\)",   # here so can get before comma split
-            "with.*$",
-            "based on.*$",
-            "assistance.*$",
-            "derived from.*$",
-            "uses.*$",
-            "as represented by.*$",
-            "contributions.*$",
-            "under.*$",
-            "and others.*$",
-            "and many others.*$",
-            "and authors.*$",
-            "assisted.*$"
+            ur"\[.*?\]",            
+            ur"\(.*?\)",   # here so can get before comma split
+            ur"with.*$",
+            ur"based on.*$",
+            ur"assistance.*$",
+            ur"derived from.*$",
+            ur"uses.*$",
+            ur"as represented by.*$",
+            ur"contributions.*$",
+            ur"under.*$",
+            ur"and others.*$",
+            ur"and many others.*$",
+            ur"and authors.*$",
+            ur"assisted.*$"
         ]
         for pattern in remove_patterns:
-            clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE)
+            clean_byline = re.sub(pattern, "", clean_byline, re.IGNORECASE | re.MULTILINE)
 
         clean_byline = clean_byline.replace(" & ", ",")
         clean_byline = clean_byline.replace(";", ",")

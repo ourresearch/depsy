@@ -21,7 +21,6 @@ def get_packages(filters=None):
         attr = getattr(Package, filter_attribute)
         q = q.filter(attr==filter_value)        
 
-    q = q.order_by(Package.pagerank.desc())
     q = q.order_by(Package.num_downloads.desc())
     q = q.limit(25)
 

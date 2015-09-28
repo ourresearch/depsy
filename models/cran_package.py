@@ -33,6 +33,10 @@ class CranPackage(Package):
     def language(self):
         return "r"
 
+    @property
+    def host_url(self):
+        return "https://cran.r-project.org/web/packages/{}".format(self.project_name)
+
     def save_host_contributors(self):
         raw_byline_string = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
