@@ -45,7 +45,7 @@ class Person(db.Model):
     def to_dict(self, full=True):
         ret = {
             "id": self.id, 
-            "name": self.name, 
+            "name": self.display_name, 
             "github_login": self.github_login, 
             "sort_score": self.sort_score, 
             "icon": self.icon, 
@@ -119,6 +119,17 @@ class Person(db.Model):
     @property
     def icon_small(self):
         return self._make_gravatar_url(30)
+
+    @property
+    def display_name(self):
+        if self.name:
+            return self.name
+        elif self.github_login:
+            return self.github_login
+        elif self.email:
+            return self.email.split("@")[0]
+        else:
+            return "name unknown"
 
     @property
     def person_packages(self):

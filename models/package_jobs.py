@@ -12,7 +12,7 @@ from jobs import Update
 
 
 
-def get_packages(filters=None):
+def get_packages(filters=None, page_size=25):
 
     q = Package.query.options(
         orm.subqueryload_all(Package.contributions, Contribution.person)
@@ -33,7 +33,7 @@ def get_packages(filters=None):
             q = q.filter(attr==filter_value)        
 
     q = q.order_by(Package.num_downloads.desc())
-    q = q.limit(25)
+    q = q.limit(page_size)
 
     ret = q.all()
     return ret

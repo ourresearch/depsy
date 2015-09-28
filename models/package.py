@@ -163,13 +163,13 @@ class Package(db.Model):
     def as_snippet_with_people(self):
         ret = self.as_snippet
 
-        distinct_people = set([c.person.name for c in self.contributions])
-        ret["people"] = list([name for name in distinct_people if name])
+        # distinct_people = set([c.person.name for c in self.contributions])
+        # ret["people"] = list([name for name in distinct_people if name])
 
         ret["contributions"] = defaultdict(list)
         for c in self.contributions:
             ret["contributions"][c.role].append(u"{}: {}".format(
-                c.percent, c.person.name))
+                c.percent, c.person.display_name))
 
         for role in ret["contributions"]:
             ret["contributions"][role].sort(reverse=True)
