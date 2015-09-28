@@ -47,7 +47,7 @@ class Byline:
         clean_byline = clean_byline.replace(";", ",")
         clean_byline = re.sub(" and ", ",", clean_byline, re.IGNORECASE)
         self.clean_byline = clean_byline
-        print "clean byline", clean_byline
+        # print "clean byline", clean_byline
         return clean_byline  
 
 

@@ -117,6 +117,13 @@ update_registry.register(Update(
     queue_id=8
 ))
 
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.save_host_contributors,
+    query=q,
+    queue_id=8
+))
+
 q = db.session.query(Package.id)
 update_registry.register(Update(
     job=Package.save_host_contributors,
