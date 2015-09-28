@@ -25,6 +25,7 @@ class Package(db.Model):
     host = db.Column(db.Text)
     project_name = db.Column(db.Text)
     import_name = db.Column(db.Text)
+    unique_import_name = db.Column(db.Boolean)
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
