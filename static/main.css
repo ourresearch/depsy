@@ -21,17 +21,94 @@ body a:hover {
 body.coming-soon {
   background: #00aeef;
   text-align: center;
-  padding-top: 180px;
+  padding-top: 120px;
   font-family: lato, helvetica, arial, sans-serif;
 }
 body.coming-soon div.logo img {
-  width: 300px;
+  width: 380px;
 }
 body.coming-soon div.tagline {
-  font-size: 30px;
+  font-size: 45px;
   font-weight: 100;
   color: #fff;
-  margin-top: 30px;
+  margin-top: 0px;
+  margin-bottom: 70px;
+}
+body.coming-soon div.tagline div.extra {
+  font-size: 16px;
+}
+body.coming-soon div.cta #mc_embed_signup {
+  font-family: lato, helvetica, arial, sans-serif;
+  background: none;
+}
+body.coming-soon div.cta #mc_embed_signup form #mc_embed_signup_scroll {
+  width: 350px;
+  margin: 10px auto 0;
+}
+body.coming-soon div.cta #mc_embed_signup form #mc_embed_signup_scroll label {
+  display: none;
+}
+body.coming-soon div.cta #mc_embed_signup form #mc_embed_signup_scroll input {
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  font-size: 18px;
+  height: 42px;
+  font-weight: 100;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-topleft: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+body.coming-soon div.cta #mc_embed_signup form #mc_embed_signup_scroll input.btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: 0;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-topleft: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+body.coming-soon div.cta #mc_embed_signup form #mc_embed_signup_scroll input.btn:hover {
+  background: #bbb;
+}
+body.coming-soon div.contact {
+  margin-top: 10px;
+  padding-left: 50px;
+}
+body.coming-soon div.contact a.contact-link {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 100;
+  margin: 5px 10px;
+}
+body.coming-soon div.contact a.contact-link i {
+  font-size: 18px;
+  margin-right: 2px;
+  vertical-align: middle;
 }
 .tooltip {
   font-weight: 300;

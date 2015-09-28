@@ -36,19 +36,73 @@ body {
 body.coming-soon {
    background: @linkColor;
    text-align: center;
-   padding-top: 180px;
+   padding-top: 120px;
    font-family: lato, helvetica, arial, sans-serif;
 
    div.logo {
       img {
-         width:300px;
+         width:380px;
       }
    }
    div.tagline {
-      font-size: 30px;
+      font-size: 45px;
       font-weight: 100;
       color: #fff;
-      margin-top: 30px;
+      margin-top: 0px;
+      margin-bottom: 70px;
+      div.extra {
+         font-size: 16px;
+      }
+   }
+   div.cta {
+      #mc_embed_signup {
+         font-family: lato, helvetica, arial, sans-serif;
+         background: none;
+         form {
+            #mc_embed_signup_scroll {
+               width: 350px;
+               margin: 10px auto 0;
+               label {
+                  display: none;
+               }
+               input {
+                  border: none;
+                  .rounded(0);
+                  font-size: 18px;
+                  height: 42px;
+                  font-weight: 100;
+                  .border-radius(0, 0, 5px, 5px);
+                  &.text-input {
+                  }
+                  &.btn {
+                     background: #ccc;
+                     color: #333;
+                     border:none;
+                     .border-radius(5px, 5px, 0, 0);
+                     &:hover {
+                        background: #bbb;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   div.contact {
+      margin-top: 10px;
+      padding-left: 50px;
+      a.contact-link {
+         color: #fff;
+         font-size: 14px;
+         font-weight: 100;
+         margin: 5px 10px;
+         i {
+            font-size: 18px;
+            margin-right: 2px;
+            vertical-align: middle;
+         }
+      }
    }
 }
 
