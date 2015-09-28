@@ -110,6 +110,16 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.setup_py != None)
+q = q.filter(PypiPackage.setup_py_import_name == None)
+update_registry.register(Update(
+    job=PypiPackage.set_setup_py_import_name,
+    query=q,
+    queue_id=3
+))
+
+
+q = db.session.query(PypiPackage.id)
 q = q.filter(PypiPackage.tags == None)
 update_registry.register(Update(
     job=PypiPackage.set_tags,

@@ -1,16 +1,13 @@
-from models import package
 from models.package import Package
-from jobs import update_registry
-from jobs import Update
 
 from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from time import time
-from validate_email import validate_email
 from distutils.version import StrictVersion
 import requests
 import hashlib
 from lxml import html
+import re
 
 from models.person import get_or_make_person
 from models.github_repo import GithubRepo
@@ -140,6 +137,7 @@ class PypiPackage(Package):
         ]
         self.requires_files = self._get_files(filenames_to_get)
         return self.requires_files
+
 
     def set_setup_py(self):
         res = self._get_files(["setup.py"])
@@ -287,6 +285,29 @@ class PypiPackage(Package):
             self.import_name = "ERROR: malformed page"
 
         return self.import_name
+
+
+    def set_setup_py_import_name(self):
+        if self.setup_py is None:
+            self.setup_py_import_name = None
+            return self
+
+
+        package_regex = re.compile(ur'^\s*\bpackages\s*=\s*\[\s*[\'"](.*?)[\'"]', re.MULTILINE)
+        module_regex = re.compile(ur'^\s*\bpy_modules\s*=\s*\[\s*[\'"](.*?)[\'"]', re.MULTILINE)
+
+        try:
+            self.setup_py_import_name = package_regex.findall(self.setup_py)[0]
+        except IndexError:
+            try:
+                self.setup_py_import_name = module_regex.findall(self.setup_py)[0]
+            except IndexError:
+                self.setup_py_import_name = "none_found"
+
+
+        return self.setup_py_import_name
+
+
 
 
 

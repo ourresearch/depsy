@@ -26,6 +26,7 @@ class Package(db.Model):
     project_name = db.Column(db.Text)
     import_name = db.Column(db.Text)
     unique_import_name = db.Column(db.Boolean)
+    setup_py_import_name = db.Column(db.Text)
 
     github_owner = db.Column(db.Text)
     github_repo_name = db.Column(db.Text)
