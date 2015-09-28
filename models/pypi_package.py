@@ -281,7 +281,11 @@ class PypiPackage(Package):
 
         page = response.text
         tree = html.fromstring(page)
-        self.import_name = tree.xpath("//span[@class='folder']/text()")[0]
+        try:
+            self.import_name = tree.xpath("//span[@class='folder']/text()")[0]
+        except IndexError:
+            self.import_name = "ERROR: malformed page"
+
         return self.import_name
 
 
