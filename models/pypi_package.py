@@ -53,14 +53,13 @@ class PypiPackage(Package):
             except ValueError:
                 versions #give up sorting, just go for it
 
-            for version in versions:
-                release_dict = self.api_raw["releases"][version]
-                for url_dict in release_dict:
-                    if "packagetype" in url_dict:
-
-                        # trying these in priority order
-                        valid_type = ["bdist_wheel", "bdist_egg", "sdist", "bdist_dumb"]
-                        for packagetype in valid_type:
+            # trying these in priority order
+            valid_type = ["bdist_egg", "sdist", "bdist_dumb", "bdist_wheel"]
+            for packagetype in valid_type:
+                for version in versions:
+                    release_dict = self.api_raw["releases"][version]
+                    for url_dict in release_dict:
+                        if "packagetype" in url_dict:
                             if url_dict["packagetype"]==packagetype:
                                 if "url" in url_dict and url_dict["url"].startswith("http"):
                                     return url_dict["url"]
