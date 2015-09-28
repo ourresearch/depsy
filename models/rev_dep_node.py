@@ -1,11 +1,13 @@
 import re
 
 class RevDepNode():
-    def __init__(self, parent, name, pagerank, stars=None):
+    def __init__(self, parent, name, pagerank, stars=None, root_pagerank=None):
         self.parent = parent
         self.name = name
         self.pagerank = pagerank
         self.stars = stars
+        self.root_pagerank = root_pagerank
+
         self.children = []
 
 
@@ -17,7 +19,11 @@ class RevDepNode():
 
     @property
     def display_pagerank(self):
-        return round(self.pagerank * 1000000, 0)
+        return self._make_display_pagerank(self.pagerank)
+
+    @property
+    def root_goodness(self):
+        return self._make_display_pagerank(self.root_pagerank)
 
     @property
     def is_rollup(self):
@@ -26,6 +32,10 @@ class RevDepNode():
     @property
     def is_package(self):
         return not self.name.startswith("github:")
+
+    @property
+    def percent_root_goodness(self):
+        return self.sort_score / float(self.root_goodness)
 
     @property
     def display_name(self):
@@ -40,23 +50,15 @@ class RevDepNode():
     def sort_score(self):
         if self.is_rollup:
             return 0  # always sort to bottom
+        elif self.is_package:
+            return self.display_pagerank
+        elif self.stars is not None:
+            return self.stars / 5
         else:
             return self.display_pagerank
 
-
-    #def add_children(self, edges):
-    #    for edge in edges:
-    #        if edge[1] == self.name:
-    #            new_child_node = RevDepNode(
-    #                self.name,
-    #                edge[2],
-    #                edge[3]
-    #            )
-    #            self.children.append(new_child_node)
-    #
-    #
-    #    for child in self.children:
-    #        child.add_children(edges)
+    def _make_display_pagerank(self, pagerank):
+        return round(pagerank * 1000000, 0)
 
 
     def set_children(self, rev_deps_lookup):
@@ -66,9 +68,11 @@ class RevDepNode():
                 parent=self.name,
                 name=child[0],
                 pagerank=child[1],
-                stars=child[2]
+                stars=child[2],
+                root_pagerank=self.root_pagerank
             )
-            self.children.append(new_child_node)
+            if new_child_node.percent_root_goodness > 0.003:
+                self.children.append(new_child_node)
 
         for child in self.children:
             child.set_children(rev_deps_lookup)
@@ -89,7 +93,9 @@ class RevDepNode():
             "is_rollup": self.is_rollup,
             "is_package": self.is_package,
             "children": [c.to_dict() for c in self.children],
-            "sort_score": self.sort_score
+            "sort_score": self.sort_score,
+            "percent_root_goodness": self.percent_root_goodness,
+            "stars": self.stars
 
         }
 

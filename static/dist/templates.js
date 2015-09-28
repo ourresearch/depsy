@@ -115,7 +115,9 @@ angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", func
     "   <div class=\"about\">\n" +
     "      <a class=\"name\" ng-if=\"!depNode.is_rollup && depNode.is_package\" href=\"package/r/{{ depNode.name }}\">{{ depNode.name }}</a>\n" +
     "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\" class=\"name\">{{ depNode.name }}</span>\n" +
+    "      <span class=\"percent-root-goodness\">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>\n" +
     "      <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
+    "      <span class=\"stars\">({{ depNode.stars }})</span>\n" +
     "   </div>\n" +
     "   <div class=\"children\">\n" +
     "      <div class=\"dep-node-container\"\n" +

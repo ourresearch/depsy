@@ -2,7 +2,9 @@
    <div class="about">
       <a class="name" ng-if="!depNode.is_rollup && depNode.is_package" href="package/r/{{ depNode.name }}">{{ depNode.name }}</a>
       <span ng-if="depNode.is_rollup || !depNode.is_package" class="name">{{ depNode.name }}</span>
+      <span class="percent-root-goodness">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>
       <span class="pagerank">{{ depNode.display_pagerank }}</span>
+      <span class="stars">({{ depNode.stars }})</span>
    </div>
    <div class="children">
       <div class="dep-node-container"

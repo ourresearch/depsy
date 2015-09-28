@@ -424,7 +424,13 @@ class Package(db.Model):
 
 
     def set_rev_deps_tree(self, rev_deps_lookup):
-        node = RevDepNode(None, self.project_name, self.pagerank)
+        node = RevDepNode(
+            parent=None,
+            name=self.project_name,
+            pagerank=self.pagerank,
+            stars=None,
+            root_pagerank=self.pagerank
+        )
         node.set_children(rev_deps_lookup)
         self.rev_deps_tree = node.to_dict()
 
