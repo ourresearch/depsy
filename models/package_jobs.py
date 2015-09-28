@@ -4,6 +4,7 @@ from sqlalchemy import orm
 from app import db
 from models.package import Package
 from models.pypi_package import PypiPackage
+from models.pypi_package import shortcut_get_pypi_package_names
 from models.cran_package import CranPackage
 from models.person import Person
 from models.contribution import Contribution
@@ -213,10 +214,14 @@ update_registry.register(Update(
 
 
 q = db.session.query(GithubRepoDeplines.id)
+q = q.filter(GithubRepoDeplines.dependency_lines != None)
+q = q.filter(GithubRepoDeplines.language == 'python')
+q = q.filter(GithubRepoDeplines.pypi_dependencies == None)
 update_registry.register(Update(
-    job=GithubRepoDeplines.say_hi,
+    job=GithubRepoDeplines.set_pypi_dependencies,
     query=q,
-    queue_id=8
+    queue_id=8,
+    shortcut_fn=shortcut_get_pypi_package_names
 ))
 
 

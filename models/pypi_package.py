@@ -290,22 +290,23 @@ class PypiPackage(Package):
 
 
 
-def get_pypi_package_names(force_lower=True):
-    """
-        returns a dict with the key as the lowercase name and the value as the orig cased name
-    """
+def shortcut_get_pypi_package_names():
     start_time = time()
-    pypi_q = db.session.query(PypiPackage.project_name)
-    pypi_lib_names = [r[0] for r in pypi_q.all()]
+    q = db.session.query(PypiPackage.import_name, PypiPackage.project_name)
+    q = q.filter(PypiPackage.unique_import_name == True)
 
-    pypi_lib_lookup = dict([(name.lower(), name) for name in pypi_lib_names])
+    import_names = {}
+    for row in q.all():
+        # import_name -> project_name
+        import_names[row[0]] = row[1]
 
-    print "got {} PyPi project names in {}sec.".format(
-        len(pypi_lib_lookup),
+
+    print "got {} PyPi import names in {}sec.".format(
+        len(import_names),
         elapsed(start_time)
     )
 
-    return pypi_lib_lookup
+    return import_names
 
 
 
