@@ -67,6 +67,19 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.import_name == None)
+update_registry.register(Update(
+    job=PypiPackage.set_import_name,
+    query=q,
+    queue_id=1
+))
+
+
+
+
+
+
+q = db.session.query(PypiPackage.id)
 q = q.filter(PypiPackage.requires_files == None)
 update_registry.register(Update(
     job=PypiPackage.set_requires_files,

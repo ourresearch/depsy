@@ -268,16 +268,20 @@ class PypiPackage(Package):
         # assume names with dots have same import name as project name.
         if "." in self.project_name:
             self.import_name = self.project_name
+            return self.import_name
 
-        else:
-            url_template = "http://pydoc.net/Python/{}"
-            url = url_template.format(self.project_name)
 
-            response = requests.get(url)
-            page = response.text
-            tree = html.fromstring(page)
-            self.import_name = tree.xpath("//span[@class='folder']/text()")[0]
+        url_template = "http://pydoc.net/Python/{}"
+        url = url_template.format(self.project_name)
 
+        response = requests.get(url)
+        if response.status_code == 404:
+            self.import_name = "ERROR: 404"
+            return self.import_name
+
+        page = response.text
+        tree = html.fromstring(page)
+        self.import_name = tree.xpath("//span[@class='folder']/text()")[0]
         return self.import_name
 
 
