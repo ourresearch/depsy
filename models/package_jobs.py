@@ -7,6 +7,7 @@ from models.pypi_package import PypiPackage
 from models.cran_package import CranPackage
 from models.person import Person
 from models.contribution import Contribution
+from models.github_repo_deplines import GithubRepoDeplines
 from jobs import update_registry
 from jobs import Update
 
@@ -197,5 +198,12 @@ update_registry.register(Update(
     queue_id=8
 ))
 
+
+q = db.session.query(GithubRepoDeplines.id)
+update_registry.register(Update(
+    job=GithubRepoDeplines.say_hi,
+    query=q,
+    queue_id=8
+))
 
 

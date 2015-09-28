@@ -146,6 +146,7 @@ def package_endpoint(host_or_language, project_name):
 def packages_endpoint():
     filter_strings = request.args.get("filters", "").split(",")
     filters = [s.split(":") for s in filter_strings if s]
+    page_size = request.args.get("page_size", "25")
 
     # not sure how this is supposed to work.  adding this for now
     type = "packages"
@@ -153,12 +154,13 @@ def packages_endpoint():
 
     start = time()
     if type == "packages":
-        packages = get_packages(filters)
+        packages = get_packages(filters, page_size=int(page_size))
         leaders_list = [p.as_snippet_with_people for p in packages]
     else:
         raise NotImplementedError("we can only rank packages right now...")
 
     ret = json_resp_from_thing({
+        "count": len(leaders_list),
         "list": leaders_list,
         "type": type,
         "filters": filters
