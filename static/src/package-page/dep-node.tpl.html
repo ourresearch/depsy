@@ -1,10 +1,21 @@
-<div class="dep-node is-rollup-{{ depNode.is_rollup }} is-package-{{ depNode.is_package }}">
+<div class="dep-node is-rollup-{{ depNode.is_rollup }} is-root-{{ depNode.is_root }} is-package-{{ depNode.is_package }}">
    <div class="about">
-      <a class="name" ng-if="!depNode.is_rollup && depNode.is_package" href="package/r/{{ depNode.name }}">{{ depNode.name }}</a>
-      <span ng-if="depNode.is_rollup || !depNode.is_package" class="name">{{ depNode.name }}</span>
-      <span class="percent-root-goodness">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>
-      <span class="pagerank">{{ depNode.display_pagerank }}</span>
-      <span class="stars">({{ depNode.stars }})</span>
+      <a class="name"
+         ng-if="!depNode.is_rollup && depNode.is_package"
+         style="font-size: {{ depNode.scale_factor }}%;"
+         href="package/r/{{ depNode.name }}">
+         {{ depNode.name }}
+      </a>
+      <span ng-if="depNode.is_rollup || !depNode.is_package"
+            style="font-size: {{ depNode.scale_factor }}%;"
+            class="name">
+         {{ depNode.name }}
+      </span>
+      <span class="metrics">
+         <span class="percent-root-goodness">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>
+         <span class="pagerank">{{ depNode.display_pagerank }}</span>
+         <span class="stars">({{ depNode.stars }})</span>
+      </span>
    </div>
    <div class="children">
       <div class="dep-node-container"

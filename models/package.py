@@ -431,6 +431,7 @@ class Package(db.Model):
             stars=None,
             root_pagerank=self.pagerank
         )
+        node.is_root = True
         node.set_children(rev_deps_lookup)
         self.rev_deps_tree = node.to_dict()
 

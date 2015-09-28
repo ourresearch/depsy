@@ -1,4 +1,5 @@
 import re
+import math
 
 class RevDepNode():
     def __init__(self, parent, name, pagerank, stars=None, root_pagerank=None):
@@ -7,6 +8,7 @@ class RevDepNode():
         self.pagerank = pagerank
         self.stars = stars
         self.root_pagerank = root_pagerank
+        self.is_root = False
 
         self.children = []
 
@@ -45,6 +47,10 @@ class RevDepNode():
             return self.name.replace("github:", "")
         else:
             return self.name
+
+    @property
+    def scale_factor(self):
+        return math.log(math.ceil(self.percent_root_goodness * 100) + 1)
 
     @property
     def sort_score(self):
@@ -95,7 +101,9 @@ class RevDepNode():
             "children": [c.to_dict() for c in self.children],
             "sort_score": self.sort_score,
             "percent_root_goodness": self.percent_root_goodness,
-            "stars": self.stars
+            "stars": self.stars,
+            "is_root": self.is_root,
+            "scale_factor": self.scale_factor
 
         }
 
