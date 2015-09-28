@@ -1,10 +1,11 @@
 import re
 
 class RevDepNode():
-    def __init__(self, parent, name, pagerank):
+    def __init__(self, parent, name, pagerank, stars=None):
         self.parent = parent
         self.name = name
         self.pagerank = pagerank
+        self.stars = stars
         self.children = []
 
 
@@ -43,25 +44,40 @@ class RevDepNode():
             return self.display_pagerank
 
 
-    def add_children(self, edges):
-        for edge in edges:
-            if edge[1] == self.name:
-                new_child_node = RevDepNode(
-                    self.name,
-                    edge[2],
-                    edge[3]
-                )
-                self.children.append(new_child_node)
+    #def add_children(self, edges):
+    #    for edge in edges:
+    #        if edge[1] == self.name:
+    #            new_child_node = RevDepNode(
+    #                self.name,
+    #                edge[2],
+    #                edge[3]
+    #            )
+    #            self.children.append(new_child_node)
+    #
+    #
+    #    for child in self.children:
+    #        child.add_children(edges)
 
+
+    def set_children(self, rev_deps_lookup):
+        my_children = rev_deps_lookup[self.name]
+        for child in my_children:
+            new_child_node = RevDepNode(
+                parent=self.name,
+                name=child[0],
+                pagerank=child[1],
+                stars=child[2]
+            )
+            self.children.append(new_child_node)
 
         for child in self.children:
-            child.add_children(edges)
+            child.set_children(rev_deps_lookup)
+
 
     def get_child(self, child_name):
         for child in self.children:
             if child.name == child_name:
                 return child
-
         return None
 
     def to_dict(self):
