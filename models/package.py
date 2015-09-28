@@ -130,10 +130,7 @@ class Package(db.Model):
 
     @property
     def tree(self):
-        #return {"hello": "world"}
-        parent = RevDepNode(None, self.project_name, self.pagerank)
-        parent.add_children(self.rev_deps_tree)
-        return parent.to_dict()
+        return self.rev_deps_tree
 
 
     @property
