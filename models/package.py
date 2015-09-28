@@ -414,12 +414,6 @@ class Package(db.Model):
             if not child_pagerank:
                 child_pagerank = min_pagerank
 
-            #rev_deps_by_package[package_name].append({
-            #    "used_by": used_by,
-            #    "pagerank": my_pagerank,
-            #    "stars": my_stars
-            #})
-
             rev_deps_by_package[my_name].append([
                 child_name,
                 child_pagerank,
@@ -428,86 +422,11 @@ class Package(db.Model):
 
         return rev_deps_by_package
 
-        #
-        #ret = defaultdict(dict)
-        #for package_name, package_rev_deps in rev_deps_by_package.iteritems():
-        #
-        #    # sort in place by pagerank
-        #    package_rev_deps.sort(key=lambda x: (x["pagerank"], x["stars"]), reverse=True)
-        #    num_rev_deps = len(package_rev_deps)
-        #    if num_rev_deps <= NUM_TOP_NODES:
-        #        # the rev deps are what you've got.  simple!
-        #        best_rev_deps = package_rev_deps
-        #    else:
-        #        # start with the top N rev deps to add
-        #        best_rev_deps = package_rev_deps[0:NUM_TOP_NODES]
-        #
-        #        # now add an "other" node with its own name...
-        #        num_other_nodes = num_rev_deps - NUM_TOP_NODES
-        #        other_node_name = "+{num}\n({package_name})".format(
-        #            num=num_rev_deps, package_name=package_name)
-        #
-        #        # ... and pagerank.  other pagerank is sum of all other pageranks
-        #        # print "for node ", package_name
-        #        total_pagerank = sum([rev_dep["pagerank"] for rev_dep in package_rev_deps])
-        #        # print "total_pagerank", total_pagerank
-        #        best_nodes_pagerank = sum([rev_dep["pagerank"] for rev_dep in best_rev_deps])
-        #        # print "best_nodes_pagerank", best_nodes_pagerank
-        #        # print "best_rev_deps", best_rev_deps
-        #        remaining_pagerank = total_pagerank - best_nodes_pagerank
-        #        # print "remaining_pagerank", remaining_pagerank
-        #        best_rev_deps.append({
-        #                "used_by": other_node_name,
-        #                "pagerank": remaining_pagerank,
-        #                "stars": 0
-        #        })
-        #
-        #    ret[package_name] = best_rev_deps
-        #
-        #return ret
-
 
     def set_rev_deps_tree(self, rev_deps_lookup):
         node = RevDepNode(None, self.project_name, self.pagerank)
         node.set_children(rev_deps_lookup)
         self.rev_deps_tree = node.to_dict()
-
-
-
-
-    #
-    #def set_rev_deps_tree(self, rev_deps_lookup):
-    #    outbox = set()
-    #    inbox = [self.project_name]
-    #    while len(inbox):
-    #        my_package_name = inbox.pop()
-    #        my_package_rev_deps = rev_deps_lookup[my_package_name]
-    #        for rev_dep_dict in my_package_rev_deps:
-    #
-    #            if rev_dep_dict["used_by"].startswith("github:"):
-    #                # this is a leaf node, no need to keep looking for rev deps
-    #                pass
-    #            else:
-    #                # print "adding this to the inbox", rev_dep_dict["used_by"]
-    #                inbox.append((rev_dep_dict["used_by"], depth+1))
-    #
-    #            node = (
-    #                my_package_name,
-    #                rev_dep_dict["used_by"],
-    #                rev_dep_dict["pagerank"],
-    #                rev_dep_dict["stars"]
-    #            )
-    #            outbox.add(node)
-    #
-    #    self.rev_deps_tree = list(outbox)
-    #    self.rev_deps_tree.sort(key=lambda x: (x[0], x[1].lower(), x[2].lower())) #by depth
-    #
-    #    # print "found reverse dependency tree!"
-    #    # for node in self.rev_deps_tree:
-    #    #     print node
-    #
-    #    return self.rev_deps_tree
-
 
 
 
