@@ -10,6 +10,7 @@ from validate_email import validate_email
 from distutils.version import StrictVersion
 import requests
 import hashlib
+from lxml import html
 
 from models.person import get_or_make_person
 from models.github_repo import GithubRepo
@@ -260,6 +261,32 @@ class PypiPackage(Package):
             print "found no tags for {}".format(self)
 
         return self.tags
+
+
+    def set_import_name(self):
+
+        # assume names with dots have same import name as project name.
+        if "." in self.project_name:
+            self.import_name = self.project_name
+            return self.import_name
+
+
+        url_template = "http://pydoc.net/Python/{}"
+        url = url_template.format(self.project_name)
+
+        response = requests.get(url)
+        if response.status_code == 404:
+            self.import_name = "ERROR: 404"
+            return self.import_name
+
+        page = response.text
+        tree = html.fromstring(page)
+        try:
+            self.import_name = tree.xpath("//span[@class='folder']/text()")[0]
+        except IndexError:
+            self.import_name = "ERROR: malformed page"
+
+        return self.import_name
 
 
 

@@ -797,11 +797,24 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
 
 angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/dep-node.tpl.html",
-    "<div class=\"dep-node is-rollup-{{ depNode.is_rollup }} is-package-{{ depNode.is_package }}\">\n" +
+    "<div class=\"dep-node is-rollup-{{ depNode.is_rollup }} is-root-{{ depNode.is_root }} is-package-{{ depNode.is_package }}\">\n" +
     "   <div class=\"about\">\n" +
-    "      <a class=\"name\" ng-if=\"!depNode.is_rollup && depNode.is_package\" href=\"package/r/{{ depNode.name }}\">{{ depNode.name }}</a>\n" +
-    "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\" class=\"name\">{{ depNode.name }}</span>\n" +
-    "      <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
+    "      <a class=\"name\"\n" +
+    "         ng-if=\"!depNode.is_rollup && depNode.is_package\"\n" +
+    "         style=\"font-size: {{ depNode.scale_factor }}%;\"\n" +
+    "         href=\"package/r/{{ depNode.name }}\">\n" +
+    "         {{ depNode.name }}\n" +
+    "      </a>\n" +
+    "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\"\n" +
+    "            style=\"font-size: {{ depNode.scale_factor }}%;\"\n" +
+    "            class=\"name\">\n" +
+    "         {{ depNode.name }}\n" +
+    "      </span>\n" +
+    "      <span class=\"metrics\">\n" +
+    "         <span class=\"percent-root-goodness\">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>\n" +
+    "         <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
+    "         <span class=\"stars\">({{ depNode.stars }})</span>\n" +
+    "      </span>\n" +
     "   </div>\n" +
     "   <div class=\"children\">\n" +
     "      <div class=\"dep-node-container\"\n" +

@@ -288,40 +288,50 @@ div.package-page {
       }
    }
    div.dep-nodes-tree {
-      div.dep-node {
-         .clearfix();
-         border: 1px solid #ddd;
-         margin: -1px;
-         padding: 0;
-         color: #999;
-         position: relative;
-
-         &.is-rollup-true {
-            font-style: italic;
-         }
-         &.is-package-true {
-            color: #333;
-         }
-
-
-         div.about {
-            padding-right: 5px;
-            padding: 5px;
-            min-width: 100px;
-            float: left;
-            span.about {
-               display: table-cell;
-               vertical-align: middle;
-            }
-            span.pagerank {
-               font-weight: bold;
-               font-style: normal;
+//      background: #ccc;
+      div.dep-node-container {
+         div.dep-node {
+            &.is-root-true {
+               font-size: 16px !important;
             }
 
-         }
-         div.children {
-            float: left;
 
+            .clearfix();
+            border: 1px solid #eee;
+            border-top: 10px solid #ddd;
+            margin: -1px;
+            padding: 0;
+//            background-color: rgba(256, 256, 256, .1);
+            color: #999;
+            position: relative;
+
+            &.is-rollup-true {
+               font-style: italic;
+            }
+            &.is-package-true {
+               color: #333;
+            }
+
+
+            div.about {
+               font-size: 2000px;
+               padding-right: 5px;
+               padding: 5px 5px 5px 10px;
+               min-width: 100px;
+               float: left;
+               span.metrics {
+                  font-size: 12px;
+                  span.pagerank {
+                     font-weight: bold;
+                     font-style: normal;
+                  }
+               }
+
+            }
+            div.children {
+               float: left;
+
+            }
          }
       }
    }
