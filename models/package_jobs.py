@@ -18,8 +18,19 @@ def get_packages(filters=None):
         orm.subqueryload_all(Package.contributions, Contribution.person)
     )
     for (filter_attribute, filter_value) in filters:
-        attr = getattr(Package, filter_attribute)
-        q = q.filter(attr==filter_value)        
+
+        if filter_attribute=="language":
+            filter_attribute = "host"
+            if filter_value=="python":
+                filter_value = "pypi"
+            elif filter_value=="r":
+                filter_value = "cran"
+
+        if filter_attribute == "tags":
+            q = q.filter(Package.tags.has_key(filter_value))        
+        else:
+            attr = getattr(Package, filter_attribute)
+            q = q.filter(attr==filter_value)        
 
     q = q.order_by(Package.num_downloads.desc())
     q = q.limit(25)
