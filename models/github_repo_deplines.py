@@ -144,7 +144,7 @@ class GithubRepoDeplines(db.Model):
             if self._in_filepath(import_name):
                 return None
             else:
-                print "found one!", import_name
+                #print "found one!", import_name
                 return import_name
 
         # if foo.bar.baz is not a pypi import name, maybe foo.bar is.  try that.
