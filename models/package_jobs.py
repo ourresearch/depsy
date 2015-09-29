@@ -10,6 +10,7 @@ from models.cran_package import CranPackage
 from models.person import Person
 from models.contribution import Contribution
 from models.github_repo_deplines import GithubRepoDeplines
+from models.github_repo import GithubRepo
 from jobs import update_registry
 from jobs import Update
 
@@ -243,6 +244,7 @@ update_registry.register(Update(
     shortcut_fn=shortcut_get_pypi_package_names
 ))
 
+
 q = db.session.query(Package.id)
 update_registry.register(Update(
     job=Package.people_contributions,
@@ -258,4 +260,30 @@ update_registry.register(Update(
     query=q,
     queue_id=8
 ))
+
+q = db.session.query(GithubRepo.id)
+q = q.filter(GithubRepo.named_deps == None)
+q = q.filter(GithubRepo.language == 'python')
+update_registry.register(Update(
+    job=GithubRepo.set_named_deps,
+    query=q,
+    queue_id=9
+))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
