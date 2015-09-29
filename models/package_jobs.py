@@ -221,8 +221,6 @@ update_registry.register(Update(
 ))
 
 
-
-
 q = db.session.query(CranPackage.id)
 q = q.filter(CranPackage.tags == None)
 update_registry.register(Update(
@@ -276,6 +274,25 @@ update_registry.register(Update(
     job=GithubRepo.set_named_deps,
     query=q,
     queue_id=9
+))
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.pagerank_percentile == None)
+update_registry.register(Update(
+    job=PypiPackage.set_all_percentiles,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_percentile_refsets
+))
+
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.pagerank_percentile == None)
+update_registry.register(Update(
+    job=PypiPackage.set_all_percentiles,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_percentile_refsets
 ))
 
 
