@@ -323,10 +323,11 @@ class Package(db.Model):
     def set_num_committers_and_commits(self):
         if not self.set_github_contributors:
             return None
-        self.num_commiters = len(self.github_contributors)
         try:
+            self.num_committers = len(self.github_contributors)
             self.num_commits = sum([contrib["contributions"] for contrib in self.github_contributors])
         except TypeError:
+            self.num_committers = 0
             self.num_commits = 0
 
 
