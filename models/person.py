@@ -120,6 +120,19 @@ class Person(db.Model):
     def icon_small(self):
         return self._make_gravatar_url(30)
 
+    def has_role_on_project(self, role, package_id):
+        for c in self.contributions:
+            if c.role == role and c.package_id == package_id:
+                return True
+        return False
+
+    def num_commits_on_project(self, package_id):
+        for c in self.contributions:
+            if c.role == "github_contributor" and c.package_id == package_id:
+                return c.quantity
+        return False
+
+
     @property
     def display_name(self):
         if self.name:
@@ -138,6 +151,7 @@ class Person(db.Model):
             person_packages[contrib.package.id].set_role(contrib)
 
         return person_packages.values()
+
 
 
 

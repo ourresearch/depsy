@@ -243,4 +243,19 @@ update_registry.register(Update(
     shortcut_fn=shortcut_get_pypi_package_names
 ))
 
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.people_contributions,
+    query=q,
+    queue_id=8
+))
+
+q = db.session.query(Package.id)
+q = q.filter(Package.github_contributors != None)
+q = q.filter(Package.num_commits == None)
+update_registry.register(Update(
+    job=Package.set_num_committers_and_commits,
+    query=q,
+    queue_id=8
+))
 

@@ -175,6 +175,7 @@ class Package(db.Model):
         for role in ret["contributions"]:
             ret["contributions"][role].sort(reverse=True)
 
+        ret["fair_shares"] = self.people_contributions()
 
         return ret
 
@@ -206,6 +207,87 @@ class Package(db.Model):
         # got a pypi or cran package...they have diff metadata formats.
         raise NotImplementedError
 
+    @property
+    def all_people(self):
+        people = list(set([c.person for c in self.contributions]))
+        return people
+
+    @property
+    def all_authors(self):
+        people = list(set([c.person for c in self.contributions if c.role=="author"]))
+        return people
+
+    @property
+    def all_github_owners(self):
+        people = list(set([c.person for c in self.contributions if c.role=="github_owner"]))
+        return people
+
+
+    @property
+    def virtual_author_share(self):
+        author_share = float(1)/len(self.all_authors)
+        return author_share
+
+
+    def people_contributions(self):
+        people_for_contributions = self.all_people
+        virtual_committers = []
+        real_committers = []
+
+        # if no github contributors, split cred equally among all authors
+        # if github contributors, give real contributions if they are a contributor
+        # else make them a virtual committer so we can calculate mean contribution for them
+        for person in people_for_contributions:
+            person.fair_share = 0
+
+            if person.has_role_on_project("github_owner", self.id):
+                person.fair_share += 0.1
+
+            if person.has_role_on_project("github_contributor", self.id):
+                print u"{} is a real committer".format(person.name)
+                real_committers += [person]
+
+            elif person.has_role_on_project("author", self.id):
+                if self.github_contributors:
+                    print u"{} is a virtual committer".format(person.name)
+                    virtual_committers += [person]
+                else:
+                    print u"{} is an author and there are no committers".format(person.name)
+                    person.fair_share += self.virtual_author_share
+
+        # give all real committers their number of real commits
+        for person in real_committers:
+            person.num_commits = person.num_commits_on_project(self.id)
+
+        # give all virtual committers the mean number of commits
+        num_real_commits = self.num_commits if self.num_commits else 0
+        num_real_committers = self.num_committers if self.num_committers else 1
+        mean_number_of_commits = float(num_real_commits) / num_real_committers
+        for person in virtual_committers:
+            person.num_commits = mean_number_of_commits
+
+        # calc how many commits were handed out, real + virtual
+        total_real_and_virtual_commits = 0
+        real_and_virtual_commmiters = real_committers + virtual_committers
+        for person in real_and_virtual_commmiters:
+            total_real_and_virtual_commits += person.num_commits
+
+        # assign fair share to be the fraction of commits they have out of total
+        for person in real_and_virtual_commmiters:
+            person.fair_share = float(person.num_commits) / total_real_and_virtual_commits
+
+        people_for_contributions.sort(key=lambda x: x.fair_share, reverse=True)
+
+        for person in people_for_contributions:
+            print u"{fair_share}: {name} has contribution".format(
+                name = person.name, 
+                fair_share = round(person.fair_share, 3)
+                )
+
+        ret_dict = [u"{}:{}".format(p.fair_share, p.display_name) for p in people_for_contributions]
+        return ret_dict
+
+
     def save_github_contribs_to_db(self):
         if isinstance(self.github_contributors, dict):
             # it's an error resp from the API, doh.
@@ -236,6 +318,13 @@ class Package(db.Model):
 
         person = get_or_make_person(github_login=self.github_owner)
         self._save_contribution(person, "github_owner")
+
+
+    def set_num_committers_and_commits(self):
+        if not self.set_github_contributors:
+            return None
+        self.num_commiters = len(self.github_contributors)
+        self.num_commits = sum([contrib["contributions"] for contrib in self.github_contributors])
 
 
     def _save_contribution(self, person, role, quantity=None, percent=None):
@@ -274,6 +363,8 @@ class Package(db.Model):
             self.github_repo_name
         )
         print "found github contributors", self.github_contributors
+        self.set_num_committers_and_commits()
+        
 
     def set_github_repo_id(self):
         # override in subclass
@@ -440,6 +531,9 @@ class Package(db.Model):
 
 
 
+
+
+
 def prep_summary(str):
     placeholder = "A nifty project."
     if not str:
@@ -496,7 +590,6 @@ def shortcut_igraph_data_dict():
         }
 
     return our_igraph_data
-
 
 
 
