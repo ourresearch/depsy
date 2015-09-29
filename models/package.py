@@ -167,15 +167,15 @@ class Package(db.Model):
         # distinct_people = set([c.person.name for c in self.contributions])
         # ret["people"] = list([name for name in distinct_people if name])
 
-        ret["contributions"] = defaultdict(list)
-        for c in self.contributions:
-            ret["contributions"][c.role].append(u"{}: {}".format(
-                c.percent, c.person.display_name))
+        # ret["contributions"] = defaultdict(list)
+        # for c in self.contributions:
+        #     ret["contributions"][c.role].append(u"{}: {}".format(
+        #         c.percent, c.person.display_name))
 
-        for role in ret["contributions"]:
-            ret["contributions"][role].sort(reverse=True)
+        # for role in ret["contributions"]:
+        #     ret["contributions"][role].sort(reverse=True)
 
-        ret["fair_shares"] = self.people_contributions()
+        ret["fair_shares"] = self.fair_shares()
 
         return ret
 
@@ -229,7 +229,7 @@ class Package(db.Model):
         return author_share
 
 
-    def people_contributions(self):
+    def fair_shares(self):
         people_for_contributions = self.all_people
         virtual_committers = []
         real_committers = []

@@ -253,7 +253,7 @@ update_registry.register(Update(
 
 q = db.session.query(Package.id)
 update_registry.register(Update(
-    job=Package.people_contributions,
+    job=Package.fair_shares,
     query=q,
     queue_id=8
 ))
