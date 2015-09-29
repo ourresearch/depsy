@@ -289,10 +289,10 @@ update_registry.register(Update(
 q = db.session.query(CranPackage.id)
 q = q.filter(CranPackage.pagerank_percentile == None)
 update_registry.register(Update(
-    job=PypiPackage.set_all_percentiles,
+    job=CranPackage.set_all_percentiles,
     query=q,
     queue_id=9,
-    shortcut_fn=PypiPackage.shortcut_percentile_refsets
+    shortcut_fn=CranPackage.shortcut_percentile_refsets
 ))
 
 
