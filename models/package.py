@@ -437,50 +437,44 @@ class Package(db.Model):
 
 
     @classmethod
-    def get_ref_list(cls):
+    def shortcut_percentile_refsets(cls):
+        print "getting the percentile refsets...."
         ref_list = defaultdict(dict)
-        for host_class in [PypiPackage, CranPackage]:
-            host_name = host_class.__name__
-            q = db.session.query(
-                    host_class.num_downloads, 
-                    host_class.pagerank,
-                    host_class.num_citations
-                    )
-            rows = q.all()
+        q = db.session.query(
+            cls.num_downloads,
+            cls.pagerank,
+            cls.num_citations
+        )
+        rows = q.all()
 
-            ref_list["num_downloads"][host_name] = sorted([row[0] for row in rows if row[0] != None])
-            ref_list["pagerank"][host_name] = sorted([row[1] for row in rows if row[1] != None])
-            ref_list["num_citations"][host_name] = sorted([row[2] for row in rows if row[2] != None])
+        ref_list["num_downloads"] = sorted([row[0] for row in rows if row[0] != None])
+        ref_list["pagerank"] = sorted([row[1] for row in rows if row[1] != None])
+        ref_list["num_citations"] = sorted([row[2] for row in rows if row[2] != None])
 
         return ref_list
 
 
-    def _calc_percentile(self, ref_list, value):
-        if value == None:  # distinguish between that and zero
+    def _calc_percentile(self, refset, value):
+        if value is None:  # distinguish between that and zero
             return None
          
-        my_ref_list = ref_list[self.__class__.__name__]  #ideally put this in subclasses so don't need this hack
-        matching_index = my_ref_list.index(value)
-        percentile = float(matching_index) / len(my_ref_list)
+        matching_index = refset.index(value)
+        percentile = float(matching_index) / len(refset)
         return percentile
 
+    def set_num_downloads_percentile(self, refset):
+        self.num_downloads_percentile = self._calc_percentile(refset, self.num_downloads)
 
-    def set_num_downloads_percentile(self):
-        global ref_lists
-        self.num_downloads_percentile = self._calc_percentile(ref_lists["num_downloads"], self.num_downloads)
+    def set_pagerank_percentile(self, refset):
+        self.pagerank_percentile = self._calc_percentile(refset, self.pagerank)
 
-    def set_pagerank_percentile(self):
-        global ref_lists
-        self.pagerank_percentile = self._calc_percentile(ref_lists["pagerank"], self.pagerank)
+    def set_num_citations_percentile(self, refset):
+        self.num_citations_percentile = self._calc_percentile(refset, self.num_citations)
 
-    def set_num_citations_percentile(self):
-        global ref_lists
-        self.num_citations_percentile = self._calc_percentile(ref_lists["num_citations"], self.num_citations)
-
-    def set_all_percentiles(self):
-        self.set_num_downloads_percentile()
-        self.set_pagerank_percentile()
-        self.set_num_citations_percentile()
+    def set_all_percentiles(self, refsets_dict):
+        self.set_num_downloads_percentile(refsets_dict["num_downloads"])
+        self.set_pagerank_percentile(refsets_dict["pagerank"])
+        self.set_num_citations_percentile(refsets_dict["num_citations"])
         self.set_sort_score()
 
     @classmethod

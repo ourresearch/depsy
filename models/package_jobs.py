@@ -10,6 +10,7 @@ from models.cran_package import CranPackage
 from models.person import Person
 from models.contribution import Contribution
 from models.github_repo_deplines import GithubRepoDeplines
+from models.github_repo import GithubRepo
 from jobs import update_registry
 from jobs import Update
 
@@ -175,9 +176,17 @@ update_registry.register(Update(
     queue_id=8
 ))
 
-q = db.session.query(Package.id)
+q = db.session.query(PypiPackage.id)
 update_registry.register(Update(
-    job=Package.set_igraph_data,
+    job=PypiPackage.set_igraph_data,
+    query=q,
+    queue_id=8,
+    shortcut_fn=shortcut_igraph_data_dict
+))
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_igraph_data,
     query=q,
     queue_id=8,
     shortcut_fn=shortcut_igraph_data_dict
@@ -212,8 +221,6 @@ update_registry.register(Update(
 ))
 
 
-
-
 q = db.session.query(CranPackage.id)
 q = q.filter(CranPackage.tags == None)
 update_registry.register(Update(
@@ -243,6 +250,7 @@ update_registry.register(Update(
     shortcut_fn=shortcut_get_pypi_package_names
 ))
 
+
 q = db.session.query(Package.id)
 update_registry.register(Update(
     job=Package.people_contributions,
@@ -258,4 +266,49 @@ update_registry.register(Update(
     query=q,
     queue_id=8
 ))
+
+q = db.session.query(GithubRepo.id)
+q = q.filter(GithubRepo.named_deps == None)
+q = q.filter(GithubRepo.language == 'python')
+update_registry.register(Update(
+    job=GithubRepo.set_named_deps,
+    query=q,
+    queue_id=9
+))
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.pagerank_percentile == None)
+update_registry.register(Update(
+    job=PypiPackage.set_all_percentiles,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_percentile_refsets
+))
+
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.pagerank_percentile == None)
+update_registry.register(Update(
+    job=CranPackage.set_all_percentiles,
+    query=q,
+    queue_id=9,
+    shortcut_fn=CranPackage.shortcut_percentile_refsets
+))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
