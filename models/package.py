@@ -241,7 +241,7 @@ class Package(db.Model):
             person.fair_share = 0
 
             if person.has_role_on_project("github_owner", self.id):
-                person.fair_share += 0.1
+                person.fair_share += 0.01
 
             if person.has_role_on_project("github_contributor", self.id):
                 print u"{} is a real committer".format(person.name)
