@@ -5,6 +5,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from sqlalchemy import sql
+import igraph
 import numpy
 
 from app import db
@@ -306,9 +307,7 @@ class Package(db.Model):
         return self.pmc_mentions
 
 
-    def set_pagerank(self):
-        global our_igraph_data
-
+    def set_igraph_data(self, our_igraph_data):
         try:
             self.pagerank = our_igraph_data[self.project_name]["pagerank"]
             self.neighborhood_size = our_igraph_data[self.project_name]["neighborhood_size"]
@@ -320,8 +319,9 @@ class Package(db.Model):
             self.neighborhood_size = 0
             self.indegree = 0
 
-        self.pagerank = self.pagerank
         # self.set_all_percentiles()
+
+
 
 
     def refresh_github_ids(self):
@@ -473,56 +473,32 @@ def make_id(namespace, name):
 
 
 
-#
-######## igraph
-#our_igraph_data = None
-#
-#q = db.session.query(PypiPackage.id)
-#q = q.filter(PypiPackage.pagerank == None)
-#update_registry.register(Update(
-#    job=PypiPackage.set_pagerank,
-#    query=q,
-#    queue_id=5
-#))
-#
-#q = db.session.query(CranPackage.id)
-#q = q.filter(CranPackage.pagerank == None)
-#update_registry.register(Update(
-#    job=CranPackage.set_pagerank,
-#    query=q,
-#    queue_id=5
-#))
-#
-#
-#def run_igraph(host="cran", limit=2):
-#    import igraph
-#
-#    print "loading in igraph"
-#    our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
-#    print "loaded, now calculating"
-#    our_vertice_names = our_graph.vs()["name"]
-#    our_pageranks = our_graph.pagerank(implementation="prpack")
-#    our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
-#    our_indegree = our_graph.vs().indegree()
-#
-#    print "now saving"
-#    global our_igraph_data
-#    our_igraph_data = {}
-#    for (i, name) in enumerate(our_vertice_names):
-#        our_igraph_data[name] = {
-#            "pagerank": our_pageranks[i],
-#            "neighborhood_size": our_neighbourhood_size[i],
-#            "indegree": our_indegree[i]
-#        }
-#
-#    method_name = "{}Package.set_pagerank".format(host.title())
-#    update = update_registry.get(method_name)
-#    update.run(
-#        no_rq=True,
-#        obj_id=None,
-#        num_jobs=limit,
-#        chunk_size=1000
-#    )
+
+def shortcut_igraph_data_dict():
+
+    print "loading text dataset into igraph"
+    our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
+
+    print "loaded, now calculating..."
+    our_vertice_names = our_graph.vs()["name"]
+    our_pageranks = our_graph.pagerank(implementation="prpack")
+    our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
+    our_indegree = our_graph.vs().indegree()
+
+    print "reformating data into dict ..."
+    global our_igraph_data
+    our_igraph_data = {}
+    for (i, name) in enumerate(our_vertice_names):
+        our_igraph_data[name] = {
+            "pagerank": our_pageranks[i],
+            "neighborhood_size": our_neighbourhood_size[i],
+            "indegree": our_indegree[i]
+        }
+
+    return our_igraph_data
+
+
+
 
 
 

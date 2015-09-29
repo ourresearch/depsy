@@ -287,6 +287,12 @@ class PypiPackage(Package):
 
 
     def set_setup_py_import_name(self):
+        """
+        Get the import names from setup.py instead of pydoc.net scrape.
+
+        in sql we are later stomping the pydoc.net ones with the results of this.
+        """
+
         if self.setup_py is None:
             self.setup_py_import_name = None
             return self

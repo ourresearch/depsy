@@ -3,6 +3,7 @@ from sqlalchemy import orm
 
 from app import db
 from models.package import Package
+from models.package import shortcut_igraph_data_dict
 from models.pypi_package import PypiPackage
 from models.pypi_package import shortcut_get_pypi_package_names
 from models.cran_package import CranPackage
@@ -172,6 +173,14 @@ update_registry.register(Update(
     job=Package.save_all_people,
     query=q,
     queue_id=8
+))
+
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.set_igraph_data,
+    query=q,
+    queue_id=8,
+    shortcut_fn=shortcut_igraph_data_dict
 ))
 
 
