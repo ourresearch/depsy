@@ -18,7 +18,7 @@ from jobs import Update
 def get_packages(filters=None, page_size=25):
 
     q = Package.query.options(
-        orm.subqueryload_all(Package.contributions, Contribution.person)
+        orm.subqueryload_all(Package.contributions, Contribution.person, Person.contributions)
     )
     for (filter_attribute, filter_value) in filters:
 

@@ -273,8 +273,11 @@ class Package(db.Model):
             total_real_and_virtual_commits += person.num_commits
 
         # assign fair share to be the fraction of commits they have out of total
+        print "total_real_and_virtual_commits", total_real_and_virtual_commits
         for person in real_and_virtual_commmiters:
             person.fair_share = float(person.num_commits) / total_real_and_virtual_commits
+            print u"{} has with {} commits, {} fair share".format(
+                person.name, person.num_commits, person.fair_share)
 
         people_for_contributions.sort(key=lambda x: x.fair_share, reverse=True)
 
@@ -284,7 +287,7 @@ class Package(db.Model):
                 fair_share = round(person.fair_share, 3)
                 )
 
-        ret_dict = [u"{}:{}".format(p.fair_share, p.display_name) for p in people_for_contributions]
+        ret_dict = [u"{}: {}".format(p.fair_share, p.display_name) for p in people_for_contributions]
         return ret_dict
 
 
