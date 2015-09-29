@@ -324,7 +324,10 @@ class Package(db.Model):
         if not self.set_github_contributors:
             return None
         self.num_commiters = len(self.github_contributors)
-        self.num_commits = sum([contrib["contributions"] for contrib in self.github_contributors])
+        try:
+            self.num_commits = sum([contrib["contributions"] for contrib in self.github_contributors])
+        except TypeError:
+            self.num_commits = 0
 
 
     def _save_contribution(self, person, role, quantity=None, percent=None):
