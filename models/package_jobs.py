@@ -176,9 +176,17 @@ update_registry.register(Update(
     queue_id=8
 ))
 
-q = db.session.query(Package.id)
+q = db.session.query(PypiPackage.id)
 update_registry.register(Update(
-    job=Package.set_igraph_data,
+    job=PypiPackage.set_igraph_data,
+    query=q,
+    queue_id=8,
+    shortcut_fn=shortcut_igraph_data_dict
+))
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_igraph_data,
     query=q,
     queue_id=8,
     shortcut_fn=shortcut_igraph_data_dict
