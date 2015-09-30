@@ -103,7 +103,7 @@ def index_view(path="index", page=""):
 ###########################################################################
 @app.route("/api")
 def api_test():
-    return jsonify({"resp": "Hi, I'm Impactstory!"})
+    return jsonify({"resp": "Hi, I'm Despy!"})
 
 @app.route("/api/person/<person_id>")
 @app.route("/api/person/<person_id>.json")
