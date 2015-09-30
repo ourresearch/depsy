@@ -96,6 +96,10 @@ class Package(db.Model):
     def language(self):
         return "unknown"
 
+    @property
+    def impact(self):
+        return self.sort_score * 100   
+
     def to_dict(self, full=True):
         ret = {
             "name": self.project_name,
@@ -117,7 +121,7 @@ class Package(db.Model):
             "num_downloads_percentile": self.num_downloads_percentile,
             "num_stars": self.num_stars,
             "sort_score": self.sort_score,
-            "impact": self.sort_score * 100,
+            "impact": self.impact,
             "rev_deps_tree": self.tree,
 
             # current implementation requires api_raw, so slows down db because deferred
@@ -175,7 +179,15 @@ class Package(db.Model):
         # for role in ret["contributions"]:
         #     ret["contributions"][role].sort(reverse=True)
 
-        ret["fair_shares"] = self.fair_shares()
+        ret["fair_shares"] = []
+        for p in self.contributors_with_fair_shares():
+            ret["fair_shares"].append(
+                u"{share}: {name} ({id})".format(
+                    share = p.fair_share, 
+                    name = p.display_name,
+                    id = p.id
+                ) 
+            )
 
         return ret
 
@@ -228,8 +240,14 @@ class Package(db.Model):
         author_share = float(1)/len(self.all_authors)
         return author_share
 
+    def get_fair_share_for_person(self, person_id):
+        people = self.contributors_with_fair_shares()
+        for person in people:
+            if person.id == person_id:
+                return person.fair_share
+        return None
 
-    def fair_shares(self):
+    def contributors_with_fair_shares(self):
         people_for_contributions = self.all_people
         virtual_committers = []
         real_committers = []
@@ -244,15 +262,15 @@ class Package(db.Model):
                 person.fair_share += 0.01
 
             if person.has_role_on_project("github_contributor", self.id):
-                print u"{} is a real committer".format(person.name)
+                # print u"{} is a real committer".format(person.name)
                 real_committers += [person]
 
             elif person.has_role_on_project("author", self.id):
-                if self.github_contributors:
-                    print u"{} is a virtual committer".format(person.name)
+                if self.num_commits:
+                    # print u"{} is a virtual committer".format(person.name)
                     virtual_committers += [person]
                 else:
-                    print u"{} is an author and there are no committers".format(person.name)
+                    # print u"{} is an author and there are no committers".format(person.name)
                     person.fair_share += self.virtual_author_share
 
         # give all real committers their number of real commits
@@ -273,22 +291,21 @@ class Package(db.Model):
             total_real_and_virtual_commits += person.num_commits
 
         # assign fair share to be the fraction of commits they have out of total
-        print "total_real_and_virtual_commits", total_real_and_virtual_commits
+        # print "total_real_and_virtual_commits", total_real_and_virtual_commits
         for person in real_and_virtual_commmiters:
             person.fair_share = float(person.num_commits) / total_real_and_virtual_commits
-            print u"{} has with {} commits, {} fair share".format(
-                person.name, person.num_commits, person.fair_share)
+            # print u"{} has with {} commits, {} fair share".format(
+            #     person.name, person.num_commits, person.fair_share)
 
         people_for_contributions.sort(key=lambda x: x.fair_share, reverse=True)
 
-        for person in people_for_contributions:
-            print u"{fair_share}: {name} has contribution".format(
-                name = person.name, 
-                fair_share = round(person.fair_share, 3)
-                )
+        # for person in people_for_contributions:
+        #     print u"{fair_share}: {name} has contribution".format(
+        #         name = person.name, 
+        #         fair_share = round(person.fair_share, 3)
+        #         )
 
-        ret_dict = [u"{}: {}".format(p.fair_share, p.display_name) for p in people_for_contributions]
-        return ret_dict
+        return people_for_contributions
 
 
     def save_github_contribs_to_db(self):
@@ -412,12 +429,11 @@ class Package(db.Model):
             self.indegree = our_igraph_data[self.project_name]["indegree"]
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
         except KeyError:
-            print "pagerank of {} is not defined".format(self.project_name)
-            self.pagerank = 0
-            self.neighborhood_size = 0
-            self.indegree = 0
-
-        # self.set_all_percentiles()
+            print "pagerank of {} was not calculated".format(self.project_name)
+            self.pagerank = None
+            self.neighborhood_size = None
+            self.indegree = None
+        self.set_all_percentiles()
 
 
 

@@ -51,9 +51,11 @@ class Person(db.Model):
             "icon": self.icon, 
             "icon_small": self.icon_small, 
             "is_academic": self.is_academic, 
+            "impact": self.impact, 
             "id": self.id
         }
         if full:
+            ret["num_packages"] = len(self.person_packages)
             ret["person_packages"] = [p.to_dict() for p in self.person_packages]
         return ret
 
@@ -145,12 +147,21 @@ class Person(db.Model):
             return "name unknown"
 
     @property
+    def impact(self):
+        impact = sum([p.credit_points for p in self.person_packages])
+        return impact
+
+
+    @property
     def person_packages(self):
         person_packages = defaultdict(PersonPackage)
         for contrib in self.contributions:
             person_packages[contrib.package.id].set_role(contrib)
 
-        return person_packages.values()
+        person_packages_list = person_packages.values()
+        person_packages_list.sort(key=lambda x: x.credit_points, reverse=True)
+        return person_packages_list
+
 
 
 
@@ -158,19 +169,21 @@ class Person(db.Model):
 class PersonPackage():
     def __init__(self):
         self.package = None
+        self.person = None
         self.roles = []
 
     def set_role(self, contrib):
         if not self.package:
             self.package = contrib.package
+        if not self.person:
+            self.person = contrib.person
         self.roles.append(contrib.role_dict)
 
     @property
     def credit_points(self):
-        ret = 0
-        for role in self.roles:
-            ret += role["fractional_sort_score"]
-        return ret
+        fair_share = self.package.get_fair_share_for_person(self.person.id)
+        credit_points = fair_share * self.package.impact
+        return credit_points
 
 
     def to_dict(self):
@@ -180,6 +193,8 @@ class PersonPackage():
         ret["num_committers"] = self.package.num_committers
         ret["num_commits"] = self.package.num_commits
         return ret
+
+
 
 
 def find_best_match(persons, **kwargs):

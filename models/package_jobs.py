@@ -19,7 +19,11 @@ from jobs import Update
 def get_packages(filters=None, page_size=25):
 
     q = Package.query.options(
-        orm.subqueryload_all(Package.contributions, Contribution.person, Person.contributions)
+        orm.subqueryload_all(
+            Package.contributions, 
+            Contribution.person, 
+            Person.contributions
+        )
     )
     for (filter_attribute, filter_value) in filters:
 
@@ -250,13 +254,6 @@ update_registry.register(Update(
     shortcut_fn=shortcut_get_pypi_package_names
 ))
 
-
-q = db.session.query(Package.id)
-update_registry.register(Update(
-    job=Package.fair_shares,
-    query=q,
-    queue_id=8
-))
 
 q = db.session.query(Package.id)
 q = q.filter(Package.github_contributors != None)
