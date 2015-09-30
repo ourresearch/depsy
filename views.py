@@ -113,7 +113,9 @@ def person_endpoint(person_id):
     # return json_resp_from_thing(data)
 
     from models.contribution import Contribution
-    my_person = Person.query.options(orm.subqueryload_all(Person.contributions, Contribution.package)).get(int(person_id))
+    my_person = Person.query.options(orm.subqueryload_all(
+        Person.contributions, Contribution.package, Package.contributions, Contribution.person, Person.contributions
+        )).get(int(person_id))
 
     if not my_person:
         abort_json(404, "This person's not in the database")
