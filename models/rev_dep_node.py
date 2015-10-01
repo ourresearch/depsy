@@ -63,22 +63,21 @@ class RevDepNode():
             return 0  # always sort to bottom
 
         score = self.display_pagerank
-        return score
-
-        if self.stars is not None:
-            if self.is_package:
-                score += math.log10(self.stars + 1)
-            else:  # github repo
-                score += math.log10(self.stars + 1) * 100
+        #if self.stars is not None:
+        #    if self.is_package:
+        #        score += math.log10(self.stars + 1)
+        #    else:  # github repo
+        #        score += math.log10(self.stars + 1) * 5
 
         return score
 
 
     def _make_display_pagerank(self, pagerank):
-        return round((math.log10(pagerank) + 5) * 20, 2)
+        return round((math.log10(pagerank) + 100) * 20, 2)
 
 
-    def set_children(self, rev_deps_lookup):
+    def set_children(self, rev_deps_lookup, cutoff_score_perc=0.9):
+
         my_children = rev_deps_lookup[self.name]
         for child in my_children:
             new_child_node = RevDepNode(
@@ -89,11 +88,22 @@ class RevDepNode():
                 stars=child[2],
                 root_pagerank=self.root_pagerank
             )
-            if new_child_node.percent_root_goodness > 0.003:
+            if new_child_node.sort_score > self.sort_score * cutoff_score_perc:
                 self.children.append(new_child_node)
 
         for child in self.children:
-            child.set_children(rev_deps_lookup)
+            child.set_children(rev_deps_lookup, cutoff_score_perc)
+
+        num_descendents = self.desdendents_count
+        if num_descendents < 20 and cutoff_score_perc* self.sort_score > 0:
+            cutoff_score_perc -= 0.1
+            print "didn't get enough descendents ({})...dropping score to {}".format(
+                num_descendents,
+                cutoff_score_perc * self.sort_score
+            )
+            self.children = []
+            return self.set_children(rev_deps_lookup, cutoff_score_perc)
+
 
 
     def get_child(self, child_name):
@@ -102,21 +112,26 @@ class RevDepNode():
                 return child
         return None
 
-    def to_generation_dict(self):
-        ret = defaultdict(list)
-        ret[self.generation].append(self.sort_score)
+    @property
+    def generation_counts(self):
+        ret = defaultdict(int)
+        ret[self.generation] += 1
         if len(self.children) > 0:
             for child in self.children:
-                print "i am child", self
-                child_generation_dict = child.to_generation_dict()
-                for generation_index, sort_scores in child_generation_dict.iteritems():
-                    print "i am child dict item", generation_index, sort_scores
-                    ret[generation_index] += sort_scores
+                print "counting for this child", child
+                child_gen_counts = child.generation_counts
+                for gen, count in child_gen_counts:
+                    ret[gen] += count
 
+        print ret
+        return ret
 
-        sorted_ret = {k: sorted(v, reverse=True) for k, v in ret.iteritems()}
-
-        return sorted_ret
+    @property
+    def desdendents_count(self):
+        ret = 0
+        for child in self.children:
+            ret += child.desdendents_count
+        return ret
 
 
     def to_dict(self):
@@ -137,13 +152,14 @@ class RevDepNode():
         }
 
         if self.is_root:
-
+            pass
+            #ret["generation_counts"] = self.generation_counts
 
 
             # needed for json serialization...
-            ret["generation_dict"] = {}
-            for generation_index, names in self.to_generation_dict().iteritems():
-                ret["generation_dict"][generation_index] = list(names)
+            #ret["generation_counts"] = {}
+            #for generation_index, names in self.to_generation_dict().iteritems():
+            #    ret["generation_dict"][generation_index] = list(names)
 
         return ret
 

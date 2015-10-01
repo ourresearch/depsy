@@ -2,12 +2,12 @@
    <div class="about">
       <a class="name"
          ng-if="!depNode.is_rollup && depNode.is_package"
-         style="font-size: {{ depNode.scale_factor }}%;"
+         style="font-size: {{ 100 }}%;"
          href="package/r/{{ depNode.name }}">
          {{ depNode.name }}
       </a>
       <span ng-if="depNode.is_rollup || !depNode.is_package"
-            style="font-size: {{ depNode.scale_factor }}%;"
+            style="font-size: {{ 100 }}%;"
             class="name">
          {{ depNode.name }}
       </span>

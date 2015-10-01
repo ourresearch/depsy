@@ -801,12 +801,12 @@ angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", func
     "   <div class=\"about\">\n" +
     "      <a class=\"name\"\n" +
     "         ng-if=\"!depNode.is_rollup && depNode.is_package\"\n" +
-    "         style=\"font-size: {{ depNode.scale_factor }}%;\"\n" +
+    "         style=\"font-size: {{ 100 }}%;\"\n" +
     "         href=\"package/r/{{ depNode.name }}\">\n" +
     "         {{ depNode.name }}\n" +
     "      </a>\n" +
     "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\"\n" +
-    "            style=\"font-size: {{ depNode.scale_factor }}%;\"\n" +
+    "            style=\"font-size: {{ 100 }}%;\"\n" +
     "            class=\"name\">\n" +
     "         {{ depNode.name }}\n" +
     "      </span>\n" +
