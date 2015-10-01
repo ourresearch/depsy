@@ -229,7 +229,7 @@ class PypiPackage(Package):
         self.tags = []
         self.tags += self._get_tags_from_classifiers()
         self.tags += self._get_tags_from_keywords()
-        self.tags = list(set(self.tags))
+        self.tags = list(set(self.tags))  # dedup
         return self.tags
 
     def set_intended_audience(self):
@@ -282,9 +282,12 @@ class PypiPackage(Package):
             # the whole string is just one keyword
             keywords = [pypi_keywords_str]
 
-        # lowercase and dedup
-        ret = list(set([x.strip().lower() for x in keywords]))
-        print "got tags from keywords", ret
+        # remove whitespace and empty strings
+        ret = [x.strip().lower() for x in keywords if len(x)]
+
+        # dedup
+        ret = list(set(ret))
+
         return ret
 
 
