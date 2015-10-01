@@ -102,7 +102,6 @@ class Package(db.Model):
 
 
     def to_dict(self, full=True):
-        #return {"hello": "world"}
         ret = {
             "name": self.project_name,
             "as_snippet": self.as_snippet,
