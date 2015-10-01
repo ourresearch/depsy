@@ -59,8 +59,6 @@ class Person(db.Model):
         return ret
 
 
-
-
     def set_github_about(self):
         if self.github_login is None:
             return None
@@ -77,6 +75,7 @@ class Person(db.Model):
             # our github_about is an error object,
             # it's got no info about the person in it.
             return False
+
 
     def set_impact(self):
         self.impact = sum([pp.person_project_impact for pp in self.person_packages])
