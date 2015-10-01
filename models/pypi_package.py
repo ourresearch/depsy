@@ -243,7 +243,8 @@ class PypiPackage(Package):
         all_comma_delim = pypi_keywords_str.replace(" ", ",")
 
         # split and dedup
-        ret = list(set(all_comma_delim.split(",")))
+        ret = list(set([x.strip() for x in all_comma_delim.split(",")]))
+        print "got tags from keywords", ret
         return ret
 
 
