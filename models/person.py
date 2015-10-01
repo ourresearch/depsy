@@ -148,7 +148,7 @@ class Person(db.Model):
 
     @property
     def impact(self):
-        impact = sum([p.credit_points for p in self.person_packages])
+        impact = sum([pp.person_project_impact for pp in self.person_packages])
         return impact
 
 
@@ -159,7 +159,7 @@ class Person(db.Model):
             person_packages[contrib.package.id].set_role(contrib)
 
         person_packages_list = person_packages.values()
-        person_packages_list.sort(key=lambda x: x.credit_points, reverse=True)
+        person_packages_list.sort(key=lambda x: x.person_project_impact, reverse=True)
         return person_packages_list
 
 
@@ -170,6 +170,7 @@ class PersonPackage():
     def __init__(self):
         self.package = None
         self.person = None
+        self.person_project_commits = None
         self.roles = []
 
     def set_role(self, contrib):
@@ -177,21 +178,25 @@ class PersonPackage():
             self.package = contrib.package
         if not self.person:
             self.person = contrib.person
-        self.roles.append(contrib.role_dict)
+        if contrib.role == "github_contributor":
+            self.person_project_commits = contrib.quantity
+        self.roles.append(contrib)
 
     @property
-    def credit_points(self):
-        fair_share = self.package.get_fair_share_for_person(self.person.id)
-        credit_points = fair_share * self.package.impact
-        return credit_points
+    def person_project_credit(self):
+        return self.package.get_credit_for_person(self.person.id)
 
+    @property
+    def person_project_impact(self):
+        person_project_impact = self.person_project_credit * self.package.impact
+        return person_project_impact
 
     def to_dict(self):
         ret = self.package.as_snippet
-        ret["roles"] = self.roles
-        ret["credit_points"] = self.credit_points
-        ret["num_committers"] = self.package.num_committers
-        ret["num_commits"] = self.package.num_commits
+        ret["roles"] = [r.role for r in self.roles]
+        ret["person_project_credit"] = self.person_project_credit
+        ret["person_project_commits"] = self.person_project_commits
+        ret["person_project_impact"] = self.person_project_impact
         return ret
 
 

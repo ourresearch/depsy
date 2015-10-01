@@ -7,6 +7,7 @@ from sqlalchemy import func
 from sqlalchemy import sql
 import igraph
 import numpy
+import enchant
 
 from app import db
 from models import github_api
@@ -16,7 +17,7 @@ from models.rev_dep_node import RevDepNode
 from jobs import update_registry
 from jobs import Update
 from util import truncate
-from providers.pubmed_api import get_pmids_from_query
+from providers.pubmed_api import get_hits_from_europe_pmc
 
 
 
@@ -98,7 +99,11 @@ class Package(db.Model):
 
     @property
     def impact(self):
+        if not self.sort_score:
+            return 0
+
         return self.sort_score * 100   
+
 
     def to_dict(self, full=True):
         ret = {
@@ -149,7 +154,7 @@ class Package(db.Model):
             "language": self.language,
 
             "sort_score": self.sort_score,
-            "impact": self.sort_score * 100,
+            "impact": self.impact,
 
             "pagerank": self.pagerank,
             "pagerank_percentile": self.pagerank_percentile,
@@ -168,22 +173,20 @@ class Package(db.Model):
     def as_snippet_with_people(self):
         ret = self.as_snippet
 
-        # distinct_people = set([c.person.name for c in self.contributions])
-        # ret["people"] = list([name for name in distinct_people if name])
+        ret["contributions"] = defaultdict(list)
+        for c in self.contributions:
+            ret["contributions"][c.role].append(u"{}: {}".format(
+                c.percent, c.person.display_name))
 
-        # ret["contributions"] = defaultdict(list)
-        # for c in self.contributions:
-        #     ret["contributions"][c.role].append(u"{}: {}".format(
-        #         c.percent, c.person.display_name))
+        for role in ret["contributions"]:
+            ret["contributions"][role].sort(reverse=True)
 
-        # for role in ret["contributions"]:
-        #     ret["contributions"][role].sort(reverse=True)
 
-        ret["fair_shares"] = []
-        for p in self.contributors_with_fair_shares():
-            ret["fair_shares"].append(
+        ret["credit"] = []
+        for p in self.contributors_with_credit():
+            ret["credit"].append(
                 u"{share}: {name} ({id})".format(
-                    share = p.fair_share, 
+                    share = p.credit, 
                     name = p.display_name,
                     id = p.id
                 ) 
@@ -219,6 +222,13 @@ class Package(db.Model):
         # got a pypi or cran package...they have diff metadata formats.
         raise NotImplementedError
 
+
+    @property
+    def host_url(self):
+        # this needs to be overridden, because it depends on whether we've
+        # got a pypi or cran package
+        raise NotImplementedError
+
     @property
     def all_people(self):
         people = list(set([c.person for c in self.contributions]))
@@ -235,74 +245,87 @@ class Package(db.Model):
         return people
 
 
-    @property
-    def virtual_author_share(self):
-        author_share = float(1)/len(self.all_authors)
-        return author_share
-
-    def get_fair_share_for_person(self, person_id):
-        people = self.contributors_with_fair_shares()
+    def get_credit_for_person(self, person_id):
+        people = self.contributors_with_credit()
         for person in people:
             if person.id == person_id:
-                return person.fair_share
+                return person.credit
         return None
 
-    def contributors_with_fair_shares(self):
+    @property
+    def has_github_commits(self):
+        return self.max_github_commits > 0
+
+    @property
+    def max_github_commits(self):
+        if len(self.contributions) == 0:
+            return 0
+
+        all_commits = [c.quantity for c in self.contributions 
+                            if c.quantity and c.role=="github_contributor"]
+        if not all_commits:
+            return None
+
+        return max(all_commits)
+
+
+    def contributors_with_credit(self):
         people_for_contributions = self.all_people
-        virtual_committers = []
-        real_committers = []
+        author_committers = []
+        non_author_committers = []
 
         # if no github contributors, split cred equally among all authors
-        # if github contributors, give real contributions if they are a contributor
-        # else make them a virtual committer so we can calculate mean contribution for them
+        # if github contributors, give contributions tied with maximum github contribution
+        #  by making them a virtual committer with that many commits
         for person in people_for_contributions:
-            person.fair_share = 0
+            person.credit = 0  # initialize
 
-            if person.has_role_on_project("github_owner", self.id):
-                person.fair_share += 0.01
-
-            if person.has_role_on_project("github_contributor", self.id):
-                # print u"{} is a real committer".format(person.name)
-                real_committers += [person]
-
-            elif person.has_role_on_project("author", self.id):
-                if self.num_commits:
-                    # print u"{} is a virtual committer".format(person.name)
-                    virtual_committers += [person]
+            if person.has_role_on_project("author", self.id):
+                if self.has_github_commits:
+                    # print u"{} is an author committer".format(person.name)
+                    author_committers += [person]
                 else:
                     # print u"{} is an author and there are no committers".format(person.name)
-                    person.fair_share += self.virtual_author_share
+                    equal_author_share = float(1)/len(self.all_authors)                    
+                    person.credit += equal_author_share
 
-        # give all real committers their number of real commits
-        for person in real_committers:
-            person.num_commits = person.num_commits_on_project(self.id)
+            elif person.has_role_on_project("github_contributor", self.id):
+                # print u"{} is a non-author committer".format(person.name)
+                non_author_committers += [person]
 
-        # give all virtual committers the mean number of commits
-        num_real_commits = self.num_commits if self.num_commits else 0
-        num_real_committers = self.num_committers if self.num_committers else 1
-        mean_number_of_commits = float(num_real_commits) / num_real_committers
-        for person in virtual_committers:
-            person.num_commits = mean_number_of_commits
+
+        # give all non-author committers their number of real commits
+        for person in non_author_committers:
+            person.num_counting_commits = person.num_commits_on_project(self.id)
+
+        # give all virtual committers the max number of commits
+        for person in author_committers:
+            person.num_counting_commits = self.max_github_commits
 
         # calc how many commits were handed out, real + virtual
-        total_real_and_virtual_commits = 0
-        real_and_virtual_commmiters = real_committers + virtual_committers
-        for person in real_and_virtual_commmiters:
-            total_real_and_virtual_commits += person.num_commits
+        total_author_and_nonauthor_commits = 0
+        author_and_nonauthor_commmiters = non_author_committers + author_committers
+        for person in author_and_nonauthor_commmiters:
+            total_author_and_nonauthor_commits += person.num_counting_commits
 
-        # assign fair share to be the fraction of commits they have out of total
-        # print "total_real_and_virtual_commits", total_real_and_virtual_commits
-        for person in real_and_virtual_commmiters:
-            person.fair_share = float(person.num_commits) / total_real_and_virtual_commits
-            # print u"{} has with {} commits, {} fair share".format(
-            #     person.name, person.num_commits, person.fair_share)
+        # assign credit to be the fraction of commits they have out of total
+        # print "total_author_and_nonauthor_commits", total_author_and_nonauthor_commits
+        for person in author_and_nonauthor_commmiters:
+            person.credit = float(person.num_counting_commits) / total_author_and_nonauthor_commits
+            # print u"{} has with {} commits, {} credit".format(
+            #     person.name, person.num_commits, person.credit)
 
-        people_for_contributions.sort(key=lambda x: x.fair_share, reverse=True)
+        # finally, handle github owners by giving them a little boost
+        for person in people_for_contributions:
+            if person.has_role_on_project("github_owner", self.id):
+                person.credit += 0.01
+
+        people_for_contributions.sort(key=lambda x: x.credit, reverse=True)
 
         # for person in people_for_contributions:
-        #     print u"{fair_share}: {name} has contribution".format(
+        #     print u"{credit}: {name} has contribution".format(
         #         name = person.name, 
-        #         fair_share = round(person.fair_share, 3)
+        #         credit = round(person.credit, 3)
         #         )
 
         return people_for_contributions
@@ -408,17 +431,42 @@ class Package(db.Model):
         self.sort_score = numpy.mean(non_null_scores)
         print "sort score for {} is {}".format(self.id, self.sort_score)
 
+
+    def is_rare_package_name(self):
+        en_US = enchant.Dict("en_US")
+        en_GB = enchant.Dict("en_GB")
+        if (en_US.check(self.project_name) or en_GB.check(self.project_name)):
+            return False
+        return True
+
+
     def set_pmc_mentions(self):
 
-        # nothing to do here at the moment
-        if not self.github_owner:
-            return None
+        pmids_set = set()
+        queries = []
 
-        # don't start with http:// for now because then can get urls that include www
-        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
-        new_pmids_set = set(get_pmids_from_query(github_url_query))
+        # add the cran or pypi url to start with
+        host_url_query = self.host_url.split(":")[1]
+        queries.append(self.host_url)
 
-        self.pmc_mentions = new_pmids_set
+        # then github url if we know it
+        if self.github_owner:
+            github_url = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
+            queries.append(github_url)
+
+        # also look up its project name if is unique
+        if self.is_rare_package_name:
+            queries.append(self.project_name)
+
+        print "queries", queries
+        for query in queries:
+            new_pmids = get_hits_from_europe_pmc(query)
+            pmids_set.add(new_pmids)
+
+        self.pmc_mentions = list(pmids_set)
+
+        self.num_citations = len(self.pmc_mentions)
+
         return self.pmc_mentions
 
 
