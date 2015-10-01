@@ -274,7 +274,7 @@ div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node.is-packa
   color: #333;
 }
 div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.about {
-  font-size: 2000px;
+  font-size: 16px;
   padding-right: 5px;
   padding: 5px 5px 5px 10px;
   min-width: 100px;
