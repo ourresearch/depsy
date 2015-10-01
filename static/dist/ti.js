@@ -811,7 +811,7 @@ angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", func
     "         {{ depNode.name }}\n" +
     "      </span>\n" +
     "      <span class=\"metrics\">\n" +
-    "         <span class=\"percent-root-goodness\">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>\n" +
+    "         <!--<span class=\"percent-root-goodness\">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>-->\n" +
     "         <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
     "         <span class=\"stars\">({{ depNode.stars }})</span>\n" +
     "      </span>\n" +

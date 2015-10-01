@@ -55,6 +55,7 @@ class RevDepNode():
 
     @property
     def scale_factor(self):
+        return 42
         return math.log(math.ceil(self.percent_root_goodness * 100) + 1)
 
     @property
@@ -63,20 +64,24 @@ class RevDepNode():
             return 0  # always sort to bottom
 
         score = self.display_pagerank
-        #if self.stars is not None:
-        #    if self.is_package:
-        #        score += math.log10(self.stars + 1)
-        #    else:  # github repo
-        #        score += math.log10(self.stars + 1) * 5
+        if self.stars is not None:
+            if self.is_package:
+                score += math.log10(self.stars + 1) / 5
+            else:  # github repo
+                score += math.log10(self.stars + 1) / 2
 
         return score
 
 
     def _make_display_pagerank(self, pagerank):
-        return round((math.log10(pagerank) + 100) * 20, 2)
+        return round((math.log10(pagerank) + 6), 2)
 
 
-    def set_children(self, rev_deps_lookup, cutoff_score_perc=0.9):
+    def set_children(self, rev_deps_lookup, score_adj=None):
+        if score_adj is None:
+            score_adj = 0
+
+        min_score = self.sort_score - score_adj
 
         my_children = rev_deps_lookup[self.name]
         for child in my_children:
@@ -88,21 +93,24 @@ class RevDepNode():
                 stars=child[2],
                 root_pagerank=self.root_pagerank
             )
-            if new_child_node.sort_score > self.sort_score * cutoff_score_perc:
+            if new_child_node.sort_score > min_score:
                 self.children.append(new_child_node)
 
         for child in self.children:
-            child.set_children(rev_deps_lookup, cutoff_score_perc)
+            child.set_children(rev_deps_lookup, score_adj)
 
         num_descendents = self.desdendents_count
-        if num_descendents < 20 and cutoff_score_perc* self.sort_score > 0:
-            cutoff_score_perc -= 0.1
-            print "didn't get enough descendents ({})...dropping score to {}".format(
+        if self.is_root:
+            print "root found {} descendents".format(num_descendents)
+
+        if num_descendents < 20 and self.is_root and min_score > 0:
+            score_adj += 1
+            print "didn't get enough descendents ({})...raising adj score to {}".format(
                 num_descendents,
-                cutoff_score_perc * self.sort_score
+                score_adj
             )
             self.children = []
-            return self.set_children(rev_deps_lookup, cutoff_score_perc)
+            return self.set_children(rev_deps_lookup, score_adj)
 
 
 
@@ -129,8 +137,11 @@ class RevDepNode():
     @property
     def desdendents_count(self):
         ret = 0
-        for child in self.children:
-            ret += child.desdendents_count
+        if len(self.children) == 0:
+            ret += 1
+        else:
+            for child in self.children:
+                ret += child.desdendents_count
         return ret
 
 
