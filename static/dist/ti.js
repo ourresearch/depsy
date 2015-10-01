@@ -741,7 +741,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -787,7 +786,7 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "   <span class=\"tag summary\">\n" +
-    "      {{ match.model.sort_score }} packages\n" +
+    "      {{ match.model.impact }} packages\n" +
     "   </span>\n" +
     "</a>\n" +
     "\n" +
@@ -909,7 +908,7 @@ angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templat
     "      </span>\n" +
     "   </div>\n" +
     "\n" +
-    "   <div class=\"sort_scores\">\n" +
+    "   <div class=\"impact\">\n" +
     "\n" +
     "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
     "         <span class=\"name\">\n" +

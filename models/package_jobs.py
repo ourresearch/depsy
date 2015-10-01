@@ -200,9 +200,9 @@ update_registry.register(Update(
 # i do not understand why, but this does not work in RQ, you must run in
 # a single dyno with --no-rq flag set...takes a good 30min :/
 q = db.session.query(Person.id)
-q = q.filter(Person.sort_score == None)
+q = q.filter(Person.impact == None)
 update_registry.register(Update(
-    job=Person.set_sort_score,
+    job=Person.set_impact,
     query=q,
     queue_id=3
 ))
@@ -294,21 +294,21 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.sort_score == None)
+q = q.filter(PypiPackage.impact == None)
 update_registry.register(Update(
-    job=PypiPackage.set_sort_score,
+    job=PypiPackage.set_impact,
     query=q,
     queue_id=9,
-    shortcut_fn=PypiPackage.shortcut_sort_score_maxes
+    shortcut_fn=PypiPackage.shortcut_impact_maxes
 ))
 
 q = db.session.query(CranPackage.id)
-# q = q.filter(CranPackage.sort_score == None)
+# q = q.filter(CranPackage.impact == None)
 update_registry.register(Update(
-    job=CranPackage.set_sort_score,
+    job=CranPackage.set_impact,
     query=q,
     queue_id=9,
-    shortcut_fn=CranPackage.shortcut_sort_score_maxes
+    shortcut_fn=CranPackage.shortcut_impact_maxes
 ))
 
 

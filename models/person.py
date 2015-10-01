@@ -22,7 +22,7 @@ class Person(db.Model):
     github_login = db.Column(db.Text)
     github_about = db.deferred(db.Column(JSONB))
     bucket = db.Column(JSONB)
-    sort_score = db.Column(db.Float)
+    impact = db.Column(db.Float)
     parsed_name = db.Column(JSONB)
 
     type = db.Column(db.Text)
@@ -47,7 +47,6 @@ class Person(db.Model):
             "id": self.id, 
             "name": self.display_name, 
             "github_login": self.github_login, 
-            "sort_score": self.sort_score, 
             "icon": self.icon, 
             "icon_small": self.icon_small, 
             "is_academic": self.is_academic, 
@@ -79,13 +78,9 @@ class Person(db.Model):
             # it's got no info about the person in it.
             return False
 
-
-    def set_sort_score(self):
-        self.sort_score = 0
-        for contrib in self.contributions:
-            self.sort_score += contrib.fractional_sort_score
-
-        return self.sort_score
+    def set_impact(self):
+        self.impact = sum([pp.person_project_impact for pp in self.person_packages])
+        return self.impact
 
     def set_parsed_name(self):
         if not self.name:
@@ -145,11 +140,6 @@ class Person(db.Model):
             return self.email.split("@")[0]
         else:
             return "name unknown"
-
-    @property
-    def impact(self):
-        impact = sum([pp.person_project_impact for pp in self.person_packages])
-        return impact
 
 
     @property

@@ -64,7 +64,8 @@ class Package(db.Model):
     indegree = db.Column(db.Float)
     summary = db.Column(db.Text)
 
-    sort_score = db.Column(db.Float)
+    impact = db.Column(db.Float)
+    impact_rank = db.Column(db.Integer)
 
     num_committers = db.Column(db.Integer)
     num_commits = db.Column(db.Integer)
@@ -98,19 +99,13 @@ class Package(db.Model):
     def language(self):
         return "unknown"
 
-    @property
-    def impact(self):
-        if not self.sort_score:
-            return 0
-
-        return self.sort_score * 100   
-
 
     def to_dict(self, full=True):
+        #return {"hello": "world"}
         ret = {
             "name": self.project_name,
             "as_snippet": self.as_snippet,
-            "contributions": [c.to_dict() for c in self.contributions],
+            #"contributions": [c.to_dict() for c in self.contributions],
             "github_owner": self.github_owner,
             "github_repo_name": self.github_repo_name,
             "host": self.host,
@@ -126,7 +121,6 @@ class Package(db.Model):
             "num_downloads": self.num_downloads,
             "num_downloads_percentile": self.num_downloads_percentile,
             "num_stars": self.num_stars,
-            "sort_score": self.sort_score,
             "impact": self.impact,
             "rev_deps_tree": self.tree,
 
@@ -154,7 +148,6 @@ class Package(db.Model):
             "name": self.project_name,
             "language": self.language,
 
-            "sort_score": self.sort_score,
             "impact": self.impact,
 
             "pagerank": self.pagerank,
@@ -529,12 +522,11 @@ class Package(db.Model):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
         self.set_pagerank_percentile(refsets_dict["pagerank"])
         self.set_num_citations_percentile(refsets_dict["num_citations"])
-        # self.set_sort_score()
 
 
     @classmethod
-    def shortcut_sort_score_maxes(cls):
-        print "getting the maxes for calculating the sort score...."
+    def shortcut_impact_maxes(cls):
+        print "getting the maxes for calculating the impact...."
         q = db.session.query(
             func.max(cls.num_downloads),
             func.max(cls.pagerank),
@@ -552,7 +544,7 @@ class Package(db.Model):
         return maxes_dict
 
 
-    def set_sort_score(self, maxes_dict):
+    def set_impact(self, maxes_dict):
 
         score_components = []
 
@@ -572,8 +564,8 @@ class Package(db.Model):
         else:
             my_mean = None
         
-        self.sort_score = my_mean
-        print u"self.sort_score for {} is {}".format(self.id, self.sort_score)
+        self.impact = my_mean
+        print u"self.impact for {} is {}".format(self.id, self.impact)
 
 
     @classmethod

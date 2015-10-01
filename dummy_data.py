@@ -37,25 +37,25 @@ person = """
             "name": "fah",
             "roles": [
                 {
-                    "fractional_sort_score": 1.0,
+                    "fractional_impact": 1.0,
                     "name": "github_owner",
                     "percent": 100,
                     "quantity": null
                 },
                 {
-                    "fractional_sort_score": 0.92105,
+                    "fractional_impact": 0.92105,
                     "name": "github_contributor",
                     "percent": 92.105,
                     "quantity": 35
                 },
                 {
-                    "fractional_sort_score": 1.0,
+                    "fractional_impact": 1.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Flask Against Humanity (copyright infringement pending).",
@@ -74,19 +74,19 @@ person = """
             "name": "pysqlw",
             "roles": [
                 {
-                    "fractional_sort_score": 417.0,
+                    "fractional_impact": 417.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 33
                 },
                 {
-                    "fractional_sort_score": 417.0,
+                    "fractional_impact": 417.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Python wrapper to make interacting with SQL databases easy",
@@ -105,19 +105,19 @@ person = """
             "name": "chrw",
             "roles": [
                 {
-                    "fractional_sort_score": 146.0,
+                    "fractional_impact": 146.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 3
                 },
                 {
-                    "fractional_sort_score": 146.0,
+                    "fractional_impact": 146.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Python wrapper for the chr url shortener API",
@@ -136,13 +136,13 @@ person = """
             "name": "spiffing",
             "roles": [
                 {
-                    "fractional_sort_score": 165.0,
+                    "fractional_impact": 165.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 4
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "The gentleman's CSS pre-processor, to convert correct English CSS to American English CSS (and the r...",
@@ -161,19 +161,19 @@ person = """
             "name": "chr",
             "roles": [
                 {
-                    "fractional_sort_score": 239.0,
+                    "fractional_impact": 239.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 73
                 },
                 {
-                    "fractional_sort_score": 239.0,
+                    "fractional_impact": 239.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Python based URL shortening service",
@@ -192,19 +192,19 @@ person = """
             "name": "corrections",
             "roles": [
                 {
-                    "fractional_sort_score": 220.0,
+                    "fractional_impact": 220.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 13
                 },
                 {
-                    "fractional_sort_score": 220.0,
+                    "fractional_impact": 220.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "A nifty project.",
@@ -223,25 +223,25 @@ person = """
             "name": "Flask-Themes2",
             "roles": [
                 {
-                    "fractional_sort_score": 376.47360000000003,
+                    "fractional_impact": 376.47360000000003,
                     "name": "github_contributor",
                     "percent": 36.765,
                     "quantity": 25
                 },
                 {
-                    "fractional_sort_score": 1024.0,
+                    "fractional_impact": 1024.0,
                     "name": "github_owner",
                     "percent": 100,
                     "quantity": null
                 },
                 {
-                    "fractional_sort_score": 1024.0,
+                    "fractional_impact": 1024.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Provides infrastructure for theming Flask applications                     (and supports Flask>=0.6!...",
@@ -260,19 +260,19 @@ person = """
             "name": "mattdaemon",
             "roles": [
                 {
-                    "fractional_sort_score": 210.0,
+                    "fractional_impact": 210.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 11
                 },
                 {
-                    "fractional_sort_score": 210.0,
+                    "fractional_impact": 210.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Easily daemonize your python projects",
@@ -291,19 +291,19 @@ person = """
             "name": "ebooks",
             "roles": [
                 {
-                    "fractional_sort_score": 1.0,
+                    "fractional_impact": 1.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 13
                 },
                 {
-                    "fractional_sort_score": 1.0,
+                    "fractional_impact": 1.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "A nifty project.",
@@ -322,13 +322,13 @@ person = """
             "name": "strawberries",
             "roles": [
                 {
-                    "fractional_sort_score": 1.0,
+                    "fractional_impact": 1.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 5
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Strawberries is an IRC bot, and also the plural of the word strawberry.",
@@ -347,13 +347,13 @@ person = """
             "name": "Quokka-Themes",
             "roles": [
                 {
-                    "fractional_sort_score": 136.66523999999998,
+                    "fractional_impact": 136.66523999999998,
                     "name": "github_contributor",
                     "percent": 22.892,
                     "quantity": 19
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Provides infrastructure for theming Quokka applications",
@@ -372,19 +372,19 @@ person = """
             "name": "rcmd",
             "roles": [
                 {
-                    "fractional_sort_score": 191.0,
+                    "fractional_impact": 191.0,
                     "name": "github_contributor",
                     "percent": 100.0,
                     "quantity": 9
                 },
                 {
-                    "fractional_sort_score": 191.0,
+                    "fractional_impact": 191.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Like Python's cmd module, but uses regex based handlers instead!",
@@ -403,19 +403,19 @@ person = """
             "name": "4ch",
             "roles": [
                 {
-                    "fractional_sort_score": 282.1837,
+                    "fractional_impact": 282.1837,
                     "name": "github_contributor",
                     "percent": 70.37,
                     "quantity": 19
                 },
                 {
-                    "fractional_sort_score": 401.0,
+                    "fractional_impact": 401.0,
                     "name": "author",
                     "percent": 100,
                     "quantity": null
                 }
             ],
-            "sort_score": null,
+            "impact": null,
             "stars": null,
             "stars_percentile": null,
             "summary": "Python wrapper for the 4chan JSON API.",
@@ -423,7 +423,7 @@ person = """
             "use_percentile": null
         }
     ],
-    "sort_score": 389886.24359,
+    "impact": 389886.24359,
     "type": null
 }
 """
