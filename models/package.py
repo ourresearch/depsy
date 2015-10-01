@@ -533,7 +533,8 @@ class Package(db.Model):
         impact_rank_lookup = {}
         ids_sorted_by_impact = [row[0] for row in rows]
         for my_id in ids_sorted_by_impact:
-            impact_rank_lookup[my_id] = ids_sorted_by_impact.index(my_id)
+            zero_based_rank = ids_sorted_by_impact.index(my_id)
+            impact_rank_lookup[my_id] = zero_based_rank + 1
 
         return impact_rank_lookup
 
