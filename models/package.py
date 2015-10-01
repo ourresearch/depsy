@@ -544,6 +544,7 @@ class Package(db.Model):
             parent=None,
             name=self.project_name,
             pagerank=self.pagerank,
+            generation=0,
             stars=None,
             root_pagerank=self.pagerank
         )

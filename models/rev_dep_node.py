@@ -2,13 +2,13 @@ import re
 import math
 
 class RevDepNode():
-    def __init__(self, parent, name, pagerank, stars=None, root_pagerank=None):
+    def __init__(self, parent, name, pagerank, generation, stars=None, root_pagerank=None):
         self.parent = parent
         self.name = name
         self.pagerank = pagerank
         self.stars = stars
         self.root_pagerank = root_pagerank
-        self.is_root = False
+        self.generation = generation
 
         self.children = []
 
@@ -30,6 +30,10 @@ class RevDepNode():
     @property
     def is_rollup(self):
         return self.name.startswith("+")
+
+    @property
+    def is_root(self):
+        return self.generation == 0
 
     @property
     def is_package(self):
@@ -66,6 +70,10 @@ class RevDepNode():
     def _make_display_pagerank(self, pagerank):
         return round(pagerank * 1000000, 0)
 
+    @property
+    def generations(self):
+        return "i have generations!"
+
 
     def set_children(self, rev_deps_lookup):
         my_children = rev_deps_lookup[self.name]
@@ -74,6 +82,7 @@ class RevDepNode():
                 parent=self.name,
                 name=child[0],
                 pagerank=child[1],
+                generation=self.generation + 1,
                 stars=child[2],
                 root_pagerank=self.root_pagerank
             )
@@ -91,7 +100,7 @@ class RevDepNode():
         return None
 
     def to_dict(self):
-        return {
+        ret = {
             "parent": self.parent,
             "name": self.display_name,
             "pagerank": self.pagerank,
@@ -103,8 +112,13 @@ class RevDepNode():
             "percent_root_goodness": self.percent_root_goodness,
             "stars": self.stars,
             "is_root": self.is_root,
-            "scale_factor": self.scale_factor
-
+            "scale_factor": self.scale_factor,
+            "generation": self.generation
         }
+
+        if self.is_root:
+            ret["generations"] = self.generations
+
+        return ret
 
 
