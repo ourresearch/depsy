@@ -98,13 +98,18 @@ class Package(db.Model):
 
     @property
     def impact(self):
-        return self.sort_score * 100   
+        # this needs to change once we get a db col called impact...
+        try:
+            return self.sort_score * 100
+        except TypeError:
+            return 0
 
     def to_dict(self, full=True):
+        #return {"hello": "world"}
         ret = {
             "name": self.project_name,
             "as_snippet": self.as_snippet,
-            "contributions": [c.to_dict() for c in self.contributions],
+            #"contributions": [c.to_dict() for c in self.contributions],
             "github_owner": self.github_owner,
             "github_repo_name": self.github_repo_name,
             "host": self.host,
