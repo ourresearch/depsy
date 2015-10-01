@@ -8,7 +8,6 @@ from sqlalchemy import func
 from sqlalchemy import sql
 import igraph
 import numpy
-import enchant
 
 from app import db
 from models import github_api
