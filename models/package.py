@@ -549,15 +549,14 @@ class Package(db.Model):
 
         if self.pagerank:
             log_pagerank = math.log10(float(self.pagerank)/maxes_dict["pagerank"])
-            if log_pagerank:
+            if log_pagerank != None:
                 score_components.append(log_pagerank)
         if self.num_downloads:
             log_num_downloads = math.log10(float(self.num_downloads)/maxes_dict["num_downloads"])
-            if log_num_downloads:
+            if log_num_downloads != None:
                 score_components.append(log_num_downloads)
 
         if score_components:
-            print "score_components=", score_components
             offset_to_recenter = 5
             my_mean = numpy.mean(score_components) + offset_to_recenter
         else:
