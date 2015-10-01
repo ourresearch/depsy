@@ -233,6 +233,7 @@ class PypiPackage(Package):
         return self.tags
 
 
+
     def _get_tags_from_keywords(self):
         try:
             pypi_keywords_str = self.api_raw["info"]["keywords"].lower()
