@@ -41,6 +41,7 @@ class Package(db.Model):
     all_r_reverse_deps = db.deferred(db.Column(JSONB))       
     tags = db.deferred(db.Column(JSONB))
     proxy_papers = db.deferred(db.Column(db.Text))
+    is_academic = db.Column(db.Boolean)
 
     num_citations_by_source = db.Column(JSONB)
 
