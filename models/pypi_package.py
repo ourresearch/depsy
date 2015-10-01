@@ -236,15 +236,24 @@ class PypiPackage(Package):
 
     def _get_tags_from_keywords(self):
         try:
-            pypi_keywords_str = self.api_raw["info"]["keywords"].lower()
+            pypi_keywords_str = self.api_raw["info"]["keywords"]
         except KeyError:
             pypi_keywords_str = ""
 
-        # sometimes these are space-delimited, sometimes comma. fix.
-        all_comma_delim = pypi_keywords_str.replace(" ", ",")
+        if pypi_keywords_str is None:
+            pypi_keywords_str = ""
 
-        # split and dedup
-        ret = list(set([x.strip() for x in all_comma_delim.split(",")]))
+        if "," in pypi_keywords_str:
+            # try splitting on commas *first*
+            keywords = pypi_keywords_str.split(",")
+        elif " " in pypi_keywords_str:
+            keywords = pypi_keywords_str.split(" ")
+        else:
+            keywords = []
+
+
+        # lowercase and dedup
+        ret = list(set([x.strip().lower() for x in keywords]))
         print "got tags from keywords", ret
         return ret
 
@@ -277,9 +286,11 @@ class PypiPackage(Package):
                 working_tag_list.append(classifier.split(" :: ")[1])
 
         unique_tags = list(set(working_tag_list))
+
+        # reject blacklisted tags and lowercase
         for tag in unique_tags:
             if len(tag) > 1 and tag not in tags_to_reject:
-                self.tags.append(tag)
+                self.tags.append(tag.lower())
 
         if len(self.tags):
             print "set tags for {}: {}".format(self, ",".join(self.tags))
