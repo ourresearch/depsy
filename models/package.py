@@ -42,7 +42,8 @@ class Package(db.Model):
     tags = db.deferred(db.Column(JSONB))
     proxy_papers = db.deferred(db.Column(db.Text))
 
-    pmc_mentions = db.Column(JSONB)
+    num_citations_by_source = db.Column(JSONB)
+
     host_reverse_deps = db.deferred(db.Column(JSONB))
 
     github_reverse_deps = db.deferred(db.Column(JSONB))
@@ -123,6 +124,7 @@ class Package(db.Model):
             "num_stars": self.num_stars,
             "impact": self.impact,
             "rev_deps_tree": self.tree,
+            "num_citations_by_source": self.set_num_citations_by_source,
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
@@ -428,14 +430,15 @@ class Package(db.Model):
         return True
 
 
-    def set_pmc_mentions(self):
+    @property
+    def set_num_citations_by_source(self):
 
         pmids_set = set()
         queries = []
 
         # add the cran or pypi url to start with
-        host_url_query = self.host_url.replace("https://", "").replace("http://", "")
-        queries.append(host_url_query)
+        host_url = self.host_url.replace("https://", "").replace("http://", "")
+        queries.append("{}".format(host_url))
 
         # then github url if we know it
         if self.github_owner:
@@ -444,20 +447,25 @@ class Package(db.Model):
 
         # also look up its project name if is unique
         if self.is_rare_package_name:
-            queries.append(self.project_name)
+            queries.append("{}".format(self.project_name))
 
-        print "queries", queries
-        for query in queries:
-            new_pmids = get_hits_from_europe_pmc(query)
-            print "{query} got {num} hits".format(
-                query=query, num=len(new_pmids))
-            pmids_set.union(new_pmids)
+        query = " OR ".join(queries)
+        print "query", query
 
-        self.pmc_mentions = list(pmids_set)
+        # for method in [
+        #     get_hits_from_europe_pmc,
+        #     get_hits_from_arxiv
+        # ]:
 
-        self.num_citations = len(self.pmc_mentions)
+        num_hits = get_hits_from_europe_pmc(query)
+        print "{query} got {num} hits".format(
+            query=query, num=num_hits)
 
-        return self.pmc_mentions
+        if not self.num_citations_by_source:
+            self.num_citations_by_source = {}
+        self.num_citations_by_source["pmc"] = num_hits
+
+        return self.num_citations_by_source
 
 
     def set_igraph_data(self, our_igraph_data):

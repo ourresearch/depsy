@@ -16,6 +16,36 @@ from jobs import Update
 
 
 
+def get_people(filters=None, page_size=25):
+
+    q = Person.query.options(
+        orm.subqueryload_all(
+            Person.contributions, 
+            Contribution.package 
+        )
+    )
+    for (filter_attribute, filter_value) in filters:
+
+        if filter_attribute=="language":
+            filter_attribute = "host"
+            if filter_value=="python":
+                filter_value = "pypi"
+            elif filter_value=="r":
+                filter_value = "cran"
+
+        if filter_attribute == "tags":
+            q = q.filter(Package.tags.has_key(filter_value))        
+        else:
+            attr = getattr(Person, filter_attribute)
+            q = q.filter(attr==filter_value)        
+
+    q = q.order_by(Person.impact.desc())
+    q = q.limit(page_size)
+
+    ret = q.all()
+    return ret
+
+
 def get_packages(filters=None, page_size=25):
 
     q = Package.query.options(
@@ -40,7 +70,7 @@ def get_packages(filters=None, page_size=25):
             attr = getattr(Package, filter_attribute)
             q = q.filter(attr==filter_value)        
 
-    q = q.order_by(Package.num_downloads.desc())
+    q = q.order_by(Package.impact.desc())
     q = q.limit(page_size)
 
     ret = q.all()
@@ -332,18 +362,6 @@ update_registry.register(Update(
 
 
 
-
-
-
-
-q = db.session.query(Package.id)
-q = q.filter(Package.github_owner != None)
-q = q.filter(Package.pmc_mentions == None)
-update_registry.register(Update(
-    job=Package.set_pmc_mentions,
-    query=q,
-    queue_id=7
-))
 
 
 
