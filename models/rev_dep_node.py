@@ -61,15 +61,21 @@ class RevDepNode():
     def sort_score(self):
         if self.is_rollup:
             return 0  # always sort to bottom
-        elif self.is_package:
-            return self.display_pagerank
-        elif self.stars is not None:
-            return self.stars / 5
-        else:
-            return self.display_pagerank
+
+        score = self.display_pagerank
+        return score
+
+        if self.stars is not None:
+            if self.is_package:
+                score += math.log10(self.stars + 1)
+            else:  # github repo
+                score += math.log10(self.stars + 1) * 100
+
+        return score
+
 
     def _make_display_pagerank(self, pagerank):
-        return round(pagerank * 1000000, 0)
+        return round((math.log10(pagerank) + 5) * 20, 2)
 
 
     def set_children(self, rev_deps_lookup):
@@ -97,17 +103,20 @@ class RevDepNode():
         return None
 
     def to_generation_dict(self):
-        ret = defaultdict(set)
-        ret[self.generation].add(self.name)
+        ret = defaultdict(list)
+        ret[self.generation].append(self.sort_score)
         if len(self.children) > 0:
             for child in self.children:
                 print "i am child", self
                 child_generation_dict = child.to_generation_dict()
-                for generation_index, names in child_generation_dict.iteritems():
-                    print "i am child dict item", generation_index, names
-                    ret[generation_index] = ret[generation_index].union(names)
+                for generation_index, sort_scores in child_generation_dict.iteritems():
+                    print "i am child dict item", generation_index, sort_scores
+                    ret[generation_index] += sort_scores
 
-        return ret
+
+        sorted_ret = {k: sorted(v, reverse=True) for k, v in ret.iteritems()}
+
+        return sorted_ret
 
 
     def to_dict(self):
@@ -128,6 +137,9 @@ class RevDepNode():
         }
 
         if self.is_root:
+
+
+
             # needed for json serialization...
             ret["generation_dict"] = {}
             for generation_index, names in self.to_generation_dict().iteritems():
