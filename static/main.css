@@ -407,57 +407,57 @@ span.package-snippet span.metadata span.summary {
   display: inline-block;
   width: 400px;
 }
-#sort-score-popover div.metric {
+#impact-popover div.metric {
   font-size: 14px;
   margin: 10px 0 0;
   line-height: 1.2;
 }
-#sort-score-popover div.metric:before,
-#sort-score-popover div.metric:after {
+#impact-popover div.metric:before,
+#impact-popover div.metric:after {
   content: " ";
   display: table;
 }
-#sort-score-popover div.metric:after {
+#impact-popover div.metric:after {
   clear: both;
 }
-#sort-score-popover div.metric.head {
+#impact-popover div.metric.head {
   border-bottom: 1px solid #ddd;
   padding: 0 0 5px 0;
   margin: 0 0 5px 0;
 }
-#sort-score-popover div.metric.head:before,
-#sort-score-popover div.metric.head:after {
+#impact-popover div.metric.head:before,
+#impact-popover div.metric.head:after {
   content: " ";
   display: table;
 }
-#sort-score-popover div.metric.head:after {
+#impact-popover div.metric.head:after {
   clear: both;
 }
-#sort-score-popover div.metric.head span.name {
+#impact-popover div.metric.head span.name {
   font-size: 18px;
   text-align: right;
   padding-right: 20px;
   font-weight: 900;
 }
-#sort-score-popover div.metric.head span.val {
+#impact-popover div.metric.head span.val {
   font-size: 18px;
 }
-#sort-score-popover div.metric.head span.val span.small {
+#impact-popover div.metric.head span.val span.small {
   font-size: 12px;
 }
-#sort-score-popover div.metric.citations {
+#impact-popover div.metric.citations {
   color: #984ea3;
 }
-#sort-score-popover div.metric.pagerank {
+#impact-popover div.metric.pagerank {
   color: #4daf4a;
 }
-#sort-score-popover div.metric.downloads {
+#impact-popover div.metric.downloads {
   color: #377eb8;
 }
-#sort-score-popover div.metric.stars {
+#impact-popover div.metric.stars {
   color: #e41a1c;
 }
-#sort-score-popover div.metric span.name {
+#impact-popover div.metric span.name {
   display: inline-block;
   width: 100px;
   float: left;
@@ -465,15 +465,15 @@ span.package-snippet span.metadata span.summary {
   text-indent: -10px;
   font-weight: bold;
 }
-#sort-score-popover div.metric span.descr {
+#impact-popover div.metric span.descr {
   float: left;
   width: 100px;
 }
-#sort-score-popover div.metric span.descr span.val {
+#impact-popover div.metric span.descr span.val {
   font-size: 18px;
   font-weight: bold;
 }
-#sort-score-popover div.metric span.descr span.paren {
+#impact-popover div.metric span.descr span.paren {
   font-size: 12px;
 }
 ul {
