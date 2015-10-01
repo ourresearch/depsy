@@ -312,7 +312,23 @@ update_registry.register(Update(
 ))
 
 
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.impact_rank == None)
+update_registry.register(Update(
+    job=PypiPackage.set_impact_rank,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_impact_rank
+))
 
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.impact_rank == None)
+update_registry.register(Update(
+    job=CranPackage.set_impact_rank,
+    query=q,
+    queue_id=9,
+    shortcut_fn=CranPackage.shortcut_impact_rank
+))
 
 
 

@@ -524,6 +524,26 @@ class Package(db.Model):
 
 
     @classmethod
+    def shortcut_impact_rank(cls):
+        print "getting the lookup for ranking impact...."
+        q = db.session.query(cls.id)
+        q = q.order_by(cls.impact.desc())  # the important part :)
+        rows = q.all()
+
+        impact_rank_lookup = {}
+        ids_sorted_by_impact = [row[0] for row in rows]
+        for my_id in ids_sorted_by_impact:
+            impact_rank_lookup[my_id] = ids_sorted_by_impact.index(my_id)
+
+        return impact_rank_lookup
+
+
+    def set_impact_rank(self, impact_rank_lookup):
+        self.impact_rank = impact_rank_lookup[self.id]
+        print "self.impact_rank", self.impact_rank
+
+
+    @classmethod
     def shortcut_impact_maxes(cls):
         print "getting the maxes for calculating the impact...."
         q = db.session.query(
