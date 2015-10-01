@@ -1,5 +1,6 @@
 import re
 import math
+from collections import defaultdict
 
 class RevDepNode():
     def __init__(self, parent, name, pagerank, generation, stars=None, root_pagerank=None):
@@ -70,10 +71,6 @@ class RevDepNode():
     def _make_display_pagerank(self, pagerank):
         return round(pagerank * 1000000, 0)
 
-    @property
-    def generations(self):
-        return "i have generations!"
-
 
     def set_children(self, rev_deps_lookup):
         my_children = rev_deps_lookup[self.name]
@@ -99,6 +96,20 @@ class RevDepNode():
                 return child
         return None
 
+    def to_generation_dict(self):
+        ret = defaultdict(set)
+        ret[self.generation].add(self.name)
+        if len(self.children) > 0:
+            for child in self.children:
+                print "i am child", self
+                child_generation_dict = child.to_generation_dict()
+                for generation_index, names in child_generation_dict.iteritems():
+                    print "i am child dict item", generation_index, names
+                    ret[generation_index] = ret[generation_index].union(names)
+
+        return ret
+
+
     def to_dict(self):
         ret = {
             "parent": self.parent,
@@ -117,7 +128,10 @@ class RevDepNode():
         }
 
         if self.is_root:
-            ret["generations"] = self.generations
+            # needed for json serialization...
+            ret["generation_dict"] = {}
+            for generation_index, names in self.to_generation_dict().iteritems():
+                ret["generation_dict"][generation_index] = list(names)
 
         return ret
 
