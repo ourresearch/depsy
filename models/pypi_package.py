@@ -232,25 +232,44 @@ class PypiPackage(Package):
         self.tags = list(set(self.tags))
         return self.tags
 
+    def set_intended_audience(self):
+        self.bucket["intended_audience"] = self._get_intended_audience()
+
+
+    def set_is_academic(self):
+        pass
+
+
+    def _get_intended_audience(self):
+        try:
+            pypi_classifiers = self.api_raw["info"]["classifiers"]
+        except KeyError:
+            return None
+
+        for classifier in pypi_classifiers:
+            if classifier.startswith("Intended Audience"):
+                return classifier.split(" :: ")[1]
+
 
 
     def _get_tags_from_keywords(self):
         try:
             pypi_keywords_str = self.api_raw["info"]["keywords"]
         except KeyError:
-            pypi_keywords_str = ""
+            pypi_keywords_str = None
 
         if pypi_keywords_str is None:
-            pypi_keywords_str = ""
+            return []
 
         if "," in pypi_keywords_str:
             # try splitting on commas *first*
             keywords = pypi_keywords_str.split(",")
         elif " " in pypi_keywords_str:
+            # split on spaces, not as good, but that's what we've got
             keywords = pypi_keywords_str.split(" ")
         else:
-            keywords = []
-
+            # the whole string is just one keyword
+            keywords = [pypi_keywords_str]
 
         # lowercase and dedup
         ret = list(set([x.strip().lower() for x in keywords]))
