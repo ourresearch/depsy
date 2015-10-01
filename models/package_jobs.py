@@ -200,9 +200,9 @@ update_registry.register(Update(
 # i do not understand why, but this does not work in RQ, you must run in
 # a single dyno with --no-rq flag set...takes a good 30min :/
 q = db.session.query(Person.id)
-q = q.filter(Person.sort_score == None)
+q = q.filter(Person.impact == None)
 update_registry.register(Update(
-    job=Person.set_sort_score,
+    job=Person.set_impact,
     query=q,
     queue_id=3
 ))
@@ -293,6 +293,42 @@ update_registry.register(Update(
 ))
 
 
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.impact == None)
+update_registry.register(Update(
+    job=PypiPackage.set_impact,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_impact_maxes
+))
+
+q = db.session.query(CranPackage.id)
+# q = q.filter(CranPackage.impact == None)
+update_registry.register(Update(
+    job=CranPackage.set_impact,
+    query=q,
+    queue_id=9,
+    shortcut_fn=CranPackage.shortcut_impact_maxes
+))
+
+
+q = db.session.query(PypiPackage.id)
+q = q.filter(PypiPackage.impact_rank == None)
+update_registry.register(Update(
+    job=PypiPackage.set_impact_rank,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_impact_rank
+))
+
+q = db.session.query(CranPackage.id)
+q = q.filter(CranPackage.impact_rank == None)
+update_registry.register(Update(
+    job=CranPackage.set_impact_rank,
+    query=q,
+    queue_id=9,
+    shortcut_fn=CranPackage.shortcut_impact_rank
+))
 
 
 
@@ -300,9 +336,34 @@ update_registry.register(Update(
 
 
 
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.pmc_mentions == None)
+update_registry.register(Update(
+    job=Package.set_pmc_mentions,
+    query=q,
+    queue_id=7
+))
 
 
 
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.github_api_raw == None)
+update_registry.register(Update(
+    job=Package.refresh_github_ids,
+    query=q,
+    queue_id=7
+))
+
+
+q = db.session.query(Package.id)
+q = q.filter(Package.credit == None)
+update_registry.register(Update(
+    job=Package.set_credit,
+    query=q,
+    queue_id=7
+))
 
 
 

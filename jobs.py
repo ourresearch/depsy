@@ -2,6 +2,7 @@ from time import time
 from time import sleep
 
 from sqlalchemy.dialects import postgresql
+from sqlalchemy import orm
 
 from app import db
 from app import ti_queues
@@ -9,6 +10,18 @@ from util import elapsed
 from util import chunks
 
 
+def person_load_options():
+    from models.person import Person
+    from models.contribution import Contribution
+    from models.package import Package
+    my_options = orm.subqueryload_all(
+            Person.contributions, 
+            Contribution.package, 
+            Package.contributions 
+            # Contribution.person,
+            # Person.contributions
+        )
+    return my_options
 
 def update_fn(cls, method_name, obj_id_list, shortcut_data=None):
 
@@ -17,7 +30,12 @@ def update_fn(cls, method_name, obj_id_list, shortcut_data=None):
     db.engine.dispose()
 
     start = time()
+
     q = db.session.query(cls).filter(cls.id.in_(obj_id_list))
+    if cls.__name__ == "Person":
+        q = q.options(person_load_options())
+
+
     obj_rows = q.all()
     num_obj_rows = len(obj_rows)
     print "{repr}.{method_name}() got {num_obj_rows} objects in {elapsed}sec".format(

@@ -1,4 +1,5 @@
 import os
+import math
 from collections import defaultdict
 
 from sqlalchemy.dialects.postgresql import JSONB
@@ -6,6 +7,8 @@ from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from sqlalchemy import sql
 import igraph
+import nltk
+from nltk.corpus import words
 import numpy
 
 from app import db
@@ -16,8 +19,7 @@ from models.rev_dep_node import RevDepNode
 from jobs import update_registry
 from jobs import Update
 from util import truncate
-from providers.pubmed_api import get_pmids_from_query
-
+from providers.pubmed_api import get_hits_from_europe_pmc
 
 
 
@@ -62,7 +64,8 @@ class Package(db.Model):
     indegree = db.Column(db.Float)
     summary = db.Column(db.Text)
 
-    sort_score = db.Column(db.Float)
+    impact = db.Column(db.Float)
+    impact_rank = db.Column(db.Integer)
 
     num_committers = db.Column(db.Integer)
     num_commits = db.Column(db.Integer)
@@ -71,6 +74,7 @@ class Package(db.Model):
     inactive = db.Column(db.Text)
 
     rev_deps_tree = db.Column(JSONB)
+    credit = db.Column(JSONB)
 
 
     contributions = db.relationship(
@@ -96,13 +100,6 @@ class Package(db.Model):
     def language(self):
         return "unknown"
 
-    @property
-    def impact(self):
-        # this needs to change once we get a db col called impact...
-        try:
-            return self.sort_score * 100
-        except TypeError:
-            return 0
 
     def to_dict(self, full=True):
         #return {"hello": "world"}
@@ -125,7 +122,6 @@ class Package(db.Model):
             "num_downloads": self.num_downloads,
             "num_downloads_percentile": self.num_downloads_percentile,
             "num_stars": self.num_stars,
-            "sort_score": self.sort_score,
             "impact": self.impact,
             "rev_deps_tree": self.tree,
 
@@ -153,8 +149,7 @@ class Package(db.Model):
             "name": self.project_name,
             "language": self.language,
 
-            "sort_score": self.sort_score,
-            "impact": self.sort_score * 100,
+            "impact": self.impact,
 
             "pagerank": self.pagerank,
             "pagerank_percentile": self.pagerank_percentile,
@@ -173,22 +168,20 @@ class Package(db.Model):
     def as_snippet_with_people(self):
         ret = self.as_snippet
 
-        # distinct_people = set([c.person.name for c in self.contributions])
-        # ret["people"] = list([name for name in distinct_people if name])
+        ret["contributions"] = defaultdict(list)
+        for c in self.contributions:
+            ret["contributions"][c.role].append(u"{}: {}".format(
+                c.percent, c.person.display_name))
 
-        # ret["contributions"] = defaultdict(list)
-        # for c in self.contributions:
-        #     ret["contributions"][c.role].append(u"{}: {}".format(
-        #         c.percent, c.person.display_name))
+        for role in ret["contributions"]:
+            ret["contributions"][role].sort(reverse=True)
 
-        # for role in ret["contributions"]:
-        #     ret["contributions"][role].sort(reverse=True)
 
-        ret["fair_shares"] = []
-        for p in self.contributors_with_fair_shares():
-            ret["fair_shares"].append(
+        ret["credit"] = []
+        for p in self.contributors_with_credit():
+            ret["credit"].append(
                 u"{share}: {name} ({id})".format(
-                    share = p.fair_share, 
+                    share = p.credit, 
                     name = p.display_name,
                     id = p.id
                 ) 
@@ -224,6 +217,13 @@ class Package(db.Model):
         # got a pypi or cran package...they have diff metadata formats.
         raise NotImplementedError
 
+
+    @property
+    def host_url(self):
+        # this needs to be overridden, because it depends on whether we've
+        # got a pypi or cran package
+        raise NotImplementedError
+
     @property
     def all_people(self):
         people = list(set([c.person for c in self.contributions]))
@@ -239,75 +239,91 @@ class Package(db.Model):
         people = list(set([c.person for c in self.contributions if c.role=="github_owner"]))
         return people
 
+    def set_credit(self):
+        people = self.contributors_with_credit()
+        credit_dict = {}
+        for person in people:
+            credit_dict[int(person.id)] = person.credit
+        self.credit = credit_dict
+
+    def get_credit_for_person(self, person_id):
+        return self.credit[str(person_id)]
+
 
     @property
-    def virtual_author_share(self):
-        author_share = float(1)/len(self.all_authors)
-        return author_share
+    def has_github_commits(self):
+        return self.max_github_commits > 0
 
-    def get_fair_share_for_person(self, person_id):
-        people = self.contributors_with_fair_shares()
-        for person in people:
-            if person.id == person_id:
-                return person.fair_share
-        return None
+    @property
+    def max_github_commits(self):
+        if len(self.contributions) == 0:
+            return 0
 
-    def contributors_with_fair_shares(self):
+        all_commits = [c.quantity for c in self.contributions 
+                            if c.quantity and c.role=="github_contributor"]
+        if not all_commits:
+            return None
+
+        return max(all_commits)
+
+
+    def contributors_with_credit(self):
         people_for_contributions = self.all_people
-        virtual_committers = []
-        real_committers = []
+        author_committers = []
+        non_author_committers = []
 
         # if no github contributors, split cred equally among all authors
-        # if github contributors, give real contributions if they are a contributor
-        # else make them a virtual committer so we can calculate mean contribution for them
+        # if github contributors, give contributions tied with maximum github contribution
+        #  by making them a virtual committer with that many commits
         for person in people_for_contributions:
-            person.fair_share = 0
+            person.credit = 0  # initialize
 
-            if person.has_role_on_project("github_owner", self.id):
-                person.fair_share += 0.01
-
-            if person.has_role_on_project("github_contributor", self.id):
-                # print u"{} is a real committer".format(person.name)
-                real_committers += [person]
-
-            elif person.has_role_on_project("author", self.id):
-                if self.num_commits:
-                    # print u"{} is a virtual committer".format(person.name)
-                    virtual_committers += [person]
+            if person.has_role_on_project("author", self.id):
+                if self.has_github_commits:
+                    # print u"{} is an author committer".format(person.name)
+                    author_committers += [person]
                 else:
                     # print u"{} is an author and there are no committers".format(person.name)
-                    person.fair_share += self.virtual_author_share
+                    equal_author_share = float(1)/len(self.all_authors)                    
+                    person.credit += equal_author_share
 
-        # give all real committers their number of real commits
-        for person in real_committers:
-            person.num_commits = person.num_commits_on_project(self.id)
+            elif person.has_role_on_project("github_contributor", self.id):
+                # print u"{} is a non-author committer".format(person.name)
+                non_author_committers += [person]
 
-        # give all virtual committers the mean number of commits
-        num_real_commits = self.num_commits if self.num_commits else 0
-        num_real_committers = self.num_committers if self.num_committers else 1
-        mean_number_of_commits = float(num_real_commits) / num_real_committers
-        for person in virtual_committers:
-            person.num_commits = mean_number_of_commits
+
+        # give all non-author committers their number of real commits
+        for person in non_author_committers:
+            person.num_counting_commits = person.num_commits_on_project(self.id)
+
+        # give all virtual committers the max number of commits
+        for person in author_committers:
+            person.num_counting_commits = self.max_github_commits
 
         # calc how many commits were handed out, real + virtual
-        total_real_and_virtual_commits = 0
-        real_and_virtual_commmiters = real_committers + virtual_committers
-        for person in real_and_virtual_commmiters:
-            total_real_and_virtual_commits += person.num_commits
+        total_author_and_nonauthor_commits = 0
+        author_and_nonauthor_commmiters = non_author_committers + author_committers
+        for person in author_and_nonauthor_commmiters:
+            total_author_and_nonauthor_commits += person.num_counting_commits
 
-        # assign fair share to be the fraction of commits they have out of total
-        # print "total_real_and_virtual_commits", total_real_and_virtual_commits
-        for person in real_and_virtual_commmiters:
-            person.fair_share = float(person.num_commits) / total_real_and_virtual_commits
-            # print u"{} has with {} commits, {} fair share".format(
-            #     person.name, person.num_commits, person.fair_share)
+        # assign credit to be the fraction of commits they have out of total
+        # print "total_author_and_nonauthor_commits", total_author_and_nonauthor_commits
+        for person in author_and_nonauthor_commmiters:
+            person.credit = float(person.num_counting_commits) / total_author_and_nonauthor_commits
+            # print u"{} has with {} commits, {} credit".format(
+            #     person.name, person.num_commits, person.credit)
 
-        people_for_contributions.sort(key=lambda x: x.fair_share, reverse=True)
+        # finally, handle github owners by giving them a little boost
+        for person in people_for_contributions:
+            if person.has_role_on_project("github_owner", self.id):
+                person.credit += 0.01
+
+        people_for_contributions.sort(key=lambda x: x.credit, reverse=True)
 
         # for person in people_for_contributions:
-        #     print u"{fair_share}: {name} has contribution".format(
+        #     print u"{credit}: {name} has contribution".format(
         #         name = person.name, 
-        #         fair_share = round(person.fair_share, 3)
+        #         credit = round(person.credit, 3)
         #         )
 
         return people_for_contributions
@@ -403,27 +419,45 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
-    def set_sort_score(self):
-        scores = [
-            self.num_downloads_percentile,
-            self.num_citations_percentile,
-            self.pagerank_percentile
-            ]
-        non_null_scores = [s for s in scores if s!=None]
-        self.sort_score = numpy.mean(non_null_scores)
-        print "sort score for {} is {}".format(self.id, self.sort_score)
+
+    def is_rare_package_name(self):
+        nltk.download('words')  # only downloads the first time, so can safely put here
+
+        word_list = words.words()
+        if project_name.lower() in word_list:
+            return False
+        return True
+
 
     def set_pmc_mentions(self):
 
-        # nothing to do here at the moment
-        if not self.github_owner:
-            return None
+        pmids_set = set()
+        queries = []
 
-        # don't start with http:// for now because then can get urls that include www
-        github_url_query = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
-        new_pmids_set = set(get_pmids_from_query(github_url_query))
+        # add the cran or pypi url to start with
+        host_url_query = self.host_url.replace("https://", "").replace("http://", "")
+        queries.append(host_url_query)
 
-        self.pmc_mentions = new_pmids_set
+        # then github url if we know it
+        if self.github_owner:
+            github_url = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
+            queries.append(github_url)
+
+        # also look up its project name if is unique
+        if self.is_rare_package_name:
+            queries.append(self.project_name)
+
+        print "queries", queries
+        for query in queries:
+            new_pmids = get_hits_from_europe_pmc(query)
+            print "{query} got {num} hits".format(
+                query=query, num=len(new_pmids))
+            pmids_set.union(new_pmids)
+
+        self.pmc_mentions = list(pmids_set)
+
+        self.num_citations = len(self.pmc_mentions)
+
         return self.pmc_mentions
 
 
@@ -438,7 +472,6 @@ class Package(db.Model):
             self.pagerank = None
             self.neighborhood_size = None
             self.indegree = None
-        self.set_all_percentiles()
 
 
 
@@ -496,7 +529,71 @@ class Package(db.Model):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
         self.set_pagerank_percentile(refsets_dict["pagerank"])
         self.set_num_citations_percentile(refsets_dict["num_citations"])
-        self.set_sort_score()
+
+
+    @classmethod
+    def shortcut_impact_rank(cls):
+        print "getting the lookup for ranking impact...."
+        q = db.session.query(cls.id)
+        q = q.order_by(cls.impact.desc())  # the important part :)
+        rows = q.all()
+
+        impact_rank_lookup = {}
+        ids_sorted_by_impact = [row[0] for row in rows]
+        for my_id in ids_sorted_by_impact:
+            zero_based_rank = ids_sorted_by_impact.index(my_id)
+            impact_rank_lookup[my_id] = zero_based_rank + 1
+
+        return impact_rank_lookup
+
+
+    def set_impact_rank(self, impact_rank_lookup):
+        self.impact_rank = impact_rank_lookup[self.id]
+        print "self.impact_rank", self.impact_rank
+
+
+    @classmethod
+    def shortcut_impact_maxes(cls):
+        print "getting the maxes for calculating the impact...."
+        q = db.session.query(
+            func.max(cls.num_downloads),
+            func.max(cls.pagerank),
+            func.max(cls.num_citations)
+        )
+        row = q.first()
+
+        maxes_dict = {}
+        maxes_dict["num_downloads"] = row[0]
+        maxes_dict["pagerank"] = row[1]
+        maxes_dict["num_citations"] = row[2]
+
+        print "maxes_dict=", maxes_dict
+
+        return maxes_dict
+
+
+    def set_impact(self, maxes_dict):
+
+        score_components = []
+
+        if self.pagerank:
+            log_pagerank = math.log10(float(self.pagerank)/maxes_dict["pagerank"])
+            if log_pagerank != None:
+                score_components.append(log_pagerank)
+        if self.num_downloads:
+            log_num_downloads = math.log10(float(self.num_downloads)/maxes_dict["num_downloads"])
+            if log_num_downloads != None:
+                score_components.append(log_num_downloads)
+
+        if score_components:
+            offset_to_recenter = 5
+            my_mean = numpy.mean(score_components) + offset_to_recenter
+        else:
+            my_mean = None
+        
+        self.impact = my_mean
+        print u"self.impact for {} is {}".format(self.id, self.impact)
+
 
     @classmethod
     def shortcut_rev_deps_pairs(cls):
@@ -621,74 +718,6 @@ def shortcut_igraph_data_dict():
 
 
 
-
-# for all Packages, not just pypi
-q = db.session.query(Package.id)
-q = q.filter(Package.sort_score == None)
-
-update_registry.register(Update(
-    job=Package.set_sort_score,
-    query=q,
-    queue_id=2
-))
-
-
-
-
-
-# runs on all packages
-q = db.session.query(Package.id)
-q = q.filter(Package.github_owner != None)
-q = q.filter(Package.pmc_mentions == None)
-
-update_registry.register(Update(
-    job=Package.set_pmc_mentions,
-    query=q,
-    queue_id=7
-))
-
-
-
-
-# runs on all packages
-q = db.session.query(Package.id)
-q = q.filter(Package.github_owner != None)
-q = q.filter(Package.github_api_raw == None)
-
-update_registry.register(Update(
-    job=Package.refresh_github_ids,
-    query=q,
-    queue_id=7
-))
-
-
-
-##### get percentiles.  Needs stuff loaded into memory before they run
-
-if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
-    print "loading data from db into memory"
-    ref_lists = Package.get_ref_list()
-    print "done loading data into memory"
-
-
-q = db.session.query(Package.id)
-q = q.filter(Package.pagerank_percentile != None)
-q = q.filter(Package.num_downloads_percentile == None)
-update_registry.register(Update(
-    job=Package.set_num_downloads_percentile,
-    query=q,
-    queue_id=8
-))
-
-
-q = db.session.query(Package.id)
-# q = q.filter(Package.sort_score == None)
-
-update_registry.register(Update(
-    job=Package.set_all_percentiles,
-    query=q,
-    queue_id=8
-))
 
 
 

@@ -114,7 +114,11 @@ def person_endpoint(person_id):
 
     from models.contribution import Contribution
     my_person = Person.query.options(orm.subqueryload_all(
-        Person.contributions, Contribution.package, Package.contributions, Contribution.person, Person.contributions
+            Person.contributions, 
+            Contribution.package, 
+            Package.contributions, 
+            Contribution.person, 
+            Person.contributions
         )).get(int(person_id))
 
     if not my_person:

@@ -684,7 +684,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'package-snippet/package-snippet.tpl.html', 'package-snippet/sort-score-popover.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'package-snippet/impact-popover.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -741,7 +741,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -787,7 +786,7 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "   <span class=\"tag summary\">\n" +
-    "      {{ match.model.sort_score }} packages\n" +
+    "      {{ match.model.impact }} packages\n" +
     "   </span>\n" +
     "</a>\n" +
     "\n" +
@@ -847,61 +846,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "");
 }]);
 
-angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("package-snippet/package-snippet.tpl.html",
-    "<span class=\"package-snippet\"\n" +
-    "     ng-controller=\"packageSnippetCtrl\">\n" +
-    "   <span class=\"left-metrics\"\n" +
-    "         popover-placement=\"top\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
-    "         popover-template=\"'package-snippet/sort-score-popover.tpl.html'\">\n" +
-    "\n" +
-    "      <span class=\"one-metric metric\">\n" +
-    "         {{ round(package.impact, 1) }}<span class=\"percent\">%</span>\n" +
-    "      </span>\n" +
-    "\n" +
-    "\n" +
-    "      <span class=\"vis\">\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
-    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
-    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
-    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
-    "         </span>\n" +
-    "\n" +
-    "      </span>\n" +
-    "\n" +
-    "   </span>\n" +
-    "\n" +
-    "   <span class=\"metadata\">\n" +
-    "      <span class=\"name-container\">\n" +
-    "\n" +
-    "         <span class=\"language-icon r\"\n" +
-    "               ng-if=\"package.language=='r'\"\n" +
-    "              tooltip=\"R package\">\n" +
-    "            R\n" +
-    "         </span>\n" +
-    "         <span class=\"language-icon python\"\n" +
-    "               ng-if=\"package.language=='python'\"\n" +
-    "              tooltip=\"Python package\">\n" +
-    "            py\n" +
-    "         </span>\n" +
-    "\n" +
-    "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
-    "            {{ package.name }}\n" +
-    "         </a>\n" +
-    "      </span>\n" +
-    "      <span class=\"summary\">{{ package.summary }}</span>\n" +
-    "   </span>\n" +
-    "\n" +
-    "</span>\n" +
-    "\n" +
-    "\n" +
-    "");
-}]);
-
-angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("package-snippet/sort-score-popover.tpl.html",
-    "<div id=\"sort-score-popover\">\n" +
+angular.module("package-snippet/impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("package-snippet/impact-popover.tpl.html",
+    "<div id=\"impact-popover\">\n" +
     "   <div class=\"head metric\">\n" +
     "      <span class=\"name\">Impact:</span>\n" +
     "      <span class=\"descr\">\n" +
@@ -909,7 +856,7 @@ angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templat
     "      </span>\n" +
     "   </div>\n" +
     "\n" +
-    "   <div class=\"sort_scores\">\n" +
+    "   <div class=\"impact\">\n" +
     "\n" +
     "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
     "         <span class=\"name\">\n" +
@@ -958,6 +905,58 @@ angular.module("package-snippet/sort-score-popover.tpl.html", []).run(["$templat
     "\n" +
     "   </div>\n" +
     "</div>");
+}]);
+
+angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("package-snippet/package-snippet.tpl.html",
+    "<span class=\"package-snippet\"\n" +
+    "     ng-controller=\"packageSnippetCtrl\">\n" +
+    "   <span class=\"left-metrics\"\n" +
+    "         popover-placement=\"top\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-template=\"'package-snippet/impact-popover.tpl.html'\">\n" +
+    "\n" +
+    "      <span class=\"one-metric metric\">\n" +
+    "         {{ round(package.impact, 1) }}<span class=\"percent\">%</span>\n" +
+    "      </span>\n" +
+    "\n" +
+    "\n" +
+    "      <span class=\"vis\">\n" +
+    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
+    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
+    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
+    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
+    "         </span>\n" +
+    "\n" +
+    "      </span>\n" +
+    "\n" +
+    "   </span>\n" +
+    "\n" +
+    "   <span class=\"metadata\">\n" +
+    "      <span class=\"name-container\">\n" +
+    "\n" +
+    "         <span class=\"language-icon r\"\n" +
+    "               ng-if=\"package.language=='r'\"\n" +
+    "              tooltip=\"R package\">\n" +
+    "            R\n" +
+    "         </span>\n" +
+    "         <span class=\"language-icon python\"\n" +
+    "               ng-if=\"package.language=='python'\"\n" +
+    "              tooltip=\"Python package\">\n" +
+    "            py\n" +
+    "         </span>\n" +
+    "\n" +
+    "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
+    "            {{ package.name }}\n" +
+    "         </a>\n" +
+    "      </span>\n" +
+    "      <span class=\"summary\">{{ package.summary }}</span>\n" +
+    "   </span>\n" +
+    "\n" +
+    "</span>\n" +
+    "\n" +
+    "\n" +
+    "");
 }]);
 
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {

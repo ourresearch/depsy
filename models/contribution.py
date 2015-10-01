@@ -55,7 +55,7 @@ class Contribution(db.Model):
             fraction = 1.0
 
         try:
-            return self.package.sort_score * fraction
+            return self.package.impact * fraction
         except TypeError:  # no sort score for some reason?
             return 0
         except AttributeError:
