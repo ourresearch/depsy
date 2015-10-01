@@ -250,7 +250,6 @@ div.package-page div.ti-page-header h1 span.indegree {
 }
 div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node {
   border: 1px solid #eee;
-  border-top: 10px solid #ddd;
   margin: -1px;
   padding: 0;
   color: #999;
