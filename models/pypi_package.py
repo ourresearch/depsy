@@ -237,7 +237,18 @@ class PypiPackage(Package):
 
 
     def set_is_academic(self):
-        pass
+        self.bucket["is_academic"] = False
+        if "scien" in self._get_intended_audience():
+            self.bucket["is_academic"] = True
+
+        for tag in self.tags:
+            if "scien" in tag:
+                self.bucket["is_academic"] = True
+            if "research" in tag:
+                self.bucket["is_academic"] = True
+
+        return self.bucket["is_academic"]
+
 
 
     def _get_intended_audience(self):
