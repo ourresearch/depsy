@@ -336,6 +336,35 @@ update_registry.register(Update(
 
 
 
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.pmc_mentions == None)
+update_registry.register(Update(
+    job=Package.set_pmc_mentions,
+    query=q,
+    queue_id=7
+))
+
+
+
+q = db.session.query(Package.id)
+q = q.filter(Package.github_owner != None)
+q = q.filter(Package.github_api_raw == None)
+update_registry.register(Update(
+    job=Package.refresh_github_ids,
+    query=q,
+    queue_id=7
+))
+
+
+q = db.session.query(Package.id)
+q = q.filter(Package.credit == None)
+update_registry.register(Update(
+    job=Package.set_credit,
+    query=q,
+    queue_id=7
+))
+
 
 
 

@@ -7,6 +7,8 @@ from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import func
 from sqlalchemy import sql
 import igraph
+import nltk
+from nltk.corpus import words
 import numpy
 
 from app import db
@@ -18,7 +20,6 @@ from jobs import update_registry
 from jobs import Update
 from util import truncate
 from providers.pubmed_api import get_hits_from_europe_pmc
-
 
 
 
@@ -73,6 +74,7 @@ class Package(db.Model):
     inactive = db.Column(db.Text)
 
     rev_deps_tree = db.Column(JSONB)
+    credit = db.Column(JSONB)
 
 
     contributions = db.relationship(
@@ -237,8 +239,18 @@ class Package(db.Model):
         people = list(set([c.person for c in self.contributions if c.role=="github_owner"]))
         return people
 
+    def set_credit(self):
+        people = self.contributors_with_credit()
+        credit_dict = {}
+        for person in people:
+            credit_dict[int(person.id)] = person.credit
+        self.credit = credit_dict
 
     def get_credit_for_person(self, person_id):
+
+        # return 1.0
+
+
         people = self.contributors_with_credit()
         for person in people:
             if person.id == person_id:
@@ -416,9 +428,10 @@ class Package(db.Model):
 
 
     def is_rare_package_name(self):
-        en_US = enchant.Dict("en_US")
-        en_GB = enchant.Dict("en_GB")
-        if (en_US.check(self.project_name) or en_GB.check(self.project_name)):
+        nltk.download('words')  # only downloads the first time, so can safely put here
+
+        word_list = words.words()
+        if project_name.lower() in word_list:
             return False
         return True
 
@@ -429,8 +442,8 @@ class Package(db.Model):
         queries = []
 
         # add the cran or pypi url to start with
-        host_url_query = self.host_url.split(":")[1]
-        queries.append(self.host_url)
+        host_url_query = self.host_url.replace("https://", "").replace("http://", "")
+        queries.append(host_url_query)
 
         # then github url if we know it
         if self.github_owner:
@@ -444,7 +457,9 @@ class Package(db.Model):
         print "queries", queries
         for query in queries:
             new_pmids = get_hits_from_europe_pmc(query)
-            pmids_set.add(new_pmids)
+            print "{query} got {num} hits".format(
+                query=query, num=len(new_pmids))
+            pmids_set.union(new_pmids)
 
         self.pmc_mentions = list(pmids_set)
 
@@ -707,34 +722,6 @@ def shortcut_igraph_data_dict():
 
 
 
-
-
-
-
-# runs on all packages
-q = db.session.query(Package.id)
-q = q.filter(Package.github_owner != None)
-q = q.filter(Package.pmc_mentions == None)
-
-update_registry.register(Update(
-    job=Package.set_pmc_mentions,
-    query=q,
-    queue_id=7
-))
-
-
-
-
-# runs on all packages
-q = db.session.query(Package.id)
-q = q.filter(Package.github_owner != None)
-q = q.filter(Package.github_api_raw == None)
-
-update_registry.register(Update(
-    job=Package.refresh_github_ids,
-    query=q,
-    queue_id=7
-))
 
 
 
