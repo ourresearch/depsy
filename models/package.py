@@ -40,6 +40,7 @@ class Package(db.Model):
     all_r_reverse_deps = db.deferred(db.Column(JSONB))       
     tags = db.deferred(db.Column(JSONB))
     proxy_papers = db.deferred(db.Column(db.Text))
+    is_academic = db.Column(db.Boolean)
 
     num_citations_by_source = db.Column(JSONB)
     is_distinctive_name = db.Column(db.Boolean)
@@ -103,7 +104,6 @@ class Package(db.Model):
 
 
     def to_dict(self, full=True):
-        #return {"hello": "world"}
         ret = {
             "name": self.project_name,
             "as_snippet": self.as_snippet,

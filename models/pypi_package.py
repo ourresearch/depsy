@@ -227,10 +227,80 @@ class PypiPackage(Package):
 
     def set_tags(self):
         self.tags = []
+        self.tags += self._get_tags_from_classifiers()
+        self.tags += self._get_tags_from_keywords()
+        self.tags = list(set(self.tags))  # dedup
+        return self.tags
+
+    def set_intended_audience(self):
+        self.bucket["intended_audience"] = self._get_intended_audience()
+
+
+    def set_is_academic(self):
+        self.is_academic = False
+        if self._get_intended_audience() == "Science/Research":
+            self.is_academic = True
+
+        for tag in self.tags:
+            if "scien" in tag.lower():
+                self.is_academic = True
+            if "research" in tag.lower():
+                self.is_academic = True
+
+        return self.is_academic
+
+
+
+    def _get_intended_audience(self):
+        try:
+            pypi_classifiers = self.api_raw["info"]["classifiers"]
+        except KeyError:
+            return None
+
+        for classifier in pypi_classifiers:
+            if classifier.startswith("Intended Audience"):
+                return classifier.split(" :: ")[1]
+
+
+
+    def _get_tags_from_keywords(self):
+        try:
+            pypi_keywords_str = self.api_raw["info"]["keywords"]
+        except KeyError:
+            pypi_keywords_str = None
+
+        if pypi_keywords_str is None:
+            return []
+
+        if "," in pypi_keywords_str:
+            # try splitting on commas *first*
+            keywords = pypi_keywords_str.split(",")
+        elif " " in pypi_keywords_str:
+            # split on spaces, not as good, but that's what we've got
+            keywords = pypi_keywords_str.split(" ")
+        else:
+            # the whole string is just one keyword
+            keywords = [pypi_keywords_str]
+
+        # remove whitespace and empty strings
+        ret = [x.strip().lower() for x in keywords if len(x)]
+
+        # dedup
+        ret = list(set(ret))
+
+        return ret
+
+
+
+    def _get_tags_from_classifiers(self):
+        self.tags = []
         tags_to_reject = [
             "Python Modules",
             "Libraries",
-            "Software Development"
+            "Software Development",
+            "Dynamic Content",
+            "Internet",
+            "WWW/HTTP"
         ]
         try:
             pypi_classifiers = self.api_raw["info"]["classifiers"]
@@ -240,17 +310,20 @@ class PypiPackage(Package):
 
         working_tag_list = []
         for classifier in pypi_classifiers:
-            if not classifier.startswith("Topic"):
-                continue
+            if classifier.startswith("Topic"):
+                # the first level of the classifier str is useless, discard
+                my_tags = classifier.split(" :: ")[1:]
+                working_tag_list += my_tags
 
-            # the first 'tag' is useless
-            my_tags = classifier.split(" :: ")[1:]
-            working_tag_list += my_tags
+            if classifier.startswith("Framework"):
+                working_tag_list.append(classifier.split(" :: ")[1])
 
         unique_tags = list(set(working_tag_list))
+
+        # reject blacklisted tags and lowercase
         for tag in unique_tags:
             if len(tag) > 1 and tag not in tags_to_reject:
-                self.tags.append(tag)
+                self.tags.append(tag.lower())
 
         if len(self.tags):
             print "set tags for {}: {}".format(self, ",".join(self.tags))

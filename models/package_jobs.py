@@ -163,6 +163,13 @@ update_registry.register(Update(
     queue_id=2
 ))
 
+q = db.session.query(PypiPackage.id)  # no run marker
+update_registry.register(Update(
+    job=PypiPackage.set_intended_audience,
+    query=q,
+    queue_id=2
+))
+
 
 
 q = db.session.query(CranPackage.id)

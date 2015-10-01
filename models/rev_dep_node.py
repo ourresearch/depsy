@@ -66,9 +66,9 @@ class RevDepNode():
         score = self.display_pagerank
         if self.stars is not None:
             if self.is_package:
-                score += math.log10(self.stars + 1) / 5
+                score += math.log10(self.stars + 1) / 100
             else:  # github repo
-                score += math.log10(self.stars + 1) / 2
+                score += math.log10(self.stars + 1) / 10
 
         return score
 
@@ -93,7 +93,7 @@ class RevDepNode():
                 stars=child[2],
                 root_pagerank=self.root_pagerank
             )
-            if new_child_node.sort_score > min_score > 0:
+            if new_child_node.sort_score > min_score > .5:
                 self.children.append(new_child_node)
 
         for child in self.children:
@@ -103,7 +103,7 @@ class RevDepNode():
         if self.is_root:
             print "root found {} descendents".format(num_descendents)
 
-        if num_descendents < 10 and self.is_root and min_score > 0:
+        if num_descendents < 15 and self.is_root and min_score > 0:
             score_adj += 0.1
             print "didn't get enough descendents ({})...raising adj score to {}".format(
                 num_descendents,
