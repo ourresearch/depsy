@@ -17,9 +17,9 @@ def person_load_options():
     my_options = orm.subqueryload_all(
             Person.contributions, 
             Contribution.package, 
-            Package.contributions, 
-            Contribution.person, 
-            Person.contributions
+            Package.contributions 
+            # Contribution.person,
+            # Person.contributions
         )
     return my_options
 

@@ -247,15 +247,8 @@ class Package(db.Model):
         self.credit = credit_dict
 
     def get_credit_for_person(self, person_id):
+        return self.credit[str(person_id)]
 
-        # return 1.0
-
-
-        people = self.contributors_with_credit()
-        for person in people:
-            if person.id == person_id:
-                return person.credit
-        return None
 
     @property
     def has_github_commits(self):
