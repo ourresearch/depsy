@@ -1,4 +1,5 @@
 import os
+import math
 from collections import defaultdict
 
 from sqlalchemy.dialects.postgresql import JSONB
@@ -421,16 +422,6 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
-    def set_sort_score(self):
-        scores = [
-            self.num_downloads_percentile,
-            self.num_citations_percentile,
-            self.pagerank_percentile
-            ]
-        non_null_scores = [s for s in scores if s!=None]
-        self.sort_score = numpy.mean(non_null_scores)
-        print "sort score for {} is {}".format(self.id, self.sort_score)
-
 
     def is_rare_package_name(self):
         en_US = enchant.Dict("en_US")
@@ -481,7 +472,6 @@ class Package(db.Model):
             self.pagerank = None
             self.neighborhood_size = None
             self.indegree = None
-        self.set_all_percentiles()
 
 
 
@@ -539,7 +529,52 @@ class Package(db.Model):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
         self.set_pagerank_percentile(refsets_dict["pagerank"])
         self.set_num_citations_percentile(refsets_dict["num_citations"])
-        self.set_sort_score()
+        # self.set_sort_score()
+
+
+    @classmethod
+    def shortcut_sort_score_maxes(cls):
+        print "getting the maxes for calculating the sort score...."
+        q = db.session.query(
+            func.max(cls.num_downloads),
+            func.max(cls.pagerank),
+            func.max(cls.num_citations)
+        )
+        row = q.first()
+
+        maxes_dict = {}
+        maxes_dict["num_downloads"] = row[0]
+        maxes_dict["pagerank"] = row[1]
+        maxes_dict["num_citations"] = row[2]
+
+        print "maxes_dict=", maxes_dict
+
+        return maxes_dict
+
+
+    def set_sort_score(self, maxes_dict):
+
+        score_components = []
+
+        if self.pagerank:
+            log_pagerank = math.log10(float(self.pagerank)/maxes_dict["pagerank"])
+            if log_pagerank:
+                score_components.append(log_pagerank)
+        if self.num_downloads:
+            log_num_downloads = math.log10(float(self.num_downloads)/maxes_dict["num_downloads"])
+            if log_num_downloads:
+                score_components.append(log_num_downloads)
+
+        if score_components:
+            print "score_components=", score_components
+            offset_to_recenter = 5
+            my_mean = numpy.mean(score_components) + offset_to_recenter
+        else:
+            my_mean = None
+        
+        self.sort_score = my_mean
+        print u"self.sort_score for {} is {}".format(self.id, self.sort_score)
+
 
     @classmethod
     def shortcut_rev_deps_pairs(cls):
@@ -664,20 +699,6 @@ def shortcut_igraph_data_dict():
 
 
 
-# for all Packages, not just pypi
-q = db.session.query(Package.id)
-q = q.filter(Package.sort_score == None)
-
-update_registry.register(Update(
-    job=Package.set_sort_score,
-    query=q,
-    queue_id=2
-))
-
-
-
-
-
 # runs on all packages
 q = db.session.query(Package.id)
 q = q.filter(Package.github_owner != None)
@@ -705,32 +726,6 @@ update_registry.register(Update(
 
 
 
-##### get percentiles.  Needs stuff loaded into memory before they run
-
-if os.getenv("LOAD_FROM_DB_BEFORE_JOBS", "False") == "True":
-    print "loading data from db into memory"
-    ref_lists = Package.get_ref_list()
-    print "done loading data into memory"
-
-
-q = db.session.query(Package.id)
-q = q.filter(Package.pagerank_percentile != None)
-q = q.filter(Package.num_downloads_percentile == None)
-update_registry.register(Update(
-    job=Package.set_num_downloads_percentile,
-    query=q,
-    queue_id=8
-))
-
-
-q = db.session.query(Package.id)
-# q = q.filter(Package.sort_score == None)
-
-update_registry.register(Update(
-    job=Package.set_all_percentiles,
-    query=q,
-    queue_id=8
-))
 
 
 
