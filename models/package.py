@@ -19,8 +19,7 @@ from models.rev_dep_node import RevDepNode
 from jobs import update_registry
 from jobs import Update
 from util import truncate
-from providers.pubmed_api import get_hits_from_europe_pmc
-
+from providers import full_text_source
 
 
 class Package(db.Model):
@@ -44,6 +43,7 @@ class Package(db.Model):
     is_academic = db.Column(db.Boolean)
 
     num_citations_by_source = db.Column(JSONB)
+    is_distinctive_name = db.Column(db.Boolean)
 
     host_reverse_deps = db.deferred(db.Column(JSONB))
 
@@ -125,7 +125,7 @@ class Package(db.Model):
             "num_stars": self.num_stars,
             "impact": self.impact,
             "rev_deps_tree": self.tree,
-            "num_citations_by_source": self.set_num_citations_by_source,
+            "citations": self.citations_dict,
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
@@ -421,50 +421,70 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
-
-    def is_rare_package_name(self):
+    def set_is_distinctive_name(self):
         nltk.download('words')  # only downloads the first time, so can safely put here
 
         word_list = words.words()
-        if project_name.lower() in word_list:
+        if self.project_name.lower() in word_list:
             return False
         return True
 
+    @property
+    def citations_dict(self):
+        citations_dict = self.set_num_citations_by_source()
+        response_dict = defaultdict(dict)
+        sources = [
+            full_text_source.Pmc,
+            full_text_source.Arxiv,
+            full_text_source.Citeseer,
+        ]
+        for source_class in sources:
+            source = source_class()
+            response_dict[source.name] = {
+                "count": citations_dict[source.name], 
+                "url": source.query_url(self.full_text_query)
+                }
+        return response_dict
 
     @property
-    def set_num_citations_by_source(self):
-
-        pmids_set = set()
+    def full_text_query(self):
         queries = []
 
         # add the cran or pypi url to start with
         host_url = self.host_url.replace("https://", "").replace("http://", "")
-        queries.append("{}".format(host_url))
+        queries.append('"{}"'.format(host_url))
 
         # then github url if we know it
         if self.github_owner:
-            github_url = "github.com/{}/{}".format(self.github_owner, self.github_repo_name)
+            github_url = '"github.com/{}/{}"'.format(self.github_owner, self.github_repo_name)
             queries.append(github_url)
 
         # also look up its project name if is unique
-        if self.is_rare_package_name:
-            queries.append("{}".format(self.project_name))
+        if self.is_distinctive_name:
+            queries.append('"{}"'.format(self.project_name))
+        else:
+            print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
 
         query = " OR ".join(queries)
         print "query", query
+        return query
 
-        # for method in [
-        #     get_hits_from_europe_pmc,
-        #     get_hits_from_arxiv
-        # ]:
-
-        num_hits = get_hits_from_europe_pmc(query)
-        print "{query} got {num} hits".format(
-            query=query, num=num_hits)
-
+    def set_num_citations_by_source(self):
         if not self.num_citations_by_source:
             self.num_citations_by_source = {}
-        self.num_citations_by_source["pmc"] = num_hits
+
+        sources = [
+            full_text_source.Pmc,
+            full_text_source.Arxiv,
+            full_text_source.Citeseer,
+        ]
+
+        self.num_citations = 0
+        for source_class in sources:
+            source = source_class()
+            num_found = source.run_query(self.full_text_query)
+            self.num_citations_by_source[source.name] = num_found
+            self.num_citations += num_found
 
         return self.num_citations_by_source
 
