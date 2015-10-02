@@ -717,6 +717,18 @@ def make_id(namespace, name):
         raise ValueError("Invalid namespace for package id")
 
 
+def make_host_name(host_or_language):
+    if host_or_language=="python":
+        return "pypi"
+    elif host_or_language=="r":
+        return "cran"
+    elif host_or_language in ["cran", "pypi"]:
+        return host_or_language
+    else:
+        raise ValueError("You're not passing in a valid host or language name.")
+
+
+
 
 
 

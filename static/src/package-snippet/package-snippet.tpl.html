@@ -6,16 +6,18 @@
          popover-template="'package-snippet/impact-popover.tpl.html'">
 
       <span class="one-metric metric">
-         {{ round(package.impact, 1) }}<span class="percent">%</span>
+         {{ round(package.impact, 1) }}
       </span>
 
 
       <span class="vis">
+         <!--
          <span class="vis-bar" style="width: {{ package.impact }}%;">
             <span ng-repeat="subScoreRatio in subScoreRatios"
                   class="subscore subscore-{{ subScoreRatio.name }}"
                   style="width: {{ subScoreRatio.val * 100 }}%;"></span>
          </span>
+         -->
 
       </span>
 
