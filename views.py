@@ -14,6 +14,8 @@ from flask import request
 from flask import abort
 from flask import jsonify
 from flask import render_template
+from flask import redirect
+from flask import url_for
 
 from time import time
 
@@ -177,8 +179,24 @@ def packages_endpoint():
     ret.headers["x-elapsed"] = elapsed_time
     return ret
 
+@app.route('/api/people')
+def people_endpoint():
+    pass
 
+@app.route('/tags')
+def tags_endpoint():
+    pass
 
+@app.route('/api/leaders/<leader_type>')
+def leaders(leader_type):
+    if leader_type == "packages":
+        return redirect(url_for('packages_endpoint'))
+    elif leader_type == "people":
+        return redirect(url_for('people_endpoint'))
+    elif leader_type == "tags":
+        return redirect(url_for('tags_endpoint'))
+    else:
+        abort_json(404, "We don't have those kind of leaders.")
 
 
 @app.route("/api/search/<search_str>")
