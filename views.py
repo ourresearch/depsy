@@ -179,6 +179,8 @@ def packages_endpoint():
 
 
 
+
+
 @app.route("/api/search/<search_str>")
 def search(search_str):
     ret = autocomplete(search_str)
