@@ -425,10 +425,12 @@ class Package(db.Model):
         nltk.download('words')  # only downloads the first time, so can safely put here
 
         word_list = words.words()
-        if self.project_name.lower() in word_list:
+        # if english word or short (could be gene name)
+        if (self.project_name.lower() in word_list) or (len(program_name) < 5):
             self.is_distinctive_name = False
         else:
             self.is_distinctive_name = True
+        return self.is_distinctive_name
 
     @property
     def citations_dict(self):
@@ -461,6 +463,9 @@ class Package(db.Model):
             queries.append(github_url)
 
         # also look up its project name if is unique
+        # this line here now because haven't run them all previously
+        self.set_is_distinctive_name()
+
         if self.is_distinctive_name:
             queries.append('"{}"'.format(self.project_name))
         else:
