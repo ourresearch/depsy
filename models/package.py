@@ -129,6 +129,7 @@ class Package(db.Model):
             "num_citations_score": 0, #tbd
             "rev_deps_tree": self.tree,
             "citations": self.citations_dict,
+            "is_academic": self.is_academic,
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
@@ -155,15 +156,13 @@ class Package(db.Model):
             "impact": self.impact,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
+            "num_citations_score": self.num_downloads_score,
 
             "pagerank": self.pagerank,
-            "pagerank_percentile": self.pagerank_percentile,
-
             "num_downloads": self.num_downloads,
-            "num_downloads_percentile": self.num_downloads_percentile,
-
             "num_citations": self.num_citations,
-            "num_citations_percentile": self.num_citations_percentile,
+
+            "is_academic": self.is_academic,
 
             "summary": prep_summary(self.summary),
             "tags": self.tags

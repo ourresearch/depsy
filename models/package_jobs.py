@@ -52,8 +52,7 @@ def get_packages(filters=None, page_size=25):
     q = Package.query.options(
         orm.subqueryload_all(
             Package.contributions, 
-            Contribution.person, 
-            Person.contributions
+            Contribution.person 
         )
     )
     for (filter_attribute, filter_value) in filters:
