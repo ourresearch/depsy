@@ -170,6 +170,14 @@ update_registry.register(Update(
     queue_id=2
 ))
 
+q = db.session.query(PypiPackage.id)  # no run marker
+q = q.filter(PypiPackage.is_academic == None)
+update_registry.register(Update(
+    job=PypiPackage.set_is_academic,
+    query=q,
+    queue_id=2
+))
+
 
 
 q = db.session.query(CranPackage.id)
