@@ -437,9 +437,10 @@ class Package(db.Model):
         citations_dict = self.set_num_citations_by_source()
         response_dict = defaultdict(dict)
         sources = [
-            full_text_source.Pmc,
-            full_text_source.Arxiv,
-            full_text_source.Citeseer,
+            full_text_source.Pmc
+            # ,
+            # full_text_source.Arxiv,
+            # full_text_source.Citeseer
         ]
         for source_class in sources:
             source = source_class()
