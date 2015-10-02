@@ -30,6 +30,14 @@ class PypiPackage(Package):
             name=self.id)
 
     @property
+    def maxes_dict(self):
+        maxes_dict = {
+            "pagerank": 0.0262218729908892147,
+            "num_downloads": 14940006
+        }
+        return maxes_dict
+
+    @property
     def language(self):
         return "python"
 

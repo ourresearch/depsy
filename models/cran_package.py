@@ -37,6 +37,14 @@ class CranPackage(Package):
     def host_url(self):
         return "https://cran.r-project.org/web/packages/{}".format(self.project_name)
 
+    @property
+    def maxes_dict(self):
+        maxes_dict = {
+            "pagerank": 0.0601950151409884823,
+            "num_downloads": 161454
+        }        
+        return maxes_dict
+
     def save_host_contributors(self):
         raw_byline_string = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]

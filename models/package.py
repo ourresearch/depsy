@@ -124,6 +124,8 @@ class Package(db.Model):
             "num_downloads_percentile": self.num_downloads_percentile,
             "num_stars": self.num_stars,
             "impact": self.impact,
+            "pagerank_score": self.pagerank_score,
+            "num_downloads_score": self.num_downloads_score,
             "rev_deps_tree": self.tree,
             "citations": self.citations_dict,
 
@@ -152,6 +154,8 @@ class Package(db.Model):
             "language": self.language,
 
             "impact": self.impact,
+            "pagerank_score": self.pagerank_score,
+            "num_downloads_score": self.num_downloads_score,
 
             "pagerank": self.pagerank,
             "pagerank_percentile": self.pagerank_percentile,
@@ -605,26 +609,45 @@ class Package(db.Model):
         return maxes_dict
 
 
-    def set_impact(self, maxes_dict):
+    @property
+    def offset_to_recenter_scores(self):
+        return 5  # brings lowest up to about 0
 
+    @property
+    def score_multiplier(self):
+        return 200  # makes it out of 1000
+
+
+    @property
+    def pagerank_score(self):
+        raw = math.log10(float(self.pagerank)/self.maxes_dict["pagerank"])
+        return (raw + self.offset_to_recenter_scores) * self.score_multiplier
+
+    @property
+    def num_downloads_score(self):
+        raw = math.log10(float(self.num_downloads)/self.maxes_dict["num_downloads"])
+        return (raw + self.offset_to_recenter_scores) * self.score_multiplier
+
+
+    def set_impact(self, maxes_dict=None):
         score_components = []
 
         if self.pagerank:
-            log_pagerank = math.log10(float(self.pagerank)/maxes_dict["pagerank"])
+            log_pagerank = self.pagerank_score
             if log_pagerank != None:
                 score_components.append(log_pagerank)
         if self.num_downloads:
-            log_num_downloads = math.log10(float(self.num_downloads)/maxes_dict["num_downloads"])
+            log_num_downloads = self.num_downloads_score
             if log_num_downloads != None:
                 score_components.append(log_num_downloads)
 
         if score_components:
-            offset_to_recenter = 5
-            my_mean = numpy.mean(score_components) + offset_to_recenter
+            my_mean = numpy.mean(score_components) + self.offset_to_recenter_scores
         else:
             my_mean = None
         
-        self.impact = my_mean
+        self.impact = my_mean * self.score_multiplier
+
         print u"self.impact for {} is {}".format(self.id, self.impact)
 
 
