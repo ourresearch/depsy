@@ -505,6 +505,24 @@ class Package(db.Model):
         return self.num_citations_by_source
 
 
+    def set_distinctiveness(self):
+        for source_class in self.get_sources_to_query():
+            source = source_class()
+
+            num_hits_raw = source.run_query(self.project_name)
+            self.bucket["num_hits_raw"] = num_hits_raw
+
+            num_hits_with_language = source.run_query(self.distinctiveness_query)
+            self.bucket["num_hits_with_language"] = num_hits_with_language
+            
+            if num_hits_raw:
+                self.bucket["distinctiveness_ratio"] = float(num_hits_with_language)/num_hits_raw
+            else:
+                self.bucket["distinctiveness_ratio"] = None
+                self.bucket["no_pmc_hits"] = True
+            print "distinctiveness_ratio for {} is {}".format(
+                self.project_name, self.bucket["distinctiveness_ratio"])
+
     def set_igraph_data(self, our_igraph_data):
         try:
             self.pagerank = our_igraph_data[self.project_name]["pagerank"]

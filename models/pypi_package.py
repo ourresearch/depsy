@@ -415,6 +415,9 @@ class PypiPackage(Package):
         return self.setup_py_import_name
 
 
+    @property
+    def distinctiveness_query(self):
+        return "{} AND python".format(self.project_name)
 
 
 

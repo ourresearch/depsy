@@ -414,4 +414,11 @@ update_registry.register(Update(
 ))
 
 
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.set_distinctiveness,
+    query=q,
+    queue_id=7
+))
+
 
