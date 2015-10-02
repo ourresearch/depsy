@@ -917,16 +917,18 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "         popover-template=\"'package-snippet/impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <span class=\"one-metric metric\">\n" +
-    "         {{ round(package.impact, 1) }}<span class=\"percent\">%</span>\n" +
+    "         {{ round(package.impact, 1) }}\n" +
     "      </span>\n" +
     "\n" +
     "\n" +
     "      <span class=\"vis\">\n" +
+    "         <!--\n" +
     "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
     "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
     "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
     "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
     "         </span>\n" +
+    "         -->\n" +
     "\n" +
     "      </span>\n" +
     "\n" +

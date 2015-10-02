@@ -4,6 +4,7 @@ from sqlalchemy import orm
 from app import db
 from models.package import Package
 from models.package import shortcut_igraph_data_dict
+from models.package import make_host_name
 from models.pypi_package import PypiPackage
 from models.pypi_package import shortcut_get_pypi_package_names
 from models.cran_package import CranPackage
@@ -59,10 +60,7 @@ def get_packages(filters=None, page_size=25):
 
         if filter_attribute=="language":
             filter_attribute = "host"
-            if filter_value=="python":
-                filter_value = "pypi"
-            elif filter_value=="r":
-                filter_value = "cran"
+            filter_value = make_host_name(filter_value)
 
         if filter_attribute == "tags":
             q = q.filter(Package.tags.has_key(filter_value))        
