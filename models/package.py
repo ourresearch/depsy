@@ -155,6 +155,7 @@ class Package(db.Model):
             "is_academic": self.is_academic,
 
             "impact": self.impact,
+            "impact_rank": self.impact_rank,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
             "num_citations_score": self.num_downloads_score,
