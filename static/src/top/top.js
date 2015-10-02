@@ -10,12 +10,11 @@ angular.module('top', [
       controller: 'TopController',
       resolve: {
         leaders: function($http, $route, Leaders){
-          console.log("getting rankees")
+          console.log("getting leaders")
           return Leaders.get(
             {
               type: $route.current.params.type,
-              filters: null,
-              sort: null
+              filters: null
             },
             function(resp){
               console.log("got a resp from leaders call", resp.list)
