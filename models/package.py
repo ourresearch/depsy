@@ -517,15 +517,20 @@ class Package(db.Model):
             num_hits_with_language = source.run_query(self.distinctiveness_query)
             self.bucket["num_hits_with_language"] = num_hits_with_language
 
+            num_hits_without_language = num_hits_raw - num_hits_with_language
             self.bucket["num_hits_without_language"] = num_hits_raw - num_hits_without_language
             
+            # clean up old junk
+            if "distinctiveness_ratio" in self.bucket:
+                del self.bucket["distinctiveness_ratio"]
+
             if num_hits_with_language:
-                self.bucket["distinctiveness_ratio"] = float(num_hits_without_language)/num_hits_with_language
+                self.bucket["hits_ratio_without_over_with"] = float(num_hits_without_language)/num_hits_with_language
             else:
-                self.bucket["distinctiveness_ratio"] = None
+                self.bucket["hits_ratio_without_over_with"] = None
                 self.bucket["no_pmc_hits"] = True
-            print "distinctiveness_ratio for {} is {}".format(
-                self.project_name, self.bucket["distinctiveness_ratio"])
+            print "hits_ratio_without_over_with for {} is {}".format(
+                self.project_name, self.bucket["hits_ratio_without_over_with"])
 
     def set_igraph_data(self, our_igraph_data):
         try:
