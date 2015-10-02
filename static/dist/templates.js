@@ -406,12 +406,13 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
     "         <h3>and only</h3>\n" +
+    "         <pre>{{ filters.d.is_academic }}</pre>\n" +
     "         <ul>\n" +
-    "            <li class=\"filter-option\" ng-click=\"filters.set('is_academic', 'true')\">\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.is_academic === 'true'\">\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
     "                  <i class=\"fa fa-check-square-o\"></i>\n" +
     "               </span>\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.is_academic !== 'true'\">\n" +
+    "               <span class=\"status\" ng-if=\"!filters.d.only_academic\">\n" +
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +

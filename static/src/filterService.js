@@ -3,14 +3,14 @@ angular.module("filterService", [])
 .factory("FilterService", function($location){
 
     var filters = {
-      is_academic: true,
+      only_academic: "true",
       language: "python",
       tag: null,
       type: "pacakges"
     }
 
     var setFromUrl = function(){
-      filters.is_academic = $location.search().is_academic
+      filters.only_academic = $location.search().only_academic
       filters.tag = $location.search().tag
       filters.language = $location.search().language
       filters.type = $location.search().type
@@ -27,6 +27,16 @@ angular.module("filterService", [])
       filters[k] = v
       $location.search(k, v)
     }
+    var toggle = function(k){
+      // for booleans
+      if (filters[k]) {
+        filters[k] = null
+      }
+      else {
+        filters[k] = "true"  // must be string or won't show up in url
+      }
+      $location.search(k, filters[k])
+    }
 
     var unset = function(k){
       filters[k] = null
@@ -36,6 +46,7 @@ angular.module("filterService", [])
   return {
     d: filters,
     set: set,
+    toggle: toggle,
     unset: unset,
     setFromUrl: setFromUrl
   }

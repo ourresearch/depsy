@@ -244,14 +244,14 @@ angular.module("filterService", [])
 .factory("FilterService", function($location){
 
     var filters = {
-      is_academic: true,
+      only_academic: "true",
       language: "python",
       tag: null,
       type: "pacakges"
     }
 
     var setFromUrl = function(){
-      filters.is_academic = $location.search().is_academic
+      filters.only_academic = $location.search().only_academic
       filters.tag = $location.search().tag
       filters.language = $location.search().language
       filters.type = $location.search().type
@@ -268,6 +268,16 @@ angular.module("filterService", [])
       filters[k] = v
       $location.search(k, v)
     }
+    var toggle = function(k){
+      // for booleans
+      if (filters[k]) {
+        filters[k] = null
+      }
+      else {
+        filters[k] = "true"  // must be string or won't show up in url
+      }
+      $location.search(k, filters[k])
+    }
 
     var unset = function(k){
       filters[k] = null
@@ -277,6 +287,7 @@ angular.module("filterService", [])
   return {
     d: filters,
     set: set,
+    toggle: toggle,
     unset: unset,
     setFromUrl: setFromUrl
   }
@@ -1142,12 +1153,13 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
     "         <h3>and only</h3>\n" +
+    "         <pre>{{ filters.d.is_academic }}</pre>\n" +
     "         <ul>\n" +
-    "            <li class=\"filter-option\" ng-click=\"filters.set('is_academic', 'true')\">\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.is_academic === 'true'\">\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
     "                  <i class=\"fa fa-check-square-o\"></i>\n" +
     "               </span>\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.is_academic !== 'true'\">\n" +
+    "               <span class=\"status\" ng-if=\"!filters.d.only_academic\">\n" +
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
