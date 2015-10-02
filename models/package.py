@@ -152,6 +152,7 @@ class Package(db.Model):
             "_host_url": self.host_url,
             "name": self.project_name,
             "language": self.language,
+            "is_academic": self.is_academic,
 
             "impact": self.impact,
             "pagerank_score": self.pagerank_score,

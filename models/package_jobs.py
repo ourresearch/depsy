@@ -4,7 +4,6 @@ from sqlalchemy import orm
 from app import db
 from models.package import Package
 from models.package import shortcut_igraph_data_dict
-from models.package import make_host_name
 from models.pypi_package import PypiPackage
 from models.pypi_package import shortcut_get_pypi_package_names
 from models.cran_package import CranPackage
@@ -18,7 +17,6 @@ from jobs import Update
 
 
 def get_people(filters=None, page_size=25):
-
     q = Person.query.options(
         orm.subqueryload_all(
             Person.contributions, 
@@ -26,14 +24,6 @@ def get_people(filters=None, page_size=25):
         )
     )
     for (filter_attribute, filter_value) in filters:
-
-        if filter_attribute=="language":
-            filter_attribute = "host"
-            if filter_value=="python":
-                filter_value = "pypi"
-            elif filter_value=="r":
-                filter_value = "cran"
-
         if filter_attribute == "tags":
             q = q.filter(Package.tags.has_key(filter_value))        
         else:
@@ -58,12 +48,13 @@ def get_packages(filters=None, page_size=25):
     )
     for (filter_attribute, filter_value) in filters:
 
-        if filter_attribute=="language":
-            filter_attribute = "host"
-            filter_value = make_host_name(filter_value)
+
+        # conditions the filter values
+
+
 
         if filter_attribute == "tags":
-            q = q.filter(Package.tags.has_key(filter_value))        
+            q = q.filter(Package.tags.has_key(filter_value))
         else:
             attr = getattr(Package, filter_attribute)
             q = q.filter(attr==filter_value)        

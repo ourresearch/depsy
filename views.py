@@ -8,6 +8,8 @@ from models.package import Package
 from models.package_jobs import get_packages
 from dummy_data import get_dummy_data
 from sqlalchemy import orm
+from models.package import make_host_name
+from util import str_to_bool
 
 from flask import make_response
 from flask import request
@@ -154,7 +156,7 @@ def package_endpoint(host_or_language, project_name):
 @app.route("/api/packages.json")
 def packages_endpoint():
     filter_strings = request.args.get("filters", "").split(",")
-    filters = [s.split(":") for s in filter_strings if s]
+    filters = [parse_filter_str(s) for s in filter_strings if s]
     page_size = request.args.get("page_size", "25")
 
     start = time()
@@ -198,8 +200,16 @@ def search(search_str):
     return jsonify({"list": ret, "count": len(ret)})
 
 
+def parse_filter_str(filter_str):
+    k, v = filter_str.split(":")
+    if k=="language":
+        k = "host"
+        v = make_host_name(v)
 
+    elif k == "is_academic":
+        v = str_to_bool(v)
 
+    return k, v
 
 
 
