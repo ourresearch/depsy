@@ -6,7 +6,8 @@
 
 
 
-@linkColor: #00aeef;
+@mainColor: #00aeef;
+@secondaryColor: red;
 @sidebar-width: 300px;
 
 @citationsColor: #984ea3;
@@ -25,16 +26,16 @@ body {
       margin: 0 auto;
    }
    a {
-      color: orangered;
+      color: @secondaryColor;
       &:hover{
-         color: orangered;
+         color: @secondaryColor;
       }
 
    }
 }
 
 body.coming-soon {
-   background: @linkColor;
+   background: @mainColor;
    text-align: center;
    padding-top: 180px;
    font-family: lato, helvetica, arial, sans-serif;
@@ -575,8 +576,8 @@ ul {
     margin: 0;
     padding: 0;
     z-index: 99998;
-    background-color: orangered !important;
-    color: orangered !important;
+    background-color: red !important;
+    color: red !important;
     box-shadow: 0 0 10px 0; /* Inherits the font color */
     height: 2px;
     opacity: 0;

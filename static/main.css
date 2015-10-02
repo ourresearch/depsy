@@ -13,10 +13,10 @@ body .wrapper {
   margin: 0 auto;
 }
 body a {
-  color: orangered;
+  color: #ff0000;
 }
 body a:hover {
-  color: orangered;
+  color: #ff0000;
 }
 body.coming-soon {
   background: #00aeef;
@@ -484,8 +484,8 @@ ul {
   margin: 0;
   padding: 0;
   z-index: 99998;
-  background-color: orangered !important;
-  color: orangered !important;
+  background-color: red !important;
+  color: red !important;
   box-shadow: 0 0 10px 0;
   /* Inherits the font color */
 
