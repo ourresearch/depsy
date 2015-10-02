@@ -432,17 +432,21 @@ class Package(db.Model):
             self.is_distinctive_name = True
         return self.is_distinctive_name
 
+    def get_sources_to_query(self):
+        # i bet there is a better way to do this!! :)
+        sources_to_query = [
+                    full_text_source.Pmc
+                    # ,
+                    # full_text_source.Arxiv,
+                    # full_text_source.Citeseer,
+                ]
+        return sources_to_query
+
     @property
     def citations_dict(self):
         citations_dict = self.set_num_citations_by_source()
         response_dict = defaultdict(dict)
-        sources = [
-            full_text_source.Pmc
-            # ,
-            # full_text_source.Arxiv,
-            # full_text_source.Citeseer
-        ]
-        for source_class in sources:
+        for source_class in self.get_sources_to_query():
             source = source_class()
             response_dict[source.name] = {
                 "count": citations_dict[source.name], 
@@ -480,14 +484,8 @@ class Package(db.Model):
         if not self.num_citations_by_source:
             self.num_citations_by_source = {}
 
-        sources = [
-            full_text_source.Pmc,
-            full_text_source.Arxiv,
-            full_text_source.Citeseer,
-        ]
-
         self.num_citations = 0
-        for source_class in sources:
+        for source_class in self.get_sources_to_query():
             source = source_class()
             num_found = source.run_query(self.full_text_query)
             self.num_citations_by_source[source.name] = num_found

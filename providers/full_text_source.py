@@ -3,7 +3,6 @@ import re
 
 from lxml import html
 
-
 class FullTextSource:
 
     @property
