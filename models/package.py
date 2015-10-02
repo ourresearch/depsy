@@ -654,14 +654,24 @@ class Package(db.Model):
 
     @property
     def pagerank_score(self):
-        raw = math.log10(float(self.pagerank)/self.maxes_dict["pagerank"])
-        return (raw + self.offset_to_recenter_scores) * self.score_multiplier
+        if not self.pagerank:
+            return None
+            
+        try:
+            raw = math.log10(float(self.pagerank)/self.maxes_dict["pagerank"])
+            adjusted = (raw + self.offset_to_recenter_scores) * self.score_multiplier
+        except ValueError:
+            adjusted = None
+        return adjusted
 
     @property
     def num_downloads_score(self):
-        raw = math.log10(float(self.num_downloads)/self.maxes_dict["num_downloads"])
-        return (raw + self.offset_to_recenter_scores) * self.score_multiplier
-
+        try:
+            raw = math.log10(float(self.num_downloads)/self.maxes_dict["num_downloads"])
+            adjusted = (raw + self.offset_to_recenter_scores) * self.score_multiplier
+        except ValueError:
+            adjusted = None
+        return adjusted
 
     def set_impact(self, maxes_dict=None):
         score_components = []

@@ -42,6 +42,7 @@ class Person(db.Model):
     )
 
 
+
     def to_dict(self, full=True):
         ret = {
             "id": self.id, 
@@ -54,8 +55,33 @@ class Person(db.Model):
             "id": self.id
         }
         if full:
-            ret["num_packages"] = len(self.person_packages)
-            ret["person_packages"] = [p.to_dict() for p in self.person_packages]
+            ret["person_packages"] = [p.to_dict() for p in self.get_person_packages()]
+            ret["num_packages"] = len(ret["person_packages"])
+        return ret
+
+
+    @property
+    def as_person_snippet(self):
+        ret = self.as_package_snippet
+
+        person_packages = self.get_person_packages()
+        ret["num_packages"] = len(person_packages)
+        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:5]]
+        return ret
+
+
+    @property
+    def as_package_snippet(self):
+        ret = {
+            "id": self.id, 
+            "name": self.display_name, 
+            "github_login": self.github_login, 
+            "icon": self.icon, 
+            "icon_small": self.icon_small, 
+            "is_academic": self.is_academic, 
+            "impact": self.impact, 
+            "id": self.id
+        }
         return ret
 
 
@@ -78,7 +104,7 @@ class Person(db.Model):
 
 
     def set_impact(self):
-        self.impact = sum([pp.person_project_impact for pp in self.person_packages])
+        self.impact = sum([pp.person_project_impact for pp in self.get_person_packages()])
         return self.impact
 
     def set_parsed_name(self):
@@ -140,9 +166,8 @@ class Person(db.Model):
         else:
             return "name unknown"
 
-
-    @property
-    def person_packages(self):
+    # could be a property, but kinda slow, so better as explicity method methinks
+    def get_person_packages(self):
         person_packages = defaultdict(PersonPackage)
         for contrib in self.contributions:
             person_packages[contrib.package.id].set_role(contrib)
@@ -151,19 +176,7 @@ class Person(db.Model):
         person_packages_list.sort(key=lambda x: x.person_project_impact, reverse=True)
         return person_packages_list
 
-    @property
-    def as_package_snippet(self):
-        ret = {
-            "id": self.id, 
-            "name": self.display_name, 
-            "github_login": self.github_login, 
-            "icon": self.icon, 
-            "icon_small": self.icon_small, 
-            "is_academic": self.is_academic, 
-            "impact": self.impact, 
-            "id": self.id
-        }
-        return ret
+
 
 
 
@@ -194,6 +207,15 @@ class PersonPackage():
         return person_project_impact
 
     def to_dict(self):
+        ret = self.package.as_snippet
+        ret["roles"] = [r.role for r in self.roles]
+        ret["person_project_credit"] = self.person_project_credit
+        ret["person_project_commits"] = self.person_project_commits
+        ret["person_project_impact"] = self.person_project_impact
+        return ret
+
+    @property
+    def as_person_snippet(self):
         ret = self.package.as_snippet
         ret["roles"] = [r.role for r in self.roles]
         ret["person_project_credit"] = self.person_project_credit
