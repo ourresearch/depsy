@@ -151,6 +151,19 @@ class Person(db.Model):
         person_packages_list.sort(key=lambda x: x.person_project_impact, reverse=True)
         return person_packages_list
 
+    @property
+    def as_package_snippet(self):
+        ret = {
+            "id": self.id, 
+            "name": self.display_name, 
+            "github_login": self.github_login, 
+            "icon": self.icon, 
+            "icon_small": self.icon_small, 
+            "is_academic": self.is_academic, 
+            "impact": self.impact, 
+            "id": self.id
+        }
+        return ret
 
 
 

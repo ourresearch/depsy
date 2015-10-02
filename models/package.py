@@ -13,6 +13,7 @@ import numpy
 
 from app import db
 from models import github_api
+from models.person import Person
 from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.rev_dep_node import RevDepNode
@@ -38,7 +39,7 @@ class Package(db.Model):
     api_raw = db.deferred(db.Column(JSONB))
     downloads = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     all_r_reverse_deps = db.deferred(db.Column(JSONB))       
-    tags = db.deferred(db.Column(JSONB))
+    tags = db.Column(JSONB)
     proxy_papers = db.deferred(db.Column(db.Text))
     is_academic = db.Column(db.Boolean)
 
@@ -107,7 +108,6 @@ class Package(db.Model):
         ret = {
             "name": self.project_name,
             "as_snippet": self.as_snippet,
-            #"contributions": [c.to_dict() for c in self.contributions],
             "github_owner": self.github_owner,
             "github_repo_name": self.github_repo_name,
             "host": self.host,
@@ -126,6 +126,7 @@ class Package(db.Model):
             "impact": self.impact,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
+            "num_citations_score": 0, #tbd
             "rev_deps_tree": self.tree,
             "citations": self.citations_dict,
 
@@ -135,8 +136,6 @@ class Package(db.Model):
             "summary": self.summary,
             "tags": self.tags
         }
-        # if full:
-        #     ret["contributions"] = [c.to_dict() for c in self.contributions]
 
         return ret
 
@@ -167,7 +166,8 @@ class Package(db.Model):
             "num_citations": self.num_citations,
             "num_citations_percentile": self.num_citations_percentile,
 
-            "summary": prep_summary(self.summary)
+            "summary": prep_summary(self.summary),
+            "tags": self.tags
         }
         return ret
 
@@ -175,24 +175,30 @@ class Package(db.Model):
     def as_snippet_with_people(self):
         ret = self.as_snippet
 
-        ret["contributions"] = defaultdict(list)
-        for c in self.contributions:
-            ret["contributions"][c.role].append(u"{}: {}".format(
-                c.percent, c.person.display_name))
+        # ret["contributions"] = defaultdict(list)
+        # for c in self.contributions:
+        #     ret["contributions"][c.role].append(u"{}: {}".format(
+        #         c.percent, c.person.display_name))
 
-        for role in ret["contributions"]:
-            ret["contributions"][role].sort(reverse=True)
+        # for role in ret["contributions"]:
+        #     ret["contributions"][role].sort(reverse=True)
 
 
         ret["credit"] = []
-        for p in self.contributors_with_credit():
-            ret["credit"].append(
-                u"{share}: {name} ({id})".format(
-                    share = p.credit, 
-                    name = p.display_name,
-                    id = p.id
-                ) 
-            )
+        if self.credit:
+            ret["num_contributors"] = len(self.credit)
+            top_five_people = sorted(self.credit, key=self.credit.get, reverse=True)[0:5]
+
+            for person_id in top_five_people:
+                person_id = int(person_id)
+                person = Person.query.get(person_id)
+                person_snippet = person.as_package_snippet
+                person_snippet["credit"] = self.credit[str(person_id)]
+                person_snippet["roles"] = []
+                for contrib in self.contributions:
+                    if contrib.person_id == person_id:
+                        person_snippet["roles"].append(contrib.role)
+                ret["credit"].append(person_snippet)
 
         return ret
 
