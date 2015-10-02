@@ -232,7 +232,7 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "         popover-template=\"'package-snippet/impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <span class=\"one-metric metric\">\n" +
-    "         {{ round(package.impact, 1) }}\n" +
+    "         {{ floor(package.impact) }}\n" +
     "      </span>\n" +
     "\n" +
     "\n" +
@@ -335,31 +335,92 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "<div class=\"top-packages top-page page sidebar-page\">\n" +
     "\n" +
     "\n" +
+    "\n" +
     "   <div class=\"sidebar\">\n" +
     "\n" +
     "      <div class=\"leader-type-select facet\">\n" +
-    "         <h3></h3>\n" +
+    "         <h3>Show me</h3>\n" +
     "         <ul>\n" +
-    "            <li class=\"leader-type\"><a href=\"top/packages\">Packages</a></li>\n" +
-    "            <li class=\"leader-type\"><a href=\"top/people\">People</a></li>\n" +
-    "            <li class=\"leader-type\"><a href=\"top/tags\">Tags</a></li>\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'packages')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type == 'packages'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type != 'packages'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
+    "\n" +
+    "               <span class=\"text\">Packages</span>\n" +
+    "            </li>\n" +
+    "\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'people')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type == 'people'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type != 'people'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
+    "\n" +
+    "               <span class=\"text\">People</span>\n" +
+    "            </li>\n" +
+    "\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'tags')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type == 'tags'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type != 'tags'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
+    "\n" +
+    "               <span class=\"text\">Tags</span>\n" +
+    "            </li>\n" +
     "         </ul>\n" +
     "\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"sort-select facet\">\n" +
-    "         <ul class=\"sort-select\">\n" +
-    "            <li><a>Sort Score</a></li>\n" +
-    "            <li><a>Citations</a></li>\n" +
-    "            <li><a>Community</a></li>\n" +
-    "         </ul>\n" +
+    "      <div class=\"language-type-select facet\">\n" +
+    "         <h3>written in</h3>\n" +
+    "         <ul>\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('language', 'python')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.language == 'python'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.language != 'python'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
     "\n" +
+    "               <span class=\"text\">Python</span>\n" +
+    "            </li>\n" +
+    "\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('language', 'r')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.language == 'r'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.language != 'r'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
+    "\n" +
+    "               <span class=\"text\">R</span>\n" +
+    "            </li>\n" +
+    "         </ul>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"language-type-select facet\">\n" +
+    "         <h3>and only</h3>\n" +
+    "         <ul>\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('is_academic', 'true')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.is_academic === 'true'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.is_academic !== 'true'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
+    "\n" +
+    "               <span class=\"text\">Academic projects</span>\n" +
+    "            </li>\n" +
+    "         </ul>\n" +
     "      </div>\n" +
     "\n" +
     "\n" +
-    "      <ul class=\"filters-select facet\">\n" +
-    "\n" +
-    "      </ul>\n" +
     "\n" +
     "   </div>\n" +
     "\n" +

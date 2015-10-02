@@ -1,26 +1,16 @@
 angular.module('top', [
-    'ngRoute'
+    'ngRoute',
+    'filterService'
   ])
 
 
 
   .config(function($routeProvider) {
-    $routeProvider.when('/top/:type', {
+    $routeProvider.when('/leaderboard', {
       templateUrl: 'top/top.tpl.html',
       controller: 'TopController',
       resolve: {
-        leaders: function($http, $route, Leaders){
-          console.log("getting leaders")
-          return Leaders.get(
-            {
-              type: $route.current.params.type,
-              filters: null
-            },
-            function(resp){
-              console.log("got a resp from leaders call", resp.list)
-            }
-          ).$promise
-        }
+
       }
     })
   })
@@ -30,10 +20,29 @@ angular.module('top', [
                                           $http,
                                           $rootScope,
                                           $routeParams,
-                                          leaders){
+                                          Leaders,
+                                          FilterService){
+    FilterService.setFromUrl()
+    $scope.filters = FilterService
 
-    console.log("i'm in hte top page ctrl", $routeParams)
-    $scope.leaders = leaders
+
+    function getLeaders(){
+      console.log("getLeaders() go")
+
+      Leaders.get(
+        FilterService.filters,
+        function(resp){
+          console.log("got a resp from leaders call", resp.list)
+          $scope.leaders = resp.list
+        }
+      )
+
+    }
+
+
+
+
+
 
 
 

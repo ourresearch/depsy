@@ -1,31 +1,92 @@
 <div class="top-packages top-page page sidebar-page">
 
 
+
    <div class="sidebar">
 
       <div class="leader-type-select facet">
-         <h3></h3>
+         <h3>Show me</h3>
          <ul>
-            <li class="leader-type"><a href="top/packages">Packages</a></li>
-            <li class="leader-type"><a href="top/people">People</a></li>
-            <li class="leader-type"><a href="top/tags">Tags</a></li>
+            <li class="filter-option" ng-click="filters.set('type', 'packages')">
+               <span class="status" ng-if="filters.d.type == 'packages'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.type != 'packages'">
+                  <i class="fa fa-square-o"></i>
+               </span>
+
+               <span class="text">Packages</span>
+            </li>
+
+            <li class="filter-option" ng-click="filters.set('type', 'people')">
+               <span class="status" ng-if="filters.d.type == 'people'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.type != 'people'">
+                  <i class="fa fa-square-o"></i>
+               </span>
+
+               <span class="text">People</span>
+            </li>
+
+            <li class="filter-option" ng-click="filters.set('type', 'tags')">
+               <span class="status" ng-if="filters.d.type == 'tags'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.type != 'tags'">
+                  <i class="fa fa-square-o"></i>
+               </span>
+
+               <span class="text">Tags</span>
+            </li>
          </ul>
 
       </div>
 
-      <div class="sort-select facet">
-         <ul class="sort-select">
-            <li><a>Sort Score</a></li>
-            <li><a>Citations</a></li>
-            <li><a>Community</a></li>
-         </ul>
+      <div class="language-type-select facet">
+         <h3>written in</h3>
+         <ul>
+            <li class="filter-option" ng-click="filters.set('language', 'python')">
+               <span class="status" ng-if="filters.d.language == 'python'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.language != 'python'">
+                  <i class="fa fa-square-o"></i>
+               </span>
 
+               <span class="text">Python</span>
+            </li>
+
+            <li class="filter-option" ng-click="filters.set('language', 'r')">
+               <span class="status" ng-if="filters.d.language == 'r'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.language != 'r'">
+                  <i class="fa fa-square-o"></i>
+               </span>
+
+               <span class="text">R</span>
+            </li>
+         </ul>
+      </div>
+
+      <div class="language-type-select facet">
+         <h3>and only</h3>
+         <ul>
+            <li class="filter-option" ng-click="filters.set('is_academic', 'true')">
+               <span class="status" ng-if="filters.d.is_academic === 'true'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.is_academic !== 'true'">
+                  <i class="fa fa-square-o"></i>
+               </span>
+
+               <span class="text">Academic projects</span>
+            </li>
+         </ul>
       </div>
 
 
-      <ul class="filters-select facet">
-
-      </ul>
 
    </div>
 
