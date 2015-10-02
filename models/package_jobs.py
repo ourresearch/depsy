@@ -414,11 +414,22 @@ update_registry.register(Update(
 ))
 
 
-q = db.session.query(Package.id)
+
+
+
+q = db.session.query(PypiPackage.id)
 update_registry.register(Update(
-    job=Package.set_distinctiveness,
+    job=PypiPackage.set_distinctiveness,
     query=q,
     queue_id=7
 ))
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_distinctiveness,
+    query=q,
+    queue_id=7
+))
+
 
 
