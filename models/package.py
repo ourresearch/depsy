@@ -506,31 +506,31 @@ class Package(db.Model):
 
 
     def set_distinctiveness(self):
-        for source_class in self.get_sources_to_query():
-            source = source_class()
+        source = full_text_source.Pmc()
 
-            raw_query = '"{name}" NOT AUTH:"{name}"'.format(
-                name=self.project_name)
-            num_hits_raw = source.run_query(raw_query)
-            self.bucket["num_hits_raw"] = num_hits_raw
+        raw_query = '"{name}" NOT AUTH:"{name}"'.format(
+            name=self.project_name)
+        num_hits_raw = source.run_query(raw_query)
+        self.bucket["num_hits_raw"] = num_hits_raw
 
-            num_hits_with_language = source.run_query(self.distinctiveness_query)
-            self.bucket["num_hits_with_language"] = num_hits_with_language
+        num_hits_with_language = source.run_query(self.distinctiveness_query)
+        self.bucket["num_hits_with_language"] = num_hits_with_language
 
-            num_hits_without_language = num_hits_raw - num_hits_with_language
-            self.bucket["num_hits_without_language"] = num_hits_raw - num_hits_without_language
-            
-            # clean up old junk
-            if "distinctiveness_ratio" in self.bucket:
-                del self.bucket["distinctiveness_ratio"]
+        num_hits_without_language = num_hits_raw - num_hits_with_language
+        self.bucket["num_hits_without_language"] = num_hits_without_language
+        
+        # clean up old junk
+        if "distinctiveness_ratio" in self.bucket:
+            del self.bucket["distinctiveness_ratio"]
 
-            if num_hits_with_language:
-                self.bucket["hits_ratio_without_over_with"] = float(num_hits_without_language)/num_hits_with_language
-            else:
-                self.bucket["hits_ratio_without_over_with"] = None
-                self.bucket["no_pmc_hits"] = True
-            print "hits_ratio_without_over_with for {} is {}".format(
-                self.project_name, self.bucket["hits_ratio_without_over_with"])
+        if num_hits_with_language:
+            self.bucket["hits_ratio_without_over_with"] = float(num_hits_without_language)/num_hits_with_language
+        else:
+            self.bucket["hits_ratio_without_over_with"] = None
+            self.bucket["no_pmc_hits"] = True
+        print "hits_ratio_without_over_with for {} is {}".format(
+            self.project_name, self.bucket["hits_ratio_without_over_with"])
+
 
     def set_igraph_data(self, our_igraph_data):
         try:
