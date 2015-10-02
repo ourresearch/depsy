@@ -426,7 +426,7 @@ class Package(db.Model):
 
         word_list = words.words()
         # if english word or short (could be gene name)
-        if (self.project_name.lower() in word_list) or (len(program_name) < 5):
+        if (self.project_name.lower() in word_list) or (len(self.project_name) < 5):
             self.is_distinctive_name = False
         else:
             self.is_distinctive_name = True
