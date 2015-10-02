@@ -100,6 +100,16 @@ def truncate(str, max=100):
         return str
 
 
+def str_to_bool(x):
+    if x.lower() in ["true", "1", "yes"]:
+        return True
+    elif x.lower() in ["false", "0", "no"]:
+        return False
+    else:
+        raise ValueError("This string can't be cast to a boolean.")
+
+
+
 
 
 
