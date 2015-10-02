@@ -238,13 +238,35 @@ class PypiPackage(Package):
 
     def set_is_academic(self):
         self.is_academic = False
+
+        # if your intended audience is scientists, you're academic
         if self._get_intended_audience() == "Science/Research":
             self.is_academic = True
 
-        for tag in self.tags:
-            if "scien" in tag.lower():
-                self.is_academic = True
-            if "research" in tag.lower():
+        # if you have academic-sounding tags, you're academic
+        sciency_words = [
+            "chemi",  # 1120
+            "scien",  # 3828
+            "bio",  # 832
+            "econo",  # 12
+            "linguistic",  # 327
+            "omics",  # 54
+            "sociology",  # 18
+            "physics",  # 344
+            "math", #588
+            "statistics", #99
+            "ecolog", # 8
+            "genetics" #27
+        ]
+
+        for sciency_word in sciency_words:
+            for tag in self.tags:
+                if sciency_word in tag.lower():
+                    self.is_academic = True
+
+        # if you have an academic-sounding name, you're academic
+        for sciency_word in sciency_words:
+            if sciency_word in self.project_name:
                 self.is_academic = True
 
         return self.is_academic
