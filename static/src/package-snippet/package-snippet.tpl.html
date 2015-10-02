@@ -6,7 +6,7 @@
          popover-template="'package-snippet/impact-popover.tpl.html'">
 
       <span class="one-metric metric">
-         {{ round(package.impact, 1) }}
+         {{ floor(package.impact) }}
       </span>
 
 

@@ -7,16 +7,17 @@
   ---------------------------------------------------*/
 body {
   font-family: lato, helvetica, arial, sans-serif;
+  padding-top: 60px;
 }
 body .wrapper {
   width: 1200px;
   margin: 0 auto;
 }
 body a {
-  color: orangered;
+  color: #ed1c24;
 }
 body a:hover {
-  color: orangered;
+  color: #ed1c24;
 }
 body.coming-soon {
   background: #00aeef;
@@ -135,6 +136,11 @@ div.ti-header {
   width: 100%;
   padding: 10px 0 10px;
   background: #00aeef;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
 }
 div.ti-header h1 {
   margin: 0 20px;
@@ -243,6 +249,18 @@ div.person-page div.ti-page-header h1 img {
   -moz-border-radius: 40px;
   border-radius: 40px;
 }
+div.top-page div.sidebar div.facet {
+  margin-top: 35px;
+}
+div.top-page div.sidebar div.facet ul li {
+  font-size: 20px;
+  font-weight: 100;
+  cursor: pointer;
+  margin-left: 10px;
+}
+div.top-page div.sidebar div.facet ul li span.status i.fa-square-o {
+  margin-right: 3px;
+}
 div.package-page div.ti-page-header h1 span.indegree {
   font-size: 16px;
   font-weight: 100;
@@ -291,13 +309,13 @@ div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.chil
 }
 div.page.sidebar-page .sidebar {
   width: 300px;
-  background: #fff;
   border-right: 1px solid #ddd;
   position: fixed;
-  top: 69px;
+  top: 0;
   left: 0;
   bottom: 0;
-  padding: 30px;
+  padding: 100px 30px 30px;
+  background: #fafafa;
 }
 div.page.sidebar-page .main {
   margin-left: 330px;
@@ -484,8 +502,8 @@ ul {
   margin: 0;
   padding: 0;
   z-index: 99998;
-  background-color: orangered !important;
-  color: orangered !important;
+  background-color: red !important;
+  color: red !important;
   box-shadow: 0 0 10px 0;
   /* Inherits the font color */
 
