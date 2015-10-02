@@ -426,8 +426,9 @@ class Package(db.Model):
 
         word_list = words.words()
         if self.project_name.lower() in word_list:
-            return False
-        return True
+            self.is_distinctive_name = False
+        else:
+            self.is_distinctive_name = True
 
     @property
     def citations_dict(self):
