@@ -415,6 +415,10 @@ class PypiPackage(Package):
         return self.setup_py_import_name
 
 
+    @property
+    def distinctiveness_query(self):
+        return '"{name}" AND python NOT AUTH:"{name}"'.format(
+            name=self.project_name)
 
 
 

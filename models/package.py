@@ -129,6 +129,7 @@ class Package(db.Model):
             "num_citations_score": 0, #tbd
             "rev_deps_tree": self.tree,
             "citations": self.citations_dict,
+            "is_academic": self.is_academic,
 
             # current implementation requires api_raw, so slows down db because deferred
             # "source_url": self.source_url,  
@@ -154,17 +155,16 @@ class Package(db.Model):
             "is_academic": self.is_academic,
 
             "impact": self.impact,
+            "impact_rank": self.impact_rank,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
+            "num_citations_score": self.num_downloads_score,
 
             "pagerank": self.pagerank,
-            "pagerank_percentile": self.pagerank_percentile,
-
             "num_downloads": self.num_downloads,
-            "num_downloads_percentile": self.num_downloads_percentile,
-
             "num_citations": self.num_citations,
-            "num_citations_percentile": self.num_citations_percentile,
+
+            "is_academic": self.is_academic,
 
             "summary": prep_summary(self.summary),
             "tags": self.tags
@@ -504,6 +504,33 @@ class Package(db.Model):
 
         return self.num_citations_by_source
 
+
+    def set_distinctiveness(self):
+        for source_class in self.get_sources_to_query():
+            source = source_class()
+
+            raw_query = '"{name}" NOT AUTH:"{name}"'.format(
+                name=self.project_name)
+            num_hits_raw = source.run_query(raw_query)
+            self.bucket["num_hits_raw"] = num_hits_raw
+
+            num_hits_with_language = source.run_query(self.distinctiveness_query)
+            self.bucket["num_hits_with_language"] = num_hits_with_language
+
+            num_hits_without_language = num_hits_raw - num_hits_with_language
+            self.bucket["num_hits_without_language"] = num_hits_raw - num_hits_without_language
+            
+            # clean up old junk
+            if "distinctiveness_ratio" in self.bucket:
+                del self.bucket["distinctiveness_ratio"]
+
+            if num_hits_with_language:
+                self.bucket["hits_ratio_without_over_with"] = float(num_hits_without_language)/num_hits_with_language
+            else:
+                self.bucket["hits_ratio_without_over_with"] = None
+                self.bucket["no_pmc_hits"] = True
+            print "hits_ratio_without_over_with for {} is {}".format(
+                self.project_name, self.bucket["hits_ratio_without_over_with"])
 
     def set_igraph_data(self, our_igraph_data):
         try:

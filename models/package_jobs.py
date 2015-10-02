@@ -42,8 +42,7 @@ def get_packages(filters=None, page_size=25):
     q = Package.query.options(
         orm.subqueryload_all(
             Package.contributions, 
-            Contribution.person, 
-            Person.contributions
+            Contribution.person 
         )
     )
     for (filter_attribute, filter_value) in filters:
@@ -410,6 +409,24 @@ update_registry.register(Update(
 q = db.session.query(Package.id)
 update_registry.register(Update(
     job=Package.set_is_distinctive_name,
+    query=q,
+    queue_id=7
+))
+
+
+
+
+
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.set_distinctiveness,
+    query=q,
+    queue_id=7
+))
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_distinctiveness,
     query=q,
     queue_id=7
 ))

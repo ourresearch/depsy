@@ -111,6 +111,11 @@ class CranPackage(Package):
     def set_tags(self):
         self.tags = get_tags(self.project_name)
 
+    @property
+    def distinctiveness_query(self):
+        return '"{name}" AND ("r package" OR "r statistical") NOT AUTH:"{name}"'.format(
+            name=self.project_name)
+
 
 def get_tags(package_name):
     url_template = "https://cran.r-project.org/web/packages/{}/"
