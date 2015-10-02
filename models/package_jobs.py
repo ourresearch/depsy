@@ -47,12 +47,6 @@ def get_packages(filters=None, page_size=25):
         )
     )
     for (filter_attribute, filter_value) in filters:
-
-
-        # conditions the filter values
-
-
-
         if filter_attribute == "tags":
             q = q.filter(Package.tags.has_key(filter_value))
         else:

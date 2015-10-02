@@ -257,7 +257,6 @@ class PypiPackage(Package):
             "scien",  # 3828
             "bio",  # 832
             "econo",  # 12
-            "linguistic",  # 327
             "omics",  # 54
             "sociology",  # 18
             "physics",  # 344
