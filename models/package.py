@@ -509,14 +509,18 @@ class Package(db.Model):
         for source_class in self.get_sources_to_query():
             source = source_class()
 
-            num_hits_raw = source.run_query(self.project_name)
+            raw_query = '"{name}" NOT AUTH:"{name}"'.format(
+                name=self.project_name)
+            num_hits_raw = source.run_query(raw_query)
             self.bucket["num_hits_raw"] = num_hits_raw
 
             num_hits_with_language = source.run_query(self.distinctiveness_query)
             self.bucket["num_hits_with_language"] = num_hits_with_language
+
+            self.bucket["num_hits_without_language"] = num_hits_raw - num_hits_without_language
             
-            if num_hits_raw:
-                self.bucket["distinctiveness_ratio"] = float(num_hits_with_language)/num_hits_raw
+            if num_hits_with_language:
+                self.bucket["distinctiveness_ratio"] = float(num_hits_without_language)/num_hits_with_language
             else:
                 self.bucket["distinctiveness_ratio"] = None
                 self.bucket["no_pmc_hits"] = True

@@ -417,7 +417,8 @@ class PypiPackage(Package):
 
     @property
     def distinctiveness_query(self):
-        return "{} AND python".format(self.project_name)
+        return '"{name}" AND python NOT AUTH:"{name}"'.format(
+            name=self.project_name)
 
 
 
