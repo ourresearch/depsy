@@ -507,7 +507,7 @@ class Package(db.Model):
 
 
     def set_distinctiveness(self):
-        source = full_text_source.Arxiv()
+        source = full_text_source.Citeseer()
         self.bucket2 = {}
 
         raw_query = '"{name}"'.format(
