@@ -53,6 +53,7 @@ class Person(db.Model):
         ret = {
             "id": self.id, 
             "name": self.display_name, 
+            "single_name": self.single_name, 
             "github_login": self.github_login, 
             "icon": self.icon, 
             "icon_small": self.icon_small, 
@@ -83,7 +84,8 @@ class Person(db.Model):
     def as_package_snippet(self):
         ret = {
             "id": self.id, 
-            "name": self.display_name, 
+            "name": self.display_name,
+            "single_name": self.single_name,              
             "github_login": self.github_login, 
             "icon": self.icon, 
             "icon_small": self.icon_small, 
@@ -156,6 +158,11 @@ class Person(db.Model):
                 return c.quantity
         return False
 
+    @property
+    def single_name(self):
+        if self.parsed_name and self.parsed_name["last"]:
+            return self.parsed_name["last"]
+        return self.display_name
 
     @property
     def display_name(self):
