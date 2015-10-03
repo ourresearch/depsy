@@ -410,6 +410,7 @@ update_registry.register(Update(
 
 q = db.session.query(Person.id)
 q = q.filter(Person.impact_rank == None)
+q = add_person_leaderboard_filters(q)
 update_registry.register(Update(
     job=Person.set_impact_rank,
     query=q,

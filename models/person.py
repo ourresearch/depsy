@@ -14,8 +14,8 @@ from util import dict_from_dir
 
 # reused elsewhere
 def add_person_leaderboard_filters(q):
-    q = q.filter(Person.name != "UNKNOWN")
-    q = q.filter(Person.email != "UNKNOWN")
+    q = q.filter(or_(Person.name == None, Person.name != "UNKNOWN"))
+    q = q.filter(or_(Person.email == None, Person.email != "UNKNOWN"))
     q = q.filter(Person.is_organization == False)
     return q
 
@@ -124,6 +124,7 @@ class Person(db.Model):
             "main_language": self.main_language,             
             "impact": self.impact, 
             "impact_rank": self.impact_rank, 
+            "impact_rank_max": self.impact_rank_max, 
             "id": self.id
         }
         return ret
@@ -156,12 +157,27 @@ class Person(db.Model):
 
 
     def set_impact_rank(self, impact_rank_lookup):
+
         try:
             self.impact_rank = impact_rank_lookup[self.main_language][self.id]
         except KeyError:  # maybe because organization, or name=="UNKNOWN"
+            print "couldn't find my id"
             self.impact_rank = None
         print "self.impact_rank", self.impact_rank
 
+    @property
+    def impact_rank_max(self):
+        # get these with this sql:
+            # select count(id), main_language 
+            # from person 
+            # where is_organization=false
+            # and name!='UKNOWN' and email!='UNKNOWN'
+            # group by main_language
+
+        if self.main_language == "python":
+            return 36152
+        elif self.main_language == "r":
+            return 2316
 
     def set_github_about(self):
         if self.github_login is None:

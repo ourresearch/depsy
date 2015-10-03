@@ -157,6 +157,7 @@ class Package(db.Model):
 
             "impact": self.impact,
             "impact_rank": self.impact_rank,
+            "impact_rank_max": self.impact_rank_max,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
             "num_citations_score": self.num_downloads_score,

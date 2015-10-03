@@ -137,6 +137,12 @@ class CranPackage(Package):
         #     name=self.project_name)
 
 
+    @property
+    def impact_rank_max(self):
+        # get these with this sql:
+            # select count(id) from package where host='cran'
+        return 7057
+
     def set_is_academic(self):
         self.is_academic = False
 
