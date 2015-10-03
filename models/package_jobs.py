@@ -31,7 +31,9 @@ def get_leaders(filters, page_size=25):
     return fn(filters=filters_without_type, page_size=page_size)
 
 
-def get_people(filters=None, page_size=25):
+def get_people(filters, page_size=25):
+    print "in get_people"
+
     q = Person.query
     q = q.filter(Person.name != "UNKNOWN")
     q = q.filter(Person.email != "UNKNOWN")
@@ -41,17 +43,21 @@ def get_people(filters=None, page_size=25):
             Contribution.package 
         )
     )
-    for (filter_attribute, filter_value) in filters:
-        if filter_attribute == "tags":
-            q = q.filter(Package.tags.has_key(filter_value))
-        else:
-            attr = getattr(Person, filter_attribute)
-            q = q.filter(attr==filter_value)
+    # for k, v in filters.iteritems():
+    #     if k == "tags":
+    #         q = q.filter(Package.tags.has_key(v))
+    #     else:
+    #         attr = getattr(Package, k)
+    #         q = q.filter(attr==v)
 
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)
 
+    print "before query"
+
     ret = q.all()
+
+    print "after query"
     return ret
 
 

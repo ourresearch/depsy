@@ -61,11 +61,14 @@ class Person(db.Model):
 
 
     @property
-    def as_person_snippet(self):
+    def as_snippet(self):
+
         ret = self.as_package_snippet
 
         person_packages = self.get_person_packages()
         ret["num_packages"] = len(person_packages)
+        ret["num_packages_r"] = len([pp for pp in person_packages if pp.package.language=='r'])
+        ret["num_packages_python"] = len([pp for pp in person_packages if pp.package.language=='python'])
         ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:5]]
         return ret
 
@@ -207,7 +210,7 @@ class PersonPackage():
         return person_project_impact
 
     def to_dict(self):
-        ret = self.package.as_snippet
+        ret = self.package.as_snippet_without_people
         ret["roles"] = [r.role for r in self.roles]
         ret["person_project_credit"] = self.person_project_credit
         ret["person_project_commits"] = self.person_project_commits
@@ -216,7 +219,7 @@ class PersonPackage():
 
     @property
     def as_person_snippet(self):
-        ret = self.package.as_snippet
+        ret = self.package.as_snippet_without_people
         ret["roles"] = [r.role for r in self.roles]
         ret["person_project_credit"] = self.person_project_credit
         ret["person_project_commits"] = self.person_project_commits
