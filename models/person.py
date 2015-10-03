@@ -26,6 +26,7 @@ class Person(db.Model):
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
+    main_language = db.Column(db.Text)
 
     type = db.Column(db.Text)
 
@@ -113,6 +114,14 @@ class Person(db.Model):
         return ret
 
 
+    def set_main_language(self):
+        person_package_summary_dict = self.as_snippet
+        if person_package_summary_dict["num_packages_r"] > person_package_summary_dict["num_packages_python"]:
+            self.main_language = "r"
+        else:
+            self.main_language = "python"
+
+
     def set_github_about(self):
         if self.github_login is None:
             return None
@@ -145,10 +154,14 @@ class Person(db.Model):
         self.parsed_name = name.as_dict()
 
     def _make_gravatar_url(self, size):
-        if self.email is not None:
-            hash = hashlib.md5(self.email).hexdigest()
-        else:
-            hash = hashlib.md5("placeholder@example.com").hexdigest()
+        try:
+            if self.email is not None:
+                hash = hashlib.md5(self.email).hexdigest()
+            else:
+                hash = hashlib.md5("placeholder@example.com").hexdigest()
+        except UnicodeEncodeError:
+            print "UnicodeEncodeError making gravatar url from email"
+            hash = 42
 
         url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=mm".format(
             hash=hash,
