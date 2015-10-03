@@ -82,7 +82,14 @@ class Person(db.Model):
         ret["num_packages"] = len(person_packages)
         ret["num_packages_r"] = len([pp for pp in person_packages if pp.package.language=='r'])
         ret["num_packages_python"] = len([pp for pp in person_packages if pp.package.language=='python'])
-        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:3]]
+        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:5]]
+        
+        tags_dict = defaultdict(int)
+        for pp in person_packages:
+            for tag in pp.package.tags:
+                tags_dict[tag] += 1
+        tags_to_return = min(3, len(tags_dict))
+        ret["top_person_tags"] = sorted(tags_dict, key=tags_dict.get, reverse=True)[0:tags_to_return]
         return ret
 
 
@@ -167,7 +174,9 @@ class Person(db.Model):
 
     @property
     def single_name(self):
-        if self.parsed_name and self.parsed_name["last"]:
+        if self.is_organization:
+            return self.display_name
+        elif self.parsed_name and self.parsed_name["last"]:
             return self.parsed_name["last"]
         return self.display_name
 
