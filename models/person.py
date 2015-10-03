@@ -152,10 +152,14 @@ class Person(db.Model):
         self.parsed_name = name.as_dict()
 
     def _make_gravatar_url(self, size):
-        if self.email is not None:
-            hash = hashlib.md5(self.email).hexdigest()
-        else:
-            hash = hashlib.md5("placeholder@example.com").hexdigest()
+        try:
+            if self.email is not None:
+                hash = hashlib.md5(self.email).hexdigest()
+            else:
+                hash = hashlib.md5("placeholder@example.com").hexdigest()
+        except UnicodeEncodeError:
+            print "UnicodeEncodeError making gravatar url from email"
+            hash = 42
 
         url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=mm".format(
             hash=hash,

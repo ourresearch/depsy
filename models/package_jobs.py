@@ -4,6 +4,7 @@ from sqlalchemy import orm
 from app import db
 from models.package import Package
 from models.package import shortcut_igraph_data_dict
+from models.package import make_language
 from models.pypi_package import PypiPackage
 from models.pypi_package import shortcut_get_pypi_package_names
 from models.cran_package import CranPackage
@@ -39,7 +40,6 @@ def get_tags(filters, page_size=25):
         # tags table is named a little weird        
         if k == "host":
             k = "namespace"
-            print "filtering with", k, v
 
         attr = getattr(Tags, k)
         q = q.filter(attr==v)
@@ -64,9 +64,13 @@ def get_people(filters, page_size=25):
         )
     )
     for k, v in filters.iteritems():
-        if k in ["host", "tags"]:
+        if k == "tags":
             pass # don't do anything for these for now for people
         else:
+            if k == "host":
+                k = "main_language"
+                v = make_language(v)
+                
             attr = getattr(Person, k)
             q = q.filter(attr==v)
 
