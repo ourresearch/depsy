@@ -497,9 +497,6 @@ angular.module('resourcesModule', [])
     return $resource('api/leaderboard')
   })
 
-  .factory('UserResource', function($resource) {
-    return $resource('/api/me')
-  })
 
   .factory('PackageResource', function($resource) {
     return $resource('/api/package/:namespace/:name')
@@ -714,13 +711,14 @@ angular.module('top', [
     getLeaders()
 
     function getLeaders(){
-      console.log("getLeaders() go")
+      console.log("getLeaders() go", FilterService.d)
+
 
       Leaders.get(
-        FilterService.filters,
+        FilterService.d,
         function(resp){
           console.log("got a resp from leaders call", resp.list)
-          $scope.leaders = resp.list
+          $scope.leaders = resp
         }
       )
 

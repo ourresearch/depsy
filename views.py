@@ -205,7 +205,7 @@ def tags_endpoint():
 
 @app.route('/api/leaderboard')
 @app.route('/api/leaderboard.json')
-def leaderboard(leader_type):
+def leaderboard():
     filters_dict = make_filters_dict(request.args)
     page_size = request.args.get("page_size", "25")
 
@@ -237,7 +237,7 @@ def search(search_str):
 def make_filters_dict(args):
     full_dict = {
         "type": args.get("type", "package"),
-        "is_academic": (args.get("is_academic", False)),
+        "is_academic": (args.get("only_academic", False)),
         "host": make_host_name(args.get("language", "python")),
         "tag": args.get("tag", None)
     }
