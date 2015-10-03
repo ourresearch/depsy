@@ -41,12 +41,13 @@ def get_people(filters, page_size=25):
             Contribution.package 
         )
     )
-    # for k, v in filters.iteritems():
-    #     if k == "tags":
-    #         q = q.filter(Package.tags.has_key(v))
-    #     else:
-    #         attr = getattr(Package, k)
-    #         q = q.filter(attr==v)
+    for k, v in filters.iteritems():
+        if k in ["host", "tags"]:
+            pass # don't do anything for these for now for people
+        else:
+            print "using filter", k, v
+            attr = getattr(Person, k)
+            q = q.filter(attr==v)
 
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)

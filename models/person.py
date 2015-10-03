@@ -24,6 +24,7 @@ class Person(db.Model):
     bucket = db.Column(JSONB)
     impact = db.Column(db.Float)
     parsed_name = db.Column(JSONB)
+    is_academic = db.Column(db.Boolean)
 
     type = db.Column(db.Text)
 
@@ -41,6 +42,11 @@ class Person(db.Model):
         backref="person"
     )
 
+
+    def set_is_academic(self):
+        # set this using the sql in the sql folder!  set_person_is_academic.sql
+        # this is just a placeholder to remind us to run it :)
+        pass
 
 
     def to_dict(self, full=True):
@@ -117,13 +123,6 @@ class Person(db.Model):
 
         name = HumanName(self.name)
         self.parsed_name = name.as_dict()
-
-    @property
-    def is_academic(self):
-        try:
-            return self.bucket["is_academic"]
-        except (KeyError, TypeError):
-            return False
 
     def _make_gravatar_url(self, size):
         if self.email is not None:

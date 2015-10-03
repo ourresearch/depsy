@@ -9,7 +9,6 @@ from models.package_jobs import get_leaders
 from dummy_data import get_dummy_data
 from sqlalchemy import orm
 from models.package import make_host_name
-from util import str_to_bool
 
 from flask import make_response
 from flask import request
@@ -183,10 +182,16 @@ def search(search_str):
 
 
 def make_filters_dict(args):
+    language = args.get("language", None)
+    if language:
+        host_name = make_host_name(language)
+    else:
+        host_name = None
+
     full_dict = {
-        "type": args.get("type", "package"),
-        "is_academic": (args.get("only_academic", False)),
-        "host": make_host_name(args.get("language", "python")),
+        "type": args.get("type", None),
+        "is_academic": args.get("only_academic", False),
+        "host": host_name,
         "tag": args.get("tag", None)
     }
     ret = {}

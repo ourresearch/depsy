@@ -49,8 +49,9 @@ select * from person
 
 
 -- setting academics, using same finding algorithm as above:
-update person set bucket = '{}'::jsonb
-update person set bucket = '{"is_academic": true}'::jsonb 
+update person set is_academic = false
+
+update person set is_academic = true
 	where false  -- just makes it easier to comment stuff in and out
 	
 	-- 1278
