@@ -124,6 +124,11 @@
                <div class="package-snippet-wrapper"  ng-include="'snippet/person-snippet.tpl.html'"></div>
             </div>
 
+            <!-- tag loop -->
+            <div ng-if="filters.d.type=='tags'" class="leader" ng-repeat="tag in leaders.list">
+               <div class="package-snippet-wrapper"  ng-include="'snippet/tag-snippet.tpl.html'"></div>
+            </div>
+
 
 
          </div>

@@ -752,7 +752,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-snippet.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -1187,6 +1187,70 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "");
 }]);
 
+angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/tag-snippet.tpl.html",
+    "<span class=\"snippet tag-snippet\"\n" +
+    "     ng-controller=\"personSnippetCtrl\">\n" +
+    "<span class=\"left-metrics\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover=\"{{ tag.count }} packages are tagged with '{{ tag.name }}'\">\n" +
+    "\n" +
+    "      <span class=\"one-metric metric\">\n" +
+    "         {{ format.short(tag.count) }}\n" +
+    "      </span>\n" +
+    "\n" +
+    "   </span>\n" +
+    "\n" +
+    "   <span class=\"metadata\">\n" +
+    "      <span class=\"name-container\">\n" +
+    "\n" +
+    "         <span class=\"icon tag-icon\">\n" +
+    "            <i class=\"fa fa-tag\"></i>\n" +
+    "         </span>\n" +
+    "\n" +
+    "         <a class=\"name\" tooltip=\"click for more info\" href=\"person/{{ tag.name }}\">\n" +
+    "            {{ tag.name }}\n" +
+    "         </a>\n" +
+    "\n" +
+    "\n" +
+    "         <i popover-title=\"Academic\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover=\"This tag is often applied to academic projects.\"\n" +
+    "            ng-show=\"tag.is_academic\"\n" +
+    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "\n" +
+    "         <span class=\"related-tags\">\n" +
+    "            Related tags:\n" +
+    "         </span>\n" +
+    "      </span>\n" +
+    "\n" +
+    "      <span class=\"summary tags\">\n" +
+    "         <span class=\"tags\">\n" +
+    "            <a href=\"tag/{{ relatedTag.name }}\"\n" +
+    "               class=\"tag\"\n" +
+    "               ng-repeat=\"relatedTag in tag.related_tags | orderBy: '-count'\">\n" +
+    "               {{ tag.name }}\n" +
+    "            </a>\n" +
+    "         </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "      </span>\n" +
+    "   </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "</span>\n" +
+    "\n" +
+    "\n" +
+    "");
+}]);
+
 angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("static-pages/landing.tpl.html",
     "<div class=\"landing\">\n" +
@@ -1329,6 +1393,11 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "            <!-- people loop -->\n" +
     "            <div ng-if=\"filters.d.type=='people'\" class=\"leader\" ng-repeat=\"person in leaders.list\">\n" +
     "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/person-snippet.tpl.html'\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <!-- tag loop -->\n" +
+    "            <div ng-if=\"filters.d.type=='tags'\" class=\"leader\" ng-repeat=\"tag in leaders.list\">\n" +
+    "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/tag-snippet.tpl.html'\"></div>\n" +
     "            </div>\n" +
     "\n" +
     "\n" +

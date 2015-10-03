@@ -445,6 +445,11 @@ span.snippet span.metadata span.name-container span.icon img.person-icon {
   -moz-border-radius: 20px;
   border-radius: 20px;
 }
+span.snippet span.metadata span.name-container span.icon.tag-icon i {
+  font-size: 18px;
+  color: #555;
+  vertical-align: -5px;
+}
 span.snippet span.metadata span.name-container a.name {
   font-size: 20px;
   font-weight: bold;
@@ -457,6 +462,9 @@ span.snippet span.metadata span.name-container a.name:hover {
 span.snippet span.metadata span.name-container i.is-academic {
   vertical-align: -2px;
   color: #555;
+}
+span.snippet span.metadata span.name-container span.related-tags {
+  vertical-align: bottom;
 }
 span.snippet span.metadata span.person-packages {
   font-size: 16px;
