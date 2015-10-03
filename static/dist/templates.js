@@ -266,6 +266,10 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
+    "         <i tooltip-header=\"aca-what?\"\n" +
+    "            tooltip-trigger=\"mouseenter\"\n" +
+    "            tooltip-content=\"content!\"\n" +
+    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "      </span>\n" +
     "      <span class=\"summary\">{{ package.summary }}</span>\n" +
     "   </span>\n" +
