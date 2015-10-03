@@ -473,5 +473,11 @@ update_registry.register(Update(
     queue_id=7
 ))
 
-
+q = db.session.query(Person.id)
+q = q.filter(Person.main_language == None)
+update_registry.register(Update(
+    job=Person.set_main_language,
+    query=q,
+    queue_id=7
+))
 
