@@ -147,7 +147,7 @@ class Package(db.Model):
 
 
     @property
-    def as_snippet(self):
+    def as_snippet_without_people(self):
         ret = {
             "_host_url": self.host_url,
             "name": self.project_name,
@@ -172,8 +172,8 @@ class Package(db.Model):
         return ret
 
     @property
-    def as_snippet_with_people(self):
-        ret = self.as_snippet
+    def as_snippet(self):
+        ret = self.as_snippet_without_people
 
         # ret["contributions"] = defaultdict(list)
         # for c in self.contributions:
