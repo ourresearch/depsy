@@ -481,33 +481,18 @@ span.snippet {
 
       span.name-container {
          float: left;
-         width: 600px;
+         width: 700px;
 
          span.icon {
             margin-right: 4px;
 
             // for the package
-            span.language-icon {
-               font-weight: 100;
-               text-align: center;
-               width: 16px;
-               display: inline-block;
-               font-size: 10px;
-               vertical-align: -1px;
-
-               border: 1px solid #777;
-               color: #777;
-               background: none;
-
-               &.r {
-                  .rounded(15px);
-               }
-            }
+            // span.language-icon is set elsewhere
 
             // for the person
             img.person-icon {
                height: 25px;
-               margin-bottom: -4px;
+//               margin-bottom: -4px;
                .rounded(20px);
             }
          }
@@ -529,25 +514,60 @@ span.snippet {
          }
 
       }
+
+      // for the person snippet
+      span.person-packages {
+         font-size: 16px;
+         display: block;
+         margin-top: 3px;
+         span.works-on {
+         }
+         span.sep {
+            margin: 0 2px;
+         }
+         a {
+            color: #333;
+            white-space: nowrap;
+            margin-left: 5px;
+            font-style: italic;
+
+         }
+      }
+
+
+
+
       span.summary {
          float: left;
-//         border-top: 1px solid #ddd;
          padding-top: 2px;
          margin-top: 2px;
-         margin-left: 1px;
          font-size: 15px;
          display: inline-block;
-         width: 600px;
+         width: 700px;
 
-         // for the person snippet
-         &.person-packages {
-            a {
-               color: #333;
+         &.tags {
+            margin: 5px 0 0 -3px;
+            a.tag {
+               border: 1px solid #ccc;
+               font-size: 14px;
+               .rounded(20px);
+               padding: 0 9px 2px;
+               margin: 0 2px;
+               color: #999;
+               &:hover {
+                  text-decoration: none;
+                  background: #eee;
+                  color: #777;
+               }
             }
          }
       }
    }
 
+   // just for the person snippet
+
+
+   // just for the package snippet
    span.contribs {
       vertical-align: -4px;
       margin-left: 5px;
@@ -632,6 +652,27 @@ span.snippet {
 }
 
 
+span.language-icon {
+   font-weight: 100;
+   text-align: center;
+   width: 16px;
+   display: inline-block;
+   font-size: 10px;
+   vertical-align: -1px;
+
+   border: 1px solid #777;
+   color: #777;
+   background: none;
+   cursor: default;
+
+//   border:none;
+//   background: #999;
+//   color: #fff;
+
+   &.r {
+      .rounded(15px);
+   }
+}
 
 
 

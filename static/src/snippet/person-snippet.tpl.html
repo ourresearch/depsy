@@ -38,41 +38,36 @@
             {{ person.name }}
          </a>
 
+
          <i popover-title="Academic"
             popover-trigger="mouseenter"
             popover="We infer academic status based on factors like email address, citedness, institution."
             ng-show="person.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
 
-         <!--
-         <span class="contribs">
-            <span class="by">by</span>
-            <a href="person/{{ contrib.id }}"
-               popover="name: {{ contrib.name }}"
-               popover-trigger="mouseenter"
-               class="contrib"
-               ng-repeat="contrib in package.contribs | orderBy: '-credit' | limitTo: 3">{{ contrib.single_name }}<span
-                       ng-hide="{{ $last }}"
-                       class="comma">, </span></a><a class="contrib plus-more"
-               href="package/{{ package.language }}/{{ package.name }}"
-                  popover="click to see all {{ package.num_contributors }} contributors"
-                  popover-trigger="mouseenter" ng-show="package.num_contributors > 5">,
-               and {{ package.num_contributors - package.credit.length }} others
+
+         <span class="person-packages">
+            <span class="works-on">{{ person.num_packages }} packages including: </span>
+            <span class="package" ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
+               <a href="package/{{ package.language }}/{{ package.name }}">
+                  {{ package.name }}</a><span class="sep" ng-show="!$last">,</span>
+            </span>
+         </span>
+      </span>
+
+      <span class="summary tags">
+         <span class="tags">
+            <a href="tag/{{ tag.name }}"
+               class="tag"
+               ng-repeat="tag in person.top_person_tags | orderBy: '-count'">
+               {{ tag.name }}
             </a>
          </span>
-         -->
 
 
 
-      </span>
-      <span class="summary person-packages">
-         <span class="works-on">Works on</span>
-         <a class="package"
-            href="package/{{ package.language }}/{{ package.name }}"
-            ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
-            {{ package.name }}<span class="comma" ng-show="!$last">,</span>
-         </a>
-         <a ng-show="{{ person.num_packages > 5 }}" href="person/{{ person.id }}">and {{ person.num_packages - 5 }} others</a>
+
+
 
       </span>
    </span>
