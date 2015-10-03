@@ -1251,7 +1251,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "      </div>\n" +
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
-    "         <h3>written in</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='packages'\">written in</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='people'\">who work in</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='tags'\">applied to</h3>\n" +
     "         <ul>\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('language', 'python')\">\n" +
     "               <span class=\"status\" ng-if=\"filters.d.language == 'python'\">\n" +
@@ -1278,7 +1280,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "      </div>\n" +
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
-    "         <h3>and only</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='packages'\">that are</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='people'\">and who are</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='tags'\">that are</h3>\n" +
     "         <ul>\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
     "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
@@ -1288,7 +1292,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">academic projects</span>\n" +
+    "               <span class=\"text\" ng-show=\"filters.d.type=='packages'\">academic projects</span>\n" +
+    "               <span class=\"text\" ng-show=\"filters.d.type=='people'\">academics</span>\n" +
+    "               <span class=\"text\" ng-show=\"filters.d.type=='tags'\">academic</span>\n" +
     "            </li>\n" +
     "         </ul>\n" +
     "      </div>\n" +
