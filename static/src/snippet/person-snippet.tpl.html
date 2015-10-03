@@ -23,31 +23,28 @@
 
    </span>
 
-   <!--
 
    <span class="metadata">
       <span class="name-container">
 
-         <span class="language-icon r"
-               ng-if="package.language=='r'"
-              tooltip="R package">
-            R
-         </span>
-         <span class="language-icon python"
-               ng-if="package.language=='python'"
-              tooltip="Python package">
-            py
+
+         <span class="icon">
+            <img class="person-icon" src="{{ person.icon_small }}" alt=""/>
          </span>
 
-         <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
-            {{ package.name }}
+
+
+         <a class="name" tooltip="click for more info" href="person/{{ person.id }}">
+            {{ person.name }}
          </a>
-         <i popover-title="aca-what?"
+
+         <i popover-title="Academic"
             popover-trigger="mouseenter"
-            popover="content!"
-            ng-show="package.is_academic"
+            popover="We infer academic status based on factors like email address, citedness, institution."
+            ng-show="person.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
 
+         <!--
          <span class="contribs">
             <span class="by">by</span>
             <a href="person/{{ contrib.id }}"
@@ -63,14 +60,24 @@
                and {{ package.num_contributors - package.credit.length }} others
             </a>
          </span>
+         -->
 
 
 
       </span>
-      <span class="summary">{{ package.summary }}</span>
+      <span class="summary person-packages">
+         <span class="works-on">Works on</span>
+         <a class="package"
+            href="package/{{ package.language }}/{{ package.name }}"
+            ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
+            {{ package.name }}<span class="comma" ng-show="!$last">,</span>
+         </a>
+         <a ng-show="{{ person.num_packages > 5 }}" href="person/{{ person.id }}">and {{ person.num_packages - 5 }} others</a>
+
+      </span>
    </span>
 
-   -->
+
 
 
 </span>

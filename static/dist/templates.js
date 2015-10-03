@@ -270,7 +270,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <span class=\"one-metric metric\">\n" +
-    "         {{ nFormatter(package.impact) }}\n" +
+    "         {{ format.short(package.impact) }}\n" +
     "      </span>\n" +
     "\n" +
     "\n" +
@@ -290,16 +290,19 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "   <span class=\"metadata\">\n" +
     "      <span class=\"name-container\">\n" +
     "\n" +
-    "         <span class=\"language-icon r\"\n" +
-    "               ng-if=\"package.language=='r'\"\n" +
-    "              tooltip=\"R package\">\n" +
-    "            R\n" +
+    "         <span class=\"icon\">\n" +
+    "            <span class=\"language-icon r\"\n" +
+    "                  ng-if=\"package.language=='r'\"\n" +
+    "                 tooltip=\"R package\">\n" +
+    "               R\n" +
+    "            </span>\n" +
+    "            <span class=\"language-icon python\"\n" +
+    "                  ng-if=\"package.language=='python'\"\n" +
+    "                 tooltip=\"Python package\">\n" +
+    "               py\n" +
+    "            </span>\n" +
     "         </span>\n" +
-    "         <span class=\"language-icon python\"\n" +
-    "               ng-if=\"package.language=='python'\"\n" +
-    "              tooltip=\"Python package\">\n" +
-    "            py\n" +
-    "         </span>\n" +
+    "\n" +
     "\n" +
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
@@ -321,8 +324,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
     "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
     "                  popover=\"click to see all {{ package.num_contributors }} contributors\"\n" +
-    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 5\">,\n" +
-    "               and {{ package.num_contributors - package.credit.length }} others\n" +
+    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 3\">,\n" +
+    "               and {{ package.num_contributors - 3 }} others\n" +
     "            </a>\n" +
     "         </span>\n" +
     "\n" +
@@ -367,31 +370,28 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "   </span>\n" +
     "\n" +
-    "   <!--\n" +
     "\n" +
     "   <span class=\"metadata\">\n" +
     "      <span class=\"name-container\">\n" +
     "\n" +
-    "         <span class=\"language-icon r\"\n" +
-    "               ng-if=\"package.language=='r'\"\n" +
-    "              tooltip=\"R package\">\n" +
-    "            R\n" +
-    "         </span>\n" +
-    "         <span class=\"language-icon python\"\n" +
-    "               ng-if=\"package.language=='python'\"\n" +
-    "              tooltip=\"Python package\">\n" +
-    "            py\n" +
+    "\n" +
+    "         <span class=\"icon\">\n" +
+    "            <img class=\"person-icon\" src=\"{{ person.icon_small }}\" alt=\"\"/>\n" +
     "         </span>\n" +
     "\n" +
-    "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
-    "            {{ package.name }}\n" +
+    "\n" +
+    "\n" +
+    "         <a class=\"name\" tooltip=\"click for more info\" href=\"person/{{ person.id }}\">\n" +
+    "            {{ person.name }}\n" +
     "         </a>\n" +
-    "         <i popover-title=\"aca-what?\"\n" +
+    "\n" +
+    "         <i popover-title=\"Academic\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"content!\"\n" +
-    "            ng-show=\"package.is_academic\"\n" +
+    "            popover=\"We infer academic status based on factors like email address, citedness, institution.\"\n" +
+    "            ng-show=\"person.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
+    "         <!--\n" +
     "         <span class=\"contribs\">\n" +
     "            <span class=\"by\">by</span>\n" +
     "            <a href=\"person/{{ contrib.id }}\"\n" +
@@ -407,14 +407,24 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "               and {{ package.num_contributors - package.credit.length }} others\n" +
     "            </a>\n" +
     "         </span>\n" +
+    "         -->\n" +
     "\n" +
     "\n" +
     "\n" +
     "      </span>\n" +
-    "      <span class=\"summary\">{{ package.summary }}</span>\n" +
+    "      <span class=\"summary person-packages\">\n" +
+    "         <span class=\"works-on\">Works on</span>\n" +
+    "         <a class=\"package\"\n" +
+    "            href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
+    "            ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
+    "            {{ package.name }}<span class=\"comma\" ng-show=\"!$last\">,</span>\n" +
+    "         </a>\n" +
+    "         <a ng-show=\"{{ person.num_packages > 5 }}\" href=\"person/{{ person.id }}\">and {{ person.num_packages - 5 }} others</a>\n" +
+    "\n" +
+    "      </span>\n" +
     "   </span>\n" +
     "\n" +
-    "   -->\n" +
+    "\n" +
     "\n" +
     "\n" +
     "</span>\n" +
@@ -535,7 +545,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "   <div class=\"main\">\n" +
     "\n" +
-    "      <div class=\"ti-page-header\">\n" +
+    "      <div class=\"ti-page-header leaderboard-header\">\n" +
     "         <h2>\n" +
     "            <span class=\"text\">\n" +
     "               Top\n" +
@@ -552,7 +562,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "      <div class=\"content\">\n" +
     "         <div class=\"list-items\">\n" +
     "            <!-- packages loop -->\n" +
-    "            <div ng-if=\"filters.d.type=='package'\" class=\"leader\" ng-repeat=\"package in leaders.list\">\n" +
+    "            <div ng-if=\"filters.d.type=='packages'\" class=\"leader\" ng-repeat=\"package in leaders.list\">\n" +
     "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/package-snippet.tpl.html'\"></div>\n" +
     "            </div>\n" +
     "\n" +

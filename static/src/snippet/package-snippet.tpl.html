@@ -6,7 +6,7 @@
          popover-template="'snippet/impact-popover.tpl.html'">
 
       <span class="one-metric metric">
-         {{ nFormatter(package.impact) }}
+         {{ format.short(package.impact) }}
       </span>
 
 
@@ -26,16 +26,19 @@
    <span class="metadata">
       <span class="name-container">
 
-         <span class="language-icon r"
-               ng-if="package.language=='r'"
-              tooltip="R package">
-            R
+         <span class="icon">
+            <span class="language-icon r"
+                  ng-if="package.language=='r'"
+                 tooltip="R package">
+               R
+            </span>
+            <span class="language-icon python"
+                  ng-if="package.language=='python'"
+                 tooltip="Python package">
+               py
+            </span>
          </span>
-         <span class="language-icon python"
-               ng-if="package.language=='python'"
-              tooltip="Python package">
-            py
-         </span>
+
 
          <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
             {{ package.name }}
@@ -57,8 +60,8 @@
                        class="comma">, </span></a><a class="contrib plus-more"
                href="package/{{ package.language }}/{{ package.name }}"
                   popover="click to see all {{ package.num_contributors }} contributors"
-                  popover-trigger="mouseenter" ng-show="package.num_contributors > 5">,
-               and {{ package.num_contributors - package.credit.length }} others
+                  popover-trigger="mouseenter" ng-show="package.num_contributors > 3">,
+               and {{ package.num_contributors - 3 }} others
             </a>
          </span>
 

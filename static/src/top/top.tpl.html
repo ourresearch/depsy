@@ -92,7 +92,7 @@
 
    <div class="main">
 
-      <div class="ti-page-header">
+      <div class="ti-page-header leaderboard-header">
          <h2>
             <span class="text">
                Top
@@ -109,7 +109,7 @@
       <div class="content">
          <div class="list-items">
             <!-- packages loop -->
-            <div ng-if="filters.d.type=='package'" class="leader" ng-repeat="package in leaders.list">
+            <div ng-if="filters.d.type=='packages'" class="leader" ng-repeat="package in leaders.list">
                <div class="package-snippet-wrapper"  ng-include="'snippet/package-snippet.tpl.html'"></div>
             </div>
 

@@ -5,8 +5,6 @@ angular.module('snippet', [
 
   .controller("packageSnippetCtrl", function($scope){
 
-    $scope.package = $scope.leader
-
     var packagePairs = _.pairs($scope.package)
     var subScores = _.filter(packagePairs, function(packagePair){
       return packagePair[0].indexOf("_percentile") > 0
