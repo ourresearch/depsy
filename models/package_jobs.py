@@ -11,6 +11,7 @@ from models.person import Person
 from models.contribution import Contribution
 from models.github_repo_deplines import GithubRepoDeplines
 from models.github_repo import GithubRepo
+from models.tags import Tags
 from jobs import update_registry
 from jobs import Update
 
@@ -22,13 +23,33 @@ def get_leaders(filters, page_size=25):
     elif filters["type"] in ["person", "people", "persons"]:
         fn = get_people
     elif filters["type"] in ["tag", "tags"]:
-        pass  # get the tags here
+        fn = get_tags
     else:
         raise ValueError("you can only get person, package, or tag leaders.")
 
     # this can break things downstream.
     filters_without_type = {k:v for k, v in filters.iteritems() if k != "type"}
     return fn(filters=filters_without_type, page_size=page_size)
+
+
+def get_tags(filters, page_size=25):
+    q = Tags.query
+    for k, v in filters.iteritems():
+
+        # tags table is named a little weird        
+        if k == "host":
+            k = "namespace"
+            print "filtering with", k, v
+
+        attr = getattr(Tags, k)
+        q = q.filter(attr==v)
+
+    total_count = q.count()
+
+    q = q.order_by(Tags.count.desc())
+    q = q.limit(page_size)
+    objects = q.all()
+    return [total_count, objects]
 
 
 def get_people(filters, page_size=25):
@@ -53,11 +74,10 @@ def get_people(filters, page_size=25):
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)
     objects = q.all()
-    return [total_count, objects]
+    return (total_count, objects)
 
 
 def get_packages(filters, page_size=25):
-
     q = Package.query.options(
         orm.subqueryload_all(
             Package.contributions, 
@@ -77,7 +97,7 @@ def get_packages(filters, page_size=25):
     q = q.limit(page_size)
 
     objects = q.all()
-    return [total_count, objects]
+    return (total_count, objects)
 
 
 
