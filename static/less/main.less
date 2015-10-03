@@ -516,7 +516,6 @@ span.snippet {
       }
       span.summary {
          float: left;
-//         border-top: 1px solid #ddd;
          padding-top: 2px;
          margin-top: 2px;
          margin-left: 1px;
@@ -526,12 +525,31 @@ span.snippet {
 
          // for the person snippet
          &.person-packages {
+            line-height: 2;
+            span.works-on {
+               font-size: 80%;
+               display: none;
+            }
+            span.sep {
+               margin: 0 2px;
+            }
             a {
                color: #333;
-               span.language-icon {
-                  display: none;
-                  vertical-align: 1px;
-                  margin-left: 6px;
+               white-space: nowrap;
+               &.package {
+                  margin-left: 5px;
+//                  border: 1px solid #ccc;
+//                  .rounded(20px);
+//                  padding: 0 5px 2px;
+//                  margin: 0 2px;
+//                  &:hover {
+//                     text-decoration: none;
+//                     background: #eee;
+//                  }
+               }
+               &.also {
+                  font-style: italic;
+                  margin-left: 5px;
                }
             }
          }
@@ -633,6 +651,11 @@ span.language-icon {
    border: 1px solid #777;
    color: #777;
    background: none;
+   cursor: default;
+
+//   border:none;
+//   background: #999;
+//   color: #fff;
 
    &.r {
       .rounded(15px);

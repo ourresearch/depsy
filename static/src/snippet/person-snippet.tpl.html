@@ -38,12 +38,12 @@
             {{ person.name }}
          </a>
 
+
          <i popover-title="Academic"
             popover-trigger="mouseenter"
             popover="We infer academic status based on factors like email address, citedness, institution."
             ng-show="person.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
-
          <!--
          <span class="contribs">
             <span class="by">by</span>
@@ -67,13 +67,17 @@
       </span>
       <span class="summary person-packages">
          <span class="works-on">Works on</span>
-         <a class="package"
-            href="package/{{ package.language }}/{{ package.name }}"
-            ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
-
-            {{ package.name }}<span class="comma" ng-show="!$last">,</span>
-         </a>
-         <a ng-show="{{ person.num_packages > 3 }}" href="person/{{ person.id }}">and {{ person.num_packages - 3 }} other packages</a>
+         <span class="package" ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
+            <a href="package/{{ package.language }}/{{ package.name }}">
+               {{ package.name }}
+            </a>
+            <span class="sep" ng-show="!$last">|</span>
+         </span>
+         <span class="also" ng-show="{{ person.num_packages > 3 }}">
+            <span class="sep">|</span>
+            <a href="person/{{ person.id }}"></a>
+            {{ person.num_packages - 3 }} other packages
+         </span>
 
       </span>
    </span>

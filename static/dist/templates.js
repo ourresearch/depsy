@@ -385,12 +385,12 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "            {{ person.name }}\n" +
     "         </a>\n" +
     "\n" +
+    "\n" +
     "         <i popover-title=\"Academic\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
     "            popover=\"We infer academic status based on factors like email address, citedness, institution.\"\n" +
     "            ng-show=\"person.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
-    "\n" +
     "         <!--\n" +
     "         <span class=\"contribs\">\n" +
     "            <span class=\"by\">by</span>\n" +
@@ -414,13 +414,17 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "      </span>\n" +
     "      <span class=\"summary person-packages\">\n" +
     "         <span class=\"works-on\">Works on</span>\n" +
-    "         <a class=\"package\"\n" +
-    "            href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
-    "            ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
-    "\n" +
-    "            {{ package.name }}<span class=\"comma\" ng-show=\"!$last\">,</span>\n" +
-    "         </a>\n" +
-    "         <a ng-show=\"{{ person.num_packages > 3 }}\" href=\"person/{{ person.id }}\">and {{ person.num_packages - 3 }} other packages</a>\n" +
+    "         <span class=\"package\" ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
+    "            <a href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
+    "               {{ package.name }}\n" +
+    "            </a>\n" +
+    "            <span class=\"sep\" ng-show=\"!$last\">|</span>\n" +
+    "         </span>\n" +
+    "         <span class=\"also\" ng-show=\"{{ person.num_packages > 3 }}\">\n" +
+    "            <span class=\"sep\">|</span>\n" +
+    "            <a href=\"person/{{ person.id }}\"></a>\n" +
+    "            {{ person.num_packages - 3 }} other packages\n" +
+    "         </span>\n" +
     "\n" +
     "      </span>\n" +
     "   </span>\n" +

@@ -430,13 +430,26 @@ span.snippet span.metadata span.summary {
   display: inline-block;
   width: 600px;
 }
+span.snippet span.metadata span.summary.person-packages {
+  line-height: 2;
+}
+span.snippet span.metadata span.summary.person-packages span.works-on {
+  font-size: 80%;
+  display: none;
+}
+span.snippet span.metadata span.summary.person-packages span.sep {
+  margin: 0 2px;
+}
 span.snippet span.metadata span.summary.person-packages a {
   color: #333;
+  white-space: nowrap;
 }
-span.snippet span.metadata span.summary.person-packages a span.language-icon {
-  display: none;
-  vertical-align: 1px;
-  margin-left: 6px;
+span.snippet span.metadata span.summary.person-packages a.package {
+  margin-left: 5px;
+}
+span.snippet span.metadata span.summary.person-packages a.also {
+  font-style: italic;
+  margin-left: 5px;
 }
 span.snippet span.contribs {
   vertical-align: -4px;
@@ -527,6 +540,7 @@ span.language-icon {
   border: 1px solid #777;
   color: #777;
   background: none;
+  cursor: default;
 }
 span.language-icon.r {
   -webkit-border-radius: 15px;
