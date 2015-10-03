@@ -18,6 +18,8 @@ from jobs import Update
 
 def get_people(filters=None, page_size=25):
     q = Person.query
+    q = q.filter(Person.name != "UNKNOWN")
+    q = q.filter(Person.email != "UNKNOWN")
     q = q.options(
         orm.subqueryload_all(
             Person.contributions,
