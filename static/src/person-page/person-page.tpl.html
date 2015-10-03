@@ -1,5 +1,5 @@
 <div class="person-page">
-   <div class="ti-page-header">
+   <div class="ti-page-sidebar">
       <h1>
          <img ng-src="{{ person.icon }}" alt=""/>
          <span class="text">
@@ -12,14 +12,19 @@
    <div class="ti-page-body">
 
       <div class="packages">
-         <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'!credit_points'">
-            <span class="roles" ng-repeat="role in package.roles">
-               <span class="role author" ng-if="role.name=='author'">auth</span>
-               <span class="role github-contrib" ng-if="role.name=='github_contributor'">contrib</span>
-               <span class="role owner" ng-if="role.name=='github_owner'">owner</span>
-
-
-            </span>
+         <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_project_impact'">
+            <div class="person-package-stats">
+               <span class="roles">
+                  <span class="role role-{{ role }}" ng-repeat="role in package.roles | orderBy: '-toLowerCase()'">
+                     <i class="fa fa-user" ng-if="role=='author'"></i>
+                     <i class="fa fa-save"  ng-if="role=='github_contributor'"></i>
+                     <i class="fa fa-github" ng-if="role=='github_owner'"></i>
+                  </span>
+               </span>
+               <div class="bar-outside">
+                  <span class="bar-inside" style="width: {{ package.person_project_credit * 100 }}%"></span>
+               </div>
+            </div>
             <span class="package-snippet-wrapper" ng-include="'snippet/package-snippet.tpl.html'"></span>
          </div>
 

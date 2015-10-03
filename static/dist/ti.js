@@ -934,7 +934,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"person-page\">\n" +
-    "   <div class=\"ti-page-header\">\n" +
+    "   <div class=\"ti-page-sidebar\">\n" +
     "      <h1>\n" +
     "         <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
     "         <span class=\"text\">\n" +
@@ -947,14 +947,19 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
     "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'!credit_points'\">\n" +
-    "            <span class=\"roles\" ng-repeat=\"role in package.roles\">\n" +
-    "               <span class=\"role author\" ng-if=\"role.name=='author'\">auth</span>\n" +
-    "               <span class=\"role github-contrib\" ng-if=\"role.name=='github_contributor'\">contrib</span>\n" +
-    "               <span class=\"role owner\" ng-if=\"role.name=='github_owner'\">owner</span>\n" +
-    "\n" +
-    "\n" +
-    "            </span>\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_project_impact'\">\n" +
+    "            <div class=\"person-package-stats\">\n" +
+    "               <span class=\"roles\">\n" +
+    "                  <span class=\"role role-{{ role }}\" ng-repeat=\"role in package.roles | orderBy: '-toLowerCase()'\">\n" +
+    "                     <i class=\"fa fa-user\" ng-if=\"role=='author'\"></i>\n" +
+    "                     <i class=\"fa fa-save\"  ng-if=\"role=='github_contributor'\"></i>\n" +
+    "                     <i class=\"fa fa-github\" ng-if=\"role=='github_owner'\"></i>\n" +
+    "                  </span>\n" +
+    "               </span>\n" +
+    "               <div class=\"bar-outside\">\n" +
+    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_project_credit * 100 }}%\"></span>\n" +
+    "               </div>\n" +
+    "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
     "         </div>\n" +
     "\n" +
