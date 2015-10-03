@@ -70,9 +70,10 @@
          <a class="package"
             href="package/{{ package.language }}/{{ package.name }}"
             ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
+
             {{ package.name }}<span class="comma" ng-show="!$last">,</span>
          </a>
-         <a ng-show="{{ person.num_packages > 5 }}" href="person/{{ person.id }}">and {{ person.num_packages - 5 }} others</a>
+         <a ng-show="{{ person.num_packages > 3 }}" href="person/{{ person.id }}">and {{ person.num_packages - 3 }} other packages</a>
 
       </span>
    </span>

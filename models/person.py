@@ -76,7 +76,7 @@ class Person(db.Model):
         ret["num_packages"] = len(person_packages)
         ret["num_packages_r"] = len([pp for pp in person_packages if pp.package.language=='r'])
         ret["num_packages_python"] = len([pp for pp in person_packages if pp.package.language=='python'])
-        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:5]]
+        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:3]]
         return ret
 
 

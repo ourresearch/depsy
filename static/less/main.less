@@ -487,22 +487,7 @@ span.snippet {
             margin-right: 4px;
 
             // for the package
-            span.language-icon {
-               font-weight: 100;
-               text-align: center;
-               width: 16px;
-               display: inline-block;
-               font-size: 10px;
-               vertical-align: -1px;
-
-               border: 1px solid #777;
-               color: #777;
-               background: none;
-
-               &.r {
-                  .rounded(15px);
-               }
-            }
+            // span.language-icon is set elsewhere
 
             // for the person
             img.person-icon {
@@ -543,6 +528,11 @@ span.snippet {
          &.person-packages {
             a {
                color: #333;
+               span.language-icon {
+                  display: none;
+                  vertical-align: 1px;
+                  margin-left: 6px;
+               }
             }
          }
       }
@@ -632,6 +622,22 @@ span.snippet {
 }
 
 
+span.language-icon {
+   font-weight: 100;
+   text-align: center;
+   width: 16px;
+   display: inline-block;
+   font-size: 10px;
+   vertical-align: -1px;
+
+   border: 1px solid #777;
+   color: #777;
+   background: none;
+
+   &.r {
+      .rounded(15px);
+   }
+}
 
 
 

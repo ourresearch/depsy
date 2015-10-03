@@ -1183,9 +1183,10 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         <a class=\"package\"\n" +
     "            href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
     "            ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
+    "\n" +
     "            {{ package.name }}<span class=\"comma\" ng-show=\"!$last\">,</span>\n" +
     "         </a>\n" +
-    "         <a ng-show=\"{{ person.num_packages > 5 }}\" href=\"person/{{ person.id }}\">and {{ person.num_packages - 5 }} others</a>\n" +
+    "         <a ng-show=\"{{ person.num_packages > 3 }}\" href=\"person/{{ person.id }}\">and {{ person.num_packages - 3 }} other packages</a>\n" +
     "\n" +
     "      </span>\n" +
     "   </span>\n" +

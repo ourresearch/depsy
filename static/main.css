@@ -401,22 +401,6 @@ span.snippet span.metadata span.name-container {
 span.snippet span.metadata span.name-container span.icon {
   margin-right: 4px;
 }
-span.snippet span.metadata span.name-container span.icon span.language-icon {
-  font-weight: 100;
-  text-align: center;
-  width: 16px;
-  display: inline-block;
-  font-size: 10px;
-  vertical-align: -1px;
-  border: 1px solid #777;
-  color: #777;
-  background: none;
-}
-span.snippet span.metadata span.name-container span.icon span.language-icon.r {
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  border-radius: 15px;
-}
 span.snippet span.metadata span.name-container span.icon img.person-icon {
   height: 25px;
   margin-bottom: -4px;
@@ -448,6 +432,11 @@ span.snippet span.metadata span.summary {
 }
 span.snippet span.metadata span.summary.person-packages a {
   color: #333;
+}
+span.snippet span.metadata span.summary.person-packages a span.language-icon {
+  display: none;
+  vertical-align: 1px;
+  margin-left: 6px;
 }
 span.snippet span.contribs {
   vertical-align: -4px;
@@ -527,6 +516,22 @@ span.snippet span.contribs a.contrib {
 }
 #impact-popover div.metric span.descr span.paren {
   font-size: 12px;
+}
+span.language-icon {
+  font-weight: 100;
+  text-align: center;
+  width: 16px;
+  display: inline-block;
+  font-size: 10px;
+  vertical-align: -1px;
+  border: 1px solid #777;
+  color: #777;
+  background: none;
+}
+span.language-icon.r {
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
 }
 ul {
   margin-left: 0;
