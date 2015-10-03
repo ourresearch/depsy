@@ -446,7 +446,11 @@ angular.module('personPage', [
 
   .controller("personPageCtrl", function($scope,
                                           $routeParams,
+                                          ngProgress,
+                                          FormatterService,
                                           personResp){
+    ngProgress.complete()
+    $scope.format = FormatterService
     $scope.person = personResp.data
     console.log("retrieved the person", $scope.person)
 
