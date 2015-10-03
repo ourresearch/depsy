@@ -1,4 +1,4 @@
-@import url("//fonts.googleapis.com/css?family=Lato:300,400,700,400italic");
+@import url("//fonts.googleapis.com/css?family=Lato:300,400,700,400italic,300italic");
 /*---------------------------------------------------
     LESS Elements 0.9
   ---------------------------------------------------
@@ -252,11 +252,15 @@ div.person-page div.ti-page-header h1 img {
 div.top-page div.sidebar div.facet {
   margin-top: 35px;
 }
+div.top-page div.sidebar div.facet h3 {
+  font-size: 22px;
+  margin: 5px 0;
+}
 div.top-page div.sidebar div.facet ul li {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 100;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: 20px;
 }
 div.top-page div.sidebar div.facet ul li span.status i.fa-square-o {
   margin-right: 3px;
@@ -308,7 +312,7 @@ div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.chil
   float: left;
 }
 div.page.sidebar-page .sidebar {
-  width: 300px;
+  width: 250px;
   border-right: 1px solid #ddd;
   position: fixed;
   top: 0;
@@ -318,7 +322,7 @@ div.page.sidebar-page .sidebar {
   background: #fafafa;
 }
 div.page.sidebar-page .main {
-  margin-left: 330px;
+  margin-left: 280px;
 }
 span.package-snippet {
   margin: 15px 0 15px 50px;
@@ -335,8 +339,8 @@ span.package-snippet span.left-metrics {
   display: inline-block;
   width: 75px;
   text-align: right;
-  font-weight: bold;
   float: left;
+  margin-top: -3px;
 }
 span.package-snippet span.left-metrics span.vis {
   display: inline-block;
@@ -344,7 +348,7 @@ span.package-snippet span.left-metrics span.vis {
   width: 58px;
   height: 8px;
   text-align: right;
-  margin-right: 3px;
+  margin-top: 3px;
 }
 span.package-snippet span.left-metrics span.vis span.vis-bar {
   display: inline-block;
@@ -372,13 +376,10 @@ span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subsc
 }
 span.package-snippet span.left-metrics .one-metric {
   cursor: default;
-  font-size: 24px;
+  font-size: 28px;
   color: #333;
   font-weight: 100;
-}
-span.package-snippet span.left-metrics .one-metric span.percent {
-  font-size: 50%;
-  margin-left: 0px;
+  margin-bottom: 5px;
 }
 span.package-snippet span.metadata {
   display: inline-block;
@@ -388,17 +389,16 @@ span.package-snippet span.metadata {
 }
 span.package-snippet span.metadata span.name-container {
   float: left;
-  min-width: 165px;
+  width: 600px;
 }
 span.package-snippet span.metadata span.name-container span.language-icon {
   margin-right: 4px;
   font-weight: 100;
   text-align: center;
-  background: #777;
   width: 16px;
   display: inline-block;
-  color: #fff;
   font-size: 10px;
+  vertical-align: -1px;
   border: 1px solid #777;
   color: #777;
   background: none;
@@ -423,29 +423,22 @@ span.package-snippet span.metadata span.name-container i.is-academic {
 }
 span.package-snippet span.metadata span.summary {
   float: left;
+  padding-top: 2px;
+  margin-top: 2px;
   margin-left: 1px;
-  font-size: 13px;
+  font-size: 15px;
   display: inline-block;
   width: 400px;
 }
 span.package-snippet span.contribs {
-  text-align: right;
-  width: 200px;
-  display: inline-block;
+  vertical-align: -4px;
+  margin-left: 5px;
+  font-size: 15px;
+  font-weight: normal;
+  font-style: italic;
 }
-span.package-snippet span.contribs span.contrib img {
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  border-radius: 15px;
-  height: 20px;
-  opacity: .8;
-}
-span.package-snippet span.contribs span.contrib.plus-more {
-  width: 100px;
-  margin-right: -100px;
-  padding: 0 0 0 5px;
-  text-align: left;
-  display: inline-block;
+span.package-snippet span.contribs a.contrib {
+  color: #333;
 }
 #impact-popover div.metric {
   font-size: 14px;

@@ -1,4 +1,4 @@
-@import url("//fonts.googleapis.com/css?family=Lato:300,400,700,400italic");
+@import url("//fonts.googleapis.com/css?family=Lato:300,400,700,400italic,300italic");
 @import "elements"; // from http://lesselements.com/
 
 
@@ -8,7 +8,7 @@
 
 @mainColor: #00aeef;
 @secondaryColor: #ed1c24;
-@sidebar-width: 300px;
+@sidebar-width: 250px;
 
 @citationsColor: #984ea3;
 @pagerankColor: #4daf4a;
@@ -278,13 +278,16 @@ div.top-page {
    div.sidebar {
       div.facet {
          margin-top: 35px;
-         h3 {}
+         h3 {
+            font-size: 22px;
+            margin: 5px 0;
+         }
          ul {
             li {
-               font-size: 20px;
+               font-size: 18px;
                font-weight: 100;
                cursor: pointer;
-               margin-left: 10px;
+               margin-left: 20px;
                span.status {
                   i.fa-square-o {
                      margin-right: 3px;
@@ -403,8 +406,8 @@ span.package-snippet {
       display: inline-block;
       width: 75px;
       text-align: right;
-      font-weight: bold;
       float: left;
+      margin-top: -3px;
 
       span.vis {
          display: inline-block;
@@ -412,7 +415,7 @@ span.package-snippet {
          width: 58px;
          height: 8px;
          text-align: right;
-         margin-right: 3px;
+         margin-top: 3px;
          span.vis-bar {
             display: inline-block;
             height: 100%;
@@ -445,13 +448,10 @@ span.package-snippet {
 
       .one-metric {
          cursor: default;
-         font-size: 24px;
+         font-size: 28px;
          color: #333;
          font-weight: 100;
-         span.percent {
-            font-size: 50%;
-            margin-left: 0px;
-         }
+         margin-bottom: 5px;
       }
 
 
@@ -465,16 +465,15 @@ span.package-snippet {
 
       span.name-container {
          float: left;
-         min-width: 165px;
+         width: 600px;
          span.language-icon {
             margin-right: 4px;
             font-weight: 100;
             text-align: center;
-            background: #777;
             width: 16px;
             display: inline-block;
-            color: #fff;
             font-size: 10px;
+            vertical-align: -1px;
 
             border: 1px solid #777;
             color: #777;
@@ -503,30 +502,29 @@ span.package-snippet {
       }
       span.summary {
          float: left;
+//         border-top: 1px solid #ddd;
+         padding-top: 2px;
+         margin-top: 2px;
          margin-left: 1px;
-         font-size: 13px;
+         font-size: 15px;
          display: inline-block;
+//         font-weight: 100;
          width: 400px;
 //         vertical-align: middle;
       }
    }
 
    span.contribs {
-      text-align: right;
-      width: 200px;
-      display: inline-block;
-      span.contrib {
-         img {
-            .rounded(15px);
-            height: 20px;
-            opacity: .8;
-         }
+      vertical-align: -4px;
+      margin-left: 5px;
+      font-size: 15px;
+      font-weight: normal;
+      font-style: italic;
+      span.by {
+      }
+      a.contrib {
+         color: #333;
          &.plus-more {
-            width: 100px;
-            margin-right: -100px;
-            padding: 0 0 0 5px;
-            text-align: left;
-            display: inline-block;
          }
 
       }
