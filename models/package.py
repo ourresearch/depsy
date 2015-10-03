@@ -521,14 +521,14 @@ class Package(db.Model):
         num_hits_with_language = source.run_query(self.distinctiveness_query)
         self.bucket2["num_hits_with_language"] = num_hits_with_language
         
-        if self.bucket["num_hits_raw"] > 0:
-            ratio = float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+        if self.bucket2["num_hits_raw"] > 0:
+            ratio = float(self.bucket2["num_hits_with_language"])/self.bucket2["num_hits_raw"]
         else:
             ratio = None
 
         print "{}: solo search finds {}, ratio is {}".format(
             self.project_name, 
-            self.bucket["num_hits_raw"],
+            self.bucket2["num_hits_raw"],
             ratio
             )
 
