@@ -68,7 +68,7 @@ class Person(db.Model):
         for pp in person_packages:
             for tag in pp.package.tags:
                 tags_dict[tag] += 1
-        tags_to_return = min(3, len(tags_dict))
+        tags_to_return = min(5, len(tags_dict))
         sorted_tags_to_return = sorted(tags_dict.items(), key=lambda x: x[1], reverse=True)[0:tags_to_return]
         ret["top_person_tags"] = [{"name": name, "count": count} for name, count in sorted_tags_to_return]
 

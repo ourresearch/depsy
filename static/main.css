@@ -241,7 +241,7 @@ div.landing div.tagline {
 }
 div.person-page div.ti-page-sidebar {
   float: left;
-  width: 400px;
+  width: 420px;
   padding: 43px 20px 20px 38px;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info {
@@ -292,14 +292,24 @@ div.person-page div.ti-page-sidebar .sidebar-header .accounts {
   color: #999;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .accounts .account {
-  margin-right: 5px;
+  margin-right: 10px;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .accounts img {
   height: 14px;
   margin-top: 3px;
+  margin-right: 90px;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .accounts a {
   color: #999;
+}
+div.person-page div.ti-page-sidebar .top-tags {
+  clear: both;
+}
+div.person-page div.ti-page-sidebar .top-tags span.tag {
+  border: 1px solid #ddd;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
 }
 div.person-page .ti-page-body {
   float: left;
@@ -537,7 +547,7 @@ span.snippet span.metadata span.summary {
   margin-top: 2px;
   font-size: 15px;
   display: inline-block;
-  width: 700px;
+  width: 600px;
 }
 span.snippet span.metadata span.summary.tags {
   margin: 5px 0 0 -3px;

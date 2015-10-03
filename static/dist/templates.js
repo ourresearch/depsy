@@ -172,8 +172,8 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "               {{ format.short(person.impact) }}\n" +
     "            </div>\n" +
     "            <div class=\"rank-info\">\n" +
-    "               <span class=\"rank\">#{{ 1198 }}</span>\n" +
-    "               <span class=\"out-of\">of 71,763</span>\n" +
+    "               <span class=\"rank\">#{{ person.impact_rank }}</span>\n" +
+    "               <span class=\"out-of\">of {{ person.impact_rank_max }}</span>\n" +
     "            </div>\n" +
     "         </div>\n" +
     "         <span class=\"name\">\n" +
@@ -198,6 +198,16 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "               github/{{ person.github_login }}\n" +
     "            </a>\n" +
     "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"top-tags\">\n" +
+    "         <h3>Top tags</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <span class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "               {{ tag.name }}\n" +
+    "            </span>\n" +
+    "         </div>\n" +
+    "\n" +
     "      </div>\n" +
     "   </div>\n" +
     "\n" +

@@ -7,8 +7,8 @@
                {{ format.short(person.impact) }}
             </div>
             <div class="rank-info">
-               <span class="rank">#{{ 1198 }}</span>
-               <span class="out-of">of 71,763</span>
+               <span class="rank">#{{ person.impact_rank }}</span>
+               <span class="out-of">of {{ person.impact_rank_max }}</span>
             </div>
          </div>
          <span class="name">
@@ -33,6 +33,16 @@
                github/{{ person.github_login }}
             </a>
          </span>
+      </div>
+
+      <div class="top-tags">
+         <h3>Top tags</h3>
+         <div class="tags">
+            <span class="tag" ng-repeat="tag in person.top_person_tags | orderBy: '-count'">
+               {{ tag.name }}
+            </span>
+         </div>
+
       </div>
    </div>
 
