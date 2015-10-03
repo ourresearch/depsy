@@ -154,8 +154,25 @@ class CranPackage(Package):
         if is_academic_phrase(self.api_raw["Description"]):
             self.is_academic = True
 
-        if is_academic_phrase(self.proxy_papers):
-            self.is_academic = True
+        # check proxy paper type
+        sciency_proxy_paper_types = [
+            '@Book', 
+            '@InBook',
+            '@InPhdThesis',
+            '@PhdThesis',
+            '@Article',
+            '@InProceedings'
+            # '%@InCollection%'
+            # '%@Manual%'
+            # '%@Misc%'
+            # '%@Unpublished%'
+            # '%@TechReport%'
+        ]
+
+        for proxy_paper_type in sciency_proxy_paper_types:
+            if proxy_paper_type in self.proxy_paper:
+                print "setting is_academic=True due to proxy paper type"
+                self.is_academic = True
 
         return self.is_academic
 

@@ -409,7 +409,14 @@ update_registry.register(Update(
 ))
 
 
-
+q = db.session.query(Person.id)
+q = q.filter(Person.impact_rank == None)
+update_registry.register(Update(
+    job=Person.set_impact_rank,
+    query=q,
+    queue_id=9,
+    shortcut_fn=Person.shortcut_impact_rank
+))
 
 
 

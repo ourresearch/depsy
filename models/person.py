@@ -23,6 +23,7 @@ class Person(db.Model):
     github_about = db.deferred(db.Column(JSONB))
     bucket = db.Column(JSONB)
     impact = db.Column(db.Float)
+    impact_rank = db.Column(db.Integer)
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
@@ -126,6 +127,26 @@ class Person(db.Model):
             self.main_language = "r"
         else:
             self.main_language = "python"
+
+    @classmethod
+    def shortcut_impact_rank(cls):
+        print "getting the lookup for ranking impact...."
+        q = db.session.query(cls.id)
+        q = q.order_by(cls.impact.desc())  # the important part :)
+        rows = q.all()
+
+        impact_rank_lookup = {}
+        ids_sorted_by_impact = [row[0] for row in rows]
+        for my_id in ids_sorted_by_impact:
+            zero_based_rank = ids_sorted_by_impact.index(my_id)
+            impact_rank_lookup[my_id] = zero_based_rank + 1
+
+        return impact_rank_lookup
+
+
+    def set_impact_rank(self, impact_rank_lookup):
+        self.impact_rank = impact_rank_lookup[self.id]
+        print "self.impact_rank", self.impact_rank
 
 
     def set_github_about(self):
