@@ -1,12 +1,12 @@
-<span class="package-snippet"
+<span class="snippet package-snippet"
      ng-controller="packageSnippetCtrl">
    <span class="left-metrics"
          popover-placement="top"
          popover-trigger="mouseenter"
-         popover-template="'package-snippet/impact-popover.tpl.html'">
+         popover-template="'snippet/impact-popover.tpl.html'">
 
       <span class="one-metric metric">
-         {{ floor(package.impact) }}
+         {{ nFormatter(package.impact) }}
       </span>
 
 

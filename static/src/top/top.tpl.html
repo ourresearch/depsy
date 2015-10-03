@@ -95,10 +95,9 @@
       <div class="ti-page-header">
          <h2>
             <span class="text">
-               Top <span class="leaders-type">{{ leaders.type }}</span>
-               <span class="sort">
-                  , sorted by <span class="val">{{ leaders.sort }}</span>
-               </span>
+               Top
+               <span class="language">{{ filters.d.language }}</span>
+               <span class="leaders-type">{{ filters.d.type }}</span>
                <span class="filters" ng-show="leaders.filters.length">
 
                </span>
@@ -109,9 +108,18 @@
 
       <div class="content">
          <div class="list-items">
-            <div class="leader" ng-repeat="leader in leaders.list">
-               <div class="package-snippet-wrapper"  ng-include="'package-snippet/package-snippet.tpl.html'"></div>
+            <!-- packages loop -->
+            <div ng-if="filters.d.type=='package'" class="leader" ng-repeat="package in leaders.list">
+               <div class="package-snippet-wrapper"  ng-include="'snippet/package-snippet.tpl.html'"></div>
             </div>
+
+            <!-- people loop -->
+            <div ng-if="filters.d.type=='people'" class="leader" ng-repeat="person in leaders.list">
+               <div class="package-snippet-wrapper"  ng-include="'snippet/person-snippet.tpl.html'"></div>
+            </div>
+
+
+
          </div>
       </div>
 

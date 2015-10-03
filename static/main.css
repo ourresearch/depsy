@@ -250,7 +250,7 @@ div.person-page div.ti-page-header h1 img {
   border-radius: 40px;
 }
 div.top-page div.sidebar div.facet {
-  margin-top: 35px;
+  margin-bottom: 35px;
 }
 div.top-page div.sidebar div.facet h3 {
   font-size: 22px;
@@ -324,17 +324,17 @@ div.page.sidebar-page .sidebar {
 div.page.sidebar-page .main {
   margin-left: 280px;
 }
-span.package-snippet {
+span.snippet {
   margin: 15px 0 15px 50px;
   padding: 4px 0;
   color: #333;
   text-decoration: none;
   display: inline-block;
 }
-span.package-snippet span.left-icons {
+span.snippet span.left-icons {
   display: inline-block;
 }
-span.package-snippet span.left-metrics {
+span.snippet span.left-metrics {
   vertical-align: middle;
   display: inline-block;
   width: 75px;
@@ -342,7 +342,7 @@ span.package-snippet span.left-metrics {
   float: left;
   margin-top: -3px;
 }
-span.package-snippet span.left-metrics span.vis {
+span.snippet span.left-metrics span.vis {
   display: inline-block;
   background: #eee;
   width: 58px;
@@ -350,7 +350,7 @@ span.package-snippet span.left-metrics span.vis {
   text-align: right;
   margin-top: 3px;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar {
+span.snippet span.left-metrics span.vis span.vis-bar {
   display: inline-block;
   height: 100%;
   text-align: right;
@@ -358,40 +358,40 @@ span.package-snippet span.left-metrics span.vis span.vis-bar {
   -moz-border-radius: 30px;
   border-radius: 30px;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore {
+span.snippet span.left-metrics span.vis span.vis-bar span.subscore {
   display: inline-block;
   height: 100%;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_citations_percentile {
+span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_citations_percentile {
   background: #984ea3;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-pagerank_percentile {
+span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-pagerank_percentile {
   background: #4daf4a;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_downloads_percentile {
+span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_downloads_percentile {
   background: #377eb8;
 }
-span.package-snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_stars_percentile {
+span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_stars_percentile {
   background: #e41a1c;
 }
-span.package-snippet span.left-metrics .one-metric {
+span.snippet span.left-metrics .one-metric {
   cursor: default;
   font-size: 28px;
   color: #333;
   font-weight: 100;
   margin-bottom: 5px;
 }
-span.package-snippet span.metadata {
+span.snippet span.metadata {
   display: inline-block;
   float: left;
   width: 300px;
   margin-left: 15px;
 }
-span.package-snippet span.metadata span.name-container {
+span.snippet span.metadata span.name-container {
   float: left;
   width: 600px;
 }
-span.package-snippet span.metadata span.name-container span.language-icon {
+span.snippet span.metadata span.name-container span.language-icon {
   margin-right: 4px;
   font-weight: 100;
   text-align: center;
@@ -403,25 +403,25 @@ span.package-snippet span.metadata span.name-container span.language-icon {
   color: #777;
   background: none;
 }
-span.package-snippet span.metadata span.name-container span.language-icon.r {
+span.snippet span.metadata span.name-container span.language-icon.r {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
 }
-span.package-snippet span.metadata span.name-container a.name {
+span.snippet span.metadata span.name-container a.name {
   font-size: 20px;
   font-weight: bold;
   color: #333;
   vertical-align: middle;
 }
-span.package-snippet span.metadata span.name-container a.name:hover {
+span.snippet span.metadata span.name-container a.name:hover {
   color: #333;
 }
-span.package-snippet span.metadata span.name-container i.is-academic {
+span.snippet span.metadata span.name-container i.is-academic {
   vertical-align: -2px;
   color: #555;
 }
-span.package-snippet span.metadata span.summary {
+span.snippet span.metadata span.summary {
   float: left;
   padding-top: 2px;
   margin-top: 2px;
@@ -430,14 +430,14 @@ span.package-snippet span.metadata span.summary {
   display: inline-block;
   width: 400px;
 }
-span.package-snippet span.contribs {
+span.snippet span.contribs {
   vertical-align: -4px;
   margin-left: 5px;
   font-size: 15px;
   font-weight: normal;
   font-style: italic;
 }
-span.package-snippet span.contribs a.contrib {
+span.snippet span.contribs a.contrib {
   color: #333;
 }
 #impact-popover div.metric {

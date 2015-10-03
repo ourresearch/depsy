@@ -1,4 +1,4 @@
-angular.module('packageSnippet', [
+angular.module('snippet', [
   ])
 
 
@@ -36,9 +36,10 @@ angular.module('packageSnippet', [
     })
 
     $scope.subScoreRatios = subScoreRatios
+  })
 
 
-
+  .controller("personSnippetCtrl", function($scope){
 
   })
 
