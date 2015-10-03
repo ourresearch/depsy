@@ -32,8 +32,6 @@ def get_leaders(filters, page_size=25):
 
 
 def get_people(filters, page_size=25):
-    print "in get_people"
-
     q = Person.query
     q = q.filter(Person.name != "UNKNOWN")
     q = q.filter(Person.email != "UNKNOWN")
@@ -52,12 +50,7 @@ def get_people(filters, page_size=25):
 
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)
-
-    print "before query"
-
     ret = q.all()
-
-    print "after query"
     return ret
 
 
