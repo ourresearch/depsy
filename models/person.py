@@ -253,7 +253,7 @@ class PersonPackage():
         return person_project_impact
 
     def to_dict(self):
-        ret = self.package.as_snippet_without_people
+        ret = self.package.as_snippet
         ret["roles"] = [r.role for r in self.roles]
         ret["person_project_credit"] = self.person_project_credit
         ret["person_project_commits"] = self.person_project_commits
