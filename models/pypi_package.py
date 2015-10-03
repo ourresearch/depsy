@@ -13,6 +13,7 @@ from models.person import get_or_make_person
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
 from models.byline import Byline
+from models.academic import is_academic_phrase
 from util import elapsed
 from python import parse_requirements_txt
 
@@ -251,30 +252,18 @@ class PypiPackage(Package):
         if self._get_intended_audience() == "Science/Research":
             self.is_academic = True
 
-        # if you have academic-sounding tags, you're academic
-        sciency_words = [
-            "chemi",  # 1120
-            "scien",  # 3828
-            "bio",  # 832
-            "econo",  # 12
-            "omics",  # 54
-            "sociology",  # 18
-            "physics",  # 344
-            "math", #588
-            "statistics", #99
-            "ecolog", # 8
-            "genetics" #27
-        ]
-
-        for sciency_word in sciency_words:
-            for tag in self.tags:
-                if sciency_word in tag.lower():
-                    self.is_academic = True
+        # if you have an academic-sounding tag, you're academic
+        for tag in self.tags:
+            if is_academic_phrase(tag):
+                self.is_academic = True
 
         # if you have an academic-sounding name, you're academic
-        for sciency_word in sciency_words:
-            if sciency_word in self.project_name:
-                self.is_academic = True
+        if is_academic_phrase(self.project_name):
+            self.is_academic = True
+
+        # if you have an academic-sounding summary, you're academic
+        if is_academic_phrase(self.summary):
+            self.is_academic = True
 
         return self.is_academic
 
