@@ -157,7 +157,7 @@ def leaderboard():
     page_size = request.args.get("page_size", "25")
 
     start = time()
-    total_count, leaders = get_leaders(
+    num_total, leaders = get_leaders(
         filters=filters_dict,
         page_size=int(page_size)
     )
@@ -165,8 +165,8 @@ def leaderboard():
     leaders_list = [leader.as_snippet for leader in leaders]
 
     ret = json_resp_from_thing({
-        "count": len(leaders_list),
-        "total_count": total_count,
+        "num_returned": len(leaders_list),
+        "num_total": num_total,
         "list": leaders_list,
         "type": filters_dict["type"],
         "filters": filters_dict
