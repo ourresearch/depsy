@@ -2,7 +2,7 @@
 def is_academic_phrase(phrase):
     if not phrase:
         return False
-        
+
     # if you have academic-sounding tags, you're academic
     sciency_words = [
         "chemi",  
@@ -18,6 +18,10 @@ def is_academic_phrase(phrase):
         "ecolog", 
         "genetics",
         "analysis", 
+        "department",
+        "dept of",
+        "university",
+        "formatics",
         "chemphys",  #cran tag         
         "experimentaldesign", 
         "clinicaltrials", 
