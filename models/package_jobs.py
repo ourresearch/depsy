@@ -56,6 +56,7 @@ def get_people(filters, page_size=25):
     q = Person.query
     q = q.filter(Person.name != "UNKNOWN")
     q = q.filter(Person.email != "UNKNOWN")
+    q = q.filter(Person.is_organization == False)
     q = q.options(
         orm.subqueryload_all(
             Person.contributions,

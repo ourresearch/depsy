@@ -25,6 +25,7 @@ class Person(db.Model):
     impact = db.Column(db.Float)
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
+    is_organization = db.Column(db.Boolean)
 
     type = db.Column(db.Text)
 
@@ -48,6 +49,10 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
+    def set_is_organization(self):
+        # set this using the sql in the sql folder!  set_person_is_organization.sql
+        # this is just a placeholder to remind us to run it :)
+        pass
 
     def to_dict(self, full=True):
         ret = {
@@ -58,6 +63,7 @@ class Person(db.Model):
             "icon": self.icon, 
             "icon_small": self.icon_small, 
             "is_academic": self.is_academic, 
+            "is_organization": self.is_organization, 
             "impact": self.impact, 
             "id": self.id
         }
@@ -90,6 +96,7 @@ class Person(db.Model):
             "icon": self.icon, 
             "icon_small": self.icon_small, 
             "is_academic": self.is_academic, 
+            "is_organization": self.is_organization,             
             "impact": self.impact, 
             "id": self.id
         }
