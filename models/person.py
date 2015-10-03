@@ -167,7 +167,9 @@ class Person(db.Model):
 
     @property
     def single_name(self):
-        if self.parsed_name and self.parsed_name["last"]:
+        if self.is_organization:
+            return self.display_name
+        elif self.parsed_name and self.parsed_name["last"]:
             return self.parsed_name["last"]
         return self.display_name
 
