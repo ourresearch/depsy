@@ -130,8 +130,10 @@ class CranPackage(Package):
 
     @property
     def distinctiveness_query(self):
-        return '"{name}" AND ("r package" OR "r statistical") NOT AUTH:"{name}"'.format(
+        return '"{name}" AND ("r package" OR "r statistical")'.format(
             name=self.project_name)
+        # return '"{name}" AND ("r package" OR "r statistical") NOT AUTH:"{name}"'.format(
+        #     name=self.project_name)
 
 
 
