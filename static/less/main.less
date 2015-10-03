@@ -510,6 +510,29 @@ span.package-snippet {
 //         vertical-align: middle;
       }
    }
+
+   span.contribs {
+      text-align: right;
+      width: 200px;
+      display: inline-block;
+      span.contrib {
+         img {
+            .rounded(15px);
+            height: 20px;
+            opacity: .8;
+         }
+         &.plus-more {
+            width: 100px;
+            margin-right: -100px;
+            padding: 0 0 0 5px;
+            text-align: left;
+            display: inline-block;
+         }
+
+      }
+
+   }
+
 }
 #impact-popover {
    div.metric {

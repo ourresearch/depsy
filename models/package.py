@@ -184,7 +184,7 @@ class Package(db.Model):
         #     ret["contributions"][role].sort(reverse=True)
 
 
-        ret["credit"] = []
+        ret["contribs"] = []
         if self.credit:
             ret["num_contributors"] = len(self.credit)
             top_five_people = sorted(self.credit, key=self.credit.get, reverse=True)[0:5]
@@ -198,7 +198,7 @@ class Package(db.Model):
                 for contrib in self.contributions:
                     if contrib.person_id == person_id:
                         person_snippet["roles"].append(contrib.role)
-                ret["credit"].append(person_snippet)
+                ret["contribs"].append(person_snippet)
 
         return ret
 
