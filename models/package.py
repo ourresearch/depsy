@@ -51,6 +51,7 @@ class Package(db.Model):
     github_reverse_deps = db.deferred(db.Column(JSONB))
     dependencies = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    bucket2 = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.deferred(db.Column(db.Text))
@@ -506,30 +507,25 @@ class Package(db.Model):
 
 
     def set_distinctiveness(self):
-        source = full_text_source.Pmc()
-
-        raw_query = '"{name}" NOT AUTH:"{name}"'.format(
+        source = full_text_source.Arxiv()
+        self.bucket2 = {}
+        
+        raw_query = '"{name}"'.format(
             name=self.project_name)
+        # raw_query = '"{name}" NOT AUTH:"{name}"'.format(
+        #     name=self.project_name)
         num_hits_raw = source.run_query(raw_query)
-        self.bucket["num_hits_raw"] = num_hits_raw
+
+        self.bucket2["num_hits_raw"] = num_hits_raw
 
         num_hits_with_language = source.run_query(self.distinctiveness_query)
-        self.bucket["num_hits_with_language"] = num_hits_with_language
-
-        num_hits_without_language = num_hits_raw - num_hits_with_language
-        self.bucket["num_hits_without_language"] = num_hits_without_language
+        self.bucket2["num_hits_with_language"] = num_hits_with_language
         
-        # clean up old junk
-        if "distinctiveness_ratio" in self.bucket:
-            del self.bucket["distinctiveness_ratio"]
-
-        if num_hits_with_language:
-            self.bucket["hits_ratio_without_over_with"] = float(num_hits_without_language)/num_hits_with_language
-        else:
-            self.bucket["hits_ratio_without_over_with"] = None
-            self.bucket["no_pmc_hits"] = True
-        print "hits_ratio_without_over_with for {} is {}".format(
-            self.project_name, self.bucket["hits_ratio_without_over_with"])
+        print "{}: solo is {}, ratio is {}".format(
+            self.project_name, 
+            self.bucket["num_hits_raw"],
+            float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+            )
 
 
     def set_igraph_data(self, our_igraph_data):
