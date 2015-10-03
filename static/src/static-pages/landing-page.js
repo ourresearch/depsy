@@ -6,25 +6,10 @@ angular.module('staticPages', [
 
   .config(function($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: 'static-pages/landing.tpl.html',
-      controller: 'landingPageCtrl'
+      redirectTo: "/leaderboard"
     })
   })
 
-
-  .controller("landingPageCtrl", function($scope,
-                                          $http,
-                                          $rootScope,
-                                          PageService){
-
-
-
-
-
-
-
-
-  })
 
 
 

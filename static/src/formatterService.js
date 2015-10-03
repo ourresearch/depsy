@@ -3,7 +3,6 @@ angular.module("formatterService", [])
 .factory("FormatterService", function($location){
 
   var short = function(num){
-    console.log("calling FormatterService.short()")
       // from http://stackoverflow.com/a/14994860/226013
       if (num === null){
         return 0
