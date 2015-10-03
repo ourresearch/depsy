@@ -509,7 +509,7 @@ class Package(db.Model):
     def set_distinctiveness(self):
         source = full_text_source.Arxiv()
         self.bucket2 = {}
-        
+
         raw_query = '"{name}"'.format(
             name=self.project_name)
         # raw_query = '"{name}" NOT AUTH:"{name}"'.format(
@@ -521,10 +521,15 @@ class Package(db.Model):
         num_hits_with_language = source.run_query(self.distinctiveness_query)
         self.bucket2["num_hits_with_language"] = num_hits_with_language
         
-        print "{}: solo is {}, ratio is {}".format(
+        if self.bucket["num_hits_raw"] > 0:
+            ratio = float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+        else:
+            ratio = None
+
+        print "{}: solo search finds {}, ratio is {}".format(
             self.project_name, 
             self.bucket["num_hits_raw"],
-            float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+            ratio
             )
 
 
