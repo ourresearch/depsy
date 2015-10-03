@@ -12,6 +12,12 @@ from models.github_api import GithubRateLimitException
 from github_api import get_profile
 from util import dict_from_dir
 
+# reused elsewhere
+def add_person_leaderboard_filters(q):
+    q = q.filter(Person.name != "UNKNOWN")
+    q = q.filter(Person.email != "UNKNOWN")
+    q = q.filter(Person.is_organization == False)
+    return q
 
 class Person(db.Model):
     __tablename__ = 'person'
@@ -115,7 +121,9 @@ class Person(db.Model):
             "icon_small": self.icon_small, 
             "is_academic": self.is_academic, 
             "is_organization": self.is_organization,             
+            "main_language": self.main_language,             
             "impact": self.impact, 
+            "impact_rank": self.impact_rank, 
             "id": self.id
         }
         return ret
@@ -134,6 +142,7 @@ class Person(db.Model):
         impact_rank_lookup = defaultdict(dict)
         for main_language in ["python", "r"]:
             q = db.session.query(cls.id)
+            q = add_person_leaderboard_filters(q)
             q = q.filter(Person.main_language==main_language)
             q = q.order_by(cls.impact.desc())  # the important part :)
             rows = q.all()
@@ -147,7 +156,10 @@ class Person(db.Model):
 
 
     def set_impact_rank(self, impact_rank_lookup):
-        self.impact_rank = impact_rank_lookup[self.main_language][self.id]
+        try:
+            self.impact_rank = impact_rank_lookup[self.main_language][self.id]
+        except KeyError:  # maybe because organization, or name=="UNKNOWN"
+            self.impact_rank = None
         print "self.impact_rank", self.impact_rank
 
 
