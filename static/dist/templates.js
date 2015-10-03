@@ -271,19 +271,30 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "            popover=\"content!\"\n" +
     "            ng-show=\"package.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "         <span class=\"contribs\">\n" +
+    "            <span class=\"by\">by</span>\n" +
+    "            <a href=\"person/{{ contrib.id }}\"\n" +
+    "               popover=\"name: {{ contrib.name }}\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               class=\"contrib\"\n" +
+    "               ng-repeat=\"contrib in package.contribs | orderBy: '-credit' | limitTo: 3\">{{ contrib.single_name }}<span\n" +
+    "                       ng-hide=\"{{ $last }}\"\n" +
+    "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
+    "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
+    "                  popover=\"click to see all {{ package.num_contributors }} contributors\"\n" +
+    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 5\">,\n" +
+    "               and {{ package.num_contributors - package.credit.length }} others\n" +
+    "            </a>\n" +
+    "         </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
     "      </span>\n" +
     "      <span class=\"summary\">{{ package.summary }}</span>\n" +
     "   </span>\n" +
     "\n" +
-    "   <span class=\"contribs\">\n" +
-    "      <span conti\n" +
-    "            class=\"contrib\" ng-repeat=\"contrib in package.contribs | orderBy: 'credit'\">\n" +
-    "         <img ng-src=\"{{ contrib.icon_small }}\" alt=\"\"/>\n" +
-    "      </span>\n" +
-    "      <span class=\"contrib plus-more\" ng-show=\"package.num_contributors > 5\">\n" +
-    "         +{{ package.num_contributors - package.credit.length }} more\n" +
-    "      </span>\n" +
-    "   </span>\n" +
+    "\n" +
     "\n" +
     "</span>\n" +
     "\n" +
