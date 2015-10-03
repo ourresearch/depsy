@@ -151,8 +151,11 @@ class CranPackage(Package):
             self.is_academic = True
 
         # if you have an academic-sounding cran description, you're academic
-        if is_academic_phrase(self.api_raw["Description"]):
-            self.is_academic = True
+        try:
+            if is_academic_phrase(self.api_raw["Description"]):
+                self.is_academic = True
+        except KeyError:
+            pass
 
         # check proxy paper type
         sciency_proxy_paper_types = [
