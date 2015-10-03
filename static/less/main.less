@@ -264,6 +264,7 @@ div.person-page {
       width: 420px;
       padding: 43px 20px 20px 38px;
       .sidebar-header {
+         .clearfix();
          .impact-score-info {
             margin: 0 0 0 20px;
             float: left;
@@ -327,9 +328,44 @@ div.person-page {
 
       .top-tags {
          clear: both;
-         span.tag {
-            border: 1px solid #ddd;
-            .rounded(10px);
+         margin: 30px 20px 0 0;
+
+         .tags {
+            span.tag {
+               border: 1px solid #ddd;
+               .rounded(10px);
+            }
+         }
+      }
+
+      .top-collabs {
+         margin-top: 70px;
+         h3 {
+
+         }
+         a.collab {
+            display: inline-block;
+            float: left;
+            clear: left;
+            color: #333;
+            margin: 0 0 15px 10px;
+            font-size: 16px;
+            &:hover {
+               text-decoration: none;
+            }
+            img {
+               height: 20px;
+               .rounded(20px);
+               vertical-align: -2px;
+            }
+            .impact {
+               font-size: 150%;
+               font-weight: 100;
+               margin: 0 5px;
+            }
+            .name {
+               font-style: italic;
+            }
          }
       }
 
@@ -666,19 +702,7 @@ span.snippet {
 
          &.tags {
             margin: 5px 0 0 -3px;
-            a.tag {
-               border: 1px solid #ccc;
-               font-size: 14px;
-               .rounded(20px);
-               padding: 0 9px 2px;
-               margin: 0 2px;
-               color: #999;
-               &:hover {
-                  text-decoration: none;
-                  background: #eee;
-                  color: #777;
-               }
-            }
+
          }
       }
    }
@@ -793,7 +817,21 @@ span.language-icon {
    }
 }
 
-
+a.tag {
+   border: 1px solid #ccc;
+   font-size: 13px;
+   line-height: 1.8;
+   .rounded(20px);
+   padding: 0 9px 2px;
+   margin: 0 2px;
+   color: #999;
+   cursor: pointer;
+   &:hover {
+      text-decoration: none;
+      background: #eee;
+      color: #777;
+   }
+}
 
 ul {
    margin-left: 0;

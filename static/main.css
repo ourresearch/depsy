@@ -244,6 +244,14 @@ div.person-page div.ti-page-sidebar {
   width: 420px;
   padding: 43px 20px 20px 38px;
 }
+div.person-page div.ti-page-sidebar .sidebar-header:before,
+div.person-page div.ti-page-sidebar .sidebar-header:after {
+  content: " ";
+  display: table;
+}
+div.person-page div.ti-page-sidebar .sidebar-header:after {
+  clear: both;
+}
 div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info {
   margin: 0 0 0 20px;
   float: left;
@@ -304,12 +312,42 @@ div.person-page div.ti-page-sidebar .sidebar-header .accounts a {
 }
 div.person-page div.ti-page-sidebar .top-tags {
   clear: both;
+  margin: 30px 20px 0 0;
 }
-div.person-page div.ti-page-sidebar .top-tags span.tag {
+div.person-page div.ti-page-sidebar .top-tags .tags span.tag {
   border: 1px solid #ddd;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
+}
+div.person-page div.ti-page-sidebar .top-collabs {
+  margin-top: 70px;
+}
+div.person-page div.ti-page-sidebar .top-collabs a.collab {
+  display: inline-block;
+  float: left;
+  clear: left;
+  color: #333;
+  margin: 0 0 15px 10px;
+  font-size: 16px;
+}
+div.person-page div.ti-page-sidebar .top-collabs a.collab:hover {
+  text-decoration: none;
+}
+div.person-page div.ti-page-sidebar .top-collabs a.collab img {
+  height: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  vertical-align: -2px;
+}
+div.person-page div.ti-page-sidebar .top-collabs a.collab .impact {
+  font-size: 150%;
+  font-weight: 100;
+  margin: 0 5px;
+}
+div.person-page div.ti-page-sidebar .top-collabs a.collab .name {
+  font-style: italic;
 }
 div.person-page .ti-page-body {
   float: left;
@@ -552,21 +590,6 @@ span.snippet span.metadata span.summary {
 span.snippet span.metadata span.summary.tags {
   margin: 5px 0 0 -3px;
 }
-span.snippet span.metadata span.summary.tags a.tag {
-  border: 1px solid #ccc;
-  font-size: 14px;
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  border-radius: 20px;
-  padding: 0 9px 2px;
-  margin: 0 2px;
-  color: #999;
-}
-span.snippet span.metadata span.summary.tags a.tag:hover {
-  text-decoration: none;
-  background: #eee;
-  color: #777;
-}
 span.snippet span.contribs {
   vertical-align: -4px;
   margin-left: 5px;
@@ -662,6 +685,23 @@ span.language-icon.r {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
+}
+a.tag {
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 1.8;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  padding: 0 9px 2px;
+  margin: 0 2px;
+  color: #999;
+  cursor: pointer;
+}
+a.tag:hover {
+  text-decoration: none;
+  background: #eee;
+  color: #777;
 }
 ul {
   margin-left: 0;

@@ -957,11 +957,27 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"top-tags\">\n" +
     "         <h3>Top tags</h3>\n" +
     "         <div class=\"tags\">\n" +
-    "            <span class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "            <a class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
     "               {{ tag.name }}\n" +
-    "            </span>\n" +
+    "            </a>\n" +
     "         </div>\n" +
+    "      </div>\n" +
     "\n" +
+    "      <div class=\"top-collabs\">\n" +
+    "         <h3>Top collaborators</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"collab\"\n" +
+    "               popover=\"We collaborated\"\n" +
+    "               popover-title=\"Top collaborator\"\n" +
+    "               href=\"people/{{ collab.id }}\"\n" +
+    "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
+    "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
+    "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
+    "               <span class=\"name\">{{ collab.name }}</span>\n" +
+    "               <span class=\"is-academic\" ng-show=\"collab.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
+    "\n" +
+    "            </a>\n" +
+    "         </div>\n" +
     "      </div>\n" +
     "   </div>\n" +
     "\n" +
