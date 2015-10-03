@@ -82,14 +82,15 @@ class Person(db.Model):
         ret["num_packages"] = len(person_packages)
         ret["num_packages_r"] = len([pp for pp in person_packages if pp.package.language=='r'])
         ret["num_packages_python"] = len([pp for pp in person_packages if pp.package.language=='python'])
-        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:5]]
+        person_packages_to_return = min(3, len(person_packages))
+        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:person_packages_to_return]]
         
         tags_dict = defaultdict(int)
         for pp in person_packages:
             for tag in pp.package.tags:
                 tags_dict[tag] += 1
         tags_to_return = min(3, len(tags_dict))
-        ret["top_person_tags"] = sorted(tags_dict, key=tags_dict.get, reverse=True)[0:tags_to_return]
+        ret["top_person_tags"] = sorted(tags_dict.items(), key=lambda x: x[1], reverse=True)[0:tags_to_return]
         return ret
 
 
@@ -126,6 +127,7 @@ class Person(db.Model):
             # our github_about is an error object,
             # it's got no info about the person in it.
             return False
+
 
 
     def set_impact(self):
@@ -201,7 +203,11 @@ class Person(db.Model):
         person_packages_list.sort(key=lambda x: x.person_project_impact, reverse=True)
         return person_packages_list
 
-
+    def num_commits_on_project(self, package_id):
+        for c in self.contributions:
+            if c.role == "github_contributor" and c.package_id == package_id:
+                return c.quantity
+        return False
 
 
 

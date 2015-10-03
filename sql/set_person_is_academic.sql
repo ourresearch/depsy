@@ -39,6 +39,8 @@ select * from person
 	or email like '%.ac.%%' 
 	or email like '%.edu%'
 
+	or name in ('Hadley Wickham')
+
 -- 2660 total (no CRAN yet tho).
 -- tried and discarded because of few results or poor precision: 
 -- lab, school, professor, student, phd, doctoral	
@@ -72,6 +74,8 @@ update person set is_academic = true
 	-- 1277
 	or email like '%.ac.%%' 
 	or email like '%.edu%'
+
+	or name in ('Hadley Wickham')
 
 -- 2660 total (no CRAN yet tho).
 -- tried and discarded because of few results or poor precision: 
