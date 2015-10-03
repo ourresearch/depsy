@@ -109,7 +109,24 @@ class CranPackage(Package):
 
 
     def set_tags(self):
-        self.tags = get_tags(self.project_name)
+        url_template = "https://cran.r-project.org/web/packages/{}/"
+        url = url_template.format(self.project_name)
+
+        requests.packages.urllib3.disable_warnings()  
+        response = requests.get(url)
+        tags = []
+        if "views" in response.text:
+            page = response.text
+            page = page.replace("&nbsp;", " ")  # otherwise starts-with for lxml doesn't work
+            tree = html.fromstring(page)
+            data = {}
+            tags_raw = tree.xpath('//tr[(starts-with(td[1], "In views"))]/td[2]/a/text()')
+            for tag in tags_raw:
+                tag = tag.strip()
+                tag = tag.strip('"')
+                tags.append(tag.lower())
+        print "returning tags", tags
+        self.tags = tags
 
     @property
     def distinctiveness_query(self):
@@ -117,23 +134,5 @@ class CranPackage(Package):
             name=self.project_name)
 
 
-def get_tags(package_name):
-    url_template = "https://cran.r-project.org/web/packages/{}/"
-    url = url_template.format(package_name)
 
-    requests.packages.urllib3.disable_warnings()  
-    response = requests.get(url)
-    tags = []
-    if "views" in response.text:
-        page = response.text
-        page = page.replace("&nbsp;", " ")  # otherwise starts-with for lxml doesn't work
-        tree = html.fromstring(page)
-        data = {}
-        tags_raw = tree.xpath('//tr[(starts-with(td[1], "In views"))]/td[2]/a/text()')
-        for tag in tags_raw:
-            tag = tag.strip()
-            tag = tag.strip('"')
-            tags.append(tag)
-    print "returning tags", tags
-    return tags
 

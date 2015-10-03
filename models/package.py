@@ -794,6 +794,16 @@ def make_host_name(host_or_language):
     else:
         raise ValueError("You're not passing in a valid host or language name.")
 
+def make_language(host_or_language):
+    if host_or_language=="pypi":
+        return "python"
+    elif host_or_language=="cran":
+        return "r"
+    elif host_or_language in ["python", "r"]:
+        return host_or_language
+    else:
+        raise ValueError("You're not passing in a valid host or language name.")
+
 
 
 
