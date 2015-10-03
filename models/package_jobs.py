@@ -9,6 +9,7 @@ from models.pypi_package import PypiPackage
 from models.pypi_package import shortcut_get_pypi_package_names
 from models.cran_package import CranPackage
 from models.person import Person
+from models.person import add_person_leaderboard_filters
 from models.contribution import Contribution
 from models.github_repo_deplines import GithubRepoDeplines
 from models.github_repo import GithubRepo
@@ -54,9 +55,7 @@ def get_tags(filters, page_size=25):
 
 def get_people(filters, page_size=25):
     q = Person.query
-    q = q.filter(Person.name != "UNKNOWN")
-    q = q.filter(Person.email != "UNKNOWN")
-    q = q.filter(Person.is_organization == False)
+    q = add_person_leaderboard_filters(q)
     q = q.options(
         orm.subqueryload_all(
             Person.contributions,
@@ -409,7 +408,15 @@ update_registry.register(Update(
 ))
 
 
-
+q = db.session.query(Person.id)
+q = q.filter(Person.impact_rank == None)
+q = add_person_leaderboard_filters(q)
+update_registry.register(Update(
+    job=Person.set_impact_rank,
+    query=q,
+    queue_id=9,
+    shortcut_fn=Person.shortcut_impact_rank
+))
 
 
 

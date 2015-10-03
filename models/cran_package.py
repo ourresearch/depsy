@@ -137,6 +137,12 @@ class CranPackage(Package):
         #     name=self.project_name)
 
 
+    @property
+    def impact_rank_max(self):
+        # get these with this sql:
+            # select count(id) from package where host='cran'
+        return 7057
+
     def set_is_academic(self):
         self.is_academic = False
 
@@ -151,11 +157,31 @@ class CranPackage(Package):
             self.is_academic = True
 
         # if you have an academic-sounding cran description, you're academic
-        if is_academic_phrase(self.api_raw["Description"]):
-            self.is_academic = True
+        try:
+            if is_academic_phrase(self.api_raw["Description"]):
+                self.is_academic = True
+        except KeyError:
+            pass
 
-        if is_academic_phrase(self.proxy_papers):
-            self.is_academic = True
+        # check proxy paper type
+        sciency_proxy_paper_types = [
+            '@Book', 
+            '@InBook',
+            '@InPhdThesis',
+            '@PhdThesis',
+            '@Article',
+            '@InProceedings'
+            # '%@InCollection%'
+            # '%@Manual%'
+            # '%@Misc%'
+            # '%@Unpublished%'
+            # '%@TechReport%'
+        ]
+
+        for proxy_paper_type in sciency_proxy_paper_types:
+            if proxy_paper_type in self.proxy_papers:
+                print "setting is_academic=True due to proxy paper type"
+                self.is_academic = True
 
         return self.is_academic
 

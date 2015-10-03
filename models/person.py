@@ -12,6 +12,12 @@ from models.github_api import GithubRateLimitException
 from github_api import get_profile
 from util import dict_from_dir
 
+# reused elsewhere
+def add_person_leaderboard_filters(q):
+    q = q.filter(or_(Person.name == None, Person.name != "UNKNOWN"))
+    q = q.filter(or_(Person.email == None, Person.email != "UNKNOWN"))
+    q = q.filter(Person.is_organization == False)
+    return q
 
 class Person(db.Model):
     __tablename__ = 'person'
@@ -23,6 +29,7 @@ class Person(db.Model):
     github_about = db.deferred(db.Column(JSONB))
     bucket = db.Column(JSONB)
     impact = db.Column(db.Float)
+    impact_rank = db.Column(db.Integer)
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
@@ -114,7 +121,10 @@ class Person(db.Model):
             "icon_small": self.icon_small, 
             "is_academic": self.is_academic, 
             "is_organization": self.is_organization,             
+            "main_language": self.main_language,             
             "impact": self.impact, 
+            "impact_rank": self.impact_rank, 
+            "impact_rank_max": self.impact_rank_max, 
             "id": self.id
         }
         return ret
@@ -127,6 +137,47 @@ class Person(db.Model):
         else:
             self.main_language = "python"
 
+    @classmethod
+    def shortcut_impact_rank(cls):
+        print "getting the lookup for ranking impact...."
+        impact_rank_lookup = defaultdict(dict)
+        for main_language in ["python", "r"]:
+            q = db.session.query(cls.id)
+            q = add_person_leaderboard_filters(q)
+            q = q.filter(Person.main_language==main_language)
+            q = q.order_by(cls.impact.desc())  # the important part :)
+            rows = q.all()
+
+            ids_sorted_by_impact = [row[0] for row in rows]
+            for my_id in ids_sorted_by_impact:
+                zero_based_rank = ids_sorted_by_impact.index(my_id)
+                impact_rank_lookup[main_language][my_id] = zero_based_rank + 1
+
+        return impact_rank_lookup
+
+
+    def set_impact_rank(self, impact_rank_lookup):
+
+        try:
+            self.impact_rank = impact_rank_lookup[self.main_language][self.id]
+        except KeyError:  # maybe because organization, or name=="UNKNOWN"
+            print "couldn't find my id"
+            self.impact_rank = None
+        print "self.impact_rank", self.impact_rank
+
+    @property
+    def impact_rank_max(self):
+        # get these with this sql:
+            # select count(id), main_language 
+            # from person 
+            # where is_organization=false
+            # and name!='UKNOWN' and email!='UNKNOWN'
+            # group by main_language
+
+        if self.main_language == "python":
+            return 36152
+        elif self.main_language == "r":
+            return 2316
 
     def set_github_about(self):
         if self.github_login is None:
