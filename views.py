@@ -120,8 +120,8 @@ def person_endpoint(person_id):
             Person.contributions, 
             Contribution.package, 
             Package.contributions, 
-            Contribution.person, 
-            Person.contributions
+            Contribution.person 
+            # Person.contributions
         )).get(int(person_id))
 
     if not my_person:

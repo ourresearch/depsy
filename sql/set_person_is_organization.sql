@@ -20,7 +20,7 @@ update person set is_organization=true
 	or name ilike '%contributor%'
 	or name ilike '%university%'
 	or name ilike '% team%'
-	or name ilike '%department%'
+	or name ilike '%developers%'
 	or name ilike '% inc.'
 	or name ilike '% inc'
 	or name ilike '% llc'
@@ -30,5 +30,5 @@ update person set is_organization=true
 	or name ilike '% GmbH'
 	or github_about->>'type' = 'Organization'
 	or name in ('Tryton', 'OpenERP SA', 'OpenStack', 'Logilab', 'IBM', 
-		'The fellowship of the packaging', 'Check your git settings!', 'Twitter')
+		'The fellowship of the packaging', 'Check your git settings!', 'Twitter', 'GNU Solidario')
 
