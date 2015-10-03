@@ -13,10 +13,11 @@ angular.module('app', [
   'personPage',
   'packagePage',
   'header',
-  'packageSnippet',
+  'snippet',
 
   'resourcesModule',
   'pageService',
+  'formatterService',
 
   'top'
 
@@ -48,7 +49,7 @@ angular.module('app').run(function($route,
   })
   $rootScope.$on('$routeChangeSuccess', function(next, current){
     console.log("route change success")
-    ngProgress.complete()
+//    ngProgress.complete()
   })
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
     console.log("$routeChangeError")
@@ -96,34 +97,14 @@ angular.module('app').controller('AppCtrl', function(
   $scope,
   $location,
   $sce,
+  FormatterService,
   PageService){
 
 
 
   $scope.page = PageService
 
-  $scope.nFormatter = function(num){
-      // from http://stackoverflow.com/a/14994860/226013
-      if (num === null){
-        return 0
-      }
 
-      if (num >= 1000000) {
-          return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-      }
-      if (num >= 1000) {
-          return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-      }
-
-      if (num < .01) {
-        return num.toExponential(1)
-      }
-      if (num < 1) {
-        return Math.round(num * 100) / 100
-      }
-
-      return Math.floor(num);
-  }
 
 
   function toRoundedSciNotation(n){
@@ -292,6 +273,38 @@ angular.module("filterService", [])
     setFromUrl: setFromUrl
   }
 });
+angular.module("formatterService", [])
+
+.factory("FormatterService", function($location){
+
+  var short = function(num){
+    console.log("calling FormatterService.short()")
+      // from http://stackoverflow.com/a/14994860/226013
+      if (num === null){
+        return 0
+      }
+
+      if (num >= 1000000) {
+          return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+      }
+      if (num >= 1000) {
+          return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+      }
+
+      if (num < .01) {
+        return num.toExponential(1)
+      }
+      if (num < 1) {
+        return Math.round(num * 100) / 100
+      }
+
+      return Math.floor(num);
+  }
+
+  return {
+    short: short
+  }
+});
 angular.module('header', [
   ])
 
@@ -406,51 +419,6 @@ angular.module('packagePage', [
   })
 
 
-
-
-angular.module('packageSnippet', [
-  ])
-
-
-
-  .controller("packageSnippetCtrl", function($scope){
-
-    $scope.package = $scope.leader
-
-    var packagePairs = _.pairs($scope.package)
-    var subScores = _.filter(packagePairs, function(packagePair){
-      return packagePair[0].indexOf("_percentile") > 0
-    })
-
-    var subScoresSum =  _.reduce(
-      _.map(subScores, function(x){return x[1]}),
-      function(memo, num){ return memo + num; },
-      0
-    )
-
-    var subScoreRatios = _.map(subScores, function(subScore){
-
-      var rawVal = subScore[1]
-      var val
-      if (!rawVal){
-        val = 0
-      }
-      else {
-        val = rawVal / subScoresSum
-      }
-
-      return {
-        name: subScore[0],
-        val: val
-      }
-    })
-
-    $scope.subScoreRatios = subScoreRatios
-
-
-
-
-  })
 
 
 angular.module('personPage', [
@@ -647,6 +615,50 @@ angular.module('profileService', [
 
 
   })
+angular.module('snippet', [
+  ])
+
+
+
+  .controller("packageSnippetCtrl", function($scope){
+
+    var packagePairs = _.pairs($scope.package)
+    var subScores = _.filter(packagePairs, function(packagePair){
+      return packagePair[0].indexOf("_percentile") > 0
+    })
+
+    var subScoresSum =  _.reduce(
+      _.map(subScores, function(x){return x[1]}),
+      function(memo, num){ return memo + num; },
+      0
+    )
+
+    var subScoreRatios = _.map(subScores, function(subScore){
+
+      var rawVal = subScore[1]
+      var val
+      if (!rawVal){
+        val = 0
+      }
+      else {
+        val = rawVal / subScoresSum
+      }
+
+      return {
+        name: subScore[0],
+        val: val
+      }
+    })
+
+    $scope.subScoreRatios = subScoreRatios
+  })
+
+
+  .controller("personSnippetCtrl", function($scope){
+
+  })
+
+
 angular.module('staticPages', [
     'ngRoute'
   ])
@@ -704,9 +716,12 @@ angular.module('top', [
                                           $rootScope,
                                           $routeParams,
                                           Leaders,
+                                          ngProgress,
+                                          FormatterService,
                                           FilterService){
     FilterService.setFromUrl()
     $scope.filters = FilterService
+    $scope.format = FormatterService
 
     getLeaders()
 
@@ -719,6 +734,11 @@ angular.module('top', [
         function(resp){
           console.log("got a resp from leaders call", resp.list)
           $scope.leaders = resp
+          ngProgress.complete()
+        },
+        function(resp){
+          console.log("got an error :(")
+          ngProgress.complete()
         }
       )
 
@@ -744,7 +764,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'package-snippet/impact-popover.tpl.html', 'package-snippet/package-snippet.tpl.html', 'person-page/person-page.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-snippet.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -907,8 +927,46 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "");
 }]);
 
-angular.module("package-snippet/impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("package-snippet/impact-popover.tpl.html",
+angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("person-page/person-page.tpl.html",
+    "<div class=\"person-page\">\n" +
+    "   <div class=\"ti-page-header\">\n" +
+    "      <h1>\n" +
+    "         <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
+    "         <span class=\"text\">\n" +
+    "            {{ person.name }}\n" +
+    "         </span>\n" +
+    "      </h1>\n" +
+    "   </div>\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"ti-page-body\">\n" +
+    "\n" +
+    "      <div class=\"packages\">\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'!credit_points'\">\n" +
+    "            <span class=\"roles\" ng-repeat=\"role in package.roles\">\n" +
+    "               <span class=\"role author\" ng-if=\"role.name=='author'\">auth</span>\n" +
+    "               <span class=\"role github-contrib\" ng-if=\"role.name=='github_contributor'\">contrib</span>\n" +
+    "               <span class=\"role owner\" ng-if=\"role.name=='github_owner'\">owner</span>\n" +
+    "\n" +
+    "\n" +
+    "            </span>\n" +
+    "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
+    "         </div>\n" +
+    "\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/impact-popover.tpl.html",
     "<div id=\"impact-popover\">\n" +
     "   <div class=\"head metric\">\n" +
     "      <span class=\"name\">Impact:</span>\n" +
@@ -968,17 +1026,17 @@ angular.module("package-snippet/impact-popover.tpl.html", []).run(["$templateCac
     "</div>");
 }]);
 
-angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("package-snippet/package-snippet.tpl.html",
-    "<span class=\"package-snippet\"\n" +
+angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/package-snippet.tpl.html",
+    "<span class=\"snippet package-snippet\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\"\n" +
     "         popover-placement=\"top\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
-    "         popover-template=\"'package-snippet/impact-popover.tpl.html'\">\n" +
+    "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <span class=\"one-metric metric\">\n" +
-    "         {{ floor(package.impact) }}\n" +
+    "         {{ format.short(package.impact) }}\n" +
     "      </span>\n" +
     "\n" +
     "\n" +
@@ -998,16 +1056,19 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "   <span class=\"metadata\">\n" +
     "      <span class=\"name-container\">\n" +
     "\n" +
-    "         <span class=\"language-icon r\"\n" +
-    "               ng-if=\"package.language=='r'\"\n" +
-    "              tooltip=\"R package\">\n" +
-    "            R\n" +
+    "         <span class=\"icon\">\n" +
+    "            <span class=\"language-icon r\"\n" +
+    "                  ng-if=\"package.language=='r'\"\n" +
+    "                 tooltip=\"R package\">\n" +
+    "               R\n" +
+    "            </span>\n" +
+    "            <span class=\"language-icon python\"\n" +
+    "                  ng-if=\"package.language=='python'\"\n" +
+    "                 tooltip=\"Python package\">\n" +
+    "               py\n" +
+    "            </span>\n" +
     "         </span>\n" +
-    "         <span class=\"language-icon python\"\n" +
-    "               ng-if=\"package.language=='python'\"\n" +
-    "              tooltip=\"Python package\">\n" +
-    "            py\n" +
-    "         </span>\n" +
+    "\n" +
     "\n" +
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
@@ -1029,8 +1090,8 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
     "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
     "                  popover=\"click to see all {{ package.num_contributors }} contributors\"\n" +
-    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 5\">,\n" +
-    "               and {{ package.num_contributors - package.credit.length }} others\n" +
+    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 3\">,\n" +
+    "               and {{ package.num_contributors - 3 }} others\n" +
     "            </a>\n" +
     "         </span>\n" +
     "\n" +
@@ -1048,41 +1109,93 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "");
 }]);
 
-angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("person-page/person-page.tpl.html",
-    "<div class=\"person-page\">\n" +
-    "   <div class=\"ti-page-header\">\n" +
-    "      <h1>\n" +
-    "         <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
-    "         <span class=\"text\">\n" +
-    "            {{ person.name }}\n" +
+angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/person-snippet.tpl.html",
+    "<span class=\"snippet person-snippet\"\n" +
+    "     ng-controller=\"personSnippetCtrl\">\n" +
+    "   <span class=\"left-metrics\"\n" +
+    "         popover-placement=\"top\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
+    "\n" +
+    "      <span class=\"one-metric metric\">\n" +
+    "         {{ format.short(person.impact) }}\n" +
+    "      </span>\n" +
+    "\n" +
+    "\n" +
+    "      <span class=\"vis\">\n" +
+    "         <!--\n" +
+    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
+    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
+    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
+    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
     "         </span>\n" +
-    "      </h1>\n" +
-    "   </div>\n" +
+    "         -->\n" +
+    "\n" +
+    "      </span>\n" +
+    "\n" +
+    "   </span>\n" +
     "\n" +
     "\n" +
-    "   <div class=\"ti-page-body\">\n" +
-    "\n" +
-    "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'!credit_points'\">\n" +
-    "            <span class=\"roles\" ng-repeat=\"role in package.roles\">\n" +
-    "               <span class=\"role author\" ng-if=\"role.name=='author'\">auth</span>\n" +
-    "               <span class=\"role github-contrib\" ng-if=\"role.name=='github_contributor'\">contrib</span>\n" +
-    "               <span class=\"role owner\" ng-if=\"role.name=='github_owner'\">owner</span>\n" +
+    "   <span class=\"metadata\">\n" +
+    "      <span class=\"name-container\">\n" +
     "\n" +
     "\n" +
-    "            </span>\n" +
-    "            <span class=\"package-snippet-wrapper\" ng-include=\"'package-snippet/package-snippet.tpl.html'\"></span>\n" +
-    "         </div>\n" +
-    "\n" +
-    "\n" +
-    "      </div>\n" +
+    "         <span class=\"icon\">\n" +
+    "            <img class=\"person-icon\" src=\"{{ person.icon_small }}\" alt=\"\"/>\n" +
+    "         </span>\n" +
     "\n" +
     "\n" +
     "\n" +
-    "   </div>\n" +
+    "         <a class=\"name\" tooltip=\"click for more info\" href=\"person/{{ person.id }}\">\n" +
+    "            {{ person.name }}\n" +
+    "         </a>\n" +
     "\n" +
-    "</div>\n" +
+    "         <i popover-title=\"Academic\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover=\"We infer academic status based on factors like email address, citedness, institution.\"\n" +
+    "            ng-show=\"person.is_academic\"\n" +
+    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "         <!--\n" +
+    "         <span class=\"contribs\">\n" +
+    "            <span class=\"by\">by</span>\n" +
+    "            <a href=\"person/{{ contrib.id }}\"\n" +
+    "               popover=\"name: {{ contrib.name }}\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               class=\"contrib\"\n" +
+    "               ng-repeat=\"contrib in package.contribs | orderBy: '-credit' | limitTo: 3\">{{ contrib.single_name }}<span\n" +
+    "                       ng-hide=\"{{ $last }}\"\n" +
+    "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
+    "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
+    "                  popover=\"click to see all {{ package.num_contributors }} contributors\"\n" +
+    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 5\">,\n" +
+    "               and {{ package.num_contributors - package.credit.length }} others\n" +
+    "            </a>\n" +
+    "         </span>\n" +
+    "         -->\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "      </span>\n" +
+    "      <span class=\"summary person-packages\">\n" +
+    "         <span class=\"works-on\">Works on</span>\n" +
+    "         <a class=\"package\"\n" +
+    "            href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
+    "            ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
+    "            {{ package.name }}<span class=\"comma\" ng-show=\"!$last\">,</span>\n" +
+    "         </a>\n" +
+    "         <a ng-show=\"{{ person.num_packages > 5 }}\" href=\"person/{{ person.id }}\">and {{ person.num_packages - 5 }} others</a>\n" +
+    "\n" +
+    "      </span>\n" +
+    "   </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "</span>\n" +
+    "\n" +
+    "\n" +
     "");
 }]);
 
@@ -1198,13 +1311,12 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "   <div class=\"main\">\n" +
     "\n" +
-    "      <div class=\"ti-page-header\">\n" +
+    "      <div class=\"ti-page-header leaderboard-header\">\n" +
     "         <h2>\n" +
     "            <span class=\"text\">\n" +
-    "               Top <span class=\"leaders-type\">{{ leaders.type }}</span>\n" +
-    "               <span class=\"sort\">\n" +
-    "                  , sorted by <span class=\"val\">{{ leaders.sort }}</span>\n" +
-    "               </span>\n" +
+    "               Top\n" +
+    "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
+    "               <span class=\"leaders-type\">{{ filters.d.type }}</span>\n" +
     "               <span class=\"filters\" ng-show=\"leaders.filters.length\">\n" +
     "\n" +
     "               </span>\n" +
@@ -1215,9 +1327,18 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "      <div class=\"content\">\n" +
     "         <div class=\"list-items\">\n" +
-    "            <div class=\"leader\" ng-repeat=\"leader in leaders.list\">\n" +
-    "               <div class=\"package-snippet-wrapper\"  ng-include=\"'package-snippet/package-snippet.tpl.html'\"></div>\n" +
+    "            <!-- packages loop -->\n" +
+    "            <div ng-if=\"filters.d.type=='packages'\" class=\"leader\" ng-repeat=\"package in leaders.list\">\n" +
+    "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/package-snippet.tpl.html'\"></div>\n" +
     "            </div>\n" +
+    "\n" +
+    "            <!-- people loop -->\n" +
+    "            <div ng-if=\"filters.d.type=='people'\" class=\"leader\" ng-repeat=\"person in leaders.list\">\n" +
+    "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/person-snippet.tpl.html'\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +

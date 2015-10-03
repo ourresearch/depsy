@@ -1,0 +1,78 @@
+<span class="snippet package-snippet"
+     ng-controller="packageSnippetCtrl">
+   <span class="left-metrics"
+         popover-placement="top"
+         popover-trigger="mouseenter"
+         popover-template="'snippet/impact-popover.tpl.html'">
+
+      <span class="one-metric metric">
+         {{ format.short(package.impact) }}
+      </span>
+
+
+      <span class="vis">
+         <!--
+         <span class="vis-bar" style="width: {{ package.impact }}%;">
+            <span ng-repeat="subScoreRatio in subScoreRatios"
+                  class="subscore subscore-{{ subScoreRatio.name }}"
+                  style="width: {{ subScoreRatio.val * 100 }}%;"></span>
+         </span>
+         -->
+
+      </span>
+
+   </span>
+
+   <span class="metadata">
+      <span class="name-container">
+
+         <span class="icon">
+            <span class="language-icon r"
+                  ng-if="package.language=='r'"
+                 tooltip="R package">
+               R
+            </span>
+            <span class="language-icon python"
+                  ng-if="package.language=='python'"
+                 tooltip="Python package">
+               py
+            </span>
+         </span>
+
+
+         <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
+            {{ package.name }}
+         </a>
+         <i popover-title="aca-what?"
+            popover-trigger="mouseenter"
+            popover="content!"
+            ng-show="package.is_academic"
+            class="is-academic fa fa-graduation-cap"></i>
+
+         <span class="contribs">
+            <span class="by">by</span>
+            <a href="person/{{ contrib.id }}"
+               popover="name: {{ contrib.name }}"
+               popover-trigger="mouseenter"
+               class="contrib"
+               ng-repeat="contrib in package.contribs | orderBy: '-credit' | limitTo: 3">{{ contrib.single_name }}<span
+                       ng-hide="{{ $last }}"
+                       class="comma">, </span></a><a class="contrib plus-more"
+               href="package/{{ package.language }}/{{ package.name }}"
+                  popover="click to see all {{ package.num_contributors }} contributors"
+                  popover-trigger="mouseenter" ng-show="package.num_contributors > 3">,
+               and {{ package.num_contributors - 3 }} others
+            </a>
+         </span>
+
+
+
+      </span>
+      <span class="summary">{{ package.summary }}</span>
+   </span>
+
+
+
+</span>
+
+

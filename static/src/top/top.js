@@ -21,9 +21,12 @@ angular.module('top', [
                                           $rootScope,
                                           $routeParams,
                                           Leaders,
+                                          ngProgress,
+                                          FormatterService,
                                           FilterService){
     FilterService.setFromUrl()
     $scope.filters = FilterService
+    $scope.format = FormatterService
 
     getLeaders()
 
@@ -36,6 +39,11 @@ angular.module('top', [
         function(resp){
           console.log("got a resp from leaders call", resp.list)
           $scope.leaders = resp
+          ngProgress.complete()
+        },
+        function(resp){
+          console.log("got an error :(")
+          ngProgress.complete()
         }
       )
 

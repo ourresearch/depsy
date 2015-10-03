@@ -12,10 +12,11 @@ angular.module('app', [
   'personPage',
   'packagePage',
   'header',
-  'packageSnippet',
+  'snippet',
 
   'resourcesModule',
   'pageService',
+  'formatterService',
 
   'top'
 
@@ -47,7 +48,7 @@ angular.module('app').run(function($route,
   })
   $rootScope.$on('$routeChangeSuccess', function(next, current){
     console.log("route change success")
-    ngProgress.complete()
+//    ngProgress.complete()
   })
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
     console.log("$routeChangeError")
@@ -95,34 +96,14 @@ angular.module('app').controller('AppCtrl', function(
   $scope,
   $location,
   $sce,
+  FormatterService,
   PageService){
 
 
 
   $scope.page = PageService
 
-  $scope.nFormatter = function(num){
-      // from http://stackoverflow.com/a/14994860/226013
-      if (num === null){
-        return 0
-      }
 
-      if (num >= 1000000) {
-          return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-      }
-      if (num >= 1000) {
-          return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-      }
-
-      if (num < .01) {
-        return num.toExponential(1)
-      }
-      if (num < 1) {
-        return Math.round(num * 100) / 100
-      }
-
-      return Math.floor(num);
-  }
 
 
   function toRoundedSciNotation(n){

@@ -1,11 +1,9 @@
-angular.module('packageSnippet', [
+angular.module('snippet', [
   ])
 
 
 
   .controller("packageSnippetCtrl", function($scope){
-
-    $scope.package = $scope.leader
 
     var packagePairs = _.pairs($scope.package)
     var subScores = _.filter(packagePairs, function(packagePair){
@@ -36,9 +34,10 @@ angular.module('packageSnippet', [
     })
 
     $scope.subScoreRatios = subScoreRatios
+  })
 
 
-
+  .controller("personSnippetCtrl", function($scope){
 
   })
 
