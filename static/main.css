@@ -428,6 +428,25 @@ span.package-snippet span.metadata span.summary {
   display: inline-block;
   width: 400px;
 }
+span.package-snippet span.contribs {
+  text-align: right;
+  width: 200px;
+  display: inline-block;
+}
+span.package-snippet span.contribs span.contrib img {
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  height: 20px;
+  opacity: .8;
+}
+span.package-snippet span.contribs span.contrib.plus-more {
+  width: 100px;
+  margin-right: -100px;
+  padding: 0 0 0 5px;
+  text-align: left;
+  display: inline-block;
+}
 #impact-popover div.metric {
   font-size: 14px;
   margin: 10px 0 0;

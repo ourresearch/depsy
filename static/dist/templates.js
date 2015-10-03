@@ -266,12 +266,23 @@ angular.module("package-snippet/package-snippet.tpl.html", []).run(["$templateCa
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
-    "         <i tooltip-header=\"aca-what?\"\n" +
-    "            tooltip-trigger=\"mouseenter\"\n" +
-    "            tooltip-content=\"content!\"\n" +
+    "         <i popover-title=\"aca-what?\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover=\"content!\"\n" +
+    "            ng-show=\"package.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "      </span>\n" +
     "      <span class=\"summary\">{{ package.summary }}</span>\n" +
+    "   </span>\n" +
+    "\n" +
+    "   <span class=\"contribs\">\n" +
+    "      <span conti\n" +
+    "            class=\"contrib\" ng-repeat=\"contrib in package.contribs | orderBy: 'credit'\">\n" +
+    "         <img ng-src=\"{{ contrib.icon_small }}\" alt=\"\"/>\n" +
+    "      </span>\n" +
+    "      <span class=\"contrib plus-more\" ng-show=\"package.num_contributors > 5\">\n" +
+    "         +{{ package.num_contributors - package.credit.length }} more\n" +
+    "      </span>\n" +
     "   </span>\n" +
     "\n" +
     "</span>\n" +

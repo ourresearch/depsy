@@ -40,12 +40,23 @@
          <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
             {{ package.name }}
          </a>
-         <i tooltip-header="aca-what?"
-            tooltip-trigger="mouseenter"
-            tooltip-content="content!"
+         <i popover-title="aca-what?"
+            popover-trigger="mouseenter"
+            popover="content!"
+            ng-show="package.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
       </span>
       <span class="summary">{{ package.summary }}</span>
+   </span>
+
+   <span class="contribs">
+      <span conti
+            class="contrib" ng-repeat="contrib in package.contribs | orderBy: 'credit'">
+         <img ng-src="{{ contrib.icon_small }}" alt=""/>
+      </span>
+      <span class="contrib plus-more" ng-show="package.num_contributors > 5">
+         +{{ package.num_contributors - package.credit.length }} more
+      </span>
    </span>
 
 </span>
