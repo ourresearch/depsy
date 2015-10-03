@@ -1,11 +1,39 @@
 <div class="person-page">
    <div class="ti-page-sidebar">
-      <h1>
+      <div class="sidebar-header">
          <img ng-src="{{ person.icon }}" alt=""/>
-         <span class="text">
+         <div class="impact-score-info">
+            <div class="score">
+               {{ format.short(person.impact) }}
+            </div>
+            <div class="rank-info">
+               <span class="rank">#{{ 1198 }}</span>
+               <span class="out-of">of 71,763</span>
+            </div>
+         </div>
+         <span class="name">
             {{ person.name }}
          </span>
-      </h1>
+         <span class="accounts">
+            <i popover-title="Academic"
+               popover-trigger="mouseenter"
+               popover="We infer academic status based on factors like email address, tags, and institution."
+               ng-show="person.is_academic"
+               class="is-academic account fa fa-graduation-cap"></i>
+
+            <img class="orcid account"
+               popover-title="ORCiD coming soon"
+               popover-trigger="mouseenter"
+               popover="ORCiD is a unique identifier for researchers. We'll be rolling out support soon."
+               ng-show="person.is_academic"
+               src="static/img/orcid.gif" alt=""/>
+
+            <a ng-if="person.github_login" class="account" href="http://github/{{ person.github_login }}">
+               <i class="fa fa-github"></i>
+               github/{{ person.github_login }}
+            </a>
+         </span>
+      </div>
    </div>
 
 

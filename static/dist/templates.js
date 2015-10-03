@@ -165,12 +165,40 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
   $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"person-page\">\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
-    "      <h1>\n" +
+    "      <div class=\"sidebar-header\">\n" +
     "         <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
-    "         <span class=\"text\">\n" +
+    "         <div class=\"impact-score-info\">\n" +
+    "            <div class=\"score\">\n" +
+    "               {{ format.short(person.impact) }}\n" +
+    "            </div>\n" +
+    "            <div class=\"rank-info\">\n" +
+    "               <span class=\"rank\">#{{ 1198 }}</span>\n" +
+    "               <span class=\"out-of\">of 71,763</span>\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "         <span class=\"name\">\n" +
     "            {{ person.name }}\n" +
     "         </span>\n" +
-    "      </h1>\n" +
+    "         <span class=\"accounts\">\n" +
+    "            <i popover-title=\"Academic\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "               ng-show=\"person.is_academic\"\n" +
+    "               class=\"is-academic account fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "            <img class=\"orcid account\"\n" +
+    "               popover-title=\"ORCiD coming soon\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
+    "               ng-show=\"person.is_academic\"\n" +
+    "               src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
+    "\n" +
+    "            <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github/{{ person.github_login }}\">\n" +
+    "               <i class=\"fa fa-github\"></i>\n" +
+    "               github/{{ person.github_login }}\n" +
+    "            </a>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
@@ -312,9 +340,9 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
-    "         <i popover-title=\"aca-what?\"\n" +
+    "         <i popover-title=\"Academic\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"content!\"\n" +
+    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
     "            ng-show=\"package.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
@@ -393,7 +421,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "         <i popover-title=\"Academic\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"We infer academic status based on factors like email address, citedness, institution.\"\n" +
+    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
     "            ng-show=\"person.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
