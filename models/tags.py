@@ -2,7 +2,8 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSONB
 from models.package import make_language
 
-
+# run create_tags_table.sql to automatically create this table 
+#  from the tags column in the package table
 
 class Tags(db.Model):
     id = db.Column(db.Text, primary_key=True)
