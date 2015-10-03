@@ -55,7 +55,7 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
-    def to_dict(self, max_person_packages=None):
+    def to_dict(self, max_person_packages=None, include_top_collabs=True):
         ret = self.as_package_snippet
 
         person_packages = self.get_person_packages()
@@ -73,20 +73,21 @@ class Person(db.Model):
         ret["top_person_tags"] = [{"name": name, "count": count} for name, count in sorted_tags_to_return]
 
         # co-collaborators
-        my_collabs = defaultdict(float)
-        for pp in person_packages:
-            for collab_person_id, collab_credit in pp.package.credit.iteritems():
-                if collab_person_id != self.id:  #don't measure my own collab strength
-                    collab_strength = collab_credit * pp.person_project_credit
-                    my_collabs[collab_person_id] += collab_strength
-        sorted_collabs_to_return = sorted(my_collabs.items(), key=lambda x: x[1], reverse=True)
-        ret["top_collabs"] = []    
-        num_collabs_to_return = min(5, len(sorted_collabs_to_return))    
-        for person_id, collab_score in sorted_collabs_to_return[0:num_collabs_to_return]:
-            person = Person.query.get(int(person_id))
-            person_dict = person.as_package_snippet
-            person_dict["collab_score"] = collab_score * 4  # to make a 0.25*0.25 connection strength of 1
-            ret["top_collabs"].append(person_dict)
+        if include_top_collabs:
+            my_collabs = defaultdict(float)
+            for pp in person_packages:
+                for collab_person_id, collab_credit in pp.package.credit.iteritems():
+                    if collab_person_id != self.id:  #don't measure my own collab strength
+                        collab_strength = collab_credit * pp.person_project_credit
+                        my_collabs[collab_person_id] += collab_strength
+            sorted_collabs_to_return = sorted(my_collabs.items(), key=lambda x: x[1], reverse=True)
+            ret["top_collabs"] = []    
+            num_collabs_to_return = min(5, len(sorted_collabs_to_return))    
+            for person_id, collab_score in sorted_collabs_to_return[0:num_collabs_to_return]:
+                person = Person.query.get(int(person_id))
+                person_dict = person.as_package_snippet
+                person_dict["collab_score"] = collab_score * 4  # to make a 0.25*0.25 connection strength of 1
+                ret["top_collabs"].append(person_dict)
 
         # person packages
         if max_person_packages:
@@ -100,7 +101,7 @@ class Person(db.Model):
 
     @property
     def as_snippet(self):
-        return self.to_dict(max_person_packages=3)
+        return self.to_dict(max_person_packages=3, include_top_collabs=False)
 
     @property
     def as_package_snippet(self):
