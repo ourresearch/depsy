@@ -808,7 +808,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "\n" +
     "   <div class=\"ti-menu\">\n" +
     "\n" +
-    "      <a href=\"top/packages\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
+    "      <a href=\"leaderboard\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
     "         leaderboard\n" +
     "      </a>\n" +
     "      <a href=\"about\" class=\"menu-link\">\n" +

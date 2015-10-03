@@ -231,10 +231,6 @@ div.ti-header div.ti-menu a.menu-link {
 div.ti-header div.ti-menu a.menu-link i {
   margin-right: 3px;
 }
-div.ti-header div.ti-menu a.menu-link:hover {
-  text-decoration: none;
-  color: #555;
-}
 div.landing div.tagline {
   text-align: center;
   color: #333;
@@ -243,11 +239,18 @@ div.landing div.tagline {
   margin: 150px auto 0;
   font-weight: 100;
 }
+div.person-page div.ti-page-header {
+  padding: 20px 40px 50px;
+  border-bottom: 1px solid #ddd;
+}
 div.person-page div.ti-page-header h1 img {
   height: 60px;
   -webkit-border-radius: 40px;
   -moz-border-radius: 40px;
   border-radius: 40px;
+}
+div.person-page .ti-page-body .packages {
+  margin-left: 40px;
 }
 div.ti-page-header.leaderboard-header span.language {
   text-transform: capitalize;
