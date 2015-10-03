@@ -140,10 +140,7 @@ class CranPackage(Package):
     def set_is_academic(self):
         self.is_academic = False
 
-        # if you have an academic-sounding tag, you're academic
-        # for tag in self.tags:
-        #     if is_academic_phrase(tag):
-        #         self.is_academic = True
+        # skip tags for cran, because they are tasks and don't work well here
 
         # if you have an academic-sounding name, you're academic
         if is_academic_phrase(self.project_name):
@@ -151,6 +148,13 @@ class CranPackage(Package):
 
         # if you have an academic-sounding summary, you're academic
         if is_academic_phrase(self.summary):
+            self.is_academic = True
+
+        # if you have an academic-sounding cran description, you're academic
+        if is_academic_phrase(self.api_raw["Description"]):
+            self.is_academic = True
+
+        if is_academic_phrase(self.proxy_papers):
             self.is_academic = True
 
         return self.is_academic

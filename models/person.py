@@ -55,47 +55,52 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
-    def to_dict(self, full=True):
-        ret = {
-            "id": self.id, 
-            "name": self.display_name, 
-            "single_name": self.single_name, 
-            "github_login": self.github_login, 
-            "icon": self.icon, 
-            "icon_small": self.icon_small, 
-            "is_academic": self.is_academic, 
-            "is_organization": self.is_organization, 
-            "impact": self.impact, 
-            "id": self.id
-        }
-        if full:
-            ret["person_packages"] = [p.to_dict() for p in self.get_person_packages()]
-            ret["num_packages"] = len(ret["person_packages"])
-        return ret
-
-
-    @property
-    def as_snippet(self):
-
+    def to_dict(self, max_person_packages=None):
         ret = self.as_package_snippet
 
         person_packages = self.get_person_packages()
         ret["num_packages"] = len(person_packages)
         ret["num_packages_r"] = len([pp for pp in person_packages if pp.package.language=='r'])
         ret["num_packages_python"] = len([pp for pp in person_packages if pp.package.language=='python'])
-        person_packages_to_return = min(3, len(person_packages))
-        ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:person_packages_to_return]]
         
+        # tags
         tags_dict = defaultdict(int)
         for pp in person_packages:
             for tag in pp.package.tags:
                 tags_dict[tag] += 1
         tags_to_return = min(3, len(tags_dict))
         sorted_tags_to_return = sorted(tags_dict.items(), key=lambda x: x[1], reverse=True)[0:tags_to_return]
-
         ret["top_person_tags"] = [{"name": name, "count": count} for name, count in sorted_tags_to_return]
+
+        # co-collaborators
+        my_collabs = defaultdict(float)
+        for pp in person_packages:
+            for collab_person_id, collab_credit in pp.package.credit.iteritems():
+                if collab_person_id != self.id:  #don't measure my own collab strength
+                    collab_strength = collab_credit * pp.person_project_credit
+                    my_collabs[collab_person_id] += collab_strength
+        sorted_collabs_to_return = sorted(my_collabs.items(), key=lambda x: x[1], reverse=True)
+        ret["top_collabs"] = []    
+        num_collabs_to_return = min(5, len(sorted_collabs_to_return))    
+        for person_id, collab_score in sorted_collabs_to_return[0:num_collabs_to_return]:
+            person = Person.query.get(int(person_id))
+            person_dict = person.as_package_snippet
+            person_dict["collab_score"] = collab_score * 4  # to make a 0.25*0.25 connection strength of 1
+            ret["top_collabs"].append(person_dict)
+
+        # person packages
+        if max_person_packages:
+            person_packages_to_return = min(max_person_packages, len(person_packages))
+            ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:person_packages_to_return]]
+        else:
+            ret["person_packages"] = [p.to_dict() for p in person_packages]
+
         return ret
 
+
+    @property
+    def as_snippet(self):
+        return self.to_dict(max_person_packages=3)
 
     @property
     def as_package_snippet(self):
