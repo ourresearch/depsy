@@ -167,17 +167,17 @@ class Person(db.Model):
 
     @property
     def impact_rank_max(self):
-        # get these with this sql:
-            # select count(id), main_language 
-            # from person 
-            # where is_organization=false
-            # and name!='UKNOWN' and email!='UNKNOWN'
-            # group by main_language
+        # select count(id), main_language 
+        # from person 
+        # where is_organization=false
+        # and (name is null or name!='UKNOWN')
+        # and (email is null or email!='UNKNOWN')
+        # group by main_language
 
         if self.main_language == "python":
-            return 36152
+            return 62951
         elif self.main_language == "r":
-            return 2316
+            return 10447
 
     def set_github_about(self):
         if self.github_login is None:
