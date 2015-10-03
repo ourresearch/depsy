@@ -391,40 +391,30 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "            popover=\"We infer academic status based on factors like email address, citedness, institution.\"\n" +
     "            ng-show=\"person.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
-    "         <!--\n" +
-    "         <span class=\"contribs\">\n" +
-    "            <span class=\"by\">by</span>\n" +
-    "            <a href=\"person/{{ contrib.id }}\"\n" +
-    "               popover=\"name: {{ contrib.name }}\"\n" +
-    "               popover-trigger=\"mouseenter\"\n" +
-    "               class=\"contrib\"\n" +
-    "               ng-repeat=\"contrib in package.contribs | orderBy: '-credit' | limitTo: 3\">{{ contrib.single_name }}<span\n" +
-    "                       ng-hide=\"{{ $last }}\"\n" +
-    "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
-    "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
-    "                  popover=\"click to see all {{ package.num_contributors }} contributors\"\n" +
-    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 5\">,\n" +
-    "               and {{ package.num_contributors - package.credit.length }} others\n" +
-    "            </a>\n" +
+    "\n" +
+    "\n" +
+    "         <span class=\"person-packages\">\n" +
+    "            <span class=\"works-on\">{{ person.num_packages }} packages including: </span>\n" +
+    "            <span class=\"package\" ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
+    "               <a href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
+    "                  {{ package.name }}</a><span class=\"sep\" ng-show=\"!$last\">,</span>\n" +
+    "            </span>\n" +
     "         </span>\n" +
-    "         -->\n" +
-    "\n" +
-    "\n" +
-    "\n" +
     "      </span>\n" +
-    "      <span class=\"summary person-packages\">\n" +
-    "         <span class=\"works-on\">Works on</span>\n" +
-    "         <span class=\"package\" ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
-    "            <a href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
-    "               {{ package.name }}\n" +
+    "\n" +
+    "      <span class=\"summary tags\">\n" +
+    "         <span class=\"tags\">\n" +
+    "            <a href=\"tag/{{ tag.name }}\"\n" +
+    "               class=\"tag\"\n" +
+    "               ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "               {{ tag.name }}\n" +
     "            </a>\n" +
-    "            <span class=\"sep\" ng-show=\"!$last\">|</span>\n" +
     "         </span>\n" +
-    "         <span class=\"also\" ng-show=\"{{ person.num_packages > 3 }}\">\n" +
-    "            <span class=\"sep\">|</span>\n" +
-    "            <a href=\"person/{{ person.id }}\"></a>\n" +
-    "            {{ person.num_packages - 3 }} other packages\n" +
-    "         </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
     "\n" +
     "      </span>\n" +
     "   </span>\n" +

@@ -481,7 +481,7 @@ span.snippet {
 
       span.name-container {
          float: left;
-         width: 600px;
+         width: 700px;
 
          span.icon {
             margin-right: 4px;
@@ -492,7 +492,7 @@ span.snippet {
             // for the person
             img.person-icon {
                height: 25px;
-               margin-bottom: -4px;
+//               margin-bottom: -4px;
                .rounded(20px);
             }
          }
@@ -514,48 +514,60 @@ span.snippet {
          }
 
       }
+
+      // for the person snippet
+      span.person-packages {
+         font-size: 16px;
+         display: block;
+         margin-top: 3px;
+         span.works-on {
+         }
+         span.sep {
+            margin: 0 2px;
+         }
+         a {
+            color: #333;
+            white-space: nowrap;
+            margin-left: 5px;
+            font-style: italic;
+
+         }
+      }
+
+
+
+
       span.summary {
          float: left;
          padding-top: 2px;
          margin-top: 2px;
-         margin-left: 1px;
          font-size: 15px;
          display: inline-block;
-         width: 600px;
+         width: 700px;
 
-         // for the person snippet
-         &.person-packages {
-            line-height: 2;
-            span.works-on {
-               font-size: 80%;
-               display: none;
-            }
-            span.sep {
+         &.tags {
+            margin: 5px 0 0 -3px;
+            a.tag {
+               border: 1px solid #ccc;
+               font-size: 14px;
+               .rounded(20px);
+               padding: 0 9px 2px;
                margin: 0 2px;
-            }
-            a {
-               color: #333;
-               white-space: nowrap;
-               &.package {
-                  margin-left: 5px;
-//                  border: 1px solid #ccc;
-//                  .rounded(20px);
-//                  padding: 0 5px 2px;
-//                  margin: 0 2px;
-//                  &:hover {
-//                     text-decoration: none;
-//                     background: #eee;
-//                  }
-               }
-               &.also {
-                  font-style: italic;
-                  margin-left: 5px;
+               color: #999;
+               &:hover {
+                  text-decoration: none;
+                  background: #eee;
+                  color: #777;
                }
             }
          }
       }
    }
 
+   // just for the person snippet
+
+
+   // just for the package snippet
    span.contribs {
       vertical-align: -4px;
       margin-left: 5px;
