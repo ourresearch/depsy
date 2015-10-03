@@ -70,7 +70,7 @@ def get_people(filters, page_size=25):
             if k == "host":
                 k = "main_language"
                 v = make_language(v)
-                
+
             attr = getattr(Person, k)
             q = q.filter(attr==v)
 
@@ -199,13 +199,18 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(PypiPackage.id)  # no run marker
-q = q.filter(PypiPackage.is_academic == None)
 update_registry.register(Update(
     job=PypiPackage.set_is_academic,
     query=q,
-    queue_id=2
+    queue_id=9
 ))
 
+q = db.session.query(CranPackage.id)  # no run marker
+update_registry.register(Update(
+    job=CranPackage.set_is_academic,
+    query=q,
+    queue_id=9
+))
 
 
 q = db.session.query(CranPackage.id)
