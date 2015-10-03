@@ -131,21 +131,23 @@ class Person(db.Model):
     @classmethod
     def shortcut_impact_rank(cls):
         print "getting the lookup for ranking impact...."
-        q = db.session.query(cls.id)
-        q = q.order_by(cls.impact.desc())  # the important part :)
-        rows = q.all()
+        impact_rank_lookup = defaultdict(dict)
+        for main_language in ["python", "r"]:
+            q = db.session.query(cls.id)
+            q = q.filter(Person.main_language==main_language)
+            q = q.order_by(cls.impact.desc())  # the important part :)
+            rows = q.all()
 
-        impact_rank_lookup = {}
-        ids_sorted_by_impact = [row[0] for row in rows]
-        for my_id in ids_sorted_by_impact:
-            zero_based_rank = ids_sorted_by_impact.index(my_id)
-            impact_rank_lookup[my_id] = zero_based_rank + 1
+            ids_sorted_by_impact = [row[0] for row in rows]
+            for my_id in ids_sorted_by_impact:
+                zero_based_rank = ids_sorted_by_impact.index(my_id)
+                impact_rank_lookup[main_language][my_id] = zero_based_rank + 1
 
         return impact_rank_lookup
 
 
     def set_impact_rank(self, impact_rank_lookup):
-        self.impact_rank = impact_rank_lookup[self.id]
+        self.impact_rank = impact_rank_lookup[self.main_language][self.id]
         print "self.impact_rank", self.impact_rank
 
 

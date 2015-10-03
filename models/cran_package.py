@@ -170,7 +170,7 @@ class CranPackage(Package):
         ]
 
         for proxy_paper_type in sciency_proxy_paper_types:
-            if proxy_paper_type in self.proxy_paper:
+            if proxy_paper_type in self.proxy_papers:
                 print "setting is_academic=True due to proxy paper type"
                 self.is_academic = True
 

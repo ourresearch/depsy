@@ -646,11 +646,11 @@ class Package(db.Model):
 
     @property
     def offset_to_recenter_scores(self):
-        return 5  # brings lowest up to about 0
+        return 6  # brings lowest up to about 0
 
     @property
     def score_multiplier(self):
-        return 200  # makes it out of 1000
+        return 1000.0/self.offset_to_recenter_scores  # makes it out of 1000
 
 
     @property
