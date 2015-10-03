@@ -151,58 +151,6 @@ def package_endpoint(host_or_language, project_name):
 
 
 
-@app.route("/api/packages")
-@app.route("/api/packages.json")
-def packages_endpoint():
-    filters_dict = make_filters_dict(request.args)
-    page_size = request.args.get("page_size", "25")
-
-    start = time()
-    packages = get_leaders(
-        filters=filters_dict,
-        page_size=int(page_size)
-    )
-    leaders_list = [p.as_snippet_with_people for p in packages]
-
-    ret = json_resp_from_thing({
-        "count": len(leaders_list),
-        "list": leaders_list,
-        "type": "package",
-        "filters": filters_dict
-    })
-
-    elapsed_time = elapsed(start)
-    ret.headers["x-elapsed"] = elapsed_time
-    return ret
-
-@app.route('/api/people')
-@app.route('/api/people.json')
-def people_endpoint():
-    filter_strings = request.args.get("filters", "").split(",")
-    filters = [parse_filter_str(s) for s in filter_strings if s]
-    page_size = request.args.get("page_size", "25")
-
-    start = time()
-    people = get_people(filters, page_size=int(page_size))
-    leaders_list = [p.as_person_snippet for p in people]
-
-    ret = json_resp_from_thing({
-        "count": len(leaders_list),
-        "list": leaders_list,
-        "type": "person",
-        "filters": filters
-    })
-
-    elapsed_time = elapsed(start)
-    ret.headers["x-elapsed"] = elapsed_time
-    return ret
-
-
-@app.route('/tags')
-@app.route('/tags.json')
-def tags_endpoint():
-    pass
-
 @app.route('/api/leaderboard')
 @app.route('/api/leaderboard.json')
 def leaderboard():
