@@ -45,14 +45,15 @@ def get_people(filters, page_size=25):
         if k in ["host", "tags"]:
             pass # don't do anything for these for now for people
         else:
-            print "using filter", k, v
             attr = getattr(Person, k)
             q = q.filter(attr==v)
 
+    total_count = q.count()
+
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)
-    ret = q.all()
-    return ret
+    objects = q.all()
+    return [total_count, objects]
 
 
 def get_packages(filters, page_size=25):
@@ -70,11 +71,13 @@ def get_packages(filters, page_size=25):
             attr = getattr(Package, k)
             q = q.filter(attr==v)
 
+    total_count = q.count()
+
     q = q.order_by(Package.impact.desc())
     q = q.limit(page_size)
 
-    ret = q.all()
-    return ret
+    objects = q.all()
+    return [total_count, objects]
 
 
 
