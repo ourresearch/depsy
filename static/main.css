@@ -231,10 +231,6 @@ div.ti-header div.ti-menu a.menu-link {
 div.ti-header div.ti-menu a.menu-link i {
   margin-right: 3px;
 }
-div.ti-header div.ti-menu a.menu-link:hover {
-  text-decoration: none;
-  color: #555;
-}
 div.landing div.tagline {
   text-align: center;
   color: #333;
@@ -243,11 +239,53 @@ div.landing div.tagline {
   margin: 150px auto 0;
   font-weight: 100;
 }
-div.person-page div.ti-page-header h1 img {
+div.person-page div.ti-page-sidebar {
+  float: left;
+  width: 400px;
+  padding: 20px 20px 20px 38px;
+}
+div.person-page div.ti-page-sidebar h1 img {
   height: 60px;
   -webkit-border-radius: 40px;
   -moz-border-radius: 40px;
   border-radius: 40px;
+}
+div.person-page .ti-page-body {
+  float: left;
+  border-left: 1px solid #ddd;
+  padding-top: 30px;
+}
+div.person-page .ti-page-body .packages {
+  margin-left: 40px;
+}
+div.person-page .ti-page-body .packages div.person-package .person-package-stats {
+  width: 80px;
+  float: left;
+  margin: 25px 5px 0;
+  padding: 0 15px 0 0;
+  text-align: right;
+  border-right: 1px solid #ddd;
+}
+div.person-page .ti-page-body .packages div.person-package .person-package-stats span.roles {
+  height: 24px;
+  display: inline-block;
+}
+div.person-page .ti-page-body .packages div.person-package .person-package-stats span.roles span.role {
+  font-size: 16px;
+  margin-left: 5px;
+  color: #777;
+}
+div.person-page .ti-page-body .packages div.person-package .person-package-stats .bar-outside {
+  height: 7px;
+  background: #eee;
+  position: relative;
+  margin-top: 10px;
+  text-align: right;
+}
+div.person-page .ti-page-body .packages div.person-package .person-package-stats .bar-outside span.bar-inside {
+  background: #777;
+  height: 100%;
+  display: inline-block;
 }
 div.ti-page-header.leaderboard-header span.language {
   text-transform: capitalize;
@@ -332,7 +370,7 @@ div.page.sidebar-page .main {
   margin-left: 230px;
 }
 span.snippet {
-  margin: 15px 0 15px 50px;
+  margin: 15px 0 15px 0;
   padding: 4px 0;
   color: #333;
   text-decoration: none;
