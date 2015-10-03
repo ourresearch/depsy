@@ -25,6 +25,7 @@ angular.module('top', [
     FilterService.setFromUrl()
     $scope.filters = FilterService
 
+    getLeaders()
 
     function getLeaders(){
       console.log("getLeaders() go")

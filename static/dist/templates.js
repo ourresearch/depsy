@@ -349,7 +349,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">Packages</span>\n" +
+    "               <span class=\"text\">packages</span>\n" +
     "            </li>\n" +
     "\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'people')\">\n" +
@@ -360,7 +360,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">People</span>\n" +
+    "               <span class=\"text\">people</span>\n" +
     "            </li>\n" +
     "\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'tags')\">\n" +
@@ -371,7 +371,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">Tags</span>\n" +
+    "               <span class=\"text\">tags</span>\n" +
     "            </li>\n" +
     "         </ul>\n" +
     "\n" +
@@ -406,7 +406,6 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
     "         <h3>and only</h3>\n" +
-    "         <pre>{{ filters.d.is_academic }}</pre>\n" +
     "         <ul>\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
     "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
@@ -416,7 +415,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">Academic projects</span>\n" +
+    "               <span class=\"text\">academic projects</span>\n" +
     "            </li>\n" +
     "         </ul>\n" +
     "      </div>\n" +

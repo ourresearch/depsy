@@ -5,7 +5,7 @@ from util import elapsed
 from models.person import Person
 from models import package
 from models.package import Package
-from models.package_jobs import get_packages
+from models.package_jobs import get_leaders
 from dummy_data import get_dummy_data
 from sqlalchemy import orm
 from models.package import make_host_name
@@ -155,19 +155,21 @@ def package_endpoint(host_or_language, project_name):
 @app.route("/api/packages")
 @app.route("/api/packages.json")
 def packages_endpoint():
-    filter_strings = request.args.get("filters", "").split(",")
-    filters = [parse_filter_str(s) for s in filter_strings if s]
+    filters_dict = make_filters_dict(request.args)
     page_size = request.args.get("page_size", "25")
 
     start = time()
-    packages = get_packages(filters, page_size=int(page_size))
+    packages = get_leaders(
+        filters=filters_dict,
+        page_size=int(page_size)
+    )
     leaders_list = [p.as_snippet_with_people for p in packages]
 
     ret = json_resp_from_thing({
         "count": len(leaders_list),
         "list": leaders_list,
         "type": "package",
-        "filters": filters
+        "filters": filters_dict
     })
 
     elapsed_time = elapsed(start)
@@ -182,16 +184,30 @@ def people_endpoint():
 def tags_endpoint():
     pass
 
-@app.route('/api/leaders/<leader_type>')
-def leaders(leader_type):
-    if leader_type == "packages":
-        return redirect(url_for('packages_endpoint'))
-    elif leader_type == "people":
-        return redirect(url_for('people_endpoint'))
-    elif leader_type == "tags":
-        return redirect(url_for('tags_endpoint'))
-    else:
-        abort_json(404, "We don't have those kind of leaders.")
+@app.route('/api/leaderboard')
+@app.route('/api/leaderboard.json')
+def leaders():
+    filters_dict = make_filters_dict(request.args)
+    page_size = request.args.get("page_size", "25")
+
+    start = time()
+    leaders = get_leaders(
+        filters=filters_dict,
+        page_size=int(page_size)
+    )
+    leaders_list = [leader.as_snippet for leader in leaders]
+
+    ret = json_resp_from_thing({
+        "count": len(leaders_list),
+        "list": leaders_list,
+        "type": filters_dict["type"],
+        "filters": filters_dict
+    })
+
+    elapsed_time = elapsed(start)
+    ret.headers["x-elapsed"] = elapsed_time
+    return ret
+
 
 
 @app.route("/api/search/<search_str>")
@@ -200,16 +216,21 @@ def search(search_str):
     return jsonify({"list": ret, "count": len(ret)})
 
 
-def parse_filter_str(filter_str):
-    k, v = filter_str.split(":")
-    if k=="language":
-        k = "host"
-        v = make_host_name(v)
+def make_filters_dict(args):
+    full_dict = {
+        "type": args.get("type", "package"),
+        "is_academic": (args.get("is_academic", False)),
+        "host": make_host_name(args.get("language", "python")),
+        "tag": args.get("tag", None)
+    }
+    ret = {}
 
-    elif k == "is_academic":
-        v = str_to_bool(v)
+    # don't return keys with falsy values, we won't filter by them.
+    for k, v in full_dict.iteritems():
+        if v:
+            ret[k] = v
 
-    return k, v
+    return ret
 
 
 

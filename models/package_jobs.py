@@ -16,6 +16,21 @@ from jobs import Update
 
 
 
+def get_leaders(filters, page_size=25):
+    if filters["type"] in ["package", "packages"]:
+        fn = get_packages
+    elif filters["type"] in ["person", "people", "persons"]:
+        fn = get_people
+    elif filters["type"] in ["tag", "tags"]:
+        pass  # get the tags here
+    else:
+        raise ValueError("you can only get person, package, or tag leaders.")
+
+    # this can break things downstream.
+    filters_without_type = {k:v for k, v in filters.iteritems() if k != "type"}
+    return fn(filters=filters_without_type, page_size=page_size)
+
+
 def get_people(filters=None, page_size=25):
     q = Person.query.options(
         orm.subqueryload_all(
@@ -25,10 +40,10 @@ def get_people(filters=None, page_size=25):
     )
     for (filter_attribute, filter_value) in filters:
         if filter_attribute == "tags":
-            q = q.filter(Package.tags.has_key(filter_value))        
+            q = q.filter(Package.tags.has_key(filter_value))
         else:
             attr = getattr(Person, filter_attribute)
-            q = q.filter(attr==filter_value)        
+            q = q.filter(attr==filter_value)
 
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)
@@ -37,7 +52,7 @@ def get_people(filters=None, page_size=25):
     return ret
 
 
-def get_packages(filters=None, page_size=25):
+def get_packages(filters, page_size=25):
 
     q = Package.query.options(
         orm.subqueryload_all(
@@ -45,12 +60,12 @@ def get_packages(filters=None, page_size=25):
             Contribution.person 
         )
     )
-    for (filter_attribute, filter_value) in filters:
-        if filter_attribute == "tags":
-            q = q.filter(Package.tags.has_key(filter_value))
+    for k, v in filters.iteritems():
+        if k == "tags":
+            q = q.filter(Package.tags.has_key(v))
         else:
-            attr = getattr(Package, filter_attribute)
-            q = q.filter(attr==filter_value)        
+            attr = getattr(Package, k)
+            q = q.filter(attr==v)
 
     q = q.order_by(Package.impact.desc())
     q = q.limit(page_size)

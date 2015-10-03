@@ -1,6 +1,6 @@
 angular.module('resourcesModule', [])
   .factory('Leaders', function($resource) {
-    return $resource('api/leaders/:type')
+    return $resource('api/leaderboard')
   })
 
   .factory('UserResource', function($resource) {
