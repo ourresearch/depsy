@@ -301,29 +301,24 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "            </span>\n" +
     "\n" +
     "         </div>\n" +
+    "      </div>\n" +
     "\n" +
-    "         <!--\n" +
-    "         <div class=\"impact-score-info\">\n" +
-    "            <div class=\"score\">\n" +
-    "               {{ format.short(person.impact) }}\n" +
-    "            </div>\n" +
-    "            <div class=\"rank-info\">\n" +
-    "               <span class=\"rank\">#{{ person.impact_rank }}</span>\n" +
-    "               <a class=\"out-of\" href=\"leaderboard?type=people&language={{ person.main_language }}\">\n" +
-    "                  of {{ person.impact_rank_max }}\n" +
-    "                  <span class=\"language-r\" ng-show=\"person.main_language=='r'\">R coders</span>\n" +
-    "                  <span class=\"language-r\" ng-show=\"person.main_language=='python'\">Pythonistas</span>\n" +
-    "               </a>\n" +
-    "            </div>\n" +
+    "      <div class=\"impact-descr\">\n" +
+    "         <h3>Impact</h3>\n" +
+    "         <div class=\"impact-copy\" ng-show=\"person.main_language=='python'\">\n" +
+    "            Ranked #{{ person.impact_rank }} out {{ person.impact_rank_max }} Pythonistas on with projects on PyPi.\n" +
     "         </div>\n" +
-    "         -->\n" +
-    "\n" +
+    "         <div class=\"impact-copy\" ng-show=\"person.main_language=='r'\">\n" +
+    "            Ranked #{{ person.impact_rank }} out {{ person.impact_rank_max }} R coders on with projects on CRAN.\n" +
+    "         </div>\n" +
     "      </div>\n" +
     "\n" +
     "      <div class=\"top-tags\">\n" +
     "         <h3>Top tags</h3>\n" +
     "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "            <a class=\"tag\"\n" +
+    "               href=\"tag/{{ tag.name }}\"\n" +
+    "               ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
     "               {{ tag.name }}\n" +
     "            </a>\n" +
     "         </div>\n" +
@@ -333,9 +328,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         <h3>Top collaborators</h3>\n" +
     "         <div class=\"tags\">\n" +
     "            <a class=\"collab\"\n" +
-    "               popover=\"We collaborated\"\n" +
-    "               popover-trigger=\"mouseenter\"\n" +
-    "               popover-title=\"Top collaborator\"\n" +
     "               href=\"person/{{ collab.id }}\"\n" +
     "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
     "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
@@ -615,8 +607,7 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "            <i class=\"fa fa-tag\"></i>\n" +
     "         </span>\n" +
     "\n" +
-    "         <a class=\"name\" popover=\"click for more info\"\n" +
-    "            popover-trigger=\"mouseenter\"\n" +
+    "         <a class=\"name\"\n" +
     "            href=\"tag/{{ tag.name }}\">\n" +
     "            {{ tag.name }}\n" +
     "         </a>\n" +
@@ -630,7 +621,7 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "\n" +
     "\n" +
     "         <span class=\"related-tags\">\n" +
-    "            Related tags:\n" +
+    "            Related tags: <span style=\"font-style: italic\">coming soon...</span>\n" +
     "         </span>\n" +
     "      </span>\n" +
     "\n" +

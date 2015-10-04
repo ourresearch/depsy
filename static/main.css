@@ -365,6 +365,10 @@ div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info .rank-inf
   font-size: 14px;
   color: #333;
 }
+div.person-page div.ti-page-sidebar .impact-descr {
+  margin: 50px 20px 50px 0;
+  font-size: 15px;
+}
 div.person-page div.ti-page-sidebar .top-tags {
   clear: both;
   margin: 30px 20px 0 0;
@@ -376,7 +380,7 @@ div.person-page div.ti-page-sidebar .top-tags .tags span.tag {
   border-radius: 10px;
 }
 div.person-page div.ti-page-sidebar .top-collabs {
-  margin-top: 70px;
+  margin-top: 50px;
 }
 div.person-page div.ti-page-sidebar .top-collabs:before,
 div.person-page div.ti-page-sidebar .top-collabs:after {
