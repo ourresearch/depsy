@@ -166,7 +166,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
 
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("person-page/person-page.tpl.html",
-    "<div class=\"person-page\">\n" +
+    "<div class=\"person-page sidebar-page\">\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
     "      <div class=\"sidebar-header\">\n" +
     "\n" +
@@ -360,15 +360,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "      </span>\n" +
     "\n" +
     "\n" +
-    "      <span class=\"vis\">\n" +
-    "         <!--\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
-    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
-    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
-    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
-    "         </span>\n" +
-    "         -->\n" +
-    "\n" +
+    "      <span class=\"rank\">\n" +
+    "         #{{ package.impact_rank }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +
@@ -443,15 +436,8 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "      </span>\n" +
     "\n" +
     "\n" +
-    "      <span class=\"vis\">\n" +
-    "         <!--\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
-    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
-    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
-    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
-    "         </span>\n" +
-    "         -->\n" +
-    "\n" +
+    "      <span class=\"rank\">\n" +
+    "         #{{ person.impact_rank }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +
@@ -606,6 +592,9 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "            <span class=\"name\">\n" +
     "               <i class=\"fa fa-tag\"></i>\n" +
     "               {{ packages.filters.tag }}\n" +
+    "            </span>\n" +
+    "            <span class=\"num-tags\">\n" +
+    "               Showing {{ packages.num_returned }} of {{ packages.num_total }} uses.\n" +
     "            </span>\n" +
     "         </div>\n" +
     "\n" +

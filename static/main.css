@@ -251,7 +251,6 @@ div.sidebar-page div.ti-page-sidebar h3 {
 }
 div.sidebar-page div.ti-page-body {
   float: left;
-  border-left: 1px solid #ddd;
   padding-top: 50px;
   padding-left: 50px;
 }
@@ -542,43 +541,19 @@ span.snippet span.left-metrics {
   text-align: right;
   float: left;
   margin-top: -3px;
+  line-height: 1.3;
 }
-span.snippet span.left-metrics span.vis {
+span.snippet span.left-metrics span.rank {
   display: inline-block;
-  background: #eee;
   width: 58px;
-  height: 8px;
   text-align: right;
-  margin-top: 3px;
-}
-span.snippet span.left-metrics span.vis span.vis-bar {
-  display: inline-block;
-  height: 100%;
-  text-align: right;
-  -webkit-border-radius: 30px;
-  -moz-border-radius: 30px;
-  border-radius: 30px;
-}
-span.snippet span.left-metrics span.vis span.vis-bar span.subscore {
-  display: inline-block;
-  height: 100%;
-}
-span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_citations_percentile {
-  background: #984ea3;
-}
-span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-pagerank_percentile {
-  background: #4daf4a;
-}
-span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_downloads_percentile {
-  background: #377eb8;
-}
-span.snippet span.left-metrics span.vis span.vis-bar span.subscore.subscore-num_stars_percentile {
-  background: #e41a1c;
+  margin-top: 0;
+  font-weight: 100;
 }
 span.snippet span.left-metrics .one-metric {
+  color: #333;
   cursor: default;
   font-size: 28px;
-  color: #333;
   font-weight: 100;
   margin-bottom: 5px;
 }
