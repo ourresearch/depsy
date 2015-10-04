@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-snippet.tpl.html', 'static-pages/landing.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -38,8 +38,11 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "\n" +
     "   <div class=\"ti-menu\">\n" +
     "\n" +
-    "      <a href=\"leaderboard\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
-    "         leaderboard\n" +
+    "      <a href=\"leaderboard?type=people\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
+    "         authors\n" +
+    "      </a>\n" +
+    "      <a href=\"leaderboard?type=tags\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
+    "         packages\n" +
     "      </a>\n" +
     "      <a href=\"about\" class=\"menu-link\">\n" +
     "         about\n" +
@@ -163,14 +166,92 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
 
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("person-page/person-page.tpl.html",
-    "<div class=\"person-page\">\n" +
+    "<div class=\"person-page sidebar-page\">\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
-    "      <h1>\n" +
-    "         <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
-    "         <span class=\"text\">\n" +
-    "            {{ person.name }}\n" +
-    "         </span>\n" +
-    "      </h1>\n" +
+    "      <div class=\"sidebar-header\">\n" +
+    "\n" +
+    "         <div class=\"person-about\">\n" +
+    "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
+    "            <div class=\"score\">\n" +
+    "               <span class=\"impact\">\n" +
+    "                  {{ format.short(person.impact) }}\n" +
+    "               </span>\n" +
+    "               <span class=\"rank\">\n" +
+    "                  #{{ person.impact_rank }}\n" +
+    "               </span>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <span class=\"name\">\n" +
+    "               {{ person.name }}\n" +
+    "            </span>\n" +
+    "            <span class=\"accounts\">\n" +
+    "               <i popover-title=\"Academic\"\n" +
+    "                  popover-trigger=\"mouseenter\"\n" +
+    "                  popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                  ng-show=\"person.is_academic\"\n" +
+    "                  class=\"is-academic account fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "               <img class=\"orcid account\"\n" +
+    "                  popover-title=\"ORCiD coming soon\"\n" +
+    "                  popover-trigger=\"mouseenter\"\n" +
+    "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
+    "                  ng-show=\"person.is_academic\"\n" +
+    "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
+    "\n" +
+    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github/{{ person.github_login }}\">\n" +
+    "                  <i class=\"fa fa-github\"></i>\n" +
+    "                  <span class=\"github-url-part\" ng-if=\"!person.is_academic\">\n" +
+    "                     github/{{ person.github_login }}\n" +
+    "                  </span>\n" +
+    "               </a>\n" +
+    "            </span>\n" +
+    "\n" +
+    "         </div>\n" +
+    "\n" +
+    "         <!--\n" +
+    "         <div class=\"impact-score-info\">\n" +
+    "            <div class=\"score\">\n" +
+    "               {{ format.short(person.impact) }}\n" +
+    "            </div>\n" +
+    "            <div class=\"rank-info\">\n" +
+    "               <span class=\"rank\">#{{ person.impact_rank }}</span>\n" +
+    "               <a class=\"out-of\" href=\"leaderboard?type=people&language={{ person.main_language }}\">\n" +
+    "                  of {{ person.impact_rank_max }}\n" +
+    "                  <span class=\"language-r\" ng-show=\"person.main_language=='r'\">R coders</span>\n" +
+    "                  <span class=\"language-r\" ng-show=\"person.main_language=='python'\">Pythonistas</span>\n" +
+    "               </a>\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "         -->\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"top-tags\">\n" +
+    "         <h3>Top tags</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "               {{ tag.name }}\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"top-collabs\">\n" +
+    "         <h3>Top collaborators</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"collab\"\n" +
+    "               popover=\"We collaborated\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               popover-title=\"Top collaborator\"\n" +
+    "               href=\"person/{{ collab.id }}\"\n" +
+    "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
+    "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
+    "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
+    "               <span class=\"name\">{{ collab.name }}</span>\n" +
+    "               <span class=\"is-academic\" ng-show=\"collab.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
+    "\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
@@ -279,15 +360,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "      </span>\n" +
     "\n" +
     "\n" +
-    "      <span class=\"vis\">\n" +
-    "         <!--\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
-    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
-    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
-    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
-    "         </span>\n" +
-    "         -->\n" +
-    "\n" +
+    "      <span class=\"rank\">\n" +
+    "         #{{ package.impact_rank }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +
@@ -312,9 +386,9 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
-    "         <i popover-title=\"aca-what?\"\n" +
+    "         <i popover-title=\"Academic\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"content!\"\n" +
+    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
     "            ng-show=\"package.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
@@ -362,15 +436,8 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "      </span>\n" +
     "\n" +
     "\n" +
-    "      <span class=\"vis\">\n" +
-    "         <!--\n" +
-    "         <span class=\"vis-bar\" style=\"width: {{ package.impact }}%;\">\n" +
-    "            <span ng-repeat=\"subScoreRatio in subScoreRatios\"\n" +
-    "                  class=\"subscore subscore-{{ subScoreRatio.name }}\"\n" +
-    "                  style=\"width: {{ subScoreRatio.val * 100 }}%;\"></span>\n" +
-    "         </span>\n" +
-    "         -->\n" +
-    "\n" +
+    "      <span class=\"rank\">\n" +
+    "         #{{ person.impact_rank }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +
@@ -393,7 +460,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "         <i popover-title=\"Academic\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"We infer academic status based on factors like email address, citedness, institution.\"\n" +
+    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
     "            ng-show=\"person.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
@@ -433,6 +500,72 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "");
 }]);
 
+angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/tag-snippet.tpl.html",
+    "<span class=\"snippet tag-snippet\"\n" +
+    "     ng-controller=\"personSnippetCtrl\">\n" +
+    "<span class=\"left-metrics\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover=\"{{ tag.count }} packages are tagged with '{{ tag.name }}'\">\n" +
+    "\n" +
+    "      <span class=\"one-metric metric\">\n" +
+    "         {{ format.short(tag.count) }}\n" +
+    "      </span>\n" +
+    "\n" +
+    "   </span>\n" +
+    "\n" +
+    "   <span class=\"metadata\">\n" +
+    "      <span class=\"name-container\">\n" +
+    "\n" +
+    "         <span class=\"icon tag-icon\">\n" +
+    "            <i class=\"fa fa-tag\"></i>\n" +
+    "         </span>\n" +
+    "\n" +
+    "         <a class=\"name\" popover=\"click for more info\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            href=\"tag/{{ tag.name }}\">\n" +
+    "            {{ tag.name }}\n" +
+    "         </a>\n" +
+    "\n" +
+    "\n" +
+    "         <i popover-title=\"Academic\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover=\"This tag is often applied to academic projects.\"\n" +
+    "            ng-show=\"tag.is_academic\"\n" +
+    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "\n" +
+    "         <span class=\"related-tags\">\n" +
+    "            Related tags:\n" +
+    "         </span>\n" +
+    "      </span>\n" +
+    "\n" +
+    "      <span class=\"summary tags\">\n" +
+    "         <span class=\"tags\">\n" +
+    "            <a href=\"tag/{{ relatedTag.name }}\"\n" +
+    "               class=\"tag\"\n" +
+    "               ng-repeat=\"relatedTag in tag.related_tags | orderBy: '-count'\">\n" +
+    "               {{ tag.name }}\n" +
+    "            </a>\n" +
+    "         </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "      </span>\n" +
+    "   </span>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "</span>\n" +
+    "\n" +
+    "\n" +
+    "");
+}]);
+
 angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("static-pages/landing.tpl.html",
     "<div class=\"landing\">\n" +
@@ -446,6 +579,71 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "\n" +
     "\n" +
     "\n" +
+    "");
+}]);
+
+angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("tag-page/tag-page.tpl.html",
+    "<div class=\"tag-page sidebar-page\">\n" +
+    "   <div class=\"ti-page-sidebar\">\n" +
+    "      <div class=\"sidebar-header\">\n" +
+    "\n" +
+    "         <div class=\"tag-about\">\n" +
+    "            <span class=\"name\">\n" +
+    "               <i class=\"fa fa-tag\"></i>\n" +
+    "               {{ packages.filters.tag }}\n" +
+    "            </span>\n" +
+    "            <span class=\"num-tags\">\n" +
+    "               Showing {{ packages.num_returned }} of {{ packages.num_total }} uses.\n" +
+    "            </span>\n" +
+    "         </div>\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"top-tags\">\n" +
+    "         <h3>Related tags</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"tag\" ng-repeat=\"tag in tag.related_tags | orderBy: '-count'\">\n" +
+    "               {{ packages.filters.tag }}\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <!-- we can use this from the people page to print out tag users...\n" +
+    "      <div class=\"top-collabs\">\n" +
+    "         <h3>Top collaborators</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"collab\"\n" +
+    "               popover=\"We collaborated\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               popover-title=\"Top collaborator\"\n" +
+    "               href=\"person/{{ collab.id }}\"\n" +
+    "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
+    "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
+    "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
+    "               <span class=\"name\">{{ collab.name }}</span>\n" +
+    "               <span class=\"is-academic\" ng-show=\"collab.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
+    "\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "      -->\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"ti-page-body\">\n" +
+    "      <div class=\"packages\">\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in packages.list | orderBy:'-impact'\">\n" +
+    "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>\n" +
     "");
 }]);
 
@@ -497,7 +695,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "      </div>\n" +
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
-    "         <h3>written in</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='packages'\">written in</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='people'\">who work in</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='tags'\">applied to</h3>\n" +
     "         <ul>\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('language', 'python')\">\n" +
     "               <span class=\"status\" ng-if=\"filters.d.language == 'python'\">\n" +
@@ -524,7 +724,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "      </div>\n" +
     "\n" +
     "      <div class=\"language-type-select facet\">\n" +
-    "         <h3>and only</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='packages'\">that are</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='people'\">and who are</h3>\n" +
+    "         <h3 ng-show=\"filters.d.type=='tags'\">that are</h3>\n" +
     "         <ul>\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
     "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
@@ -534,7 +736,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">academic projects</span>\n" +
+    "               <span class=\"text\" ng-show=\"filters.d.type=='packages'\">academic projects</span>\n" +
+    "               <span class=\"text\" ng-show=\"filters.d.type=='people'\">academics</span>\n" +
+    "               <span class=\"text\" ng-show=\"filters.d.type=='tags'\">academic</span>\n" +
     "            </li>\n" +
     "         </ul>\n" +
     "      </div>\n" +
@@ -569,6 +773,11 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "            <!-- people loop -->\n" +
     "            <div ng-if=\"filters.d.type=='people'\" class=\"leader\" ng-repeat=\"person in leaders.list\">\n" +
     "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/person-snippet.tpl.html'\"></div>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <!-- tag loop -->\n" +
+    "            <div ng-if=\"filters.d.type=='tags'\" class=\"leader\" ng-repeat=\"tag in leaders.list\">\n" +
+    "               <div class=\"package-snippet-wrapper\"  ng-include=\"'snippet/tag-snippet.tpl.html'\"></div>\n" +
     "            </div>\n" +
     "\n" +
     "\n" +

@@ -10,6 +10,7 @@ angular.module('app', [
 
   'staticPages',
   'personPage',
+  'tagPage',
   'packagePage',
   'header',
   'snippet',
@@ -48,10 +49,12 @@ angular.module('app').run(function($route,
   })
   $rootScope.$on('$routeChangeSuccess', function(next, current){
     console.log("route change success")
+    window.scrollTo(0, 0)
 //    ngProgress.complete()
   })
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
     console.log("$routeChangeError")
+    window.scrollTo(0, 0)
     ngProgress.complete()
   });
 

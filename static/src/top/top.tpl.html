@@ -44,7 +44,9 @@
       </div>
 
       <div class="language-type-select facet">
-         <h3>written in</h3>
+         <h3 ng-show="filters.d.type=='packages'">written in</h3>
+         <h3 ng-show="filters.d.type=='people'">who work in</h3>
+         <h3 ng-show="filters.d.type=='tags'">applied to</h3>
          <ul>
             <li class="filter-option" ng-click="filters.set('language', 'python')">
                <span class="status" ng-if="filters.d.language == 'python'">
@@ -71,7 +73,9 @@
       </div>
 
       <div class="language-type-select facet">
-         <h3>and only</h3>
+         <h3 ng-show="filters.d.type=='packages'">that are</h3>
+         <h3 ng-show="filters.d.type=='people'">and who are</h3>
+         <h3 ng-show="filters.d.type=='tags'">that are</h3>
          <ul>
             <li class="filter-option" ng-click="filters.toggle('only_academic')">
                <span class="status" ng-if="filters.d.only_academic">
@@ -81,7 +85,9 @@
                   <i class="fa fa-square-o"></i>
                </span>
 
-               <span class="text">academic projects</span>
+               <span class="text" ng-show="filters.d.type=='packages'">academic projects</span>
+               <span class="text" ng-show="filters.d.type=='people'">academics</span>
+               <span class="text" ng-show="filters.d.type=='tags'">academic</span>
             </li>
          </ul>
       </div>
@@ -116,6 +122,11 @@
             <!-- people loop -->
             <div ng-if="filters.d.type=='people'" class="leader" ng-repeat="person in leaders.list">
                <div class="package-snippet-wrapper"  ng-include="'snippet/person-snippet.tpl.html'"></div>
+            </div>
+
+            <!-- tag loop -->
+            <div ng-if="filters.d.type=='tags'" class="leader" ng-repeat="tag in leaders.list">
+               <div class="package-snippet-wrapper"  ng-include="'snippet/tag-snippet.tpl.html'"></div>
             </div>
 
 
