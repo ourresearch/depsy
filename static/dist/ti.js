@@ -408,7 +408,9 @@ angular.module('packagePage', [
 
   .controller("PackagePageCtrl", function($scope,
                                           $routeParams,
+                                          ngProgress,
                                           packageResp){
+    ngProgress.complete()
     $scope.package = packageResp
     $scope.depNode = packageResp.rev_deps_tree
 
@@ -845,9 +847,11 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "      <a href=\"leaderboard?type=tags\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
     "         packages\n" +
     "      </a>\n" +
+    "      <!--\n" +
     "      <a href=\"about\" class=\"menu-link\">\n" +
     "         about\n" +
     "      </a>\n" +
+    "      -->\n" +
     "   </div>\n" +
     "</div>\n" +
     "\n" +
@@ -944,22 +948,114 @@ angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", func
 
 angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/package-page.tpl.html",
-    "<div class=\"package-page\">\n" +
-    "   <div class=\"ti-page-header\">\n" +
-    "      <h1>\n" +
-    "         <span class=\"text\">\n" +
-    "            {{ package.name }}\n" +
-    "         </span>\n" +
-    "         <span class=\"indegree\">{{ package.indegree }} direct reverse dependencies</span>\n" +
-    "      </h1>\n" +
+    "<div class=\"package-page sidebar-page\">\n" +
+    "\n" +
+    "\n" +
+    "   <div class=\"coming-soon\">\n" +
+    "      <h1>Coming soon :)</h1>\n" +
+    "      <h2>Check back here soon for summary, authors, impact details (downloads, dependency pagerank, citations) and dependency tree.</h2>\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "   <!--\n" +
+    "   <div class=\"ti-page-sidebar\">\n" +
+    "      <div class=\"sidebar-header\">\n" +
+    "\n" +
+    "         <div class=\"person-about\">\n" +
+    "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
+    "            <div class=\"score\">\n" +
+    "               <span class=\"impact\">\n" +
+    "                  {{ format.short(person.impact) }}\n" +
+    "               </span>\n" +
+    "               <span class=\"rank\">\n" +
+    "                  #{{ person.impact_rank }}\n" +
+    "               </span>\n" +
+    "            </div>\n" +
+    "\n" +
+    "            <span class=\"name\">\n" +
+    "               {{ person.name }}\n" +
+    "            </span>\n" +
+    "            <span class=\"accounts\">\n" +
+    "               <i popover-title=\"Academic\"\n" +
+    "                  popover-trigger=\"mouseenter\"\n" +
+    "                  popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                  ng-show=\"person.is_academic\"\n" +
+    "                  class=\"is-academic account fa fa-graduation-cap\"></i>\n" +
+    "\n" +
+    "               <img class=\"orcid account\"\n" +
+    "                  popover-title=\"ORCiD coming soon\"\n" +
+    "                  popover-trigger=\"mouseenter\"\n" +
+    "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
+    "                  ng-show=\"person.is_academic\"\n" +
+    "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
+    "\n" +
+    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github/{{ person.github_login }}\">\n" +
+    "                  <i class=\"fa fa-github\"></i>\n" +
+    "                  <span class=\"github-url-part\" ng-if=\"!person.is_academic\">\n" +
+    "                     github/{{ person.github_login }}\n" +
+    "                  </span>\n" +
+    "               </a>\n" +
+    "            </span>\n" +
+    "\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"top-tags\">\n" +
+    "         <h3>Top tags</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "               {{ tag.name }}\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"top-collabs\">\n" +
+    "         <h3>Top collaborators</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"collab\"\n" +
+    "               popover=\"We collaborated\"\n" +
+    "               popover-trigger=\"mouseenter\"\n" +
+    "               popover-title=\"Top collaborator\"\n" +
+    "               href=\"person/{{ collab.id }}\"\n" +
+    "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
+    "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
+    "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
+    "               <span class=\"name\">{{ collab.name }}</span>\n" +
+    "               <span class=\"is-academic\" ng-show=\"collab.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
+    "\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
-    "      <div class=\"dep-nodes-tree\" ng-include=\"'package-page/dep-node.tpl.html'\">\n" +
+    "      <div class=\"packages\">\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_project_impact'\">\n" +
+    "            <div class=\"person-package-stats\">\n" +
+    "               <span class=\"roles\">\n" +
+    "                  <span class=\"role role-{{ role }}\" ng-repeat=\"role in package.roles | orderBy: '-toLowerCase()'\">\n" +
+    "                     <i class=\"fa fa-user\" ng-if=\"role=='author'\"></i>\n" +
+    "                     <i class=\"fa fa-save\"  ng-if=\"role=='github_contributor'\"></i>\n" +
+    "                     <i class=\"fa fa-github\" ng-if=\"role=='github_owner'\"></i>\n" +
+    "                  </span>\n" +
+    "               </span>\n" +
+    "               <div class=\"bar-outside\">\n" +
+    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_project_credit * 100 }}%\"></span>\n" +
+    "               </div>\n" +
+    "            </div>\n" +
+    "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
+    "         </div>\n" +
+    "\n" +
+    "\n" +
     "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
     "   </div>\n" +
+    "\n" +
+    "   -->\n" +
     "\n" +
     "</div>\n" +
     "");

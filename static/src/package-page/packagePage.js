@@ -23,7 +23,9 @@ angular.module('packagePage', [
 
   .controller("PackagePageCtrl", function($scope,
                                           $routeParams,
+                                          ngProgress,
                                           packageResp){
+    ngProgress.complete()
     $scope.package = packageResp
     $scope.depNode = packageResp.rev_deps_tree
 
