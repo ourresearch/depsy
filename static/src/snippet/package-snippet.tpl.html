@@ -1,8 +1,8 @@
 <span class="snippet package-snippet"
      ng-controller="packageSnippetCtrl">
    <span class="left-metrics"
-         popover-placement="top"
          popover-trigger="mouseenter"
+         popover-title="Impact"
          popover-template="'snippet/impact-popover.tpl.html'">
 
       <span class="one-metric metric">
@@ -33,7 +33,7 @@
          </span>
 
 
-         <a class="name" tooltip="click for more info" href="package/{{ package.language }}/{{ package.name }}">
+         <a class="name" href="package/{{ package.language }}/{{ package.name }}">
             {{ package.name }}
          </a>
          <i popover-title="Academic"

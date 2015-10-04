@@ -1,11 +1,4 @@
 <div id="impact-popover">
-   <div class="head metric">
-      <span class="name">Impact:</span>
-      <span class="descr">
-         <span class="val">{{ floor(package.impact) }}<span class="small">/10k</span></span>
-      </span>
-   </div>
-
    <div class="impact">
 
       <div class="sub-score citations metric" ng-show="package.num_citations">
@@ -15,7 +8,6 @@
          </span>
          <span class="descr">
             <span class="val">{{ package.num_citations }}</span>
-            <span class="paren">({{ round(package.num_citations_percentile * 100) }}%)</span>
          </span>
       </div>
 
@@ -25,8 +17,7 @@
             Dependency PageRank
          </span>
          <span class="descr">
-            <span class="val">{{ nFormatter(package.pagerank) }} </span>
-            <span class="paren">({{ round(package.pagerank_percentile * 100 )}}%)</span>
+            <span class="val">{{ format.short(package.pagerank_score) }} </span>
          </span>
       </div>
 
@@ -36,19 +27,7 @@
             Downloads
          </span>
          <span class="descr">
-            <span class="val">{{ nFormatter(package.num_downloads)}}</span>
-            <span class="paren">({{ round(package.num_downloads_percentile * 100) }}%)</span>
-         </span>
-      </div>
-
-      <div class="sub-score stars metric" ng-show="package.num_stars">
-         <span class="name">
-            <i class="fa fa-star-o"></i>
-            Github stars
-         </span>
-         <span class="descr">
-            <span class="val">{{ nFormatter( package.num_stars ) }} </span>
-            <span class="paren">({{ round(package.num_stars_percentile * 100) }}%)</span>
+            <span class="val">{{ format.short(package.num_downloads)}}</span>
          </span>
       </div>
 

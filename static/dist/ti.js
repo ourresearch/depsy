@@ -1109,10 +1109,10 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"impact-descr\">\n" +
     "         <h3>Impact</h3>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='python'\">\n" +
-    "            Ranked #{{ person.impact_rank }} out {{ person.impact_rank_max }} Pythonistas on with projects on PyPi.\n" +
+    "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} Pythonistas on PyPi. Calculation based on summed package impacts, adjusted by percent contributions.\n" +
     "         </div>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='r'\">\n" +
-    "            Ranked #{{ person.impact_rank }} out {{ person.impact_rank_max }} R coders on with projects on CRAN.\n" +
+    "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. Calculation based on summed package impacts, adjusted by percent contributions.\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
@@ -1177,13 +1177,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
 angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("snippet/impact-popover.tpl.html",
     "<div id=\"impact-popover\">\n" +
-    "   <div class=\"head metric\">\n" +
-    "      <span class=\"name\">Impact:</span>\n" +
-    "      <span class=\"descr\">\n" +
-    "         <span class=\"val\">{{ floor(package.impact) }}<span class=\"small\">/10k</span></span>\n" +
-    "      </span>\n" +
-    "   </div>\n" +
-    "\n" +
     "   <div class=\"impact\">\n" +
     "\n" +
     "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
@@ -1193,7 +1186,6 @@ angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", fun
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
     "            <span class=\"val\">{{ package.num_citations }}</span>\n" +
-    "            <span class=\"paren\">({{ round(package.num_citations_percentile * 100) }}%)</span>\n" +
     "         </span>\n" +
     "      </div>\n" +
     "\n" +
@@ -1203,8 +1195,7 @@ angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", fun
     "            Dependency PageRank\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
-    "            <span class=\"val\">{{ nFormatter(package.pagerank) }} </span>\n" +
-    "            <span class=\"paren\">({{ round(package.pagerank_percentile * 100 )}}%)</span>\n" +
+    "            <span class=\"val\">{{ format.short(package.pagerank_score) }} </span>\n" +
     "         </span>\n" +
     "      </div>\n" +
     "\n" +
@@ -1214,19 +1205,7 @@ angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", fun
     "            Downloads\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
-    "            <span class=\"val\">{{ nFormatter(package.num_downloads)}}</span>\n" +
-    "            <span class=\"paren\">({{ round(package.num_downloads_percentile * 100) }}%)</span>\n" +
-    "         </span>\n" +
-    "      </div>\n" +
-    "\n" +
-    "      <div class=\"sub-score stars metric\" ng-show=\"package.num_stars\">\n" +
-    "         <span class=\"name\">\n" +
-    "            <i class=\"fa fa-star-o\"></i>\n" +
-    "            Github stars\n" +
-    "         </span>\n" +
-    "         <span class=\"descr\">\n" +
-    "            <span class=\"val\">{{ nFormatter( package.num_stars ) }} </span>\n" +
-    "            <span class=\"paren\">({{ round(package.num_stars_percentile * 100) }}%)</span>\n" +
+    "            <span class=\"val\">{{ format.short(package.num_downloads)}}</span>\n" +
     "         </span>\n" +
     "      </div>\n" +
     "\n" +
@@ -1240,8 +1219,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "<span class=\"snippet package-snippet\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\"\n" +
-    "         popover-placement=\"top\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-title=\"Impact\"\n" +
     "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <span class=\"one-metric metric\">\n" +
@@ -1272,7 +1251,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         </span>\n" +
     "\n" +
     "\n" +
-    "         <a class=\"name\" tooltip=\"click for more info\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
+    "         <a class=\"name\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
     "         <i popover-title=\"Academic\"\n" +
