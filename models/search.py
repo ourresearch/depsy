@@ -26,7 +26,7 @@ def autocomplete(search_str):
     order by impact desc
     limit 3)
     union
-    (select unique_tag, "count" as impact, null as summary, 'tag' as type, 4 as first_sort, id
+    (select unique_tag, "count" as impact, namespace as summary, 'tag' as type, 4 as first_sort, id
     from tags
     where unique_tag ilike '{str}%'
     or unique_tag ilike '% {str}%'
