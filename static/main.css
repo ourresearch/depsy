@@ -252,10 +252,18 @@ div.sidebar-page div.ti-page-sidebar h3 {
 div.sidebar-page div.ti-page-body {
   float: left;
   padding-top: 50px;
-  padding-left: 50px;
+  padding-left: 40px;
+}
+div.tag-page .ti-page-sidebar div.tag-about {
+  margin-top: -5px;
 }
 div.tag-page .ti-page-sidebar div.tag-about span.name {
   font-size: 30px;
+}
+div.tag-page .ti-page-sidebar div.tag-about span.num-tags {
+  display: block;
+  margin-left: 32px;
+  font-size: 18px;
 }
 div.tag-page .ti-page-sidebar div.top-tags {
   display: none;

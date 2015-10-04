@@ -1395,7 +1395,7 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "               {{ packages.filters.tag }}\n" +
     "            </span>\n" +
     "            <span class=\"num-tags\">\n" +
-    "               Showing {{ packages.num_returned }} of {{ packages.num_total }} uses.\n" +
+    "               Showing {{ packages.num_returned }} of {{ packages.num_total }} uses\n" +
     "            </span>\n" +
     "         </div>\n" +
     "\n" +
