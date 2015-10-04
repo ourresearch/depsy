@@ -435,15 +435,31 @@ class Package(db.Model):
         raise NotImplementedError
 
     def set_is_distinctive_name(self):
-        nltk.download('words')  # only downloads the first time, so can safely put here
+        self.is_distinctive_name = False
 
-        word_list = words.words()
-        # if english word or short (could be gene name)
-        if (self.project_name.lower() in word_list) or (len(self.project_name) < 5):
-            self.is_distinctive_name = False
+        if not self.bucket:
+            return
+
+        if not 'num_hits_raw' in self.bucket:
+            return
+
+        if self.bucket["num_hits_raw"] <= 0:
+            return
+
+        ratio = float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+        print "distinctiveness ratio for {} is {}".format(
+            self.project_name, ratio)
+        if self.host == "cran":
+            if ratio > 0.20:
+                self.is_distinctive_name = True
+                print "IS DISTINCTIVE!  going for it"
         else:
-            self.is_distinctive_name = True
-        return self.is_distinctive_name
+            if ratio > 0.27:
+                self.is_distinctive_name = True
+                print "IS DISTINCTIVE!  going for it"
+
+        return
+
 
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
@@ -490,8 +506,10 @@ class Package(db.Model):
             print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
 
         query = " OR ".join(queries)
+        query += ' NOT AUTH:"{}"'.format(self.project_name)
         print "query", query
         return query
+
 
     def set_num_citations_by_source(self):
         if not self.num_citations_by_source:
@@ -503,6 +521,7 @@ class Package(db.Model):
             num_found = source.run_query(self.full_text_query)
             self.num_citations_by_source[source.name] = num_found
             self.num_citations += num_found
+            print "num citations found", num_found
 
         return self.num_citations_by_source
 
