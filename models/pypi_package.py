@@ -31,10 +31,15 @@ class PypiPackage(Package):
             name=self.id)
 
     @property
+    def citation_offset_to_recenter_scores(self):
+        return 2.84  # brings lowest up to about 0
+
+    @property
     def maxes_dict(self):
         maxes_dict = {
             "pagerank": 0.0262218729908892147,
-            "num_downloads": 14940006
+            "num_downloads": 14940006,
+            "num_citations": 691
         }
         return maxes_dict
 

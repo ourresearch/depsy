@@ -435,15 +435,31 @@ class Package(db.Model):
         raise NotImplementedError
 
     def set_is_distinctive_name(self):
-        nltk.download('words')  # only downloads the first time, so can safely put here
+        self.is_distinctive_name = False
 
-        word_list = words.words()
-        # if english word or short (could be gene name)
-        if (self.project_name.lower() in word_list) or (len(self.project_name) < 5):
-            self.is_distinctive_name = False
+        if not self.bucket:
+            return
+
+        if not 'num_hits_raw' in self.bucket:
+            return
+
+        if self.bucket["num_hits_raw"] <= 0:
+            return
+
+        ratio = float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+        print "distinctiveness ratio for {} is {}".format(
+            self.project_name, ratio)
+        if self.host == "cran":
+            if ratio > 0.20:
+                self.is_distinctive_name = True
+                print "IS DISTINCTIVE!  going for it"
         else:
-            self.is_distinctive_name = True
-        return self.is_distinctive_name
+            if ratio > 0.27:
+                self.is_distinctive_name = True
+                print "IS DISTINCTIVE!  going for it"
+
+        return
+
 
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
@@ -490,8 +506,10 @@ class Package(db.Model):
             print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
 
         query = " OR ".join(queries)
+        query += ' NOT AUTH:"{}"'.format(self.project_name)
         print "query", query
         return query
+
 
     def set_num_citations_by_source(self):
         if not self.num_citations_by_source:
@@ -503,6 +521,7 @@ class Package(db.Model):
             num_found = source.run_query(self.full_text_query)
             self.num_citations_by_source[source.name] = num_found
             self.num_citations += num_found
+            print "num citations found", num_found
 
         return self.num_citations_by_source
 
@@ -625,34 +644,37 @@ class Package(db.Model):
         print "self.impact_rank", self.impact_rank
 
 
-    @classmethod
-    def shortcut_impact_maxes(cls):
-        print "getting the maxes for calculating the impact...."
-        q = db.session.query(
-            func.max(cls.num_downloads),
-            func.max(cls.pagerank),
-            func.max(cls.num_citations)
-        )
-        row = q.first()
+    # overridden by hard coded numbers below
+    # @classmethod
+    # def shortcut_impact_maxes(cls):
+    #     print "getting the maxes for calculating the impact...."
+    #     q = db.session.query(
+    #         func.max(cls.num_downloads),
+    #         func.max(cls.pagerank),
+    #         func.max(cls.num_citations)
+    #     )
+    #     row = q.first()
 
-        maxes_dict = {}
-        maxes_dict["num_downloads"] = row[0]
-        maxes_dict["pagerank"] = row[1]
-        maxes_dict["num_citations"] = row[2]
+    #     maxes_dict = {}
+    #     maxes_dict["num_downloads"] = row[0]
+    #     maxes_dict["pagerank"] = row[1]
+    #     maxes_dict["num_citations"] = row[2]
 
-        print "maxes_dict=", maxes_dict
+    #     print "maxes_dict=", maxes_dict
 
-        return maxes_dict
-
+    #     return maxes_dict
 
     @property
     def offset_to_recenter_scores(self):
-        return 6  # brings lowest up to about 0
+        return 7.2  # brings lowest up to about 0
+
+    @property
+    def citation_score_multiplier(self):
+        return 1000.0/self.citation_offset_to_recenter_scores  # makes it out of 1000
 
     @property
     def score_multiplier(self):
         return 1000.0/self.offset_to_recenter_scores  # makes it out of 1000
-
 
     @property
     def pagerank_score(self):
@@ -675,7 +697,20 @@ class Package(db.Model):
             adjusted = None
         return adjusted
 
-    def set_impact(self, maxes_dict=None):
+    @property
+    def num_citations_score(self):
+        if not self.num_citations:
+            return 0
+
+        try:
+            raw = math.log10(float(self.num_citations)/self.maxes_dict["num_citations"])
+            adjusted = (raw + self.citation_offset_to_recenter_scores) * self.citation_score_multiplier
+        except ValueError:
+            adjusted = None
+        return adjusted
+
+
+    def set_impact(self):
         score_components = []
 
         if self.pagerank:
@@ -688,11 +723,15 @@ class Package(db.Model):
                 score_components.append(log_num_downloads)
 
         if score_components:
-            my_mean = numpy.mean(score_components) + self.offset_to_recenter_scores
+            pagerank_and_downloads_mean = numpy.mean(score_components)
         else:
-            my_mean = None
+            pagerank_and_downloads_mean = None
         
-        self.impact = my_mean * self.score_multiplier
+        scaled_citations = self.num_citations_score
+        
+        # twice the mean and twenty percent of the scaled citations
+        combo = (pagerank_and_downloads_mean*2 + scaled_citations*0.2) / 2.2
+        self.impact = combo
 
         print u"self.impact for {} is {}".format(self.id, self.impact)
 
