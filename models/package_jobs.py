@@ -375,8 +375,7 @@ q = q.filter(PypiPackage.impact == None)
 update_registry.register(Update(
     job=PypiPackage.set_impact,
     query=q,
-    queue_id=9,
-    shortcut_fn=PypiPackage.shortcut_impact_maxes
+    queue_id=9
 ))
 
 q = db.session.query(CranPackage.id)
@@ -384,8 +383,7 @@ q = db.session.query(CranPackage.id)
 update_registry.register(Update(
     job=CranPackage.set_impact,
     query=q,
-    queue_id=9,
-    shortcut_fn=CranPackage.shortcut_impact_maxes
+    queue_id=9
 ))
 
 

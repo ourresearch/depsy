@@ -39,10 +39,15 @@ class CranPackage(Package):
         return "https://cran.r-project.org/web/packages/{}".format(self.project_name)
 
     @property
+    def citation_offset_to_recenter_scores(self):
+        return 3.45  # brings lowest up to about 0
+
+    @property
     def maxes_dict(self):
         maxes_dict = {
             "pagerank": 0.0601950151409884823,
-            "num_downloads": 161454
+            "num_downloads": 161454,
+            "num_citations": 2799
         }        
         return maxes_dict
 
