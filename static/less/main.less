@@ -21,7 +21,7 @@
 
 body {
    font-family: lato, helvetica, arial, sans-serif;
-   padding-top: 60px;
+   padding-top: 64px;  // hack, header height
    .wrapper {
       width: 1200px;
       margin: 0 auto;
@@ -258,15 +258,110 @@ div.landing {
    }
 }
 
+div.sidebar-page {
+   div.ti-page-sidebar {
+      float: left;
+      width: 400px;
+      padding: 70px 20px 20px 38px;
+      h3 {
+         font-weight: bold;
+         font-size: 18px;
+         margin-bottom: 12px;
+      }
+   }
+   div.ti-page-body {
+      float: left;
+      border-left: 1px solid #ddd;
+      padding-top: 50px;
+      padding-left: 50px;
+   }
+
+}
+
+div.tag-page {
+   .ti-page-sidebar {
+      div.tag-about {
+         span.name {
+            font-size: 30px;
+         }
+      }
+      div.top-tags {
+         display: none;
+      }
+   }
+   .ti-page-body {
+
+   }
+}
+
 div.person-page {
    div.ti-page-sidebar {
       float: left;
-      width: 420px;
-      padding: 43px 20px 20px 38px;
+      width: 400px;
+      padding: 53px 20px 20px 38px;
+      h3 {
+         font-weight: bold;
+         font-size: 18px;
+         margin-bottom: 12px;
+      }
       .sidebar-header {
          .clearfix();
+
+         .person-about {
+            float: left;
+            margin-bottom: 10px;
+            img {
+               float: left;
+               margin-top: 0;
+               height: 90px;
+               .rounded(100px);
+            }
+            .score {
+               margin: 0 0 5px 20px;
+               float: left;
+               line-height: 1;
+               span.impact {
+                  font-size: 35px;
+                  font-weight: 100;
+               }
+               span.rank {
+                  font-weight: 100;
+                  font-size: 12px;
+               }
+            }
+            .name {
+               display: block;
+               font-size: 24px;
+               margin-left: 20px;
+               float: left;
+               font-weight: bold;
+               line-height: 1.3;
+               width: 200px;
+            }
+            .accounts {
+               float: left;
+               margin:10px 20px 0;
+               color: #999;
+               .account {
+                  margin-right: 10px;
+                  vertical-align: top;
+               }
+               img {
+                  height: 14px;
+                  margin-right: 90px;
+               }
+               a {
+                  color: #999;
+                  i {
+                     vertical-align: middle;
+                  }
+               }
+            }
+         }
+
+
          .impact-score-info {
-            margin: 0 0 0 20px;
+            margin: 0px 0 50px 0;
             float: left;
             .score {
                font-size: 46px;
@@ -279,51 +374,24 @@ div.person-page {
                line-height: 1.3;
                margin-top: 14px;
                margin-left: 10px;
+               font-weight: 100;
                .rank {
                   font-size: 18px;
+                  font-weight: normal;
                   display:block;
 //                  font-weight: 100;
                }
                .out-of {
-                  font-size: 12px;
-                  font-weight: 100;
+                  font-size: 14px;
+//                  font-weight: 100;
+                  color: #333;
+
 
                }
             }
 
          }
-         img {
-            float: left;
-            margin-top: 5px;
-            margin-bottom: 45px; // to keep floats from falling under
-            height: 100px;
-            .rounded(100px);
-         }
-         .name {
-            display: block;
-            font-size: 24px;
-            margin-left: 20px;
-            float: left;
-            font-weight: bold;
-            line-height: 1.3;
-            max-width: 200px;
-         }
-         .accounts {
-            float: left;
-            margin-left: 20px;
-            color: #999;
-            .account {
-               margin-right: 10px;
-            }
-            img {
-               height: 14px;
-               margin-top: 3px;
-               margin-right: 90px;
-            }
-            a {
-               color: #999;
-            }
-         }
+
       }
 
       .top-tags {
@@ -340,6 +408,7 @@ div.person-page {
 
       .top-collabs {
          margin-top: 70px;
+         .clearfix();
          h3 {
 
          }
@@ -348,7 +417,7 @@ div.person-page {
             float: left;
             clear: left;
             color: #333;
-            margin: 0 0 15px 10px;
+            margin: 0 0 10px 10px;
             font-size: 16px;
             &:hover {
                text-decoration: none;
@@ -366,6 +435,12 @@ div.person-page {
             .name {
                font-style: italic;
             }
+            .is-academic {
+               i {
+                  font-size: 80%;
+                  opacity: .8;
+               }
+            }
          }
       }
 
@@ -374,9 +449,6 @@ div.person-page {
 
    }
    .ti-page-body {
-      float: left;
-      border-left: 1px solid #ddd;
-      padding-top: 30px;
       .packages {
          margin-left: 40px;
          div.person-package {
@@ -386,7 +458,6 @@ div.person-page {
                margin: 25px 5px 0;
                padding: 0 15px 0 0;
                text-align: right;
-               border-right: 1px solid #ddd;
 
                span.roles {
                   height: 24px;
@@ -456,7 +527,7 @@ div.top-page {
       }
    }
    div.main {
-
+      padding-left: 40px;
    }
 }
 
@@ -820,7 +891,7 @@ span.language-icon {
 a.tag {
    border: 1px solid #ccc;
    font-size: 13px;
-   line-height: 1.8;
+   line-height: 2;
    .rounded(20px);
    padding: 0 9px 2px;
    margin: 0 2px;

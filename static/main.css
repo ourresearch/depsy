@@ -7,7 +7,7 @@
   ---------------------------------------------------*/
 body {
   font-family: lato, helvetica, arial, sans-serif;
-  padding-top: 60px;
+  padding-top: 64px;
 }
 body .wrapper {
   width: 1200px;
@@ -239,10 +239,37 @@ div.landing div.tagline {
   margin: 150px auto 0;
   font-weight: 100;
 }
+div.sidebar-page div.ti-page-sidebar {
+  float: left;
+  width: 400px;
+  padding: 70px 20px 20px 38px;
+}
+div.sidebar-page div.ti-page-sidebar h3 {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+div.sidebar-page div.ti-page-body {
+  float: left;
+  border-left: 1px solid #ddd;
+  padding-top: 50px;
+  padding-left: 50px;
+}
+div.tag-page .ti-page-sidebar div.tag-about span.name {
+  font-size: 30px;
+}
+div.tag-page .ti-page-sidebar div.top-tags {
+  display: none;
+}
 div.person-page div.ti-page-sidebar {
   float: left;
-  width: 420px;
-  padding: 43px 20px 20px 38px;
+  width: 400px;
+  padding: 53px 20px 20px 38px;
+}
+div.person-page div.ti-page-sidebar h3 {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 12px;
 }
 div.person-page div.ti-page-sidebar .sidebar-header:before,
 div.person-page div.ti-page-sidebar .sidebar-header:after {
@@ -252,8 +279,61 @@ div.person-page div.ti-page-sidebar .sidebar-header:after {
 div.person-page div.ti-page-sidebar .sidebar-header:after {
   clear: both;
 }
+div.person-page div.ti-page-sidebar .sidebar-header .person-about {
+  float: left;
+  margin-bottom: 10px;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about img {
+  float: left;
+  margin-top: 0;
+  height: 90px;
+  -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  border-radius: 100px;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .score {
+  margin: 0 0 5px 20px;
+  float: left;
+  line-height: 1;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .score span.impact {
+  font-size: 35px;
+  font-weight: 100;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .score span.rank {
+  font-weight: 100;
+  font-size: 12px;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .name {
+  display: block;
+  font-size: 24px;
+  margin-left: 20px;
+  float: left;
+  font-weight: bold;
+  line-height: 1.3;
+  width: 200px;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts {
+  float: left;
+  margin: 10px 20px 0;
+  color: #999;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts .account {
+  margin-right: 10px;
+  vertical-align: top;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts img {
+  height: 14px;
+  margin-right: 90px;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts a {
+  color: #999;
+}
+div.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts a i {
+  vertical-align: middle;
+}
 div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info {
-  margin: 0 0 0 20px;
+  margin: 0px 0 50px 0;
   float: left;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info .score {
@@ -267,48 +347,16 @@ div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info .rank-inf
   line-height: 1.3;
   margin-top: 14px;
   margin-left: 10px;
+  font-weight: 100;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info .rank-info .rank {
   font-size: 18px;
+  font-weight: normal;
   display: block;
 }
 div.person-page div.ti-page-sidebar .sidebar-header .impact-score-info .rank-info .out-of {
-  font-size: 12px;
-  font-weight: 100;
-}
-div.person-page div.ti-page-sidebar .sidebar-header img {
-  float: left;
-  margin-top: 5px;
-  margin-bottom: 45px;
-  height: 100px;
-  -webkit-border-radius: 100px;
-  -moz-border-radius: 100px;
-  border-radius: 100px;
-}
-div.person-page div.ti-page-sidebar .sidebar-header .name {
-  display: block;
-  font-size: 24px;
-  margin-left: 20px;
-  float: left;
-  font-weight: bold;
-  line-height: 1.3;
-  max-width: 200px;
-}
-div.person-page div.ti-page-sidebar .sidebar-header .accounts {
-  float: left;
-  margin-left: 20px;
-  color: #999;
-}
-div.person-page div.ti-page-sidebar .sidebar-header .accounts .account {
-  margin-right: 10px;
-}
-div.person-page div.ti-page-sidebar .sidebar-header .accounts img {
-  height: 14px;
-  margin-top: 3px;
-  margin-right: 90px;
-}
-div.person-page div.ti-page-sidebar .sidebar-header .accounts a {
-  color: #999;
+  font-size: 14px;
+  color: #333;
 }
 div.person-page div.ti-page-sidebar .top-tags {
   clear: both;
@@ -323,12 +371,20 @@ div.person-page div.ti-page-sidebar .top-tags .tags span.tag {
 div.person-page div.ti-page-sidebar .top-collabs {
   margin-top: 70px;
 }
+div.person-page div.ti-page-sidebar .top-collabs:before,
+div.person-page div.ti-page-sidebar .top-collabs:after {
+  content: " ";
+  display: table;
+}
+div.person-page div.ti-page-sidebar .top-collabs:after {
+  clear: both;
+}
 div.person-page div.ti-page-sidebar .top-collabs a.collab {
   display: inline-block;
   float: left;
   clear: left;
   color: #333;
-  margin: 0 0 15px 10px;
+  margin: 0 0 10px 10px;
   font-size: 16px;
 }
 div.person-page div.ti-page-sidebar .top-collabs a.collab:hover {
@@ -349,10 +405,9 @@ div.person-page div.ti-page-sidebar .top-collabs a.collab .impact {
 div.person-page div.ti-page-sidebar .top-collabs a.collab .name {
   font-style: italic;
 }
-div.person-page .ti-page-body {
-  float: left;
-  border-left: 1px solid #ddd;
-  padding-top: 30px;
+div.person-page div.ti-page-sidebar .top-collabs a.collab .is-academic i {
+  font-size: 80%;
+  opacity: .8;
 }
 div.person-page .ti-page-body .packages {
   margin-left: 40px;
@@ -363,7 +418,6 @@ div.person-page .ti-page-body .packages div.person-package .person-package-stats
   margin: 25px 5px 0;
   padding: 0 15px 0 0;
   text-align: right;
-  border-right: 1px solid #ddd;
 }
 div.person-page .ti-page-body .packages div.person-package .person-package-stats span.roles {
   height: 24px;
@@ -408,6 +462,9 @@ div.top-page div.sidebar div.facet ul li {
 div.top-page div.sidebar div.facet ul li span.status i.fa-square-o {
   margin-right: 3px;
   vertical-align: -2px;
+}
+div.top-page div.main {
+  padding-left: 40px;
 }
 div.package-page div.ti-page-header h1 span.indegree {
   font-size: 16px;
@@ -689,7 +746,7 @@ span.language-icon.r {
 a.tag {
   border: 1px solid #ccc;
   font-size: 13px;
-  line-height: 1.8;
+  line-height: 2;
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;

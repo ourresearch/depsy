@@ -17,7 +17,9 @@
             <i class="fa fa-tag"></i>
          </span>
 
-         <a class="name" tooltip="click for more info" href="person/{{ tag.name }}">
+         <a class="name" popover="click for more info"
+            popover-trigger="mouseenter"
+            href="tag/{{ tag.name }}">
             {{ tag.name }}
          </a>
 

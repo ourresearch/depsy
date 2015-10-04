@@ -1,38 +1,61 @@
 <div class="person-page">
    <div class="ti-page-sidebar">
       <div class="sidebar-header">
-         <img ng-src="{{ person.icon }}" alt=""/>
+
+         <div class="person-about">
+            <img ng-src="{{ person.icon }}" alt=""/>
+            <div class="score">
+               <span class="impact">
+                  {{ format.short(person.impact) }}
+               </span>
+               <span class="rank">
+                  #{{ person.impact_rank }}
+               </span>
+            </div>
+
+            <span class="name">
+               {{ person.name }}
+            </span>
+            <span class="accounts">
+               <i popover-title="Academic"
+                  popover-trigger="mouseenter"
+                  popover="We infer academic status based on factors like email address, tags, and institution."
+                  ng-show="person.is_academic"
+                  class="is-academic account fa fa-graduation-cap"></i>
+
+               <img class="orcid account"
+                  popover-title="ORCiD coming soon"
+                  popover-trigger="mouseenter"
+                  popover="ORCiD is a unique identifier for researchers. We'll be rolling out support soon."
+                  ng-show="person.is_academic"
+                  src="static/img/orcid.gif" alt=""/>
+
+               <a ng-if="person.github_login" class="account" href="http://github/{{ person.github_login }}">
+                  <i class="fa fa-github"></i>
+                  <span class="github-url-part" ng-if="!person.is_academic">
+                     github/{{ person.github_login }}
+                  </span>
+               </a>
+            </span>
+
+         </div>
+
+         <!--
          <div class="impact-score-info">
             <div class="score">
                {{ format.short(person.impact) }}
             </div>
             <div class="rank-info">
                <span class="rank">#{{ person.impact_rank }}</span>
-               <span class="out-of">of {{ person.impact_rank_max }}</span>
+               <a class="out-of" href="leaderboard?type=people&language={{ person.main_language }}">
+                  of {{ person.impact_rank_max }}
+                  <span class="language-r" ng-show="person.main_language=='r'">R coders</span>
+                  <span class="language-r" ng-show="person.main_language=='python'">Pythonistas</span>
+               </a>
             </div>
          </div>
-         <span class="name">
-            {{ person.name }}
-         </span>
-         <span class="accounts">
-            <i popover-title="Academic"
-               popover-trigger="mouseenter"
-               popover="We infer academic status based on factors like email address, tags, and institution."
-               ng-show="person.is_academic"
-               class="is-academic account fa fa-graduation-cap"></i>
+         -->
 
-            <img class="orcid account"
-               popover-title="ORCiD coming soon"
-               popover-trigger="mouseenter"
-               popover="ORCiD is a unique identifier for researchers. We'll be rolling out support soon."
-               ng-show="person.is_academic"
-               src="static/img/orcid.gif" alt=""/>
-
-            <a ng-if="person.github_login" class="account" href="http://github/{{ person.github_login }}">
-               <i class="fa fa-github"></i>
-               github/{{ person.github_login }}
-            </a>
-         </span>
       </div>
 
       <div class="top-tags">
@@ -49,8 +72,9 @@
          <div class="tags">
             <a class="collab"
                popover="We collaborated"
+               popover-trigger="mouseenter"
                popover-title="Top collaborator"
-               href="people/{{ collab.id }}"
+               href="person/{{ collab.id }}"
                ng-repeat="collab in person.top_collabs | orderBy: '-collab_score'">
                <img src="{{ collab.icon_small }}" alt=""/>
                <span class="impact">{{ format.short(collab.impact) }}</span>

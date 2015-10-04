@@ -89,7 +89,7 @@ def get_packages(filters, page_size=25):
         )
     )
     for k, v in filters.iteritems():
-        if k == "tags":
+        if k == "tag":
             q = q.filter(Package.tags.has_key(v))
         else:
             attr = getattr(Package, k)
