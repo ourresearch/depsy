@@ -84,7 +84,7 @@ class Person(db.Model):
             my_collabs = defaultdict(float)
             for pp in person_packages:
                 for collab_person_id, collab_credit in pp.package.credit.iteritems():
-                    if collab_person_id != self.id:  #don't measure my own collab strength
+                    if int(collab_person_id) != self.id:  #don't measure my own collab strength
                         collab_strength = collab_credit * pp.person_project_credit
                         my_collabs[collab_person_id] += collab_strength
             sorted_collabs_to_return = sorted(my_collabs.items(), key=lambda x: x[1], reverse=True)

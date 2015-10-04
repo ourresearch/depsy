@@ -517,6 +517,12 @@ class Package(db.Model):
 
         self.num_citations = 0
         for source_class in self.get_sources_to_query():
+
+            if source.__name__ == "Pmc" and ("-" in self.name):
+                # pmc can't do a query if a hyphen in the name, so just bail
+                self.num_citations = 0
+                return {}
+
             source = source_class()
             num_found = source.run_query(self.full_text_query)
             self.num_citations_by_source[source.name] = num_found
