@@ -118,18 +118,17 @@ class Package(db.Model):
             "num_commits": self.num_commits,
             "num_committers": self.num_committers,
             "num_citations": self.num_citations,
-            "num_citations_percentile": self.num_citations_percentile,
+            "num_citations_score": self.num_citations_score,
             "pagerank": self.pagerank,
-            "pagerank_percentile": self.pagerank_percentile,
+            "pagerank_score": self.pagerank_score,
             "num_downloads": self.num_downloads,
-            "num_downloads_percentile": self.num_downloads_percentile,
+            "num_downloads_score": self.num_downloads_score,
             "num_stars": self.num_stars,
             "impact": self.impact,
+            "impact_rank": self.impact_rank,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
-            "num_citations_score": 0, #tbd
             "rev_deps_tree": self.tree,
-            "citations": self.citations_dict,
             "is_academic": self.is_academic,
 
             # current implementation requires api_raw, so slows down db because deferred
