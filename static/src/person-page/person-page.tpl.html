@@ -9,7 +9,7 @@
                   {{ format.short(person.impact) }}
                </span>
                <span class="rank">
-                  #{{ person.impact_rank }}
+                  #{{ format.commas(person.impact_rank) }}
                </span>
             </div>
 
@@ -41,13 +41,13 @@
          </div>
       </div>
 
-      <div class="impact-descr">
+      <div class="impact-descr" ng-if="!person.is_organization">
          <h3>Impact</h3>
          <div class="impact-copy" ng-show="person.main_language=='python'">
-            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} Pythonistas on PyPi. Calculation based on summed package impacts, adjusted by percent contributions.
+            Ranked #{{ format.commas(person.impact_rank) }} in impact out of {{ format.commas(person.impact_rank_max) }} Pythonistas on PyPi. That's based on summed package impacts, adjusted by percent contributions.
          </div>
          <div class="impact-copy" ng-show="person.main_language=='r'">
-            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. Calculation based on summed package impacts, adjusted by percent contributions.
+            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. That's based on summed package impacts, adjusted by percent contributions.
          </div>
       </div>
 
@@ -64,8 +64,8 @@
 
       <div class="top-collabs">
          <h3>Top collaborators</h3>
-         <div class="tags">
-            <a class="collab"
+         <div class="top-collabs-list">
+            <a class="collab person-mini"
                href="person/{{ collab.id }}"
                ng-repeat="collab in person.top_collabs | orderBy: '-collab_score'">
                <img src="{{ collab.icon_small }}" alt=""/>
@@ -76,6 +76,17 @@
             </a>
          </div>
       </div>
+
+      <a class="json-link btn btn-default"
+         popover-title="View this page as JSON"
+         popover-placement="right"
+         popover-trigger="mouseenter"
+         popover="Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access."
+         href="api/person/{{ person.id }}">
+         <i class="fa fa-download"></i>
+         JSON
+      </a>
+
    </div>
 
 

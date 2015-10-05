@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -271,7 +271,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  {{ format.short(person.impact) }}\n" +
     "               </span>\n" +
     "               <span class=\"rank\">\n" +
-    "                  #{{ person.impact_rank }}\n" +
+    "                  #{{ format.commas(person.impact_rank) }}\n" +
     "               </span>\n" +
     "            </div>\n" +
     "\n" +
@@ -303,13 +303,13 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"impact-descr\">\n" +
+    "      <div class=\"impact-descr\" ng-if=\"!person.is_organization\">\n" +
     "         <h3>Impact</h3>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='python'\">\n" +
-    "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} Pythonistas on PyPi. Calculation based on summed package impacts, adjusted by percent contributions.\n" +
+    "            Ranked #{{ format.commas(person.impact_rank) }} in impact out of {{ format.commas(person.impact_rank_max) }} Pythonistas on PyPi. That's based on summed package impacts, adjusted by percent contributions.\n" +
     "         </div>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='r'\">\n" +
-    "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. Calculation based on summed package impacts, adjusted by percent contributions.\n" +
+    "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. That's based on summed package impacts, adjusted by percent contributions.\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
@@ -326,8 +326,8 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "      <div class=\"top-collabs\">\n" +
     "         <h3>Top collaborators</h3>\n" +
-    "         <div class=\"tags\">\n" +
-    "            <a class=\"collab\"\n" +
+    "         <div class=\"top-collabs-list\">\n" +
+    "            <a class=\"collab person-mini\"\n" +
     "               href=\"person/{{ collab.id }}\"\n" +
     "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
     "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
@@ -338,6 +338,17 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "            </a>\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "\n" +
+    "      <a class=\"json-link btn btn-default\"\n" +
+    "         popover-title=\"View this page as JSON\"\n" +
+    "         popover-placement=\"right\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
+    "         href=\"api/person/{{ person.id }}\">\n" +
+    "         <i class=\"fa fa-download\"></i>\n" +
+    "         JSON\n" +
+    "      </a>\n" +
+    "\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
@@ -426,7 +437,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "\n" +
     "      <span class=\"rank\">\n" +
-    "         #{{ package.impact_rank }}\n" +
+    "         #{{ format.commas(package.impact_rank) }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +
@@ -436,13 +447,11 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "         <span class=\"icon\">\n" +
     "            <span class=\"language-icon r\"\n" +
-    "                  ng-if=\"package.language=='r'\"\n" +
-    "                 tooltip=\"R package\">\n" +
+    "                  ng-if=\"package.language=='r'\">\n" +
     "               R\n" +
     "            </span>\n" +
     "            <span class=\"language-icon python\"\n" +
-    "                  ng-if=\"package.language=='python'\"\n" +
-    "                 tooltip=\"Python package\">\n" +
+    "                  ng-if=\"package.language=='python'\">\n" +
     "               py\n" +
     "            </span>\n" +
     "         </span>\n" +
@@ -487,6 +496,16 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "");
 }]);
 
+angular.module("snippet/person-mini.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/person-mini.tpl.html",
+    "<span class=\"person-mini-insides\"\n" +
+    "   <img src=\"{{ contrib.icon_small }}\" alt=\"\"/>\n" +
+    "   <span class=\"impact\">{{ format.short(contrib.impact) }}</span>\n" +
+    "   <span class=\"name\">{{ contrib.name }}</span>\n" +
+    "   <span class=\"is-academic\" ng-show=\"contrib.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
+    "</span>");
+}]);
+
 angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("snippet/person-snippet.tpl.html",
     "<span class=\"snippet person-snippet\"\n" +
@@ -502,7 +521,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "\n" +
     "      <span class=\"rank\">\n" +
-    "         #{{ person.impact_rank }}\n" +
+    "         #{{ format.commas(person.impact_rank) }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +
@@ -672,6 +691,16 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "            </a>\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "\n" +
+    "      <a class=\"json-link btn btn-default\"\n" +
+    "         popover-title=\"View this page as JSON\"\n" +
+    "         popover-placement=\"right\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
+    "         href=\"http://localhost:5008/api/leaderboard?type=packages&tag={{ tag.name }}\">\n" +
+    "         <i class=\"fa fa-download\"></i>\n" +
+    "         JSON\n" +
+    "      </a>\n" +
     "\n" +
     "      <!-- we can use this from the people page to print out tag users...\n" +
     "      <div class=\"top-collabs\">\n" +

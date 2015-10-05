@@ -2,17 +2,6 @@
   "CodeKitInfo" : "This is a CodeKit project configuration file. It is designed to sync project settings across multiple machines. Modifying the contents of this file can be a poor life decision if you don't know what you're doing. This file is not useful unless accompanied by the project that created it in CodeKit. For more information, see: http:\/\/incident57.com\/codekit",
   "creatorBuild" : "8317",
   "files" : {
-    "\/node_modules\/grunt-html2js\/test\/expected\/file_header.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/file_header.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/file_header-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/inherits\/inherits.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -33,6 +22,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/pause-resume-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt-html2js\/test\/expected\/file_header.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/file_header.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/file_header-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/tasks\/lib\/taskrun.js" : {
@@ -163,6 +163,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/schema\/safe-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/sum.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/sum.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/sum-ck.js",
+      "fileType" : 64
+    },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/rename_test.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -183,17 +194,6 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/src\/snippet\/package-snippet-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/sum.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/sum.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/sum-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-html2js\/tasks\/html2js.js" : {
@@ -284,17 +284,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/help\/added_formatters-ck.js",
       "fileType" : 64
     },
-    "\/img\/impactstory-biomed.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/img\/impactstory-biomed.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/img\/impactstory-biomed.png",
-      "initialSize" : 32330,
-      "fileType" : 8192
-    },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/bin\/esvalidate.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -304,6 +293,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/bin\/esvalidate-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/brace-expand.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/brace-expand.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/brace-expand-ck.js",
       "fileType" : 64
     },
     "\/img\/tex.png" : {
@@ -317,16 +317,16 @@
       "initialSize" : 3447,
       "fileType" : 8192
     },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/brace-expand.js" : {
+    "\/img\/impactstory-biomed.png" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/brace-expand.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/brace-expand-ck.js",
-      "fileType" : 64
+      "inputAbbreviatedPath" : "\/img\/impactstory-biomed.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/img\/impactstory-biomed.png",
+      "initialSize" : 32330,
+      "fileType" : 8192
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/minimatch.js" : {
       "ignoreWasSetByUser" : 0,
@@ -753,15 +753,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/glob\/test\/zz-cleanup-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/int.js" : {
+    "\/node_modules\/grunt-html2js\/test\/expected\/double_quotes.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/int.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/double_quotes.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/int-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/double_quotes-ck.js",
       "fileType" : 64
     },
     "\/src\/tag-page\/tag-page.tpl.html" : {
@@ -773,15 +773,15 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/node_modules\/grunt\/node_modules\/hooker\/test\/hooker_test.js" : {
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/int.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/test\/hooker_test.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/int.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/test\/hooker_test-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/int-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/minimatch\/node_modules\/sigmund\/sigmund.js" : {
@@ -817,15 +817,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/caching-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-html2js\/test\/expected\/double_quotes.js" : {
+    "\/node_modules\/grunt\/node_modules\/hooker\/test\/hooker_test.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/double_quotes.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/test\/hooker_test.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/double_quotes-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/test\/hooker_test-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/glob\/test\/00-setup.js" : {
@@ -1073,15 +1073,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.underscore-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/esprima.js" : {
+    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/objects.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/esprima.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/objects.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/esprima-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/objects-ck.js",
       "fileType" : 64
     },
     "\/img\/perl.png" : {
@@ -1106,17 +1106,6 @@
       "initialSize" : 3675,
       "fileType" : 8192
     },
-    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/objects.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/objects.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/objects-ck.js",
-      "fileType" : 64
-    },
     "\/src\/person-page\/person-page.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -1126,6 +1115,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/src\/person-page\/person-page-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/esprima.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/esprima.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/esprima-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/multiTargets\/lib\/two.js" : {
@@ -1491,17 +1491,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/parent-ck.js",
       "fileType" : 64
     },
-    "\/img\/impactstory-software.png" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/img\/impactstory-software.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/img\/impactstory-software.png",
-      "initialSize" : 17276,
-      "fileType" : 8192
-    },
     "\/node_modules\/grunt\/node_modules\/glob\/test\/cwd-test.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -1523,6 +1512,17 @@
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/minimatch\/minimatch-ck.js",
       "fileType" : 64
+    },
+    "\/img\/impactstory-software.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/img\/impactstory-software.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/img\/impactstory-software.png",
+      "initialSize" : 17276,
+      "fileType" : 8192
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/null.js" : {
       "ignoreWasSetByUser" : 0,
@@ -1643,17 +1643,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/files_object_default_options_1-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/readme-issue.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -1674,6 +1663,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/dist\/ba-hooker.min-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/lib\/grunt\/task.js" : {
@@ -1698,15 +1698,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/node_modules\/sigmund\/test\/basic-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/sub\/two.js" : {
+    "\/node_modules\/grunt\/node_modules\/colors\/colors.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/sub\/two.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/colors\/colors.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/sub\/two-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/colors\/colors-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/inherits\/inherits.js" : {
@@ -1720,15 +1720,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/inherits\/inherits-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-html2js\/test\/fixtures\/four.tpl.html" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/fixtures\/four.tpl.html",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
     "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/sigmund.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -1740,26 +1731,35 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/sigmund-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/colors\/colors.js" : {
+    "\/node_modules\/grunt-html2js\/test\/fixtures\/four.tpl.html" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/colors\/colors.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/fixtures\/four.tpl.html",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/sub\/two.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/sub\/two.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/colors\/colors-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/sub\/two-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.compat.min.js" : {
+    "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/nospawn\/lib\/interrupt.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.compat.min.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/nospawn\/lib\/interrupt.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.compat.min-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/nospawn\/lib\/interrupt-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/lib\/grunt\/file.js" : {
@@ -1773,6 +1773,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/lib\/grunt\/file-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.compat.min.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.compat.min.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.compat.min-ck.js",
+      "fileType" : 64
+    },
     "\/node_modules\/grunt\/node_modules\/nopt\/examples\/my-program.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -1782,17 +1793,6 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/nopt\/examples\/my-program-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/nospawn\/lib\/interrupt.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/nospawn\/lib\/interrupt.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/nospawn\/lib\/interrupt-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/lodash\/dist\/lodash.underscore.js" : {
@@ -1905,15 +1905,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/arrays-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/index.js" : {
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/lib\/underscore.string.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/index.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/lib\/underscore.string.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/index-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/lib\/underscore.string-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/lib\/grunt\/template.js" : {
@@ -1927,15 +1927,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/lib\/grunt\/template-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/lib\/underscore.string.js" : {
+    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/index.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/lib\/underscore.string.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/index.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/lib\/underscore.string-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/index-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/store\/false.js" : {
@@ -2057,26 +2057,15 @@
       "initialSize" : 944,
       "fileType" : 8192
     },
-    "\/src\/filterService.js" : {
+    "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/Gruntfile.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/src\/filterService.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/Gruntfile.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/src\/filterService-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/tests\/helper.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/tests\/helper.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/tests\/helper-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/Gruntfile-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/bash-comparison.js" : {
@@ -2112,6 +2101,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore.string\/gulpfile-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/tests\/helper.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/tests\/helper.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/tests\/helper-ck.js",
+      "fileType" : 64
+    },
     "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/vendor\/jquery.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2134,15 +2134,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/cwd-test-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/Gruntfile.js" : {
+    "\/src\/filterService.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/Gruntfile.js",
+      "inputAbbreviatedPath" : "\/src\/filterService.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/Gruntfile-ck.js",
+      "outputAbbreviatedPath" : "\/src\/filterService-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/test\/memory-leak.js" : {
@@ -2207,17 +2207,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/bool-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/bench.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/bench.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/bench-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/testformatters.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2229,6 +2218,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/testformatters-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/bench.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/bench.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/bench-ck.js",
+      "fileType" : 64
+    },
     "\/node_modules\/grunt-html2js\/test\/html2js_test.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2238,28 +2238,6 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/html2js_test-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/count.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/count.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/count-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/reflect.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/reflect.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/reflect-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/tasks\/echo.js" : {
@@ -2282,6 +2260,28 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.underscore.min-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/reflect.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/reflect.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/reflect-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/count.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/count.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/count-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/getobject\/test\/namespace_test.js" : {
@@ -2327,6 +2327,15 @@
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/sub\/one-ck.js",
       "fileType" : 64
+    },
+    "\/src\/snippet\/person-mini.tpl.html" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/src\/snippet\/person-mini.tpl.html",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
     },
     "\/node_modules\/grunt-html2js\/test\/expected\/strict_mode.js" : {
       "ignoreWasSetByUser" : 0,
@@ -2381,17 +2390,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/grunt-legacy-log-utils\/Gruntfile-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/strings.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/strings.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/strings-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/glob\/test\/nocase-nomagic.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2401,6 +2399,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/glob\/test\/nocase-nomagic-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/strings.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/strings.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/strings-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/lexer.js" : {
@@ -2425,17 +2434,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument_parser-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/root.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/root.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/root-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/test.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2445,6 +2443,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/esprima\/test\/test-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/root.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/root.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/root-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/lib\/util\/task.js" : {
@@ -2513,6 +2522,17 @@
       "outputAbbreviatedPath" : "\/src\/package-page\/packagePage-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/extglob-ending-with-state-char.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/extglob-ending-with-state-char.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/extglob-ending-with-state-char-ck.js",
+      "fileType" : 64
+    },
     "\/vendor\/angular-snap.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2533,17 +2553,6 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/dist\/ba-hooker-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/extglob-ending-with-state-char.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/extglob-ending-with-state-char.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/test\/extglob-ending-with-state-char-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/map.js" : {
@@ -2711,15 +2720,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/tasks\/watch_test-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv.js" : {
+    "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/gbk.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/gbk.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/gbk-ck.js",
       "fileType" : 64
     },
     "\/bower_components\/snapjs\/demo\/apps\/default.html" : {
@@ -2731,15 +2740,15 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
-    "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/gbk.js" : {
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/seq.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/gbk.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/seq.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/gbk-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/seq-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/extglob-ending-with-state-char.js" : {
@@ -2753,15 +2762,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/extglob-ending-with-state-char-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/seq.js" : {
+    "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/seq.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/seq-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/set.js" : {
@@ -2775,16 +2784,14 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/set-ck.js",
       "fileType" : 64
     },
-    "\/bower_components\/snapjs\/snap.js" : {
+    "\/bower_components\/angular-snap\/angular-snap.min.css" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/snap.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/bower_components\/snapjs\/snap-ck.js",
-      "fileType" : 64
+      "inputAbbreviatedPath" : "\/bower_components\/angular-snap\/angular-snap.min.css",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 16
     },
     "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/arrays.js" : {
       "ignoreWasSetByUser" : 0,
@@ -2797,14 +2804,16 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/arrays-ck.js",
       "fileType" : 64
     },
-    "\/bower_components\/angular-snap\/angular-snap.min.css" : {
+    "\/vendor\/ng-progress.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/bower_components\/angular-snap\/angular-snap.min.css",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 16
+      "inputAbbreviatedPath" : "\/vendor\/ng-progress.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/vendor\/ng-progress-ck.js",
+      "fileType" : 64
     },
     "\/img\/logo-white.png" : {
       "ignoreWasSetByUser" : 0,
@@ -2834,15 +2843,15 @@
       "fileType" : 1,
       "debugStyle" : 0
     },
-    "\/vendor\/ng-progress.js" : {
+    "\/bower_components\/snapjs\/snap.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/vendor\/ng-progress.js",
+      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/snap.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/vendor\/ng-progress-ck.js",
+      "outputAbbreviatedPath" : "\/bower_components\/snapjs\/snap-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/getobject\/lib\/getobject.js" : {
@@ -2953,6 +2962,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/js\/regexp-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test.html" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test.html",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
     "\/img\/favicon.png" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2975,15 +2993,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/lodash\/lodash-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test.html" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test.html",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/schema.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -2993,6 +3002,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/schema-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-concat\/test\/fixtures\/banner2.js" : {
@@ -3014,17 +3034,6 @@
       "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/ratchet\/ratchet.css",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 16
-    },
-    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/lodash\/dist\/lodash-ck.js",
-      "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action\/store.js" : {
       "ignoreWasSetByUser" : 0,
@@ -3150,17 +3159,6 @@
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 16
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/common.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/common.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/common-ck.js",
-      "fileType" : 64
-    },
     "\/src\/services\/global-modal.tpl.html" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -3179,6 +3177,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/child-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/common.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/common.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/common-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/action_container.js" : {
@@ -3267,17 +3276,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/test\/gbk-test-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/prefix_chars.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/prefix_chars.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/prefix_chars-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/test\/root-nomount.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -3287,6 +3285,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/test\/root-nomount-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/prefix_chars.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/prefix_chars.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/prefix_chars-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/vendor\/jslitmus.js" : {
@@ -3524,15 +3533,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/lru-cache\/test\/memory-leak-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_2.js" : {
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/help.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_2.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/help.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_2-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/help-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/relative_test.js" : {
@@ -3546,6 +3555,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/relative_test-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_2.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_2.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_2-ck.js",
+      "fileType" : 64
+    },
     "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/repl.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -3555,17 +3575,6 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/repl-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/help.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/help.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/help-ck.js",
       "fileType" : 64
     },
     "\/bower_components\/snapjs\/demo\/assets\/demo.css" : {
@@ -3588,6 +3597,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/examples-ck.js",
       "fileType" : 64
     },
+    "\/node_modules\/grunt-html2js\/Gruntfile.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/Gruntfile.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/Gruntfile-ck.js",
+      "fileType" : 64
+    },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/choice.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -3607,17 +3627,6 @@
       "inputAbbreviatedPath" : "\/src\/header\/header.tpl.html",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
-    },
-    "\/node_modules\/grunt-html2js\/Gruntfile.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/Gruntfile.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/Gruntfile-ck.js",
-      "fileType" : 64
     },
     "\/bower_components\/snapjs\/demo\/apps\/ratchet\/ratchet.js" : {
       "ignoreWasSetByUser" : 0,
@@ -3707,16 +3716,14 @@
       "outputAbbreviatedPath" : "\/src\/services\/profileService-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/add_test.js" : {
+    "\/bower_components\/snapjs\/demo\/apps\/dragElement.html" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/add_test.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/add_test-ck.js",
-      "fileType" : 64
+      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/dragElement.html",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
     },
     "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/speed.js" : {
       "ignoreWasSetByUser" : 0,
@@ -3729,15 +3736,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/speed-ck.js",
       "fileType" : 64
     },
-    "\/bower_components\/snapjs\/demo\/apps\/dragElement.html" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/dragElement.html",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/constants.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -3749,14 +3747,16 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/examples\/constants-ck.js",
       "fileType" : 64
     },
-    "\/bower_components\/snapjs\/demo\/apps\/noDrag.html" : {
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/add_test.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/noDrag.html",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/add_test.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/add_test-ck.js",
+      "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/command.js" : {
       "ignoreWasSetByUser" : 0,
@@ -3767,6 +3767,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/command-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/timestamp.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/timestamp.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/timestamp-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/test\/mark.js" : {
@@ -3802,26 +3813,24 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/internal-tasks\/bump-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/timestamp.js" : {
+    "\/bower_components\/snapjs\/demo\/apps\/noDrag.html" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/timestamp.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/timestamp-ck.js",
-      "fileType" : 64
+      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/noDrag.html",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
     },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/benchmarks\/gaze100s.js" : {
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/benchmarks\/gaze100s.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/benchmarks\/gaze100s-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/node_modules\/lru-cache\/test\/foreach.js" : {
@@ -3835,15 +3844,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/node_modules\/lru-cache\/test\/foreach-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml.js" : {
+    "\/node_modules\/grunt-contrib-watch\/test\/tasks\/helper.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/tasks\/helper.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/tasks\/helper-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/test\/basic.js" : {
@@ -3857,15 +3866,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/minimatch\/node_modules\/sigmund\/test\/basic-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-contrib-watch\/test\/tasks\/helper.js" : {
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/benchmarks\/gaze100s.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/tasks\/helper.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/benchmarks\/gaze100s.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/tasks\/helper-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/benchmarks\/gaze100s-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-html2js\/test\/expected\/files_array_default_options_1.js" : {
@@ -4051,17 +4060,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-execArgv-child-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument\/error.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument\/error.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument\/error-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/glob.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4071,6 +4069,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/glob-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument\/error.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument\/error.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/argument\/error-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/sub\/two.js" : {
@@ -4115,15 +4124,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/zz-cleanup-ck.js",
       "fileType" : 64
     },
-    "\/src\/article-page\/article-page.js" : {
+    "\/node_modules\/grunt\/node_modules\/iconv-lite\/generation\/generate-singlebyte.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/src\/article-page\/article-page.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/generation\/generate-singlebyte.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/src\/article-page\/article-page-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/generation\/generate-singlebyte-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/multiTargets\/lib\/fail.js" : {
@@ -4137,15 +4146,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/multiTargets\/lib\/fail-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/iconv-lite\/generation\/generate-singlebyte.js" : {
+    "\/src\/article-page\/article-page.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/generation\/generate-singlebyte.js",
+      "inputAbbreviatedPath" : "\/src\/article-page\/article-page.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/generation\/generate-singlebyte-ck.js",
+      "outputAbbreviatedPath" : "\/src\/article-page\/article-page-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/dateformat\/test\/test_weekofyear.js" : {
@@ -4278,17 +4287,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/lib\/const-ck.js",
       "fileType" : 64
     },
-    "\/src\/static-pages\/landing-page.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/src\/static-pages\/landing-page.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/src\/static-pages\/landing-page-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/helpers.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4298,6 +4296,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/helpers-ck.js",
+      "fileType" : 64
+    },
+    "\/src\/static-pages\/landing-page.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/src\/static-pages\/landing-page.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/src\/static-pages\/landing-page-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/test\/stat.js" : {
@@ -4487,17 +4496,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/js\/function-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/float.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/float.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/float-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4507,6 +4505,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/minimatch\/node_modules\/lru-cache\/lib\/lru-cache-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/float.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/float.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/type\/float-ck.js",
       "fileType" : 64
     },
     "\/src\/article-page\/article-page.tpl.html" : {
@@ -4540,17 +4549,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/chaining-ck.js",
       "fileType" : 64
     },
-    "\/src\/formatterService.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/src\/formatterService.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/src\/formatterService-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/exit\/test\/fixtures\/log.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4560,6 +4558,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/exit\/test\/fixtures\/log-ck.js",
+      "fileType" : 64
+    },
+    "\/src\/formatterService.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/src\/formatterService.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/src\/formatterService-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-html2js\/test\/expected\/files_object_custom_options_2.js" : {
@@ -4602,17 +4611,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/test\/pause-resume-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/nopt\/lib\/nopt.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/nopt\/lib\/nopt.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/nopt\/lib\/nopt-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/colors\/themes\/winston-dark.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4622,6 +4620,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/colors\/themes\/winston-dark-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/nopt\/lib\/nopt.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/nopt\/lib\/nopt.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/nopt\/lib\/nopt-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/fileset\/node_modules\/glob\/node_modules\/inherits\/inherits_browser.js" : {
@@ -4688,17 +4697,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-concat\/test\/concat_test-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/one.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/one.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/one-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/colors\/example.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4741,6 +4739,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/defaults-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/one.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/one.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/one-ck.js",
       "fileType" : 64
     },
     "\/bower_components\/snapjs\/demo\/assets\/graph.png" : {
@@ -4842,15 +4851,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/inherits\/inherits_browser-ck.js",
       "fileType" : 64
     },
-    "\/bower_components\/snapjs\/snap.css" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/snap.css",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 16
-    },
     "\/node_modules\/grunt\/node_modules\/hooker\/lib\/hooker.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4861,6 +4861,15 @@
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/hooker\/lib\/hooker-ck.js",
       "fileType" : 64
+    },
+    "\/bower_components\/snapjs\/snap.css" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/snap.css",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 16
     },
     "\/node_modules\/grunt\/node_modules\/lodash\/lodash.underscore.min.js" : {
       "ignoreWasSetByUser" : 0,
@@ -4906,17 +4915,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/test\/00-setup-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/brace-expand.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/brace-expand.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/brace-expand-ck.js",
-      "fileType" : 64
-    },
     "\/dist\/angular-libs.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -4937,6 +4935,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/files_object_custom_options_1-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/brace-expand.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/brace-expand.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/findup-sync\/node_modules\/glob\/node_modules\/minimatch\/test\/brace-expand-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/js-yaml\/node_modules\/argparse\/node_modules\/underscore\/underscore.js" : {
@@ -4983,17 +4992,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/node_modules\/minimatch\/test\/defaults-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/events\/Gruntfile.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/events\/Gruntfile.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/events\/Gruntfile-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/Gruntfile.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -5003,6 +5001,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/Gruntfile-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/events\/Gruntfile.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/events\/Gruntfile.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/events\/Gruntfile-ck.js",
       "fileType" : 64
     },
     "\/src\/package-page\/dep-node.tpl.html" : {
@@ -5047,6 +5056,17 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/fixtures\/nested\/three-ck.js",
       "fileType" : 64
     },
+    "\/img\/logo.png" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/img\/logo.png",
+      "processed" : 0,
+      "outputAbbreviatedPath" : "\/img\/logo.png",
+      "initialSize" : 14223,
+      "fileType" : 8192
+    },
     "\/node_modules\/grunt\/node_modules\/glob\/test\/root-nomount.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -5056,17 +5076,6 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/glob\/test\/root-nomount-ck.js",
-      "fileType" : 64
-    },
-    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/speed.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/speed.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/speed-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/index.js" : {
@@ -5080,16 +5089,16 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/index-ck.js",
       "fileType" : 64
     },
-    "\/img\/logo.png" : {
+    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/speed.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/img\/logo.png",
-      "processed" : 0,
-      "outputAbbreviatedPath" : "\/img\/logo.png",
-      "initialSize" : 14223,
-      "fileType" : 8192
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/speed.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/speed-ck.js",
+      "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/test_underscore\/vendor\/qunit.css" : {
       "ignoreWasSetByUser" : 0,
@@ -5261,17 +5270,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/test\/index-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/utility.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/utility.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/utility-ck.js",
-      "fileType" : 64
-    },
     "\/bower_components\/angular-snap\/angular-snap.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -5281,6 +5279,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/bower_components\/angular-snap\/angular-snap-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/utility.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/utility.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/test\/test_underscore\/utility-ck.js",
       "fileType" : 64
     },
     "\/src\/snippet\/tag-snippet.tpl.html" : {
@@ -5314,6 +5323,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/internal-tasks\/subgrunt-ck.js",
       "fileType" : 64
     },
+    "\/bower_components\/snapjs\/demo\/apps\/expand.html" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/expand.html",
+      "outputAbbreviatedPath" : "No Output Path",
+      "fileType" : 2048
+    },
     "\/node_modules\/grunt\/node_modules\/glob\/node_modules\/graceful-fs\/test\/ulimit.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -5331,15 +5349,6 @@
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
       "inputAbbreviatedPath" : "\/src\/directives\/language-icon.tpl.html",
-      "outputAbbreviatedPath" : "No Output Path",
-      "fileType" : 2048
-    },
-    "\/bower_components\/snapjs\/demo\/apps\/expand.html" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/bower_components\/snapjs\/demo\/apps\/expand.html",
       "outputAbbreviatedPath" : "No Output Path",
       "fileType" : 2048
     },
@@ -5464,17 +5473,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/grunt-legacy-util\/test\/fixtures\/Gruntfile-print-text-ck.js",
       "fileType" : 64
     },
-    "\/src\/OurSortService.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/src\/OurSortService.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/src\/OurSortService-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt-contrib-watch\/test\/fixtures\/multiTargets\/lib\/wait.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -5495,6 +5493,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/underscore.string\/test\/speed-ck.js",
+      "fileType" : 64
+    },
+    "\/src\/OurSortService.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/src\/OurSortService.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/src\/OurSortService-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/grunt-legacy-log\/node_modules\/underscore.string\/lib\/underscore.string.js" : {
@@ -5594,17 +5603,6 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/iconv-lite\/encodings\/table\/gbk-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/eventemitter2\/lib\/eventemitter2.js" : {
-      "ignoreWasSetByUser" : 0,
-      "ignore" : 0,
-      "hidden" : 0,
-      "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/eventemitter2\/lib\/eventemitter2.js",
-      "outputStyle" : 0,
-      "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/eventemitter2\/lib\/eventemitter2-ck.js",
-      "fileType" : 64
-    },
     "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/rewriter.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
@@ -5614,6 +5612,17 @@
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/rewriter-ck.js",
+      "fileType" : 64
+    },
+    "\/node_modules\/grunt\/node_modules\/eventemitter2\/lib\/eventemitter2.js" : {
+      "ignoreWasSetByUser" : 0,
+      "ignore" : 0,
+      "hidden" : 0,
+      "outputPathIsSetByUser" : 0,
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/eventemitter2\/lib\/eventemitter2.js",
+      "outputStyle" : 0,
+      "syntaxCheckerStyle" : 0,
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/eventemitter2\/lib\/eventemitter2-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/lib\/grunt\/fail.js" : {
@@ -5671,15 +5680,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/js-yaml\/lib\/js-yaml\/loader-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/grammar.js" : {
+    "\/node_modules\/grunt-html2js\/test\/expected\/multi_lines_4spaces.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/grammar.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/multi_lines_4spaces.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/grammar-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/multi_lines_4spaces-ck.js",
       "fileType" : 64
     },
     "\/node_modules\/grunt\/node_modules\/lodash\/lodash.underscore.js" : {
@@ -5704,15 +5713,15 @@
       "outputAbbreviatedPath" : "\/node_modules\/grunt-contrib-watch\/node_modules\/gaze\/test\/api_test-ck.js",
       "fileType" : 64
     },
-    "\/node_modules\/grunt-html2js\/test\/expected\/multi_lines_4spaces.js" : {
+    "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/grammar.js" : {
       "ignoreWasSetByUser" : 0,
       "ignore" : 0,
       "hidden" : 0,
       "outputPathIsSetByUser" : 0,
-      "inputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/multi_lines_4spaces.js",
+      "inputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/grammar.js",
       "outputStyle" : 0,
       "syntaxCheckerStyle" : 0,
-      "outputAbbreviatedPath" : "\/node_modules\/grunt-html2js\/test\/expected\/multi_lines_4spaces-ck.js",
+      "outputAbbreviatedPath" : "\/node_modules\/grunt\/node_modules\/coffee-script\/lib\/coffee-script\/grammar-ck.js",
       "fileType" : 64
     }
   },

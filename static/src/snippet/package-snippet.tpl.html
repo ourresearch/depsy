@@ -11,7 +11,7 @@
 
 
       <span class="rank">
-         #{{ package.impact_rank }}
+         #{{ format.commas(package.impact_rank) }}
       </span>
 
    </span>
@@ -21,13 +21,11 @@
 
          <span class="icon">
             <span class="language-icon r"
-                  ng-if="package.language=='r'"
-                 tooltip="R package">
+                  ng-if="package.language=='r'">
                R
             </span>
             <span class="language-icon python"
-                  ng-if="package.language=='python'"
-                 tooltip="Python package">
+                  ng-if="package.language=='python'">
                py
             </span>
          </span>

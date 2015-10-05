@@ -265,6 +265,9 @@ div.tag-page .ti-page-sidebar div.tag-about span.num-tags {
   margin-left: 32px;
   font-size: 18px;
 }
+div.tag-page .ti-page-sidebar a.json-link {
+  margin-top: 50px;
+}
 div.tag-page .ti-page-sidebar div.top-tags {
   display: none;
 }
@@ -390,35 +393,8 @@ div.person-page div.ti-page-sidebar .top-collabs:after {
 div.person-page div.ti-page-sidebar .top-collabs:after {
   clear: both;
 }
-div.person-page div.ti-page-sidebar .top-collabs a.collab {
-  display: inline-block;
-  float: left;
-  clear: left;
-  color: #333;
-  margin: 0 0 10px 10px;
-  font-size: 16px;
-}
-div.person-page div.ti-page-sidebar .top-collabs a.collab:hover {
-  text-decoration: none;
-}
-div.person-page div.ti-page-sidebar .top-collabs a.collab img {
-  height: 20px;
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  border-radius: 20px;
-  vertical-align: -2px;
-}
-div.person-page div.ti-page-sidebar .top-collabs a.collab .impact {
-  font-size: 150%;
-  font-weight: 100;
-  margin: 0 5px;
-}
-div.person-page div.ti-page-sidebar .top-collabs a.collab .name {
-  font-style: italic;
-}
-div.person-page div.ti-page-sidebar .top-collabs a.collab .is-academic i {
-  font-size: 80%;
-  opacity: .8;
+div.person-page div.ti-page-sidebar a.json-link {
+  margin-top: 50px;
 }
 div.person-page .ti-page-body .packages {
   margin-left: 40px;
@@ -733,6 +709,40 @@ span.language-icon.r {
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
   border-radius: 15px;
+}
+.person-mini {
+  display: inline-block;
+  float: left;
+  clear: left;
+  color: #333;
+  margin: 0 0 10px 10px;
+  font-size: 16px;
+}
+.person-mini:hover {
+  text-decoration: none;
+  color: #333;
+}
+.person-mini:hover span.name {
+  text-decoration: underline;
+}
+.person-mini img {
+  height: 20px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  vertical-align: -2px;
+}
+.person-mini .impact {
+  font-size: 150%;
+  font-weight: 100;
+  margin: 0 5px;
+}
+.person-mini .name {
+  font-style: italic;
+}
+.person-mini .is-academic i {
+  font-size: 80%;
+  opacity: .8;
 }
 a.tag {
   border: 1px solid #ccc;

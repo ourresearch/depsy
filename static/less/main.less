@@ -291,6 +291,10 @@ div.tag-page {
             font-size: 18px;
          }
       }
+      a.json-link {
+//         margin-left: 32px;
+         margin-top: 50px;
+      }
       div.top-tags {
          display: none;
       }
@@ -423,36 +427,11 @@ div.person-page {
          h3 {
 
          }
-         a.collab {
-            display: inline-block;
-            float: left;
-            clear: left;
-            color: #333;
-            margin: 0 0 10px 10px;
-            font-size: 16px;
-            &:hover {
-               text-decoration: none;
-            }
-            img {
-               height: 20px;
-               .rounded(20px);
-               vertical-align: -2px;
-            }
-            .impact {
-               font-size: 150%;
-               font-weight: 100;
-               margin: 0 5px;
-            }
-            .name {
-               font-style: italic;
-            }
-            .is-academic {
-               i {
-                  font-size: 80%;
-                  opacity: .8;
-               }
-            }
-         }
+
+      }
+
+      a.json-link {
+         margin-top: 50px;
       }
 
 
@@ -879,6 +858,42 @@ span.language-icon {
       .rounded(15px);
    }
 }
+
+.person-mini {
+   display: inline-block;
+   float: left;
+   clear: left;
+   color: #333;
+   margin: 0 0 10px 10px;
+   font-size: 16px;
+   &:hover {
+      text-decoration: none;
+      color: #333;
+      span.name {
+         text-decoration: underline;
+      }
+   }
+   img {
+      height: 20px;
+      .rounded(20px);
+      vertical-align: -2px;
+   }
+   .impact {
+      font-size: 150%;
+      font-weight: 100;
+      margin: 0 5px;
+   }
+   .name {
+      font-style: italic;
+   }
+   .is-academic {
+      i {
+         font-size: 80%;
+         opacity: .8;
+      }
+   }
+}
+
 
 a.tag {
    border: 1px solid #ccc;
