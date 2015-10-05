@@ -828,6 +828,41 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "      </a>\n" +
     "   </h1>\n" +
     "\n" +
+    "   <div class=\"ti-menu\">\n" +
+    "      <a href=\"leaderboard?type=people\"\n" +
+    "         popover=\"Top coders\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-placement=\"bottom\"\n" +
+    "         class=\"menu-link\" id=\"leaders-menu-link\">\n" +
+    "         <i class=\"fa fa-user\"></i>\n" +
+    "      </a>\n" +
+    "      <a href=\"leaderboard?type=packages\"\n" +
+    "         popover=\"Top packages\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-placement=\"bottom\"\n" +
+    "         class=\"menu-link\" id=\"leaders-menu-link\">\n" +
+    "         <i class=\"fa fa-archive\"></i>\n" +
+    "      </a>\n" +
+    "      <a href=\"leaderboard?type=tags\"\n" +
+    "         popover=\"Top tags\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-placement=\"bottom\"\n" +
+    "         class=\"menu-link\" id=\"leaders-menu-link\">\n" +
+    "         <i class=\"fa fa-tag\"></i>\n" +
+    "      </a>\n" +
+    "\n" +
+    "      <!-- needs weird style hacks -->\n" +
+    "      <a href=\"about\"\n" +
+    "         class=\"menu-link about\" id=\"leaders-menu-link\">\n" +
+    "         <i\n" +
+    "         popover=\"Learn more about Depsy\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover-placement=\"bottom\" class=\"fa fa-question-circle\"></i>\n" +
+    "      </a>\n" +
+    "\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
     "\n" +
     "\n" +
     "\n" +
@@ -846,20 +881,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "   </div>\n" +
     "\n" +
     "\n" +
-    "   <div class=\"ti-menu\">\n" +
-    "\n" +
-    "      <a href=\"leaderboard?type=people\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
-    "         authors\n" +
-    "      </a>\n" +
-    "      <a href=\"leaderboard?type=tags\" class=\"menu-link\" id=\"leaders-menu-link\">\n" +
-    "         packages\n" +
-    "      </a>\n" +
-    "      <!--\n" +
-    "      <a href=\"about\" class=\"menu-link\">\n" +
-    "         about\n" +
-    "      </a>\n" +
-    "      -->\n" +
-    "   </div>\n" +
     "</div>\n" +
     "\n" +
     "\n" +
@@ -1638,6 +1659,9 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "               <span class=\"status\" ng-if=\"!filters.d.only_academic\">\n" +
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
+    "               <!--\n" +
+    "               <i class=\"fa fa-graduation-cap\"></i>\n" +
+    "               -->\n" +
     "\n" +
     "               <span class=\"text\" ng-show=\"filters.d.type=='packages'\">academic projects</span>\n" +
     "               <span class=\"text\" ng-show=\"filters.d.type=='people'\">academics</span>\n" +
