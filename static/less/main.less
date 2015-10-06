@@ -485,8 +485,32 @@ div.person-page {
 
 div.ti-page-header {
    &.leaderboard-header {
+      padding-top: 32px;
       span.language {
          text-transform: capitalize;
+      }
+      div.descr {
+         width: 700px;
+         font-size: 16px;
+         font-weight: 100;
+         margin-bottom: 30px;
+         a.impact-dimension {
+            color: #333;
+            cursor: pointer;
+            display: inline-block;
+            i {
+               opacity: .5;
+               font-size: 80%;
+               vertical-align: top;
+               margin-left: -2px;
+               padding-right: 2px;
+            }
+            &:hover {
+               i {
+                  opacity: 1;
+               }
+            }
+         }
       }
    }
 }
@@ -603,13 +627,11 @@ div.page {
    &.sidebar-page {
       .sidebar {
          width: @sidebar-width;
-         border-right: 1px solid #ddd;
          position: fixed;
          top: 0;
          left: 0;
          bottom: 0;
-         padding: 100px 30px 30px;
-         background: #fafafa;
+         padding: 120px 30px 30px 50px;
       }
       .main {
          margin-left: @sidebar-width + 30px;

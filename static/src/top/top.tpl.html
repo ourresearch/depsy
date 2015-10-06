@@ -103,15 +103,41 @@
 
       <div class="ti-page-header leaderboard-header">
          <h2>
+            <span class="icons">
+               <!-- put icons here based on filters -->
+            </span>
             <span class="text">
-               Top
+               Highest-impact
+               <span class="is-academic" ng-if="filters.d.is_academic">academic</span>
                <span class="language">{{ filters.d.language }}</span>
                <span class="leaders-type">{{ filters.d.type }}</span>
-               <span class="filters" ng-show="leaders.filters.length">
-
-               </span>
             </span>
          </h2>
+         <div class="descr">
+            <span class="people" ng-show="filters.d.type=='people'">
+               Based on the impact of packages they've worked on.
+            </span>
+            <span class="tags" ng-show="filters.d.type=='tags'">
+               Based on the number of packages associated with the tag.
+            </span>
+            <span class="impact-criteria" ng-show="filters.d.type=='packages' || filters.d.type=='people'">
+               That's from how often (and by whom) packages are
+                  <a class="impact-dimension downloads" popover="More about downloads coming soon" popover-trigger="mouseenter">
+                     downloaded,
+                     <i class="fa fa-question-circle"></i>
+                  </a>
+                  <a class="impact-dimension pagerank" popover="More about reverse dependencies coming soon" popover-trigger="mouseenter">
+                     used in other software,
+                     <i class="fa fa-question-circle"></i>
+                  </a>
+                     and
+                  <a class="impact-dimension downloads" popover="More about citations coming soon" popover-trigger="mouseenter">
+                     cited in the scholarly literature.
+                     <i class="fa fa-question-circle"></i>
+                  </a>
+            </span>
+
+         </div>
       </div>
 
 

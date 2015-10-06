@@ -169,11 +169,13 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "<div class=\"package-page sidebar-page\">\n" +
     "\n" +
     "\n" +
+    "   <!--\n" +
     "   <div class=\"coming-soon\">\n" +
     "      <h1>Coming soon :)</h1>\n" +
     "      <h2>Check back here soon for summary, authors, impact details (downloads, dependency pagerank, citations) and dependency tree.</h2>\n" +
     "\n" +
     "   </div>\n" +
+    "   -->\n" +
     "\n" +
     "   <!--\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
@@ -868,15 +870,41 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "      <div class=\"ti-page-header leaderboard-header\">\n" +
     "         <h2>\n" +
+    "            <span class=\"icons\">\n" +
+    "               <!-- put icons here based on filters -->\n" +
+    "            </span>\n" +
     "            <span class=\"text\">\n" +
-    "               Top\n" +
+    "               Highest-impact\n" +
+    "               <span class=\"is-academic\" ng-if=\"filters.d.is_academic\">academic</span>\n" +
     "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
     "               <span class=\"leaders-type\">{{ filters.d.type }}</span>\n" +
-    "               <span class=\"filters\" ng-show=\"leaders.filters.length\">\n" +
-    "\n" +
-    "               </span>\n" +
     "            </span>\n" +
     "         </h2>\n" +
+    "         <div class=\"descr\">\n" +
+    "            <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
+    "               Based on the impact of packages they've worked on.\n" +
+    "            </span>\n" +
+    "            <span class=\"tags\" ng-show=\"filters.d.type=='tags'\">\n" +
+    "               Based on the number of packages associated with the tag.\n" +
+    "            </span>\n" +
+    "            <span class=\"impact-criteria\" ng-show=\"filters.d.type=='packages' || filters.d.type=='people'\">\n" +
+    "               That's from how often (and by whom) packages are\n" +
+    "                  <a class=\"impact-dimension downloads\" popover=\"More about downloads coming soon\" popover-trigger=\"mouseenter\">\n" +
+    "                     downloaded,\n" +
+    "                     <i class=\"fa fa-question-circle\"></i>\n" +
+    "                  </a>\n" +
+    "                  <a class=\"impact-dimension pagerank\" popover=\"More about reverse dependencies coming soon\" popover-trigger=\"mouseenter\">\n" +
+    "                     used in other software,\n" +
+    "                     <i class=\"fa fa-question-circle\"></i>\n" +
+    "                  </a>\n" +
+    "                     and\n" +
+    "                  <a class=\"impact-dimension downloads\" popover=\"More about citations coming soon\" popover-trigger=\"mouseenter\">\n" +
+    "                     cited in the scholarly literature.\n" +
+    "                     <i class=\"fa fa-question-circle\"></i>\n" +
+    "                  </a>\n" +
+    "            </span>\n" +
+    "\n" +
+    "         </div>\n" +
     "      </div>\n" +
     "\n" +
     "\n" +
