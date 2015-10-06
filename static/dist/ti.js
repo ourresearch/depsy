@@ -243,7 +243,7 @@ angular.module("filterService", [])
         set("language", "python")
       }
       if (!filters.type){
-        set("type", "packages")
+        set("type", "people")
       }
       console.log("set filters from url", filters)
     }
@@ -891,7 +891,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -1584,6 +1583,17 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "      <div class=\"leader-type-select facet\">\n" +
     "         <h3>Show me</h3>\n" +
     "         <ul>\n" +
+    "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'people')\">\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type == 'people'\">\n" +
+    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
+    "               </span>\n" +
+    "               <span class=\"status\" ng-if=\"filters.d.type != 'people'\">\n" +
+    "                  <i class=\"fa fa-square-o\"></i>\n" +
+    "               </span>\n" +
+    "\n" +
+    "               <span class=\"text\">coders</span>\n" +
+    "            </li>\n" +
+    "\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'packages')\">\n" +
     "               <span class=\"status\" ng-if=\"filters.d.type == 'packages'\">\n" +
     "                  <i class=\"fa fa-check-square-o\"></i>\n" +
@@ -1593,17 +1603,6 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "               </span>\n" +
     "\n" +
     "               <span class=\"text\">packages</span>\n" +
-    "            </li>\n" +
-    "\n" +
-    "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'people')\">\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.type == 'people'\">\n" +
-    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
-    "               </span>\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.type != 'people'\">\n" +
-    "                  <i class=\"fa fa-square-o\"></i>\n" +
-    "               </span>\n" +
-    "\n" +
-    "               <span class=\"text\">people</span>\n" +
     "            </li>\n" +
     "\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'tags')\">\n" +

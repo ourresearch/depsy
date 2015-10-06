@@ -371,7 +371,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.impact == None)
+# q = q.filter(PypiPackage.impact == None)
 update_registry.register(Update(
     job=PypiPackage.set_impact,
     query=q,

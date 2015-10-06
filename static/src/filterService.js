@@ -18,7 +18,7 @@ angular.module("filterService", [])
         set("language", "python")
       }
       if (!filters.type){
-        set("type", "packages")
+        set("type", "people")
       }
       console.log("set filters from url", filters)
     }

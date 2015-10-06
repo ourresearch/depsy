@@ -31,17 +31,32 @@ class PypiPackage(Package):
             name=self.id)
 
     @property
-    def citation_offset_to_recenter_scores(self):
+    def pagerank_offset_to_recenter_scores(self):
+        # select log(1.0/max(pagerank)), host from package group by host        
+        return 4.12  # brings lowest up to about 0
+
+    @property
+    def num_downloads_offset_to_recenter_scores(self):
+        # select log(1.0/max(num_downloads)), host from package group by host        
+        return 5.47  # brings lowest up to about 0
+
+    @property
+    def num_citations_offset_to_recenter_scores(self):
+        # select log(1.0/max(num_citations)), host from package group by host        
         return 2.84  # brings lowest up to about 0
 
     @property
-    def maxes_dict(self):
-        maxes_dict = {
-            "pagerank": 0.0262218729908892147,
-            "num_downloads": 14940006,
-            "num_citations": 691
-        }
-        return maxes_dict
+    def pagerank_max(self):
+        return 0.0262218729908892147  # brings lowest up to about 0
+
+    @property
+    def num_downloads_max(self):
+        return 14940006  # brings lowest up to about 0
+
+    @property
+    def num_citations_max(self):
+        return 691  # brings lowest up to about 0
+
 
     @property
     def language(self):

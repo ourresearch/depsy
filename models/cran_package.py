@@ -39,17 +39,32 @@ class CranPackage(Package):
         return "https://cran.r-project.org/web/packages/{}".format(self.project_name)
 
     @property
-    def citation_offset_to_recenter_scores(self):
+    def pagerank_offset_to_recenter_scores(self):
+        # select log(1.0/max(pagerank)), host from package group by host
+        return 3.72  # brings lowest up to about 0
+
+    @property
+    def num_downloads_offset_to_recenter_scores(self):
+        # select log(1.0/max(num_downloads)), host from package group by host
+        return 4.61  # brings lowest up to about 0
+
+    @property
+    def num_citations_offset_to_recenter_scores(self):
+        # select log(1.0/max(num_citations)), host from package group by host        
         return 3.45  # brings lowest up to about 0
 
     @property
-    def maxes_dict(self):
-        maxes_dict = {
-            "pagerank": 0.0601950151409884823,
-            "num_downloads": 161454,
-            "num_citations": 2799
-        }        
-        return maxes_dict
+    def pagerank_max(self):
+        return 0.0601950151409884823  # brings lowest up to about 0
+
+    @property
+    def num_downloads_max(self):
+        return 161454  # brings lowest up to about 0
+
+    @property
+    def num_citations_max(self):
+        return 2799  # brings lowest up to about 0
+
 
     def save_host_contributors(self):
         raw_byline_string = self.api_raw["Author"]

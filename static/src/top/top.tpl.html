@@ -7,6 +7,17 @@
       <div class="leader-type-select facet">
          <h3>Show me</h3>
          <ul>
+            <li class="filter-option" ng-click="filters.set('type', 'people')">
+               <span class="status" ng-if="filters.d.type == 'people'">
+                  <i class="fa fa-check-square-o"></i>
+               </span>
+               <span class="status" ng-if="filters.d.type != 'people'">
+                  <i class="fa fa-square-o"></i>
+               </span>
+
+               <span class="text">coders</span>
+            </li>
+
             <li class="filter-option" ng-click="filters.set('type', 'packages')">
                <span class="status" ng-if="filters.d.type == 'packages'">
                   <i class="fa fa-check-square-o"></i>
@@ -16,17 +27,6 @@
                </span>
 
                <span class="text">packages</span>
-            </li>
-
-            <li class="filter-option" ng-click="filters.set('type', 'people')">
-               <span class="status" ng-if="filters.d.type == 'people'">
-                  <i class="fa fa-check-square-o"></i>
-               </span>
-               <span class="status" ng-if="filters.d.type != 'people'">
-                  <i class="fa fa-square-o"></i>
-               </span>
-
-               <span class="text">people</span>
             </li>
 
             <li class="filter-option" ng-click="filters.set('type', 'tags')">
