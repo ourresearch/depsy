@@ -430,8 +430,32 @@ div.person-page .ti-page-body .packages div.person-package .person-package-stats
   height: 100%;
   display: inline-block;
 }
+div.ti-page-header.leaderboard-header {
+  padding-top: 32px;
+}
 div.ti-page-header.leaderboard-header span.language {
   text-transform: capitalize;
+}
+div.ti-page-header.leaderboard-header div.descr {
+  width: 700px;
+  font-size: 16px;
+  font-weight: 100;
+  margin-bottom: 30px;
+}
+div.ti-page-header.leaderboard-header div.descr a.impact-dimension {
+  color: #333;
+  cursor: pointer;
+  display: inline-block;
+}
+div.ti-page-header.leaderboard-header div.descr a.impact-dimension i {
+  opacity: .5;
+  font-size: 80%;
+  vertical-align: top;
+  margin-left: -2px;
+  padding-right: 2px;
+}
+div.ti-page-header.leaderboard-header div.descr a.impact-dimension:hover i {
+  opacity: 1;
 }
 div.top-page div.sidebar div.facet {
   margin-bottom: 35px;
@@ -509,13 +533,11 @@ div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.chil
 }
 div.page.sidebar-page .sidebar {
   width: 200px;
-  border-right: 1px solid #ddd;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  padding: 100px 30px 30px;
-  background: #fafafa;
+  padding: 120px 30px 30px 50px;
 }
 div.page.sidebar-page .main {
   margin-left: 230px;
