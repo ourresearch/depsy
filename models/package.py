@@ -164,6 +164,9 @@ class Package(db.Model):
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
             "num_citations_score": self.num_citations_score,
+            "pagerank_percentile": self.pagerank_percentile,
+            "num_downloads_percentile": self.num_downloads_percentile,
+            "num_citations_percentile": self.num_citations_percentile,
 
             "pagerank": self.pagerank,
             "num_downloads": self.num_downloads,
