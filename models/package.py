@@ -122,15 +122,16 @@ class Package(db.Model):
             "num_committers": self.num_committers,
             "num_citations": self.num_citations,
             "num_citations_score": self.num_citations_score,
+            "num_citations_percentile": self.num_citations_percentile,
             "pagerank": self.pagerank,
             "pagerank_score": self.pagerank_score,
+            "pagerank_percentile": self.calc_pagerank_percentile,
             "num_downloads": self.num_downloads,
             "num_downloads_score": self.num_downloads_score,
+            "num_downloads_percentile": self.num_downloads_percentile,
             "num_stars": self.num_stars,
             "impact": self.impact,
             "impact_rank": self.impact_rank,
-            "pagerank_score": self.pagerank_score,
-            "num_downloads_score": self.num_downloads_score,
             "rev_deps_tree": self.tree,
             "is_academic": self.is_academic,
 
@@ -162,7 +163,10 @@ class Package(db.Model):
             "impact_rank_max": self.impact_rank_max,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
-            "num_citations_score": self.num_downloads_score,
+            "num_citations_score": self.num_citations_score,
+            "pagerank_percentile": self.pagerank_percentile,
+            "num_downloads_percentile": self.num_downloads_percentile,
+            "num_citations_percentile": self.num_citations_percentile,
 
             "pagerank": self.pagerank,
             "num_downloads": self.num_downloads,
@@ -651,31 +655,9 @@ class Package(db.Model):
         self.impact_rank = impact_rank_lookup[self.id]
         print "self.impact_rank", self.impact_rank
 
-
-    # overridden by hard coded numbers below
-    # @classmethod
-    # def shortcut_impact_maxes(cls):
-    #     print "getting the maxes for calculating the impact...."
-    #     q = db.session.query(
-    #         func.max(cls.num_downloads),
-    #         func.max(cls.pagerank),
-    #         func.max(cls.num_citations)
-    #     )
-    #     row = q.first()
-
-    #     maxes_dict = {}
-    #     maxes_dict["num_downloads"] = row[0]
-    #     maxes_dict["pagerank"] = row[1]
-    #     maxes_dict["num_citations"] = row[2]
-
-    #     print "maxes_dict=", maxes_dict
-
-    #     return maxes_dict
-
-
     @property
     def pagerank_score_multiplier(self):
-        return 1000.0/self.pagerank_offset_to_recenter_scores  # makes it out of 1000
+        return self.pagerank_score
 
     @property
     def num_downloads_score_multiplier(self):
