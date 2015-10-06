@@ -30,6 +30,10 @@ angular.module('top', [
 
     getLeaders()
 
+    var makeUrl = function(){
+      return "leaderboard?" + FilterService.asQueryStr()
+    }
+
     function getLeaders(){
       console.log("getLeaders() go", FilterService.d)
 

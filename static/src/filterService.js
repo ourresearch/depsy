@@ -42,12 +42,24 @@ angular.module("filterService", [])
       filters[k] = null
     }
 
+    var asQueryStr = function(){
+      var ret = []
+      _.each(filters, function(v, k){
+        console.log("test filter")
+        if (v){
+          ret.push(k + "=" + v)
+        }
+      })
+      return ret.join("&")
+    }
+
 
   return {
     d: filters,
     set: set,
     toggle: toggle,
     unset: unset,
-    setFromUrl: setFromUrl
+    setFromUrl: setFromUrl,
+    asQueryStr: asQueryStr
   }
 });

@@ -457,6 +457,9 @@ div.ti-page-header.leaderboard-header div.descr a.impact-dimension i {
 div.ti-page-header.leaderboard-header div.descr a.impact-dimension:hover i {
   opacity: 1;
 }
+div.top-page div.sidebar .popover-inner {
+  min-width: 200px;
+}
 div.top-page div.sidebar div.facet {
   margin-bottom: 35px;
 }

@@ -267,13 +267,25 @@ angular.module("filterService", [])
       filters[k] = null
     }
 
+    var asQueryStr = function(){
+      var ret = []
+      _.each(filters, function(v, k){
+        console.log("test filter")
+        if (v){
+          ret.push(k + "=" + v)
+        }
+      })
+      return ret.join("&")
+    }
+
 
   return {
     d: filters,
     set: set,
     toggle: toggle,
     unset: unset,
-    setFromUrl: setFromUrl
+    setFromUrl: setFromUrl,
+    asQueryStr: asQueryStr
   }
 });
 angular.module("formatterService", [])
@@ -769,6 +781,10 @@ angular.module('top', [
 
     getLeaders()
 
+    var makeUrl = function(){
+      return "leaderboard?" + FilterService.asQueryStr()
+    }
+
     function getLeaders(){
       console.log("getLeaders() go", FilterService.d)
 
@@ -891,6 +907,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
+    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -1670,6 +1687,16 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "            </li>\n" +
     "         </ul>\n" +
     "      </div>\n" +
+    "\n" +
+    "      <a class=\"json-link btn btn-default\"\n" +
+    "         popover-title=\"View this page as JSON\"\n" +
+    "         popover-placement=\"right\"\n" +
+    "         popover-trigger=\"mouseenter\"\n" +
+    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
+    "         href=\"api/leaderboard?{{ filters.asQueryStr() }}\">\n" +
+    "         <i class=\"fa fa-download\"></i>\n" +
+    "         JSON\n" +
+    "      </a>\n" +
     "\n" +
     "\n" +
     "\n" +
