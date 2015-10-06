@@ -36,4 +36,5 @@ update person set is_organization=true
 	or name ilike '% GmbH'
 	or github_about->>'type' = 'Organization'
 	or name in ('Tryton', 'OpenERP SA', 'OpenStack', 'Logilab', 'IBM', 
-		'The fellowship of the packaging', 'Check your git settings!', 'Twitter', 'GNU Solidario')
+		'The fellowship of the packaging', 'Check your git settings!', 
+		'Twitter', 'GNU Solidario', 'hfpython')
