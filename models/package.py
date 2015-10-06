@@ -672,17 +672,19 @@ class Package(db.Model):
 
     #     return maxes_dict
 
-    @property
-    def offset_to_recenter_scores(self):
-        return 7.2  # brings lowest up to about 0
 
     @property
-    def citation_score_multiplier(self):
-        return 1000.0/self.citation_offset_to_recenter_scores  # makes it out of 1000
+    def pagerank_score_multiplier(self):
+        return 1000.0/self.pagerank_offset_to_recenter_scores  # makes it out of 1000
 
     @property
-    def score_multiplier(self):
-        return 1000.0/self.offset_to_recenter_scores  # makes it out of 1000
+    def num_downloads_score_multiplier(self):
+        return 1000.0/self.num_downloads_offset_to_recenter_scores  # makes it out of 1000
+
+    @property
+    def num_citations_score_multiplier(self):
+        return 1000.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1000
+
 
     def set_pagerank_score(self):
         if not self.pagerank:
@@ -690,8 +692,8 @@ class Package(db.Model):
             return self.pagerank_score
             
         try:
-            raw = math.log10(float(self.pagerank)/self.maxes_dict["pagerank"])
-            adjusted = (raw + self.offset_to_recenter_scores) * self.score_multiplier
+            raw = math.log10(float(self.pagerank)/self.pagerank_max)
+            adjusted = (raw + self.pagerank_offset_to_recenter_scores) * self.pagerank_score_multiplier
         except ValueError:
             adjusted = None
 
@@ -704,13 +706,12 @@ class Package(db.Model):
             return self.num_downloads_score
 
         try:
-            raw = math.log10(float(self.num_downloads)/self.maxes_dict["num_downloads"])
-            adjusted = (raw + self.offset_to_recenter_scores) * self.score_multiplier
+            raw = math.log10(float(self.num_downloads)/self.num_downloads_max)
+            adjusted = (raw + self.num_downloads_offset_to_recenter_scores) * self.num_downloads_score_multiplier
         except ValueError:
             adjusted = None
 
         self.num_downloads_score = adjusted   
-        print "self.num_downloads_score", self.num_downloads_score  
         return self.num_downloads_score
 
 
@@ -720,8 +721,8 @@ class Package(db.Model):
             return self.num_citations_score
 
         try:
-            raw = math.log10(float(self.num_citations)/self.maxes_dict["num_citations"])
-            adjusted = (raw + self.citation_offset_to_recenter_scores) * self.citation_score_multiplier
+            raw = math.log10(float(self.num_citations)/self.num_citations_max)
+            adjusted = (raw + self.num_citations_offset_to_recenter_scores) * self.num_citations_score_multiplier
         except ValueError:
             adjusted = None
 
