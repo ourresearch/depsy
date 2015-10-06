@@ -58,14 +58,17 @@ class Package(db.Model):
 
     num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
-    num_citations = db.Column(db.Integer)
-    num_citations_percentile = db.Column(db.Float)
-    num_stars = db.Column(db.Integer)
+    num_downloads_score = db.Column(db.Float)
     pagerank = db.Column(db.Float)
     pagerank_percentile = db.Column(db.Float)
+    pagerank_score = db.Column(db.Float)
+    num_citations = db.Column(db.Integer)
+    num_citations_percentile = db.Column(db.Float)
+    num_citations_score = db.Column(db.Float)
 
     neighborhood_size = db.Column(db.Float)
     indegree = db.Column(db.Float)
+    num_stars = db.Column(db.Integer)
     summary = db.Column(db.Text)
 
     impact = db.Column(db.Float)
@@ -681,61 +684,73 @@ class Package(db.Model):
     def score_multiplier(self):
         return 1000.0/self.offset_to_recenter_scores  # makes it out of 1000
 
-    @property
-    def pagerank_score(self):
+    def set_pagerank_score(self):
         if not self.pagerank:
-            return None
+            self.pagerank_score = None
+            return self.pagerank_score
             
         try:
             raw = math.log10(float(self.pagerank)/self.maxes_dict["pagerank"])
             adjusted = (raw + self.offset_to_recenter_scores) * self.score_multiplier
         except ValueError:
             adjusted = None
-        return adjusted
 
-    @property
-    def num_downloads_score(self):
+        self.pagerank_score = adjusted
+        return self.pagerank_score
+
+    def set_num_downloads_score(self):
+        if not self.num_downloads:
+            self.num_downloads_score = None
+            return self.num_downloads_score
+
         try:
             raw = math.log10(float(self.num_downloads)/self.maxes_dict["num_downloads"])
             adjusted = (raw + self.offset_to_recenter_scores) * self.score_multiplier
         except ValueError:
             adjusted = None
-        return adjusted
 
-    @property
-    def num_citations_score(self):
+        self.num_downloads_score = adjusted   
+        print "self.num_downloads_score", self.num_downloads_score  
+        return self.num_downloads_score
+
+
+    def set_num_citations_score(self):
         if not self.num_citations:
-            return 0
+            self.num_citations_score = 0
+            return self.num_citations_score
 
         try:
             raw = math.log10(float(self.num_citations)/self.maxes_dict["num_citations"])
             adjusted = (raw + self.citation_offset_to_recenter_scores) * self.citation_score_multiplier
         except ValueError:
             adjusted = None
-        return adjusted
+
+        self.num_citations_score = adjusted
+        return self.num_citations_score
 
 
     def set_impact(self):
         score_components = []
 
-        if self.pagerank:
-            log_pagerank = self.pagerank_score
-            if log_pagerank != None:
-                score_components.append(log_pagerank)
-        if self.num_downloads:
-            log_num_downloads = self.num_downloads_score
-            if log_num_downloads != None:
-                score_components.append(log_num_downloads)
+        pagerank_score = self.set_pagerank_score()
+        if pagerank_score != None:
+            score_components.append(pagerank_score)
+
+        num_downloads_score = self.set_num_downloads_score()
+        if num_downloads_score != None:
+            score_components.append(num_downloads_score)
 
         if score_components:
             pagerank_and_downloads_mean = numpy.mean(score_components)
         else:
             pagerank_and_downloads_mean = None
         
-        scaled_citations = self.num_citations_score
+        num_citations_score = self.set_num_citations_score()
         
         # twice the mean and twenty percent of the scaled citations
-        combo = (pagerank_and_downloads_mean*2 + scaled_citations*0.2) / 2.2
+        combo = (pagerank_and_downloads_mean*2 + num_citations_score*0.2) / 2.2
+
+
         self.impact = combo
 
         print u"self.impact for {} is {}".format(self.id, self.impact)
