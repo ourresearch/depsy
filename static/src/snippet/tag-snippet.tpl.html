@@ -29,18 +29,15 @@
             ng-show="tag.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
 
-
-         <span class="related-tags">
-            Related tags: <span style="font-style: italic">coming soon...</span>
-         </span>
       </span>
 
       <span class="summary tags">
          <span class="tags">
+            related tags:
             <a href="tag/{{ relatedTag.name }}"
                class="tag"
                ng-repeat="relatedTag in tag.related_tags | orderBy: '-count'">
-               {{ tag.name }}
+               {{ relatedTag.name }}
             </a>
          </span>
 

@@ -81,7 +81,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -651,18 +650,15 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "            ng-show=\"tag.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
-    "\n" +
-    "         <span class=\"related-tags\">\n" +
-    "            Related tags: <span style=\"font-style: italic\">coming soon...</span>\n" +
-    "         </span>\n" +
     "      </span>\n" +
     "\n" +
     "      <span class=\"summary tags\">\n" +
     "         <span class=\"tags\">\n" +
+    "            related tags:\n" +
     "            <a href=\"tag/{{ relatedTag.name }}\"\n" +
     "               class=\"tag\"\n" +
     "               ng-repeat=\"relatedTag in tag.related_tags | orderBy: '-count'\">\n" +
-    "               {{ tag.name }}\n" +
+    "               {{ relatedTag.name }}\n" +
     "            </a>\n" +
     "         </span>\n" +
     "\n" +
@@ -732,7 +728,7 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
     "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
-    "         href=\"http://localhost:5008/api/leaderboard?type=packages&tag={{ tag.name }}\">\n" +
+    "         href=\"http://localhost:5008/api/leaderboard?type=packages&tag={{ packages.filters.tag }}\">\n" +
     "         <i class=\"fa fa-download\"></i>\n" +
     "         JSON\n" +
     "      </a>\n" +
