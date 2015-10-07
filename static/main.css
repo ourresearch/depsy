@@ -269,9 +269,6 @@ div.tag-page .ti-page-sidebar div.tag-about span.num-tags {
 div.tag-page .ti-page-sidebar a.json-link {
   margin-top: 50px;
 }
-div.tag-page .ti-page-sidebar div.top-tags {
-  display: none;
-}
 div.person-page div.ti-page-sidebar {
   float: left;
   width: 400px;

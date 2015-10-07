@@ -17,8 +17,8 @@
       <div class="top-tags">
          <h3>Related tags</h3>
          <div class="tags">
-            <a class="tag" ng-repeat="tag in tag.related_tags | orderBy: '-count'">
-               {{ packages.filters.tag }}
+            <a class="tag" ng-repeat="tag in packages.related_tags | orderBy: '-count'">
+               {{ tag.name }}
             </a>
          </div>
       </div>

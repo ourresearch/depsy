@@ -6,6 +6,7 @@ from models.person import Person
 from models import package
 from models.package import Package
 from models.package_jobs import get_leaders
+from models.tags import Tags
 from dummy_data import get_dummy_data
 from sqlalchemy import orm
 from models.package import make_host_name
@@ -164,14 +165,18 @@ def leaderboard():
 
     leaders_list = [leader.as_snippet for leader in leaders]
 
-    ret = json_resp_from_thing({
+    ret_dict = {
         "num_returned": len(leaders_list),
         "num_total": num_total,
         "list": leaders_list,
         "type": filters_dict["type"],
         "filters": filters_dict
-    })
+    }
+    if "tag" in filters_dict:
+        tag_obj = Tags.query.filter(Tags.unique_tag==filters_dict["tag"]).first()
+        ret_dict["related_tags"] = tag_obj.related_tags
 
+    ret = json_resp_from_thing(ret_dict)
     elapsed_time = elapsed(start)
     ret.headers["x-elapsed"] = elapsed_time
     return ret
