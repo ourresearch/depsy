@@ -32,6 +32,7 @@ create table package_tags as (
 
 
 alter table tags add column count_academic int4;
+update tags set count_academic=0 where count_academic is null
 update tags set count_academic=s.c from (
 		select tag, namespace, count(*) as c
 		from package_tags 
