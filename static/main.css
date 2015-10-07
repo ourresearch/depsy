@@ -404,7 +404,7 @@ div.person-page .ti-page-body .packages {
   margin-left: 40px;
 }
 div.person-page .ti-page-body .packages div.person-package .person-package-stats {
-  padding: 42px 0 0 0;
+  padding: 42px 20px 0 0;
   text-align: right;
   float: left;
 }
@@ -430,44 +430,21 @@ div.person-page .ti-page-body .packages div.person-package .person-package-stats
   height: 100%;
   display: inline-block;
 }
-div.ti-page-header.leaderboard-header {
-  padding-top: 32px;
+div.sidebar-page.top-page div.sidebar {
+  padding-top: 154px;
 }
-div.ti-page-header.leaderboard-header span.language {
-  text-transform: capitalize;
-}
-div.ti-page-header.leaderboard-header div.descr {
-  width: 700px;
-  font-size: 16px;
-  font-weight: 100;
-  margin-bottom: 30px;
-}
-div.ti-page-header.leaderboard-header div.descr a.impact-dimension {
-  color: #333;
-  cursor: pointer;
-  display: inline-block;
-}
-div.ti-page-header.leaderboard-header div.descr a.impact-dimension i {
-  opacity: .5;
-  font-size: 80%;
-  vertical-align: top;
-  margin-left: -2px;
-  padding-right: 2px;
-}
-div.ti-page-header.leaderboard-header div.descr a.impact-dimension:hover i {
-  opacity: 1;
-}
-div.top-page div.sidebar .popover-inner {
+div.sidebar-page.top-page div.sidebar .popover-inner {
   min-width: 200px;
+  padding-top: 120px;
 }
-div.top-page div.sidebar div.facet {
+div.sidebar-page.top-page div.sidebar div.facet {
   margin-bottom: 35px;
 }
-div.top-page div.sidebar div.facet h3 {
+div.sidebar-page.top-page div.sidebar div.facet h3 {
   font-size: 22px;
   margin: 5px 0;
 }
-div.top-page div.sidebar div.facet ul li {
+div.sidebar-page.top-page div.sidebar div.facet ul li {
   font-size: 18px;
   font-weight: 100;
   cursor: pointer;
@@ -476,12 +453,39 @@ div.top-page div.sidebar div.facet ul li {
   line-height: 1.3;
   margin-bottom: 6px;
 }
-div.top-page div.sidebar div.facet ul li span.status i.fa-square-o {
+div.sidebar-page.top-page div.sidebar div.facet ul li span.status i.fa-square-o {
   margin-right: 3px;
   vertical-align: -2px;
 }
-div.top-page div.main {
+div.sidebar-page.top-page div.main {
   padding-left: 40px;
+}
+div.sidebar-page.top-page div.main .leaderboard-header {
+  padding-top: 30px;
+}
+div.sidebar-page.top-page div.main .leaderboard-header span.language {
+  text-transform: capitalize;
+}
+div.sidebar-page.top-page div.main .leaderboard-header div.descr {
+  width: 700px;
+  font-size: 16px;
+  font-weight: 100;
+  margin-bottom: 30px;
+}
+div.sidebar-page.top-page div.main .leaderboard-header div.descr a.impact-dimension {
+  color: #333;
+  cursor: pointer;
+  display: inline-block;
+}
+div.sidebar-page.top-page div.main .leaderboard-header div.descr a.impact-dimension i {
+  opacity: .5;
+  font-size: 80%;
+  vertical-align: top;
+  margin-left: -2px;
+  padding-right: 2px;
+}
+div.sidebar-page.top-page div.main .leaderboard-header div.descr a.impact-dimension:hover i {
+  opacity: 1;
 }
 div.package-page .coming-soon {
   width: 500px;
@@ -558,18 +562,16 @@ span.snippet span.left-icons {
 span.snippet span.left-metrics {
   vertical-align: middle;
   display: inline-block;
-  width: 75px;
   text-align: right;
   float: left;
   margin-top: -3px;
   line-height: 1.3;
 }
-span.snippet span.left-metrics span.rank {
+span.snippet span.left-metrics .rank {
   display: inline-block;
   width: 58px;
   text-align: right;
   margin-top: 0;
-  font-weight: 100;
 }
 span.snippet span.left-metrics .one-metric {
   color: #333;
@@ -577,6 +579,49 @@ span.snippet span.left-metrics .one-metric {
   font-size: 28px;
   font-weight: 100;
   margin-bottom: 5px;
+  display: none;
+}
+span.snippet span.left-metrics .vis {
+  margin-top: 10px;
+}
+span.snippet span.left-metrics .vis .subscore {
+  line-height: .7;
+}
+span.snippet span.left-metrics .vis .subscore .val {
+  font-size: 10px;
+  display: inline-block;
+  width: 30px;
+  text-align: right;
+  vertical-align: 2px;
+}
+span.snippet span.left-metrics .vis .subscore .val.num_downloads {
+  color: #377eb8;
+}
+span.snippet span.left-metrics .vis .subscore .val.pagerank {
+  color: #4daf4a;
+}
+span.snippet span.left-metrics .vis .subscore .val.num_citations {
+  color: #984ea3;
+}
+span.snippet span.left-metrics .vis .subscore .bar-outer {
+  width: 30px;
+  display: inline-block;
+  height: 10px;
+  background: #fafafa;
+  text-align: right;
+}
+span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner {
+  height: 100%;
+  display: inline-block;
+}
+span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_downloads {
+  background: #377eb8;
+}
+span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.pagerank {
+  background: #4daf4a;
+}
+span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_citations {
+  background: #984ea3;
 }
 span.snippet span.metadata {
   display: inline-block;
@@ -635,7 +680,7 @@ span.snippet span.metadata span.person-packages a {
 span.snippet span.metadata span.summary {
   float: left;
   padding-top: 2px;
-  margin-top: 2px;
+  margin-top: 5px;
   font-size: 15px;
   display: inline-block;
   width: 600px;

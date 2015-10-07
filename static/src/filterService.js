@@ -45,7 +45,6 @@ angular.module("filterService", [])
     var asQueryStr = function(){
       var ret = []
       _.each(filters, function(v, k){
-        console.log("test filter")
         if (v){
           ret.push(k + "=" + v)
         }

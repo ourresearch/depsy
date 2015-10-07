@@ -270,7 +270,6 @@ angular.module("filterService", [])
     var asQueryStr = function(){
       var ret = []
       _.each(filters, function(v, k){
-        console.log("test filter")
         if (v){
           ret.push(k + "=" + v)
         }
@@ -648,36 +647,25 @@ angular.module('snippet', [
 
 
   .controller("packageSnippetCtrl", function($scope){
+//    var subscoreNames = [
+//      "num_downloads",
+//      "pagerank",
+//      "num_citations"
+//    ]
+//    var subscores = _.map(subscoreNames, function(name){
+//      return {
+//        name: name,
+//        percentile: $scope.package[name + "_percentile"],
+//        val: $scope.package[name]
+//      }
+//    })
 
-    var packagePairs = _.pairs($scope.package)
-    var subScores = _.filter(packagePairs, function(packagePair){
-      return packagePair[0].indexOf("_percentile") > 0
-    })
-
-    var subScoresSum =  _.reduce(
-      _.map(subScores, function(x){return x[1]}),
-      function(memo, num){ return memo + num; },
-      0
-    )
-
-    var subScoreRatios = _.map(subScores, function(subScore){
-
-      var rawVal = subScore[1]
-      var val
-      if (!rawVal){
-        val = 0
-      }
-      else {
-        val = rawVal / subScoresSum
-      }
-
-      return {
-        name: subScore[0],
-        val: val
-      }
-    })
-
-    $scope.subScoreRatios = subScoreRatios
+//    var subScoresSum =  _.reduce(
+//      _.map(subScores, function(x){return x[1]}),
+//      function(memo, num){ return memo + num; },
+//      0
+//    )
+//    $scope.subScores = subscores
   })
 
 
@@ -1192,6 +1180,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         popover-title=\"View this page as JSON\"\n" +
     "         popover-placement=\"right\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
+    "         target=\"_self\"\n" +
     "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/person/{{ person.id }}\">\n" +
     "         <i class=\"fa fa-download\"></i>\n" +
@@ -1280,14 +1269,24 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         popover-title=\"Impact\"\n" +
     "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
     "\n" +
-    "      <span class=\"one-metric metric\">\n" +
+    "      <div class=\"one-metric metric\">\n" +
     "         {{ format.short(package.impact) }}\n" +
-    "      </span>\n" +
+    "      </div>\n" +
     "\n" +
     "\n" +
-    "      <span class=\"rank\">\n" +
+    "      <div class=\"vis\">\n" +
+    "         <div class=\"subscore {{ subscore.name }}\"\n" +
+    "              ng-repeat=\"subscore in package.subscores\">\n" +
+    "            <div class=\"val {{ subscore.name }}\" ng-if=\"subscore.val > 0\">{{ format.short(subscore.val) }}</div>\n" +
+    "            <div class=\"bar-outer\">\n" +
+    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%;\"></div>\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"rank\">\n" +
     "         #{{ format.commas(package.impact_rank) }}\n" +
-    "      </span>\n" +
+    "      </div>\n" +
     "\n" +
     "   </span>\n" +
     "\n" +
@@ -1545,6 +1544,7 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "         popover-title=\"View this page as JSON\"\n" +
     "         popover-placement=\"right\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
+    "         target=\"_self\"\n" +
     "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"http://localhost:5008/api/leaderboard?type=packages&tag={{ tag.name }}\">\n" +
     "         <i class=\"fa fa-download\"></i>\n" +
@@ -1692,6 +1692,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "         popover-title=\"View this page as JSON\"\n" +
     "         popover-placement=\"right\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
+    "         target=\"_self\"\n" +
     "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/leaderboard?{{ filters.asQueryStr() }}\">\n" +
     "         <i class=\"fa fa-download\"></i>\n" +

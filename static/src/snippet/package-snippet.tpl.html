@@ -5,14 +5,24 @@
          popover-title="Impact"
          popover-template="'snippet/impact-popover.tpl.html'">
 
-      <span class="one-metric metric">
+      <div class="one-metric metric">
          {{ format.short(package.impact) }}
-      </span>
+      </div>
 
 
-      <span class="rank">
+      <div class="vis">
+         <div class="subscore {{ subscore.name }}"
+              ng-repeat="subscore in package.subscores">
+            <div class="val {{ subscore.name }}" ng-if="subscore.val > 0">{{ format.short(subscore.val) }}</div>
+            <div class="bar-outer">
+               <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.percentile * 100 }}%;"></div>
+            </div>
+         </div>
+      </div>
+
+      <div class="rank">
          #{{ format.commas(package.impact_rank) }}
-      </span>
+      </div>
 
    </span>
 

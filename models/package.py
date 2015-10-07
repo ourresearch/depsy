@@ -167,16 +167,38 @@ class Package(db.Model):
             "pagerank_percentile": self.pagerank_percentile,
             "num_downloads_percentile": self.num_downloads_percentile,
             "num_citations_percentile": self.num_citations_percentile,
-
             "pagerank": self.pagerank,
             "num_downloads": self.num_downloads,
             "num_citations": self.num_citations,
+            "subscores": self.subscores,
 
             "is_academic": self.is_academic,
 
             "summary": prep_summary(self.summary),
             "tags": self.tags
         }
+        return ret
+
+    @property
+    def subscores(self):
+        names = [
+            "num_citations",
+            "pagerank",
+            "num_downloads"
+        ]
+        ret = []
+        for name in names:
+            if name == "pagerank":
+                score = self.pagerank_score
+            else:
+                score = getattr(self, name)
+
+            ret.append({
+                "name": name,
+                "percentile": getattr(self, name + "_percentile"),
+                "val": score
+            })
+
         return ret
 
     @property
@@ -636,10 +658,35 @@ class Package(db.Model):
 
 
     @classmethod
-    def shortcut_impact_rank(cls):
+    def _shortcut_rank(cls, name_to_rank_by):
         print "getting the lookup for ranking impact...."
+        property_to_rank_by = getattr(cls, name_to_rank_by)
+
         q = db.session.query(cls.id)
-        q = q.order_by(cls.impact.desc())  # the important part :)
+        q = q.order_by(property_to_rank_by.desc())  # the important part :)
+        rows = q.all()
+
+        impact_rank_lookup = {}
+        ids_sorted = [row[0] for row in rows]
+        for my_id in ids_sorted:
+            zero_based_rank = ids_sorted.index(my_id)
+            impact_rank_lookup[my_id] = zero_based_rank + 1
+
+        return impact_rank_lookup
+
+    @classmethod
+    def shortcut_impact_rank(cls):
+        return cls._shortcut_rank("impact")
+
+    def set_impact_rank(self, impact_rank_lookup):
+        self.impact_rank = impact_rank_lookup[self.id]
+        print "self.impact_rank", self.impact_rank
+
+    @classmethod
+    def shortcut_num_citations_rank(cls):
+        print "getting the lookup for num_citations ranking shortcut...."
+        q = db.session.query(cls.id)
+        q = q.order_by(cls.num_citations.desc())  # the important part :)
         rows = q.all()
 
         impact_rank_lookup = {}

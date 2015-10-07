@@ -12,9 +12,6 @@
 
 @citationsColor: #984ea3;
 @pagerankColor: #4daf4a;
-
-
-
 @downloadsColor: #377eb8;
 @starsColor: #e41a1c;
 
@@ -450,7 +447,7 @@ div.person-page {
          margin-left: 40px;
          div.person-package {
             .person-package-stats {
-               padding: 42px 0 0 0;
+               padding: 42px 20px 0 0;
                text-align: right;
 
                float: left;
@@ -484,42 +481,16 @@ div.person-page {
 }
 
 div.ti-page-header {
-   &.leaderboard-header {
-      padding-top: 32px;
-      span.language {
-         text-transform: capitalize;
-      }
-      div.descr {
-         width: 700px;
-         font-size: 16px;
-         font-weight: 100;
-         margin-bottom: 30px;
-         a.impact-dimension {
-            color: #333;
-            cursor: pointer;
-            display: inline-block;
-            i {
-               opacity: .5;
-               font-size: 80%;
-               vertical-align: top;
-               margin-left: -2px;
-               padding-right: 2px;
-            }
-            &:hover {
-               i {
-                  opacity: 1;
-               }
-            }
-         }
-      }
-   }
+
 }
 
 
-div.top-page {
+div.sidebar-page.top-page {
    div.sidebar {
+      padding-top: 154px;
       .popover-inner {
          min-width: 200px;
+         padding-top: 120px;
       }
       div.facet {
          margin-bottom: 35px;
@@ -552,6 +523,35 @@ div.top-page {
    }
    div.main {
       padding-left: 40px;
+      .leaderboard-header {
+      padding-top: 30px;
+      span.language {
+         text-transform: capitalize;
+      }
+      div.descr {
+         width: 700px;
+         font-size: 16px;
+         font-weight: 100;
+         margin-bottom: 30px;
+         a.impact-dimension {
+            color: #333;
+            cursor: pointer;
+            display: inline-block;
+            i {
+               opacity: .5;
+               font-size: 80%;
+               vertical-align: top;
+               margin-left: -2px;
+               padding-right: 2px;
+            }
+            &:hover {
+               i {
+                  opacity: 1;
+               }
+            }
+         }
+      }
+   }
    }
 }
 
@@ -663,18 +663,17 @@ span.snippet {
    span.left-metrics {
       vertical-align: middle;
       display: inline-block;
-      width: 75px;
       text-align: right;
       float: left;
       margin-top: -3px;
       line-height: 1.3;
 
-      span.rank {
+      .rank {
          display: inline-block;
          width: 58px;
+//         margin-right: 33px;
          text-align: right;
          margin-top: 0;
-         font-weight: 100;
       }
 
 
@@ -684,6 +683,51 @@ span.snippet {
          font-size: 28px;
          font-weight: 100;
          margin-bottom: 5px;
+         display: none;
+      }
+
+      .vis {
+         margin-top: 10px;
+         .subscore {
+            line-height: .7;
+            .val {
+               font-size: 10px;
+               display: inline-block;
+               width: 30px;
+               text-align: right;
+               vertical-align: 2px;
+               &.num_downloads {
+                  color: @downloadsColor;
+               }
+               &.pagerank {
+                  color: @pagerankColor;
+               }
+               &.num_citations {
+                  color: @citationsColor;
+               }
+            }
+            .bar-outer {
+               width: 30px;
+               display: inline-block;
+               height: 10px;
+               background: #fafafa;
+               text-align: right;
+               .bar-inner {
+                  height: 100%;
+                  display: inline-block;
+                  &.num_downloads {
+                     background: @downloadsColor;
+                  }
+                  &.pagerank {
+                     background: @pagerankColor;
+
+                  }
+                  &.num_citations {
+                     background: @citationsColor;
+                  }
+               }
+            }
+         }
       }
 
 
@@ -769,7 +813,7 @@ span.snippet {
       span.summary {
          float: left;
          padding-top: 2px;
-         margin-top: 2px;
+         margin-top: 5px;
          font-size: 15px;
          display: inline-block;
          width: 600px;
