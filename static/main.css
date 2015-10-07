@@ -588,8 +588,9 @@ span.snippet span.left-metrics .vis .subscore {
   line-height: .7;
 }
 span.snippet span.left-metrics .vis .subscore .val {
-  font-size: 10px;
   display: inline-block;
+  display: none;
+  font-size: 10px;
   width: 30px;
   text-align: right;
   vertical-align: 2px;
