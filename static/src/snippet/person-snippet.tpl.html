@@ -41,7 +41,7 @@
 
          <span class="person-packages">
             <span class="works-on">{{ person.num_packages }} packages including: </span>
-            <span class="package" ng-repeat="package in person.person_packages | orderBy: '-person_project_impact'">
+            <span class="package" ng-repeat="package in person.person_packages | orderBy: '-person_package_impact'">
                <a href="package/{{ package.language }}/{{ package.name }}">
                   {{ package.name }}</a><span class="sep" ng-show="!$last">,</span>
             </span>

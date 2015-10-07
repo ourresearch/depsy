@@ -30,6 +30,9 @@ class Person(db.Model):
     bucket = db.Column(JSONB)
     impact = db.Column(db.Float)
     impact_rank = db.Column(db.Integer)
+    pagerank_score = db.Column(db.Float)
+    num_downloads_score = db.Column(db.Float)
+    num_citations_score = db.Column(db.Float)
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
@@ -85,7 +88,7 @@ class Person(db.Model):
             for pp in person_packages:
                 for collab_person_id, collab_credit in pp.package.credit.iteritems():
                     if int(collab_person_id) != self.id:  #don't measure my own collab strength
-                        collab_strength = collab_credit * pp.person_project_credit
+                        collab_strength = collab_credit * pp.person_package_credit
                         my_collabs[collab_person_id] += collab_strength
             sorted_collabs_to_return = sorted(my_collabs.items(), key=lambda x: x[1], reverse=True)
             ret["top_collabs"] = []    
@@ -125,6 +128,9 @@ class Person(db.Model):
             "impact": self.impact, 
             "impact_rank": self.impact_rank, 
             "impact_rank_max": self.impact_rank_max, 
+            "pagerank_score": self.pagerank_score, 
+            "num_downloads_score": self.num_downloads_score, 
+            "num_citations_score": self.num_citations_score, 
             "id": self.id
         }
         return ret
@@ -199,8 +205,18 @@ class Person(db.Model):
 
 
     def set_impact(self):
-        self.impact = sum([pp.person_project_impact for pp in self.get_person_packages()])
+        self.impact = sum([pp.person_package_impact for pp in self.get_person_packages()])
         return self.impact
+
+    def set_scores(self):
+        person_packages = self.get_person_packages()
+
+
+        self.pagerank_score = sum([pp.person_package_pagerank_score for pp in person_packages 
+                                        if pp.person_package_pagerank_score])
+        self.num_downloads_score = sum([pp.person_package_num_downloads_score for pp in person_packages])
+        self.num_citations_score = sum([pp.person_package_num_citations_score for pp in person_packages])
+
 
     def set_parsed_name(self):
         if not self.name:
@@ -272,7 +288,7 @@ class Person(db.Model):
             person_packages[contrib.package.id].set_role(contrib)
 
         person_packages_list = person_packages.values()
-        person_packages_list.sort(key=lambda x: x.person_project_impact, reverse=True)
+        person_packages_list.sort(key=lambda x: x.person_package_impact, reverse=True)
         return person_packages_list
 
     def num_commits_on_project(self, package_id):
@@ -288,7 +304,7 @@ class PersonPackage():
     def __init__(self):
         self.package = None
         self.person = None
-        self.person_project_commits = None
+        self.person_package_commits = None
         self.roles = []
 
     def set_role(self, contrib):
@@ -297,33 +313,57 @@ class PersonPackage():
         if not self.person:
             self.person = contrib.person
         if contrib.role == "github_contributor":
-            self.person_project_commits = contrib.quantity
+            self.person_package_commits = contrib.quantity
         self.roles.append(contrib)
 
     @property
-    def person_project_credit(self):
+    def person_package_credit(self):
         return self.package.get_credit_for_person(self.person.id)
 
     @property
-    def person_project_impact(self):
-        person_project_impact = self.person_project_credit * self.package.impact
-        return person_project_impact
+    def person_package_impact(self):
+        ret = self.person_package_credit * self.package.impact
+        return ret
+
+    @property
+    def person_package_pagerank_score(self):
+        if self.package.pagerank_score == None:
+            return None
+        ret = self.person_package_credit * self.package.pagerank_score
+        return ret
+
+    @property
+    def person_package_num_citations_score(self):
+        ret = self.person_package_credit * self.package.num_citations_score
+        return ret
+
+    @property
+    def person_package_num_downloads_score(self):
+        ret = self.person_package_credit * self.package.num_downloads_score
+        return ret
+
 
     def to_dict(self):
         ret = self.package.as_snippet
         ret["roles"] = [r.role for r in self.roles]
-        ret["person_project_credit"] = self.person_project_credit
-        ret["person_project_commits"] = self.person_project_commits
-        ret["person_project_impact"] = self.person_project_impact
+        ret["person_package_credit"] = self.person_package_credit
+        ret["person_package_commits"] = self.person_package_commits
+        ret["person_package_impact"] = self.person_package_impact
+        ret["person_package_pagerank_score"] = self.person_package_pagerank_score
+        ret["person_package_num_citations_score"] = self.person_package_num_citations_score
+        ret["person_package_num_downloads_score"] = self.person_package_num_downloads_score
         return ret
 
     @property
     def as_person_snippet(self):
         ret = self.package.as_snippet_without_people
         ret["roles"] = [r.role for r in self.roles]
-        ret["person_project_credit"] = self.person_project_credit
-        ret["person_project_commits"] = self.person_project_commits
-        ret["person_project_impact"] = self.person_project_impact
+        ret["person_package_credit"] = self.person_package_credit
+        ret["person_package_commits"] = self.person_package_commits
+        ret["person_package_impact"] = self.person_package_impact
+        ret["person_package_pagerank_score"] = self.person_package_pagerank_score
+        ret["person_package_num_citations_score"] = self.person_package_num_citations_score
+        ret["person_package_num_downloads_score"] = self.person_package_num_downloads_score
         return ret
 
 

@@ -94,7 +94,7 @@
    <div class="ti-page-body">
 
       <div class="packages">
-         <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_project_impact'">
+         <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
             <div class="person-package-stats">
                <span class="roles">
                   <span class="role role-{{ role }}" ng-repeat="role in package.roles | orderBy: '-toLowerCase()'">
@@ -104,7 +104,7 @@
                   </span>
                </span>
                <div class="bar-outside">
-                  <span class="bar-inside" style="width: {{ package.person_project_credit * 100 }}%"></span>
+                  <span class="bar-inside" style="width: {{ package.person_package_credit * 100 }}%"></span>
                </div>
             </div>
             <span class="package-snippet-wrapper" ng-include="'snippet/package-snippet.tpl.html'"></span>

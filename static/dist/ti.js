@@ -1066,7 +1066,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
     "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_project_impact'\">\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "            <div class=\"person-package-stats\">\n" +
     "               <span class=\"roles\">\n" +
     "                  <span class=\"role role-{{ role }}\" ng-repeat=\"role in package.roles | orderBy: '-toLowerCase()'\">\n" +
@@ -1076,7 +1076,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                  </span>\n" +
     "               </span>\n" +
     "               <div class=\"bar-outside\">\n" +
-    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_project_credit * 100 }}%\"></span>\n" +
+    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_package_credit * 100 }}%\"></span>\n" +
     "               </div>\n" +
     "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
@@ -1193,7 +1193,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
     "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_project_impact'\">\n" +
+    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "            <div class=\"person-package-stats\">\n" +
     "               <span class=\"roles\">\n" +
     "                  <span class=\"role role-{{ role }}\" ng-repeat=\"role in package.roles | orderBy: '-toLowerCase()'\">\n" +
@@ -1203,7 +1203,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  </span>\n" +
     "               </span>\n" +
     "               <div class=\"bar-outside\">\n" +
-    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_project_credit * 100 }}%\"></span>\n" +
+    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_package_credit * 100 }}%\"></span>\n" +
     "               </div>\n" +
     "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
@@ -1399,7 +1399,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "         <span class=\"person-packages\">\n" +
     "            <span class=\"works-on\">{{ person.num_packages }} packages including: </span>\n" +
-    "            <span class=\"package\" ng-repeat=\"package in person.person_packages | orderBy: '-person_project_impact'\">\n" +
+    "            <span class=\"package\" ng-repeat=\"package in person.person_packages | orderBy: '-person_package_impact'\">\n" +
     "               <a href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "                  {{ package.name }}</a><span class=\"sep\" ng-show=\"!$last\">,</span>\n" +
     "            </span>\n" +

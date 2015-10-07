@@ -495,3 +495,10 @@ update_registry.register(Update(
     queue_id=7
 ))
 
+q = db.session.query(Person.id)
+q = q.filter(Person.pagerank_score == None)
+update_registry.register(Update(
+    job=Person.set_scores,
+    query=q,
+    queue_id=7
+))
