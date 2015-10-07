@@ -716,7 +716,7 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "      <div class=\"top-tags\">\n" +
     "         <h3>Related tags</h3>\n" +
     "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\" ng-repeat=\"tag in packages.related_tags | orderBy: '-count'\">\n" +
+    "            <a class=\"tag\" href=\"tag/{{ tag.name }}\" ng-repeat=\"tag in packages.related_tags | orderBy: '-count'\">\n" +
     "               {{ tag.name }}\n" +
     "            </a>\n" +
     "         </div>\n" +
