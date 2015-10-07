@@ -195,7 +195,7 @@ class Package(db.Model):
 
             ret.append({
                 "name": name,
-                "percentile": getattr(self, name + "_percentile"),
+                "score": getattr(self, name + "_score"),
                 "val": score
             })
 
