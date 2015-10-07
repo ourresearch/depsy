@@ -38,16 +38,22 @@ def get_tags(filters, page_size=25):
     q = Tags.query
     for k, v in filters.iteritems():
 
-        # tags table is named a little weird        
-        if k == "host":
-            k = "namespace"
+        order_by_column = Tags.count.desc()
 
-        attr = getattr(Tags, k)
-        q = q.filter(attr==v)
+        # handle only_academic differently, is an order_by
+        if k == "is_academic":
+            order_by_column = Tags.count_academic.desc()
+        else:
+            # tags table is named a little differently        
+            if k == "host":
+                k = "namespace"
+
+            attr = getattr(Tags, k)
+            q = q.filter(attr==v)
 
     total_count = q.count()
 
-    q = q.order_by(Tags.count.desc())
+    q = q.order_by(order_by_column)
     q = q.limit(page_size)
     objects = q.all()
     return [total_count, objects]

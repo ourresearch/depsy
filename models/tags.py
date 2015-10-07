@@ -12,6 +12,7 @@ class Tags(db.Model):
     unique_tag = db.Column(db.Text)
     namespace = db.Column(db.Text)
     count = db.Column(db.Integer)
+    count_academic = db.Column(db.Integer)
 
     def __repr__(self):
         return u'<Tag "{}">'.format(self.id)
@@ -43,6 +44,7 @@ class Tags(db.Model):
         ret = {
         	"language": make_language(self.namespace),
         	"count": self.count,
+            "count_academic": self.count_academic,
         	"name": self.unique_tag,
             "related_tags": self.related_tags
         }
