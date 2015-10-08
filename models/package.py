@@ -56,6 +56,9 @@ class Package(db.Model):
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.deferred(db.Column(db.Text))
 
+    impact = db.Column(db.Float)
+    impact_rank = db.Column(db.Integer)
+
     num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
     num_downloads_score = db.Column(db.Float)
@@ -68,17 +71,16 @@ class Package(db.Model):
 
     neighborhood_size = db.Column(db.Float)
     indegree = db.Column(db.Float)
+    eccentricity = db.Column(db.Float)
+    knn = db.Column(db.Float)
+    closeness = db.Column(db.Float)
+
     num_stars = db.Column(db.Integer)
     summary = db.Column(db.Text)
-
-    impact = db.Column(db.Float)
-    impact_rank = db.Column(db.Integer)
 
     num_committers = db.Column(db.Integer)
     num_commits = db.Column(db.Integer)
     num_authors = db.Column(db.Integer)
-
-    inactive = db.Column(db.Text)
 
     rev_deps_tree = db.Column(JSONB)
     credit = db.Column(JSONB)
@@ -125,7 +127,7 @@ class Package(db.Model):
             "num_citations_percentile": self.num_citations_percentile,
             "pagerank": self.pagerank,
             "pagerank_score": self.pagerank_score,
-            "pagerank_percentile": self.calc_pagerank_percentile,
+            "pagerank_percentile": self.pagerank_percentile,
             "num_downloads": self.num_downloads,
             "num_downloads_score": self.num_downloads_score,
             "num_downloads_percentile": self.num_downloads_percentile,
@@ -592,14 +594,18 @@ class Package(db.Model):
             self.pagerank = our_igraph_data[self.project_name]["pagerank"]
             self.neighborhood_size = our_igraph_data[self.project_name]["neighborhood_size"]
             self.indegree = our_igraph_data[self.project_name]["indegree"]
+            self.eccentricity = our_igraph_data[self.project_name]["eccentricity"]
+            self.knn = our_igraph_data[self.project_name]["knn"]
+            self.closeness = our_igraph_data[self.project_name]["closeness"]  
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
         except KeyError:
-            print "pagerank of {} was not calculated".format(self.project_name)
+            print "network params for {} were not calculated".format(self.project_name)
             self.pagerank = None
             self.neighborhood_size = None
             self.indegree = None
-
-
+            self.eccentricity = None
+            self.knn = None
+            self.closeness = None            
 
 
     def refresh_github_ids(self):
@@ -911,6 +917,9 @@ def shortcut_igraph_data_dict():
     our_pageranks = our_graph.pagerank(implementation="prpack")
     our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
     our_indegree = our_graph.vs().indegree()
+    our_eccentricities = our_graph.eccentricity()
+    our_knn = our_graph.knn()[0]
+    our_closeness = our_graph.closeness(mode="IN")
 
     print "reformating data into dict ..."
     global our_igraph_data
@@ -919,7 +928,10 @@ def shortcut_igraph_data_dict():
         our_igraph_data[name] = {
             "pagerank": our_pageranks[i],
             "neighborhood_size": our_neighbourhood_size[i],
-            "indegree": our_indegree[i]
+            "indegree": our_indegree[i],
+            "eccentricity": our_eccentricities[i],
+            "knn": our_knn[i],
+            "closeness": our_closeness[i]
         }
 
     return our_igraph_data
