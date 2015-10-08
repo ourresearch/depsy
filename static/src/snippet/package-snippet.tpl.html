@@ -15,13 +15,16 @@
               ng-repeat="subscore in package.subscores">
             <div class="val {{ subscore.name }}" ng-if="subscore.val > 0">{{ format.short(subscore.val) }}</div>
             <div class="bar-outer">
-               <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
+               <div class="bar-inner {{ subscore.name }}" style="height: {{ subscore.score / 10 }}%;"></div>
             </div>
          </div>
       </div>
 
       <div class="rank">
-         #{{ format.commas(package.impact_rank) }}
+         <span class="octothorpe">#</span>
+         <span class="val">
+            {{ format.commas(package.impact_rank) }}
+         </span>
       </div>
 
    </span>

@@ -401,7 +401,7 @@ div.person-page .ti-page-body .packages {
   margin-left: 40px;
 }
 div.person-page .ti-page-body .packages div.person-package .person-package-stats {
-  padding: 42px 20px 0 0;
+  padding: 48px 10px 0 0;
   text-align: right;
   float: left;
 }
@@ -567,24 +567,27 @@ span.snippet span.left-metrics .rank {
   display: inline-block;
   width: 58px;
   text-align: right;
-  margin-top: 0;
+  margin-top: 14px;
+}
+span.snippet span.left-metrics .rank span.val {
+  font-size: 12px;
+  font-weight: bold;
+}
+span.snippet span.left-metrics .rank span.octothorpe {
+  font-size: 10px;
+  font-weight: 100;
 }
 span.snippet span.left-metrics .one-metric {
-  color: #333;
-  cursor: default;
-  font-size: 28px;
-  font-weight: 100;
-  margin-bottom: 5px;
   display: none;
 }
 span.snippet span.left-metrics .vis {
-  margin-top: 10px;
+  margin-top: 9px;
 }
 span.snippet span.left-metrics .vis .subscore {
   line-height: .7;
+  float: right;
 }
 span.snippet span.left-metrics .vis .subscore .val {
-  display: inline-block;
   display: none;
   font-size: 10px;
   width: 30px;
@@ -601,14 +604,18 @@ span.snippet span.left-metrics .vis .subscore .val.num_citations {
   color: #984ea3;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer {
-  width: 30px;
+  width: 8px;
   display: inline-block;
-  height: 10px;
+  height: 17px;
   background: #fafafa;
   text-align: right;
+  position: relative;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner {
-  height: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: inline-block;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_downloads {
