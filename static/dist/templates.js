@@ -81,6 +81,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
+    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -464,13 +465,16 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "              ng-repeat=\"subscore in package.subscores\">\n" +
     "            <div class=\"val {{ subscore.name }}\" ng-if=\"subscore.val > 0\">{{ format.short(subscore.val) }}</div>\n" +
     "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
     "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
     "      <div class=\"rank\">\n" +
-    "         #{{ format.commas(package.impact_rank) }}\n" +
+    "         <span class=\"octothorpe\">#</span>\n" +
+    "         <span class=\"val\">\n" +
+    "            {{ format.commas(package.impact_rank) }}\n" +
+    "         </span>\n" +
     "      </div>\n" +
     "\n" +
     "   </span>\n" +

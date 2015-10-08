@@ -188,9 +188,9 @@ class Package(db.Model):
     @property
     def subscores(self):
         names = [
-            "num_citations",
+            "num_downloads",
             "pagerank",
-            "num_downloads"
+            "num_citations"
         ]
         ret = []
         for name in names:
