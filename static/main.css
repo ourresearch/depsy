@@ -401,7 +401,7 @@ div.person-page .ti-page-body .packages {
   margin-left: 40px;
 }
 div.person-page .ti-page-body .packages div.person-package .person-package-stats {
-  padding: 48px 10px 0 0;
+  padding: 48px 15px 0 0;
   text-align: right;
   float: left;
 }
@@ -570,7 +570,7 @@ span.snippet span.left-metrics .rank {
   margin-top: 14px;
 }
 span.snippet span.left-metrics .rank span.val {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }
 span.snippet span.left-metrics .rank span.octothorpe {
