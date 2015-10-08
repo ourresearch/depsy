@@ -65,6 +65,44 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
+    @property
+    def subscores(self):
+        ret = []
+        ret.append({
+                "name": "num_citations",
+                "score": self.num_citations_score,
+                "val": None
+            })
+        ret.append({
+                "name": "pagerank",
+                "score": self.pagerank_score,
+                "val": None
+            })
+        ret.append({
+                "name": "num_downloads",
+                "score": self.num_downloads_score,
+                "val": None
+            })      
+
+        # select id, name, email, num_citations_score from person where is_organization=false and main_lanugage='python' order by num_downloads_score desc limit 5
+        maxes = {
+            "python": {
+                "num_citations": 1312.07783912007676,
+                "pagerank": 6828.41972274044019,
+                "num_downloads": 16419.5532038200363
+            },
+            "r": {
+                "num_citations": 1866,
+                "pagerank": 9270,
+                "num_downloads": 18213
+            }
+        }
+        for my_dict in ret:
+            if my_dict["score"]:
+                my_dict["score"] = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
+
+        return ret
+
     def to_dict(self, max_person_packages=None, include_top_collabs=True):
         ret = self.as_package_snippet
 
@@ -105,6 +143,9 @@ class Person(db.Model):
             ret["person_packages"] = [p.as_person_snippet for p in person_packages[0:person_packages_to_return]]
         else:
             ret["person_packages"] = [p.to_dict() for p in person_packages]
+
+
+        ret["subscores"] = self.subscores
 
         return ret
 

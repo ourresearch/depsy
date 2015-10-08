@@ -1247,7 +1247,7 @@ angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", fun
     "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
     "         <span class=\"name\">\n" +
     "            <i class=\"fa fa-download\"></i>\n" +
-    "            Downloads\n" +
+    "            Monthly Downloads\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
     "            <span class=\"val\">{{ format.short(package.num_downloads)}}</span>\n" +
@@ -1366,6 +1366,16 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         {{ format.short(person.impact) }}\n" +
     "      </span>\n" +
     "\n" +
+    "\n" +
+    "      <div class=\"vis\">\n" +
+    "         <div class=\"subscore {{ subscore.name }}\"\n" +
+    "              ng-repeat=\"subscore in person.subscores\">\n" +
+    "            <div class=\"val {{ subscore.name }}\" ng-if=\"subscore.val > 0\">{{ format.short(subscore.val) }}</div>\n" +
+    "            <div class=\"bar-outer\">\n" +
+    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
     "\n" +
     "      <span class=\"rank\">\n" +
     "         #{{ format.commas(person.impact_rank) }}\n" +
