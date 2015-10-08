@@ -918,8 +918,11 @@ def shortcut_igraph_data_dict():
     our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
     our_indegree = our_graph.vs().indegree()
     our_eccentricities = our_graph.eccentricity()
-    our_knn = our_graph.knn()[0]
     our_closeness = our_graph.closeness(mode="IN")
+
+    # do this one last because simplifying it modifies the graph
+    our_graph.simplify(multiple=False, loops=True, combine_edges=None)
+    our_knn = our_graph.knn()[0]
 
     print "reformating data into dict ..."
     global our_igraph_data
