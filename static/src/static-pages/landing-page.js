@@ -11,6 +11,21 @@ angular.module('staticPages', [
   })
 
 
+  .config(function($routeProvider) {
+    $routeProvider.when('/about', {
+      templateUrl: "static-pages/about.tpl.html",
+      controller: "StaticPageCtrl"
+    })
+  })
+
+  .controller("StaticPageCtrl", function($scope, ngProgress){
+      ngProgress.complete()
+  })
+
+
+
+
+
 
 
 
