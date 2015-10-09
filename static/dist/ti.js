@@ -687,6 +687,21 @@ angular.module('staticPages', [
   })
 
 
+  .config(function($routeProvider) {
+    $routeProvider.when('/about', {
+      templateUrl: "static-pages/about.tpl.html",
+      controller: "StaticPageCtrl"
+    })
+  })
+
+  .controller("StaticPageCtrl", function($scope, ngProgress){
+      ngProgress.complete()
+  })
+
+
+
+
+
 
 
 
@@ -812,7 +827,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -1507,11 +1522,27 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "");
 }]);
 
+angular.module("static-pages/about.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("static-pages/about.tpl.html",
+    "<div class=\"about-page static-page\">\n" +
+    "   <div class=\"coming-soon\">\n" +
+    "      <h1>Coming soon</h1>\n" +
+    "      <h2>Many explanations of many things.</h2>\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "");
+}]);
+
 angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("static-pages/landing.tpl.html",
-    "<div class=\"landing\">\n" +
+    "<div class=\"landing static-page\">\n" +
     "   <div class=\"tagline\">\n" +
-    "      Find the impact of software packages for Python and R.\n" +
+    "      foo Find the impact of software packages for Python and R.\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
