@@ -72,8 +72,8 @@ class Package(db.Model):
     neighborhood_size = db.Column(db.Float)
     indegree = db.Column(db.Float)
     eccentricity = db.Column(db.Float)
-    knn = db.Column(db.Float)
     closeness = db.Column(db.Float)
+    betweenness = db.Column(db.Float)
     max_path_length = db.Column(db.Integer)
     avg_path_length = db.Column(db.Float)
     longest_path = db.Column(JSONB)
@@ -599,8 +599,8 @@ class Package(db.Model):
             self.neighborhood_size = our_igraph_data[self.project_name]["neighborhood_size"]
             self.indegree = our_igraph_data[self.project_name]["indegree"]
             self.eccentricity = our_igraph_data[self.project_name]["eccentricity"]
-            self.knn = our_igraph_data[self.project_name]["knn"]
             self.closeness = our_igraph_data[self.project_name]["closeness"]  
+            self.betweenness = our_igraph_data[self.project_name]["betweenness"]  
             self.longest_path = our_igraph_data[self.project_name]["longest_path"]  
             self.max_path_length = our_igraph_data[self.project_name]["max_path_length"]  
             self.avg_path_length = our_igraph_data[self.project_name]["avg_path_length"]  
@@ -611,8 +611,8 @@ class Package(db.Model):
             self.neighborhood_size = None
             self.indegree = None
             self.eccentricity = None
-            self.knn = None
             self.closeness = None            
+            self.betweenness = None            
             self.longest_path = None            
             self.max_path_length = None            
             self.avg_path_length = None            
@@ -927,8 +927,9 @@ def shortcut_igraph_data_dict():
     our_pageranks = our_graph.pagerank(implementation="prpack")
     our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
     our_indegree = our_graph.vs().indegree()
-    our_eccentricities = our_graph.eccentricity()
+    our_eccentricities = our_graph.eccentricity(mode="IN")
     our_closeness = our_graph.closeness(mode="IN")
+    our_betweenness = our_graph.betweenness()
 
     our_longest_paths = defaultdict(str)
     our_max_path_lengths = defaultdict(int)
@@ -948,10 +949,6 @@ def shortcut_igraph_data_dict():
         our_max_path_lengths[name] = max(list_of_lengths)
         our_avg_path_lengths[name] = float(sum(list_of_lengths))/len(list_of_lengths)
 
-    # do this one last because simplifying it modifies the graph
-    our_graph.simplify(multiple=False, loops=True, combine_edges=None)
-    our_knn = our_graph.knn()[0]
-
     print "reformating data into dict ..."
     global our_igraph_data
     our_igraph_data = {}
@@ -961,8 +958,8 @@ def shortcut_igraph_data_dict():
             "neighborhood_size": our_neighbourhood_size[i],
             "indegree": our_indegree[i],
             "eccentricity": our_eccentricities[i],
-            "knn": our_knn[i],
             "closeness": our_closeness[i],
+            "betweenness": our_betweeness[i],
             "longest_path": our_longest_paths[name],  #was stored in a dict
             "max_path_length": our_max_path_lengths[name], #was stored in a dict
             "avg_path_length": our_avg_path_lengths[name]  #was stored in a dict
