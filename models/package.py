@@ -74,10 +74,10 @@ class Package(db.Model):
     eccentricity = db.Column(db.Float)
     knn = db.Column(db.Float)
     closeness = db.Column(db.Float)
-
     max_path_length = db.Column(db.Integer)
     avg_path_length = db.Column(db.Float)
     longest_path = db.Column(JSONB)
+    avg_outdegree_of_indegrees = db.Column(db.Float)
 
     num_stars = db.Column(db.Integer)
     summary = db.Column(db.Text)
