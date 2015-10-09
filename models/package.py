@@ -959,7 +959,7 @@ def shortcut_igraph_data_dict():
             "indegree": our_indegree[i],
             "eccentricity": our_eccentricities[i],
             "closeness": our_closeness[i],
-            "betweenness": our_betweeness[i],
+            "betweenness": our_betweenness[i],
             "longest_path": our_longest_paths[name],  #was stored in a dict
             "max_path_length": our_max_path_lengths[name], #was stored in a dict
             "avg_path_length": our_avg_path_lengths[name]  #was stored in a dict
