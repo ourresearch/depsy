@@ -2,8 +2,9 @@
      ng-controller="personSnippetCtrl">
    <span class="left-metrics"
          popover-placement="top"
+         popover-title="Impact"
          popover-trigger="mouseenter"
-         popover-template="'snippet/impact-popover.tpl.html'">
+         popover-template="'snippet/person-impact-popover.tpl.html'">
 
       <span class="one-metric metric">
          {{ format.short(person.impact) }}
