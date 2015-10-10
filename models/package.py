@@ -968,9 +968,9 @@ def shortcut_igraph_data_dict():
         first_order_neighbours = our_graph.neighbors(v, mode="IN")
         if first_order_neighbours:
             for v_index in first_order_neighbours:
-                sum_outdegree_of_indegrees += our_outdegrees[v_index]
+                sum_outdegree_of_indegrees += our_outdegree[v_index]
                 sum_pagerank_of_indegrees += our_pageranks[v_index]
-            our_outdegrees_of_indegrees[name] = sum_outdegree_of_indegrees / len(first_order_neighbours)
+            our_outdegree_of_indegrees[name] = sum_outdegree_of_indegrees / len(first_order_neighbours)
             our_pagerank_of_indegrees[name] = sum_pagerank_of_indegrees / len(first_order_neighbours)
         else:
             our_outdegree_of_indegrees[name] = None
@@ -990,8 +990,8 @@ def shortcut_igraph_data_dict():
             "eigenvector_centrality": our_eigenvector_centrality[i],
             "longest_path": our_longest_paths[name],  #was stored in a dict
             "max_path_length": our_max_path_lengths[name], #was stored in a dict
-            "avg_path_length": our_avg_path_lengths[name]  #was stored in a dict
-            "avg_outdegree_of_indegrees": our_outdegree_of_indegrees[name]  #was stored in a dict
+            "avg_path_length": our_avg_path_lengths[name],  #was stored in a dict
+            "avg_outdegree_of_indegrees": our_outdegree_of_indegrees[name],  #was stored in a dict
             "avg_pagerank_of_indegrees": our_pagerank_of_indegrees[name]  #was stored in a dict
         }
 
