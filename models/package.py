@@ -607,6 +607,8 @@ class Package(db.Model):
             self.longest_path = our_igraph_data[self.project_name]["longest_path"]  
             self.max_path_length = our_igraph_data[self.project_name]["max_path_length"]  
             self.avg_path_length = our_igraph_data[self.project_name]["avg_path_length"]  
+            self.avg_outdegree_of_indegrees = our_igraph_data[self.project_name]["avg_outdegree_of_indegrees"]  
+            self.avg_pagerank_of_indegrees = our_igraph_data[self.project_name]["avg_pagerank_of_indegrees"]  
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
         except KeyError:
             print "network params for {} were not calculated".format(self.project_name)
@@ -620,6 +622,8 @@ class Package(db.Model):
             self.longest_path = None            
             self.max_path_length = None            
             self.avg_path_length = None            
+            self.avg_outdegree_of_indegrees = None            
+            self.avg_pagerank_of_indegrees = None            
 
 
     def refresh_github_ids(self):
@@ -931,6 +935,7 @@ def shortcut_igraph_data_dict():
     our_pageranks = our_graph.pagerank(implementation="prpack")
     our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
     our_indegree = our_graph.vs().indegree()
+    our_outdegree = our_graph.vs().outdegree()
     our_eccentricities = our_graph.eccentricity(mode="IN")
     our_closeness = our_graph.closeness(mode="IN")
     our_betweenness = our_graph.betweenness()
@@ -939,6 +944,10 @@ def shortcut_igraph_data_dict():
     our_longest_paths = defaultdict(str)
     our_max_path_lengths = defaultdict(int)
     our_avg_path_lengths = defaultdict(int)
+    our_outdegree_of_indegrees = defaultdict(int)
+    our_pagerank_of_indegrees = defaultdict(int)
+    avg_outdegree_of_indegrees = defaultdict(int)
+    avg_pagerank_of_indegrees = defaultdict(int)
 
     for v in our_graph.vs():
         name = v["name"]
@@ -954,13 +963,17 @@ def shortcut_igraph_data_dict():
         our_max_path_lengths[name] = max(list_of_lengths)
         our_avg_path_lengths[name] = float(sum(list_of_lengths))/len(list_of_lengths)
 
+        sum_outdegree_of_indegrees = 0
         sum_pagerank_of_indegrees = 0
         first_order_neighbours = our_graph.neighbors(v, mode="IN")
         if first_order_neighbours:
             for v_index in first_order_neighbours:
+                sum_outdegree_of_indegrees += our_outdegree[v_index]
                 sum_pagerank_of_indegrees += our_pageranks[v_index]
+            our_outdegree_of_indegrees[name] = sum_outdegree_of_indegrees / len(first_order_neighbours)
             our_pagerank_of_indegrees[name] = sum_pagerank_of_indegrees / len(first_order_neighbours)
         else:
+            our_outdegree_of_indegrees[name] = None
             our_pagerank_of_indegrees[name] = None
 
     print "reformating data into dict ..."
@@ -977,7 +990,9 @@ def shortcut_igraph_data_dict():
             "eigenvector_centrality": our_eigenvector_centrality[i],
             "longest_path": our_longest_paths[name],  #was stored in a dict
             "max_path_length": our_max_path_lengths[name], #was stored in a dict
-            "avg_path_length": our_avg_path_lengths[name]  #was stored in a dict
+            "avg_path_length": our_avg_path_lengths[name],  #was stored in a dict
+            "avg_outdegree_of_indegrees": our_outdegree_of_indegrees[name],  #was stored in a dict
+            "avg_pagerank_of_indegrees": our_pagerank_of_indegrees[name]  #was stored in a dict
         }
 
     return our_igraph_data
