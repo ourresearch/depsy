@@ -69,8 +69,8 @@ class Person(db.Model):
     def subscores(self):
         ret = []
         ret.append({
-                "name": "num_citations",
-                "score": self.num_citations_score,
+                "name": "num_downloads",
+                "score": self.num_downloads_score,
                 "val": None
             })
         ret.append({
@@ -79,10 +79,10 @@ class Person(db.Model):
                 "val": None
             })
         ret.append({
-                "name": "num_downloads",
-                "score": self.num_downloads_score,
+                "name": "num_citations",
+                "score": self.num_citations_score,
                 "val": None
-            })      
+            })
 
         # select id, name, email, num_citations_score from person where is_organization=false and main_lanugage='python' order by num_downloads_score desc limit 5
         maxes = {

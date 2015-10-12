@@ -910,6 +910,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
+    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -1430,9 +1431,8 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "      <div class=\"vis\">\n" +
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
     "              ng-repeat=\"subscore in person.subscores\">\n" +
-    "            <div class=\"val {{ subscore.name }}\" ng-if=\"subscore.val > 0\">{{ format.short(subscore.val) }}</div>\n" +
     "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
     "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +

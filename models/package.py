@@ -166,8 +166,8 @@ class Package(db.Model):
             "language": self.language,
             "is_academic": self.is_academic,
 
-            "impact": self.impact,
             "impact_rank": self.impact_rank,
+            "impact": self.impact,
             "impact_rank_max": self.impact_rank_max,
             "pagerank_score": self.pagerank_score,
             "num_downloads_score": self.num_downloads_score,
