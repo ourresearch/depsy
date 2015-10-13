@@ -80,6 +80,8 @@ class Package(db.Model):
     longest_path = db.Column(JSONB)
     avg_outdegree_of_indegrees = db.Column(db.Float)
     avg_pagerank_of_indegrees = db.Column(db.Float)
+    higher_pagerank_neighborhood_size = db.Column(db.Integer)
+    academic_neighborhood_size = db.Column(db.Integer)
 
     num_stars = db.Column(db.Integer)
     summary = db.Column(db.Text)
@@ -609,6 +611,8 @@ class Package(db.Model):
             self.avg_path_length = our_igraph_data[self.project_name]["avg_path_length"]  
             self.avg_outdegree_of_indegrees = our_igraph_data[self.project_name]["avg_outdegree_of_indegrees"]  
             self.avg_pagerank_of_indegrees = our_igraph_data[self.project_name]["avg_pagerank_of_indegrees"]  
+            self.higher_pagerank_neighborhood_size = our_igraph_data[self.project_name]["higher_pagerank_neighborhood_size"]  
+            self.academic_neighborhood_size = our_igraph_data[self.project_name]["academic_neighborhood_size"]  
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
         except KeyError:
             print "network params for {} were not calculated".format(self.project_name)
@@ -624,6 +628,8 @@ class Package(db.Model):
             self.avg_path_length = None            
             self.avg_outdegree_of_indegrees = None            
             self.avg_pagerank_of_indegrees = None            
+            self.higher_pagerank_neighborhood_size = None
+            self.academic_neighborhood_size = None
 
 
     def refresh_github_ids(self):
@@ -927,13 +933,16 @@ def make_language(host_or_language):
 
 def shortcut_igraph_data_dict():
 
+    print "loading is_academic"
+    academic_package_ids = db.session.query(Package(id)).filter(Package.is_academic==True)
+
     print "loading text dataset into igraph"
     our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
 
     print "loaded, now calculating..."
     our_vertice_names = our_graph.vs()["name"]
     our_pageranks = our_graph.pagerank(implementation="prpack")
-    our_neighbourhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
+    our_neighborhood_size = our_graph.neighborhood_size(our_graph.vs(), mode="IN", order=100)
     our_indegree = our_graph.vs().indegree()
     our_outdegree = our_graph.vs().outdegree()
     our_eccentricities = our_graph.eccentricity(mode="IN")
@@ -948,6 +957,8 @@ def shortcut_igraph_data_dict():
     our_pagerank_of_indegrees = defaultdict(int)
     avg_outdegree_of_indegrees = defaultdict(int)
     avg_pagerank_of_indegrees = defaultdict(int)
+    higher_pagerank_neighborhood_size = defaultdict(int)
+    academic_neighborhood_size = defaultdict(int)
 
     for v in our_graph.vs():
         name = v["name"]
@@ -976,13 +987,24 @@ def shortcut_igraph_data_dict():
             our_outdegree_of_indegrees[name] = None
             our_pagerank_of_indegrees[name] = None
 
+        higher_pagerank_neighborhood_size[name] = 0
+        academic_neighborhood_size[name] = 0
+        neighborhood = our_graph.neighborhood(v, mode="IN")
+        if neighborhood:
+            for v_index in neighborhood:
+                if our_pageranks[v_index] >= our_pageranks[name]:
+                    higher_pagerank_neighborhood_size[name] += 1
+                if our_vertice_names[v_index] in academic_package_ids:
+                    academic_neighborhood_size[name] += 1
+
+
     print "reformating data into dict ..."
     global our_igraph_data
     our_igraph_data = {}
     for (i, name) in enumerate(our_vertice_names):
         our_igraph_data[name] = {
             "pagerank": our_pageranks[i],
-            "neighborhood_size": our_neighbourhood_size[i],
+            "neighborhood_size": our_neighborhood_size[i],
             "indegree": our_indegree[i],
             "eccentricity": our_eccentricities[i],
             "closeness": our_closeness[i],
@@ -992,7 +1014,9 @@ def shortcut_igraph_data_dict():
             "max_path_length": our_max_path_lengths[name], #was stored in a dict
             "avg_path_length": our_avg_path_lengths[name],  #was stored in a dict
             "avg_outdegree_of_indegrees": our_outdegree_of_indegrees[name],  #was stored in a dict
-            "avg_pagerank_of_indegrees": our_pagerank_of_indegrees[name]  #was stored in a dict
+            "avg_pagerank_of_indegrees": our_pagerank_of_indegrees[name],  #was stored in a dict
+            "higher_pagerank_neighborhood_size": our_higher_pagerank_neighborhood_size[name],  #was stored in a dict
+            "academic_neighborhood_size": our_academic_neighborhood_size[name]  #was stored in a dict
         }
 
     return our_igraph_data
