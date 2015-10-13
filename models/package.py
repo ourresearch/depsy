@@ -80,6 +80,7 @@ class Package(db.Model):
     longest_path = db.Column(JSONB)
     avg_outdegree_of_neighbors = db.Column(db.Float)
     avg_pagerank_of_neighbors = db.Column(db.Float)
+    higher_pagerank_neighbors = db.Column(JSONB)
     higher_pagerank_neighborhood_size = db.Column(db.Integer)
     academic_neighborhood_size = db.Column(db.Integer)
 
@@ -612,6 +613,7 @@ class Package(db.Model):
             self.avg_outdegree_of_neighbors = our_igraph_data[self.project_name]["avg_outdegree_of_neighbors"]  
             self.avg_pagerank_of_neighbors = our_igraph_data[self.project_name]["avg_pagerank_of_neighbors"]  
             self.higher_pagerank_neighborhood_size = our_igraph_data[self.project_name]["higher_pagerank_neighborhood_size"]  
+            self.higher_pagerank_neighbors = our_igraph_data[self.project_name]["higher_pagerank_neighbors"]  
             self.academic_neighborhood_size = our_igraph_data[self.project_name]["academic_neighborhood_size"]  
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
         except KeyError:
@@ -629,6 +631,7 @@ class Package(db.Model):
             self.avg_outdegree_of_neighbors = None            
             self.avg_pagerank_of_neighbors = None            
             self.higher_pagerank_neighborhood_size = None
+            self.higher_pagerank_neighbors = None
             self.academic_neighborhood_size = None
 
 
@@ -935,7 +938,9 @@ def shortcut_igraph_data_dict():
 
     print "loading is_academic"
     # todo: need to make this specific to the host
-    academic_package_names = db.session.query(Package.project_name).filter(Package.is_academic==True).all()
+    rows = db.session.query(Package.project_name).filter(Package.is_academic==True).all()
+    academic_package_names = [row[0] for row in rows]
+    print "first few academic_package_names:", academic_package_names[0:10]
 
     print "loading text dataset into igraph"
     our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
@@ -957,6 +962,7 @@ def shortcut_igraph_data_dict():
     our_outdegree_of_neighbors = defaultdict(int)
     our_pagerank_of_neighbors = defaultdict(int)
     our_higher_pagerank_neighborhood_size = defaultdict(int)
+    our_higher_pagerank_neighbors = defaultdict(list)
     our_academic_neighborhood_size = defaultdict(int)
 
     for v in our_graph.vs():
@@ -991,12 +997,19 @@ def shortcut_igraph_data_dict():
         neighborhood = our_graph.neighborhood(v, mode="IN")
         if neighborhood:
             for neighbor_index in neighborhood:
+                if neighbor_index == v.index:
+                    # this is us.  skip.
+                    continue
+
                 if our_pageranks[neighbor_index] >= our_pageranks[v.index]:
                     our_higher_pagerank_neighborhood_size[name] += 1
+
                 neighbor_package_name = our_vertice_names[neighbor_index]
+
                 if neighbor_package_name in academic_package_names:
                     print "found an academic one!", neighbor_package_id
                     our_academic_neighborhood_size[name] += 1
+                    our_higher_pagerank_neighbors[name].append(neighbor_package_name)
 
 
     print "reformating data into dict ..."
@@ -1016,6 +1029,7 @@ def shortcut_igraph_data_dict():
             "avg_path_length": our_avg_path_lengths[name],  #was stored in a dict
             "avg_outdegree_of_neighbors": our_outdegree_of_neighbors[name],  #was stored in a dict
             "avg_pagerank_of_neighbors": our_pagerank_of_neighbors[name],  #was stored in a dict
+            "higher_pagerank_neighbors": our_higher_pagerank_neighbors[name],  #was stored in a dict
             "higher_pagerank_neighborhood_size": our_higher_pagerank_neighborhood_size[name],  #was stored in a dict
             "academic_neighborhood_size": our_academic_neighborhood_size[name]  #was stored in a dict
         }
