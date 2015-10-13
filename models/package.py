@@ -1007,7 +1007,6 @@ def shortcut_igraph_data_dict():
                 neighbor_package_name = our_vertice_names[neighbor_index]
 
                 if neighbor_package_name in academic_package_names:
-                    print "found an academic one!", neighbor_package_id
                     our_academic_neighborhood_size[name] += 1
                     our_higher_pagerank_neighbors[name].append(neighbor_package_name)
 
