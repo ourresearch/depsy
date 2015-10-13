@@ -934,7 +934,7 @@ def make_language(host_or_language):
 def shortcut_igraph_data_dict():
 
     print "loading is_academic"
-    academic_package_ids = db.session.query(Package(id)).filter(Package.is_academic==True)
+    academic_package_ids = db.session.query(Package.id).filter(Package.is_academic==True)
 
     print "loading text dataset into igraph"
     our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
