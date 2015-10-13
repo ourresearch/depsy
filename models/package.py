@@ -978,9 +978,9 @@ def shortcut_igraph_data_dict():
         sum_pagerank_of_indegrees = 0
         first_order_neighbours = our_graph.neighbors(v, mode="IN")
         if first_order_neighbours:
-            for v_index in first_order_neighbours:
-                sum_outdegree_of_indegrees += our_outdegree[v_index]
-                sum_pagerank_of_indegrees += our_pageranks[v_index]
+            for neighbor_index in first_order_neighbours:
+                sum_outdegree_of_indegrees += our_outdegree[neighbor_index]
+                sum_pagerank_of_indegrees += our_pageranks[neighbor_index]
             our_outdegree_of_indegrees[name] = sum_outdegree_of_indegrees / len(first_order_neighbours)
             our_pagerank_of_indegrees[name] = sum_pagerank_of_indegrees / len(first_order_neighbours)
         else:
@@ -991,10 +991,10 @@ def shortcut_igraph_data_dict():
         academic_neighborhood_size[name] = 0
         neighborhood = our_graph.neighborhood(v, mode="IN")
         if neighborhood:
-            for v_index in neighborhood:
-                if our_pageranks[v_index] >= our_pageranks[name]:
+            for neighbor_index in neighborhood:
+                if our_pageranks[neighbor_index] >= our_pageranks[v.index]:
                     higher_pagerank_neighborhood_size[name] += 1
-                if our_vertice_names[v_index] in academic_package_ids:
+                if our_vertice_names[neighbor_index] in academic_package_ids:
                     academic_neighborhood_size[name] += 1
 
 
