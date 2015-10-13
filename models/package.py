@@ -934,7 +934,8 @@ def make_language(host_or_language):
 def shortcut_igraph_data_dict():
 
     print "loading is_academic"
-    academic_package_ids = db.session.query(Package.id).filter(Package.is_academic==True).all()
+    # todo: need to make this specific to the host
+    academic_package_names = db.session.query(Package.project_name).filter(Package.is_academic==True).all()
 
     print "loading text dataset into igraph"
     our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
@@ -992,10 +993,8 @@ def shortcut_igraph_data_dict():
             for neighbor_index in neighborhood:
                 if our_pageranks[neighbor_index] >= our_pageranks[v.index]:
                     our_higher_pagerank_neighborhood_size[name] += 1
-                neighbor_package_id = "{host}:{name}".format(
-                    host=self.host, 
-                    name=our_vertice_names[neighbor_index])
-                if neighbor_package_id in academic_package_ids:
+                neighbor_package_name = our_vertice_names[neighbor_index]
+                if neighbor_package_name in academic_package_names:
                     print "found an academic one!", neighbor_package_id
                     our_academic_neighborhood_size[name] += 1
 
