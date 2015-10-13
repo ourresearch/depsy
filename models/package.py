@@ -992,8 +992,6 @@ def shortcut_igraph_data_dict():
             our_outdegree_of_neighbors[name] = None
             our_pagerank_of_neighbors[name] = None
 
-        our_higher_pagerank_neighborhood_size[name] = 0
-        our_academic_neighborhood_size[name] = 0
         neighborhood = our_graph.neighborhood(v, mode="IN")
         if neighborhood:
             for neighbor_index in neighborhood:
@@ -1003,12 +1001,11 @@ def shortcut_igraph_data_dict():
 
                 if our_pageranks[neighbor_index] >= our_pageranks[v.index]:
                     our_higher_pagerank_neighborhood_size[name] += 1
+                    our_higher_pagerank_neighbors[name].append(neighbor_package_name)
 
                 neighbor_package_name = our_vertice_names[neighbor_index]
-
                 if neighbor_package_name in academic_package_names:
                     our_academic_neighborhood_size[name] += 1
-                    our_higher_pagerank_neighbors[name].append(neighbor_package_name)
 
 
     print "reformating data into dict ..."
