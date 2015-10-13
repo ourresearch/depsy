@@ -934,7 +934,7 @@ def make_language(host_or_language):
 def shortcut_igraph_data_dict():
 
     print "loading is_academic"
-    academic_package_ids = db.session.query(Package.id).filter(Package.is_academic==True)
+    academic_package_ids = db.session.query(Package.id).filter(Package.is_academic==True).all()
 
     print "loading text dataset into igraph"
     our_graph = igraph.read("dep_nodes_ncol.txt", format="ncol", directed=True, names=True)
@@ -964,7 +964,7 @@ def shortcut_igraph_data_dict():
         name = v["name"]
         if v["name"].startswith("github"):
             continue
-        # print v["name"]
+        print v["name"]
         paths = our_graph.get_all_shortest_paths(v, mode="IN")
         longest_path_indices = sorted(paths, key=len, reverse=True)[0]
         longest_path_names = our_graph.vs()[longest_path_indices]["name"]
