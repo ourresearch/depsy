@@ -78,8 +78,8 @@ class Package(db.Model):
     max_path_length = db.Column(db.Integer)
     avg_path_length = db.Column(db.Float)
     longest_path = db.Column(JSONB)
-    avg_outdegree_of_indegrees = db.Column(db.Float)
-    avg_pagerank_of_indegrees = db.Column(db.Float)
+    avg_outdegree_of_neighbors = db.Column(db.Float)
+    avg_pagerank_of_neighbors = db.Column(db.Float)
     higher_pagerank_neighborhood_size = db.Column(db.Integer)
     academic_neighborhood_size = db.Column(db.Integer)
 
@@ -609,8 +609,8 @@ class Package(db.Model):
             self.longest_path = our_igraph_data[self.project_name]["longest_path"]  
             self.max_path_length = our_igraph_data[self.project_name]["max_path_length"]  
             self.avg_path_length = our_igraph_data[self.project_name]["avg_path_length"]  
-            self.avg_outdegree_of_indegrees = our_igraph_data[self.project_name]["avg_outdegree_of_indegrees"]  
-            self.avg_pagerank_of_indegrees = our_igraph_data[self.project_name]["avg_pagerank_of_indegrees"]  
+            self.avg_outdegree_of_neighbors = our_igraph_data[self.project_name]["avg_outdegree_of_neighbors"]  
+            self.avg_pagerank_of_neighbors = our_igraph_data[self.project_name]["avg_pagerank_of_neighbors"]  
             self.higher_pagerank_neighborhood_size = our_igraph_data[self.project_name]["higher_pagerank_neighborhood_size"]  
             self.academic_neighborhood_size = our_igraph_data[self.project_name]["academic_neighborhood_size"]  
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
@@ -626,8 +626,8 @@ class Package(db.Model):
             self.longest_path = None            
             self.max_path_length = None            
             self.avg_path_length = None            
-            self.avg_outdegree_of_indegrees = None            
-            self.avg_pagerank_of_indegrees = None            
+            self.avg_outdegree_of_neighbors = None            
+            self.avg_pagerank_of_neighbors = None            
             self.higher_pagerank_neighborhood_size = None
             self.academic_neighborhood_size = None
 
@@ -953,12 +953,10 @@ def shortcut_igraph_data_dict():
     our_longest_paths = defaultdict(str)
     our_max_path_lengths = defaultdict(int)
     our_avg_path_lengths = defaultdict(int)
-    our_outdegree_of_indegrees = defaultdict(int)
-    our_pagerank_of_indegrees = defaultdict(int)
-    avg_outdegree_of_indegrees = defaultdict(int)
-    avg_pagerank_of_indegrees = defaultdict(int)
-    higher_pagerank_neighborhood_size = defaultdict(int)
-    academic_neighborhood_size = defaultdict(int)
+    our_outdegree_of_neighbors = defaultdict(int)
+    our_pagerank_of_neighbors = defaultdict(int)
+    our_higher_pagerank_neighborhood_size = defaultdict(int)
+    our_academic_neighborhood_size = defaultdict(int)
 
     for v in our_graph.vs():
         name = v["name"]
@@ -974,18 +972,18 @@ def shortcut_igraph_data_dict():
         our_max_path_lengths[name] = max(list_of_lengths)
         our_avg_path_lengths[name] = float(sum(list_of_lengths))/len(list_of_lengths)
 
-        sum_outdegree_of_indegrees = 0
-        sum_pagerank_of_indegrees = 0
+        sum_outdegree_of_neighbors = 0
+        sum_pagerank_of_neighbors = 0
         first_order_neighbours = our_graph.neighbors(v, mode="IN")
         if first_order_neighbours:
             for neighbor_index in first_order_neighbours:
-                sum_outdegree_of_indegrees += our_outdegree[neighbor_index]
-                sum_pagerank_of_indegrees += our_pageranks[neighbor_index]
-            our_outdegree_of_indegrees[name] = sum_outdegree_of_indegrees / len(first_order_neighbours)
-            our_pagerank_of_indegrees[name] = sum_pagerank_of_indegrees / len(first_order_neighbours)
+                sum_outdegree_of_neighbors += our_outdegree[neighbor_index]
+                sum_pagerank_of_neighbors += our_pageranks[neighbor_index]
+            our_outdegree_of_neighbors[name] = sum_outdegree_of_neighbors / len(first_order_neighbours)
+            our_pagerank_of_neighbors[name] = sum_pagerank_of_neighbors / len(first_order_neighbours)
         else:
-            our_outdegree_of_indegrees[name] = None
-            our_pagerank_of_indegrees[name] = None
+            our_outdegree_of_neighbors[name] = None
+            our_pagerank_of_neighbors[name] = None
 
         higher_pagerank_neighborhood_size[name] = 0
         academic_neighborhood_size[name] = 0
@@ -993,9 +991,9 @@ def shortcut_igraph_data_dict():
         if neighborhood:
             for neighbor_index in neighborhood:
                 if our_pageranks[neighbor_index] >= our_pageranks[v.index]:
-                    higher_pagerank_neighborhood_size[name] += 1
+                    our_higher_pagerank_neighborhood_size[name] += 1
                 if our_vertice_names[neighbor_index] in academic_package_ids:
-                    academic_neighborhood_size[name] += 1
+                    our_academic_neighborhood_size[name] += 1
 
 
     print "reformating data into dict ..."
@@ -1013,8 +1011,8 @@ def shortcut_igraph_data_dict():
             "longest_path": our_longest_paths[name],  #was stored in a dict
             "max_path_length": our_max_path_lengths[name], #was stored in a dict
             "avg_path_length": our_avg_path_lengths[name],  #was stored in a dict
-            "avg_outdegree_of_indegrees": our_outdegree_of_indegrees[name],  #was stored in a dict
-            "avg_pagerank_of_indegrees": our_pagerank_of_indegrees[name],  #was stored in a dict
+            "avg_outdegree_of_neighbors": our_outdegree_of_neighbors[name],  #was stored in a dict
+            "avg_pagerank_of_neighbors": our_pagerank_of_neighbors[name],  #was stored in a dict
             "higher_pagerank_neighborhood_size": our_higher_pagerank_neighborhood_size[name],  #was stored in a dict
             "academic_neighborhood_size": our_academic_neighborhood_size[name]  #was stored in a dict
         }
