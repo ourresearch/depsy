@@ -985,8 +985,8 @@ def shortcut_igraph_data_dict():
             our_outdegree_of_neighbors[name] = None
             our_pagerank_of_neighbors[name] = None
 
-        higher_pagerank_neighborhood_size[name] = 0
-        academic_neighborhood_size[name] = 0
+        our_higher_pagerank_neighborhood_size[name] = 0
+        our_academic_neighborhood_size[name] = 0
         neighborhood = our_graph.neighborhood(v, mode="IN")
         if neighborhood:
             for neighbor_index in neighborhood:

@@ -30,6 +30,6 @@ union
 	group by host, d.package
 )
 
-update package set avg_outdegree_of_indegrees=average_outdegree 
+update package set avg_outdegree_of_neighbors=average_outdegree 
 from average_outdegree_of_used_by
 where average_outdegree_of_used_by.id = package.id
