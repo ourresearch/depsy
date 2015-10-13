@@ -76,3 +76,5 @@ codekit*
 codekit-config.json
 static/codekit-config.json
 
+despy_env_params.sh
+dep_nodes_ncol.txt
