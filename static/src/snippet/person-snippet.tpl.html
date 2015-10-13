@@ -2,8 +2,9 @@
      ng-controller="personSnippetCtrl">
    <span class="left-metrics"
          popover-placement="top"
+         popover-title="Impact"
          popover-trigger="mouseenter"
-         popover-template="'snippet/impact-popover.tpl.html'">
+         popover-template="'snippet/person-impact-popover.tpl.html'">
 
       <span class="one-metric metric">
          {{ format.short(person.impact) }}
@@ -13,9 +14,8 @@
       <div class="vis">
          <div class="subscore {{ subscore.name }}"
               ng-repeat="subscore in person.subscores">
-            <div class="val {{ subscore.name }}" ng-if="subscore.val > 0">{{ format.short(subscore.val) }}</div>
             <div class="bar-outer">
-               <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
+               <div class="bar-inner {{ subscore.name }}" style="height: {{ subscore.score / 10 }}%;"></div>
             </div>
          </div>
       </div>

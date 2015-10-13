@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -81,6 +81,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
+    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -405,9 +406,9 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "");
 }]);
 
-angular.module("snippet/impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("snippet/impact-popover.tpl.html",
-    "<div id=\"impact-popover\">\n" +
+angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/package-impact-popover.tpl.html",
+    "<div class=\"package impact-popover\">\n" +
     "   <div class=\"impact\">\n" +
     "\n" +
     "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
@@ -452,7 +453,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "   <span class=\"left-metrics\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
     "         popover-title=\"Impact\"\n" +
-    "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
+    "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"one-metric metric\">\n" +
     "         {{ format.short(package.impact) }}\n" +
@@ -532,6 +533,47 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "");
 }]);
 
+angular.module("snippet/person-impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("snippet/person-impact-popover.tpl.html",
+    "<div class=\"person impact-popover\">\n" +
+    "   coming soon...\n" +
+    "   <div class=\"impact\">\n" +
+    "\n" +
+    "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-file-text-o\"></i>\n" +
+    "            Citations\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ package.num_citations }}</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score pagerank metric\" ng-show=\"package.pagerank\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-exchange\"></i>\n" +
+    "            Dependency PageRank\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ format.short(package.pagerank_score) }} </span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
+    "         <span class=\"name\">\n" +
+    "            <i class=\"fa fa-download\"></i>\n" +
+    "            Monthly Downloads\n" +
+    "         </span>\n" +
+    "         <span class=\"descr\">\n" +
+    "            <span class=\"val\">{{ format.short(package.num_downloads)}}</span>\n" +
+    "         </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
+    "   </div>\n" +
+    "</div>");
+}]);
+
 angular.module("snippet/person-mini.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("snippet/person-mini.tpl.html",
     "<span class=\"person-mini-insides\"\n" +
@@ -548,8 +590,9 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "     ng-controller=\"personSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\"\n" +
     "         popover-placement=\"top\"\n" +
+    "         popover-title=\"Impact\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
-    "         popover-template=\"'snippet/impact-popover.tpl.html'\">\n" +
+    "         popover-template=\"'snippet/person-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <span class=\"one-metric metric\">\n" +
     "         {{ format.short(person.impact) }}\n" +
@@ -559,9 +602,8 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "      <div class=\"vis\">\n" +
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
     "              ng-repeat=\"subscore in person.subscores\">\n" +
-    "            <div class=\"val {{ subscore.name }}\" ng-if=\"subscore.val > 0\">{{ format.short(subscore.val) }}</div>\n" +
     "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
     "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +
