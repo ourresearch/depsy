@@ -992,7 +992,11 @@ def shortcut_igraph_data_dict():
             for neighbor_index in neighborhood:
                 if our_pageranks[neighbor_index] >= our_pageranks[v.index]:
                     our_higher_pagerank_neighborhood_size[name] += 1
-                if our_vertice_names[neighbor_index] in academic_package_ids:
+                neighbor_package_id = "{host}:{name}".format(
+                    host=self.host, 
+                    name=our_vertice_names[neighbor_index])
+                if neighbor_package_id in academic_package_ids:
+                    print "found an academic one!", neighbor_package_id
                     our_academic_neighborhood_size[name] += 1
 
 
