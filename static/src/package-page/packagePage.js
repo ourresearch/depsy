@@ -29,6 +29,8 @@ angular.module('packagePage', [
     $scope.package = packageResp
     $scope.depNode = packageResp.rev_deps_tree
 
+    console.log("package page!", $scope.package)
+
 
 
 

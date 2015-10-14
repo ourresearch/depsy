@@ -1,19 +1,10 @@
 <div class="package-page sidebar-page">
 
 
-   <!--
-   <div class="coming-soon">
-      <h1>Coming soon :)</h1>
-      <h2>Check back here soon for summary, authors, impact details (downloads, dependency pagerank, citations) and dependency tree.</h2>
-
-   </div>
-   -->
-
-   <!--
    <div class="ti-page-sidebar">
       <div class="sidebar-header">
 
-         <div class="person-about">
+         <div class="about">
             <img ng-src="{{ person.icon }}" alt=""/>
             <div class="score">
                <span class="impact">
@@ -52,17 +43,9 @@
          </div>
       </div>
 
-      <div class="top-tags">
-         <h3>Top tags</h3>
-         <div class="tags">
-            <a class="tag" ng-repeat="tag in person.top_person_tags | orderBy: '-count'">
-               {{ tag.name }}
-            </a>
-         </div>
-      </div>
 
-      <div class="top-collabs">
-         <h3>Top collaborators</h3>
+      <div class="sidebar-section contribs">
+         <h3>Contributors</h3>
          <div class="tags">
             <a class="collab"
                popover="We collaborated"
@@ -78,10 +61,25 @@
             </a>
          </div>
       </div>
+
+
+
+      <div class="sidebar-section tags">
+         <h3>Tags</h3>
+         <div class="tags">
+            <a class="tag" ng-repeat="tag in package.tags">
+               {{ tag }}
+            </a>
+         </div>
+      </div>
+
+
    </div>
 
 
    <div class="ti-page-body">
+
+   <!--
 
       <div class="packages">
          <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
@@ -104,9 +102,9 @@
       </div>
 
 
+   -->
 
    </div>
 
-   -->
 
 </div>
