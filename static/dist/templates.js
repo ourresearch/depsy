@@ -169,19 +169,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "<div class=\"package-page sidebar-page\">\n" +
     "\n" +
     "\n" +
-    "   <!--\n" +
-    "   <div class=\"coming-soon\">\n" +
-    "      <h1>Coming soon :)</h1>\n" +
-    "      <h2>Check back here soon for summary, authors, impact details (downloads, dependency pagerank, citations) and dependency tree.</h2>\n" +
-    "\n" +
-    "   </div>\n" +
-    "   -->\n" +
-    "\n" +
-    "   <!--\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
     "      <div class=\"sidebar-header\">\n" +
     "\n" +
-    "         <div class=\"person-about\">\n" +
+    "         <div class=\"about\">\n" +
     "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
     "            <div class=\"score\">\n" +
     "               <span class=\"impact\">\n" +
@@ -220,17 +211,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"top-tags\">\n" +
-    "         <h3>Top tags</h3>\n" +
-    "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\" ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
-    "               {{ tag.name }}\n" +
-    "            </a>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
     "\n" +
-    "      <div class=\"top-collabs\">\n" +
-    "         <h3>Top collaborators</h3>\n" +
+    "      <div class=\"sidebar-section contribs\">\n" +
+    "         <h3>Contributors</h3>\n" +
     "         <div class=\"tags\">\n" +
     "            <a class=\"collab\"\n" +
     "               popover=\"We collaborated\"\n" +
@@ -246,10 +229,25 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            </a>\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "      <div class=\"sidebar-section tags\">\n" +
+    "         <h3>Tags</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
+    "               {{ tag }}\n" +
+    "            </a>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
     "   </div>\n" +
     "\n" +
     "\n" +
     "   <div class=\"ti-page-body\">\n" +
+    "\n" +
+    "   <!--\n" +
     "\n" +
     "      <div class=\"packages\">\n" +
     "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
@@ -272,10 +270,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "      </div>\n" +
     "\n" +
     "\n" +
+    "   -->\n" +
     "\n" +
     "   </div>\n" +
     "\n" +
-    "   -->\n" +
     "\n" +
     "</div>\n" +
     "");
