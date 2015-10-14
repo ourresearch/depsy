@@ -19,7 +19,6 @@ def is_academic_phrase(phrase):
         "genetics",
         # "analysis", 
         "department",
-        "dept of",
         "university",
         "formatics",
         "evolution",
@@ -29,6 +28,8 @@ def is_academic_phrase(phrase):
         "phd", 
         "postdoc", 
         "post-doc",
+
+        "doi",
 
         # "chemphys",  #cran tag         
         # "experimentaldesign", 

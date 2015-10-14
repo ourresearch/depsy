@@ -283,6 +283,49 @@ class Package(db.Model):
         people = list(set([c.person for c in self.contributions]))
         return people
 
+    def dedup_people(self):
+        all_people = self.all_people
+
+        people_by_name = defaultdict(list)
+        for person in all_people:
+            if person.name:
+                name_to_dedup = person.name.lower()
+                people_by_name[name_to_dedup].append(person)
+
+        for name, people_with_name in people_by_name.iteritems():
+            if len(people_with_name) <= 1:
+                # this name has no dups
+                pass
+            else:
+                people_with_github = [p for p in people_with_name if p.github_login]
+                people_with_no_github = [p for p in people_with_name if not p.github_login]
+
+                # don't merge people with github together
+                # so we only care about merging if there are people with no github
+                if people_with_no_github:
+                    if people_with_github:
+                        # merge people with no github into first person with github
+                        dedup_target = people_with_github[0]
+                        people_to_merge = people_with_no_github
+                    else:
+                        # pick first person with no github as target, rest as mergees
+                        dedup_target = people_with_no_github[0]
+                        people_to_merge = people_with_no_github[1:]
+
+                    print "dedup_target:", dedup_target
+                    print "people_to_merge", people_to_merge
+                    
+                    for person_to_delete in people_to_merge:
+                        contributions_to_change = person_to_delete.contributions
+                        for contrib in contributions_to_change:
+                            contrib.person = dedup_target
+                            db.session.add(contrib)
+                        print u"now going to delete {}".format(person_to_delete)
+                        db.session.delete(person_to_delete)
+
+                    # have to run set_credit on everything after this
+
+
     @property
     def all_authors(self):
         people = list(set([c.person for c in self.contributions if c.role=="author"]))
@@ -301,6 +344,7 @@ class Package(db.Model):
         self.credit = credit_dict
 
     def get_credit_for_person(self, person_id):
+        print "trying to get credit for package", self.id
         return self.credit[str(person_id)]
 
 
@@ -503,8 +547,8 @@ class Package(db.Model):
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
         sources_to_query = [
-                    full_text_source.Pmc
-                    # ,
+                    full_text_source.Ads
+                    # full_text_source.Pmc,
                     # full_text_source.Arxiv,
                     # full_text_source.Citeseer,
                 ]
