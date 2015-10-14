@@ -312,8 +312,8 @@ class Package(db.Model):
                         dedup_target = people_with_no_github[0]
                         people_to_merge = people_with_no_github[1:]
 
-                    print u"person we will marge into: {}".format(dedup_target)
-                    print u"people to merge: {}".format(people_to_merge)
+                    print u"person we will marge into: {}".format(dedup_target.id)
+                    print u"people to merge: {}".format([p.id for p in people_to_merge])
                     
                     for person_to_delete in people_to_merge:
                         contributions_to_change = person_to_delete.contributions
