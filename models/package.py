@@ -312,8 +312,8 @@ class Package(db.Model):
                         dedup_target = people_with_no_github[0]
                         people_to_merge = people_with_no_github[1:]
 
-                    print "dedup_target:", dedup_target
-                    print "people_to_merge", people_to_merge
+                    print u"person we will marge into: {}".format(dedup_target)
+                    print u"people to merge: {}".format(people_to_merge)
                     
                     for person_to_delete in people_to_merge:
                         contributions_to_change = person_to_delete.contributions
@@ -344,7 +344,6 @@ class Package(db.Model):
         self.credit = credit_dict
 
     def get_credit_for_person(self, person_id):
-        print "trying to get credit for package", self.id
         return self.credit[str(person_id)]
 
 
