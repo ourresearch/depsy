@@ -1,4 +1,4 @@
-<div class="package-page sidebar-page">
+<div class="page entity-page person-page">
 
 
    <div class="ti-page-sidebar">
@@ -16,7 +16,7 @@
             </div>
 
             <span class="name">
-               {{ person.name }}
+               {{ package.name }}
             </span>
             <span class="accounts">
                <i popover-title="Academic"
@@ -51,12 +51,12 @@
                popover="We collaborated"
                popover-trigger="mouseenter"
                popover-title="Top collaborator"
-               href="person/{{ collab.id }}"
-               ng-repeat="collab in person.top_collabs | orderBy: '-collab_score'">
-               <img src="{{ collab.icon_small }}" alt=""/>
-               <span class="impact">{{ format.short(collab.impact) }}</span>
-               <span class="name">{{ collab.name }}</span>
-               <span class="is-academic" ng-show="collab.is_academic"><i class="fa fa-graduation-cap"></i></span>
+               href="person/{{ contrib.id }}"
+               ng-repeat="contrib in package.top_contribs | orderBy: '-credit'">
+               <img src="{{ contrib.icon_small }}" alt=""/>
+               <span class="impact">{{ format.short(contrib.impact) }}</span>
+               <span class="name">{{ contrib.name }}</span>
+               <span class="is-academic" ng-show="contrib.is_academic"><i class="fa fa-graduation-cap"></i></span>
 
             </a>
          </div>
@@ -71,6 +71,22 @@
                {{ tag }}
             </a>
          </div>
+      </div>
+
+      <div class="sidebar-section actions">
+         <a class="json-link btn btn-default"
+            popover-title="View this page as JSON"
+            popover-placement="right"
+            popover-trigger="mouseenter"
+            target="_self"
+            popover="Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access."
+            href="api/package/{{ package.host }}/{{ package.name }}">
+            <i class="fa fa-download"></i>
+            JSON
+         </a>
+
+
+
       </div>
 
 
