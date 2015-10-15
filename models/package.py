@@ -121,41 +121,46 @@ class Package(db.Model):
         return "unknown"
 
 
-    def to_dict(self, full=True):
-        ret = {
-            "name": self.project_name,
-            "as_snippet": self.as_snippet,
-            "github_owner": self.github_owner,
-            "github_repo_name": self.github_repo_name,
-            "host": self.host,
-            "indegree": self.indegree,
-            "neighborhood_size": self.neighborhood_size,
-            "num_authors": self.num_authors,
-            "num_commits": self.num_commits,
-            "num_committers": self.num_committers,
-            "num_citations": self.num_citations,
-            "num_citations_score": self.num_citations_score,
-            "num_citations_percentile": self.num_citations_percentile,
-            "pagerank": self.pagerank,
-            "pagerank_score": self.pagerank_score,
-            "pagerank_percentile": self.pagerank_percentile,
-            "num_downloads": self.num_downloads,
-            "num_downloads_score": self.num_downloads_score,
-            "num_downloads_percentile": self.num_downloads_percentile,
-            "num_stars": self.num_stars,
-            "impact": self.impact,
-            "impact_rank": self.impact_rank,
-            "rev_deps_tree": self.tree,
-            "is_academic": self.is_academic,
 
-            # current implementation requires api_raw, so slows down db because deferred
-            # "source_url": self.source_url,  
+    def to_dict(self, exclude=None):
+        if exclude is None:
+            exclude = []
 
-            "summary": self.summary,
-            "tags": self.tags
-        }
+        property_names = [
+            "github_owner",
+            "github_repo_name",
+            "host",
+            "impact_rank",
+            "language",
+            "indegree",
+            "neighborhood_size",
+            "num_authors",
+            "num_commits",
+            "num_committers",
+            "num_stars",
+            "impact",
+            "tree",
+            "is_academic",
+            "summary",
+            "tags",
+            "subscores",
+            "contribs",
+            "top_contribs"
+        ]
+
+        ret = {}
+        for property_name in property_names:
+            if property_name not in exclude:
+                ret[property_name] = getattr(self, property_name)
+
+        # special cases
+        ret["name"] = self.project_name
+        if self.credit:
+            ret["num_contribs"] = len(self.credit)
+
 
         return ret
+
 
 
     @property
@@ -165,83 +170,62 @@ class Package(db.Model):
 
     @property
     def as_snippet_without_people(self):
-        ret = {
-            "_host_url": self.host_url,
-            "name": self.project_name,
-            "language": self.language,
-            "is_academic": self.is_academic,
-
-            "impact_rank": self.impact_rank,
-            "impact": self.impact,
-            "impact_rank_max": self.impact_rank_max,
-            "pagerank_score": self.pagerank_score,
-            "num_downloads_score": self.num_downloads_score,
-            "num_citations_score": self.num_citations_score,
-            "pagerank_percentile": self.pagerank_percentile,
-            "num_downloads_percentile": self.num_downloads_percentile,
-            "num_citations_percentile": self.num_citations_percentile,
-            "pagerank": self.pagerank,
-            "num_downloads": self.num_downloads,
-            "num_citations": self.num_citations,
-            "subscores": self.subscores,
-
-            "is_academic": self.is_academic,
-
-            "summary": prep_summary(self.summary),
-            "tags": self.tags
-        }
-        return ret
-
-    @property
-    def subscores(self):
-        names = [
-            "num_downloads",
-            "pagerank",
-            "num_citations"
-        ]
-        ret = []
-        for name in names:
-            if name == "pagerank":
-                score = self.pagerank_score
-            else:
-                score = getattr(self, name)
-
-            ret.append({
-                "name": name,
-                "score": getattr(self, name + "_score"),
-                "val": score
-            })
-
-        return ret
+        return self.to_dict(exclude=["contribs", "top_contribs", "tree"])
 
     @property
     def as_snippet(self):
-        ret = self.as_snippet_without_people
+        return self.to_dict(exclude=["contribs", "tree"])
 
-        # ret["contributions"] = defaultdict(list)
-        # for c in self.contributions:
-        #     ret["contributions"][c.role].append(u"{}: {}".format(
-        #         c.percent, c.person.display_name))
+    @property
+    def subscores(self):
+        ret = [
+            {
+                "name": "num_downloads",
+                "score": self.num_downloads_score,
+                "val": self.num_downloads,
+                "display_name": "Monthly downloads"
+            },
+            {
+                "name": "pagerank",
+                "score": self.pagerank_score,
+                "val": self.pagerank,
+                "display_name": "Dependency PageRank"
+            },
+            {
+                "name": "num_mentions",
+                "score": self.num_citations_score,
+                "val": self.num_citations,
+                "display_name": "Literature mentions"
+            }
+        ]
+        return ret
 
-        # for role in ret["contributions"]:
-        #     ret["contributions"][role].sort(reverse=True)
 
+    @property
+    def top_contribs(self):
+        return self.contribs[0:5]
 
-        ret["contribs"] = []
-        if self.credit:
-            ret["num_contributors"] = len(self.credit)
-            top_five_people = sorted(self.credit, key=self.credit.get, reverse=True)[0:5]
+    @property
+    def contribs(self):
+        if not self.credit:
+            return []
 
-            for person_id in top_five_people:
-                person_id = int(person_id)
-                person = Person.query.get(person_id)
-                person_snippet = person.as_package_snippet
-                person_snippet["credit"] = self.credit[str(person_id)]
-                person_snippet["roles"] = []
-                for contrib in self.contributions:
-                    if contrib.person_id == person_id:
-                        person_snippet["roles"].append(contrib.role)
-                ret["contribs"].append(person_snippet)
+        person_ids_sorted_by_credit = sorted(self.credit, key=self.credit.get, reverse=True)
+
+        ret = []
+        for person_id in person_ids_sorted_by_credit:
+            person_id = int(person_id)
+
+            # query is v. fast, cos Persons are in the Session (in memory).
+            person = Person.query.get(person_id)
+            person_snippet = person.as_package_snippet
+            person_snippet["credit"] = self.credit[str(person_id)]
+            person_snippet["roles"] = []
+            for contrib in self.contributions:
+                if contrib.person_id == person_id:
+                    person_snippet["roles"].append(contrib.role)
+
+            ret.append(person_snippet)
 
         return ret
 
