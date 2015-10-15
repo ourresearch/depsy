@@ -43,7 +43,7 @@ class Package(db.Model):
     proxy_papers = db.deferred(db.Column(db.Text))
     is_academic = db.Column(db.Boolean)
 
-    num_citations_by_source = db.Column(JSONB)
+    num_citations_by_source = db.Column(MutableDict.as_mutable(JSONB))
     is_distinctive_name = db.Column(db.Boolean)
 
     host_reverse_deps = db.deferred(db.Column(JSONB))
@@ -532,8 +532,8 @@ class Package(db.Model):
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
         sources_to_query = [
-                    full_text_source.Ads
-                    # full_text_source.Pmc,
+                    full_text_source.Ads,
+                    full_text_source.Pmc
                     # full_text_source.Arxiv,
                     # full_text_source.Citeseer,
                 ]
@@ -541,18 +541,19 @@ class Package(db.Model):
 
     @property
     def citations_dict(self):
-        citations_dict = self.set_num_citations_by_source()
+        citations_dict = self.num_citations_by_source
         response_dict = defaultdict(dict)
         for source_class in self.get_sources_to_query():
             source = source_class()
+            query = self.build_full_text_query(source)
             response_dict[source.name] = {
                 "count": citations_dict[source.name], 
-                "url": source.query_url(self.full_text_query)
+                "url": source.query_url(query)
                 }
         return response_dict
 
-    @property
-    def full_text_query(self):
+
+    def build_full_text_query(self, source, override_with_is_distinctive=None):
         queries = []
 
         # add the cran or pypi url to start with
@@ -564,40 +565,96 @@ class Package(db.Model):
             github_url = '"github.com/{}/{}"'.format(self.github_owner, self.github_repo_name)
             queries.append(github_url)
 
-        # also look up its project name if is unique
-        # this line here now because haven't run them all previously
-        self.set_is_distinctive_name()
+        if override_with_is_distinctive != None:
+            is_distinctive = override_with_is_distinctive
+        else:
+            is_distinctive = self.is_distinctive_by_source(source)
 
-        if self.is_distinctive_name:
+        if is_distinctive:
             queries.append('"{}"'.format(self.project_name))
         else:
             print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
 
         query = " OR ".join(queries)
-        query += ' NOT AUTH:"{}"'.format(self.project_name)
+
+        if source.__class__.__name__ == "Pmc":
+            query += ' NOT AUTH:"{}"'.format(self.project_name)
+
         print "query", query
         return query
+
+
+    def is_dictinctive_name_by_source(self, source):
+        if source_class.__name__ == "Pmc":
+            ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
+            if self.host == "cran":
+                if ratio > 0.20:
+                    return True
+            else:
+                if ratio > 0.27:
+                    return True
+        elif source_class.__name__ == "Ads":
+            ratio = float(self.ads_distinctiveness["num_hits_with_language"])/self.ads_distinctiveness["num_hits_raw"]
+            if self.host == "cran":
+                if ratio > 0.20:
+                    return True
+            else:
+                if ratio > 0.27:
+                    return True
+        elif source_class.__name__ == "Citeseer":
+            pass
+        return False
 
 
     def set_num_citations_by_source(self):
         if not self.num_citations_by_source:
             self.num_citations_by_source = {}
 
-        self.num_citations = 0
         for source_class in self.get_sources_to_query():
 
-            if source_class.__name__ == "Pmc" and ("-" in self.project_name):
-                # pmc can't do a query if a hyphen in the name, so just bail
-                self.num_citations = 0
-                return {}
+            for override_with_is_distinctive in [True, False]:
+                if source_class.__name__ == "Pmc" and ("-" in self.project_name):
+                    # pmc can't do a query if a hyphen in the name, so just bail
+                    print "is a hyphen name, and pmc can't do those, returning zero citations"
+                    num_found = 0
+                else:
+                    source = source_class()
+                    query = self.build_full_text_query(source, override_with_is_distinctive=override_with_is_distinctive)
+                    num_found = source.run_query(query)
 
-            source = source_class()
-            num_found = source.run_query(self.full_text_query)
-            self.num_citations_by_source[source.name] = num_found
-            self.num_citations += num_found
-            print "num citations found", num_found
+                bucket_key = "{source_name}:include_name_{is_distinctive}".format(
+                    source_name=source.name, is_distinctive=override_with_is_distinctive)
+                self.num_citations_by_source[bucket_key] = num_found
+                print "num citations found", num_found
 
         return self.num_citations_by_source
+
+
+    # def set_num_citations_by_source(self):
+    #     if not self.num_citations_by_source:
+    #         self.num_citations_by_source = {}
+
+    #     self.num_citations = 0
+    #     for source_class in self.get_sources_to_query():
+
+    #         for override_with_is_distinctive in [True, False]:
+    #             if source_class.__name__ == "Pmc" and ("-" in self.project_name):
+    #                 # pmc can't do a query if a hyphen in the name, so just bail
+    #                 print "is a hyphen name, and pmc can't do those, returning zero citations"
+    #                 num_found = 0
+    #             else:
+    #                 source = source_class()
+    #                 query = self.build_full_text_query(source, override_with_is_distinctive=override_with_is_distinctive)
+    #                 num_found = source.run_query(query)
+
+    #             bucket_key = "{source_name}:{is_distinctive}".format(
+    #                 source_name=source.name, is_distinctive=override_with_is_distinctive)
+    #             self.num_citations_by_source[bucket_key] = num_found
+    #             self.num_citations += num_found
+    #             print "num citations found", num_found
+
+    #     return self.num_citations_by_source
+
 
     def set_pmc_distinctiveness(self):
         source = full_text_source.Pmc()

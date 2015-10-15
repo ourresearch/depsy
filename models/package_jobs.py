@@ -444,7 +444,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.num_citations_by_source == None)
+# q = q.filter(Package.num_citations_by_source == None)
 update_registry.register(Update(
     job=Package.set_num_citations_by_source,
     query=q,
