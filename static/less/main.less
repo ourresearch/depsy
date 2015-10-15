@@ -688,32 +688,11 @@ span.snippet {
          }
       }
 
-
-      .one-metric {
-         display: none;
-      }
-
       .vis {
          margin-top: 9px;
          .subscore {
             line-height: .7;
             float:right;
-            .val {
-               display: none;
-               font-size: 10px;
-               width: 30px;
-               text-align: right;
-               vertical-align: 2px;
-               &.num_downloads {
-                  color: @downloadsColor;
-               }
-               &.pagerank {
-                  color: @pagerankColor;
-               }
-               &.num_citations {
-                  color: @citationsColor;
-               }
-            }
             .bar-outer {
                width: 8px;
                display: inline-block;
@@ -734,7 +713,7 @@ span.snippet {
                      background: @pagerankColor;
 
                   }
-                  &.num_citations {
+                  &.num_mentions {
                      background: @citationsColor;
                   }
                }
@@ -898,17 +877,14 @@ span.snippet {
             }
          }
 
-         &.citations {
+         &.num_mentions {
             color: @citationsColor;
          }
          &.pagerank {
             color: @pagerankColor;
          }
-         &.downloads {
+         &.num_downloads {
             color: @downloadsColor;
-         }
-         &.stars {
-            color: @starsColor;
          }
 
 

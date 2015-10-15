@@ -1256,35 +1256,24 @@ angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCac
     "<div class=\"package impact-popover\">\n" +
     "   <div class=\"impact\">\n" +
     "\n" +
-    "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
+    "      <!-- repeat for each subscore -->\n" +
+    "      <div class=\"subscore {{ subscore.name }} metric\"\n" +
+    "           ng-repeat=\"subscore in package.subscores\">\n" +
     "         <span class=\"name\">\n" +
-    "            <i class=\"fa fa-file-text-o\"></i>\n" +
-    "            Citations\n" +
+    "            <i class=\"fa fa-file-text-o\" ng-if=\"subscore.name=='num_mentions'\"></i>\n" +
+    "            <i class=\"fa fa-exchange\" ng-if=\"subscore.name=='pagerank'\"></i>\n" +
+    "            <i class=\"fa fa-download\" ng-if=\"subscore.name=='num_downloads'\"></i>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "            {{ subscore.display_name }}\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
-    "            <span class=\"val\">{{ package.num_citations }}</span>\n" +
+    "            <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
     "         </span>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"sub-score pagerank metric\" ng-show=\"package.pagerank\">\n" +
-    "         <span class=\"name\">\n" +
-    "            <i class=\"fa fa-exchange\"></i>\n" +
-    "            Dependency PageRank\n" +
-    "         </span>\n" +
-    "         <span class=\"descr\">\n" +
-    "            <span class=\"val\">{{ format.short(package.pagerank_score) }} </span>\n" +
-    "         </span>\n" +
-    "      </div>\n" +
     "\n" +
-    "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
-    "         <span class=\"name\">\n" +
-    "            <i class=\"fa fa-download\"></i>\n" +
-    "            Monthly Downloads\n" +
-    "         </span>\n" +
-    "         <span class=\"descr\">\n" +
-    "            <span class=\"val\">{{ format.short(package.num_downloads)}}</span>\n" +
-    "         </span>\n" +
-    "      </div>\n" +
     "\n" +
     "\n" +
     "   </div>\n" +
@@ -1300,15 +1289,9 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         popover-title=\"Impact\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
-    "      <div class=\"one-metric metric\">\n" +
-    "         {{ format.short(package.impact) }}\n" +
-    "      </div>\n" +
-    "\n" +
-    "\n" +
     "      <div class=\"vis\">\n" +
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
     "              ng-repeat=\"subscore in package.subscores\">\n" +
-    "            <div class=\"val {{ subscore.name }}\" ng-if=\"subscore.val > 0\">{{ format.short(subscore.val) }}</div>\n" +
     "            <div class=\"bar-outer\">\n" +
     "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
     "            </div>\n" +

@@ -1,35 +1,24 @@
 <div class="package impact-popover">
    <div class="impact">
 
-      <div class="sub-score citations metric" ng-show="package.num_citations">
+      <!-- repeat for each subscore -->
+      <div class="subscore {{ subscore.name }} metric"
+           ng-repeat="subscore in package.subscores">
          <span class="name">
-            <i class="fa fa-file-text-o"></i>
-            Citations
+            <i class="fa fa-file-text-o" ng-if="subscore.name=='num_mentions'"></i>
+            <i class="fa fa-exchange" ng-if="subscore.name=='pagerank'"></i>
+            <i class="fa fa-download" ng-if="subscore.name=='num_downloads'"></i>
+
+
+
+            {{ subscore.display_name }}
          </span>
          <span class="descr">
-            <span class="val">{{ package.num_citations }}</span>
+            <span class="val">{{ format.short(subscore.val) }}</span>
          </span>
       </div>
 
-      <div class="sub-score pagerank metric" ng-show="package.pagerank">
-         <span class="name">
-            <i class="fa fa-exchange"></i>
-            Dependency PageRank
-         </span>
-         <span class="descr">
-            <span class="val">{{ format.short(package.pagerank_score) }} </span>
-         </span>
-      </div>
 
-      <div class="sub-score downloads metric" ng-show="package.num_downloads">
-         <span class="name">
-            <i class="fa fa-download"></i>
-            Monthly Downloads
-         </span>
-         <span class="descr">
-            <span class="val">{{ format.short(package.num_downloads)}}</span>
-         </span>
-      </div>
 
 
    </div>

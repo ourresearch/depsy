@@ -128,6 +128,7 @@ class Package(db.Model):
             "github_owner",
             "github_repo_name",
             "host",
+            "impact_rank",
             "language",
             "indegree",
             "neighborhood_size",
@@ -150,8 +151,14 @@ class Package(db.Model):
                 ret[property_name] = getattr(self, property_name)
 
         # special cases
-        ret["num_contribs"] = len(ret["contribs"])
-        ret["top_contribs"] = ret["contribs"][0:5]  # they are already sorted
+        if self.credit:
+            ret["num_contribs"] = len(self.credit)
+
+        try:
+            ret["top_contribs"] = ret["contribs"][0:5]  # they are already sorted
+        except KeyError:
+            pass
+
         ret["name"] = self.project_name
 
         return ret
@@ -173,24 +180,26 @@ class Package(db.Model):
 
     @property
     def subscores(self):
-        names = [
-            "num_downloads",
-            "pagerank",
-            "num_citations"
+        ret = [
+            {
+                "name": "num_downloads",
+                "score": self.num_downloads_score,
+                "val": self.num_downloads,
+                "display_name": "Monthly downloads"
+            },
+            {
+                "name": "pagerank",
+                "score": self.pagerank_score,
+                "val": self.pagerank,
+                "display_name": "Dependency PageRank"
+            },
+            {
+                "name": "num_mentions",
+                "score": self.num_citations_score,
+                "val": self.num_citations,
+                "display_name": "Literature mentions"
+            }
         ]
-        ret = []
-        for name in names:
-            if name == "pagerank":
-                score = self.pagerank_score
-            else:
-                score = getattr(self, name)
-
-            ret.append({
-                "name": name,
-                "score": getattr(self, name + "_score"),
-                "val": score
-            })
-
         return ret
 
 

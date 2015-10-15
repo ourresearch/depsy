@@ -566,31 +566,12 @@ span.snippet span.left-metrics .rank span.octothorpe {
   font-size: 10px;
   font-weight: 100;
 }
-span.snippet span.left-metrics .one-metric {
-  display: none;
-}
 span.snippet span.left-metrics .vis {
   margin-top: 9px;
 }
 span.snippet span.left-metrics .vis .subscore {
   line-height: .7;
   float: right;
-}
-span.snippet span.left-metrics .vis .subscore .val {
-  display: none;
-  font-size: 10px;
-  width: 30px;
-  text-align: right;
-  vertical-align: 2px;
-}
-span.snippet span.left-metrics .vis .subscore .val.num_downloads {
-  color: #377eb8;
-}
-span.snippet span.left-metrics .vis .subscore .val.pagerank {
-  color: #4daf4a;
-}
-span.snippet span.left-metrics .vis .subscore .val.num_citations {
-  color: #984ea3;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer {
   width: 8px;
@@ -613,7 +594,7 @@ span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_download
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.pagerank {
   background: #4daf4a;
 }
-span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_citations {
+span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_mentions {
   background: #984ea3;
 }
 span.snippet span.metadata {
@@ -734,17 +715,14 @@ span.snippet span.contribs a.contrib {
 .impact-popover.package div.metric.head span.val span.small {
   font-size: 12px;
 }
-.impact-popover.package div.metric.citations {
+.impact-popover.package div.metric.num_mentions {
   color: #984ea3;
 }
 .impact-popover.package div.metric.pagerank {
   color: #4daf4a;
 }
-.impact-popover.package div.metric.downloads {
+.impact-popover.package div.metric.num_downloads {
   color: #377eb8;
-}
-.impact-popover.package div.metric.stars {
-  color: #e41a1c;
 }
 .impact-popover.package div.metric span.name {
   display: inline-block;
