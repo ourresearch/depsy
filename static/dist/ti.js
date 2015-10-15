@@ -1258,14 +1258,12 @@ angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCac
     "\n" +
     "      <!-- repeat for each subscore -->\n" +
     "      <div class=\"subscore {{ subscore.name }} metric\"\n" +
+    "           ng-if=\"subscore.val > 0\"\n" +
     "           ng-repeat=\"subscore in package.subscores\">\n" +
     "         <span class=\"name\">\n" +
     "            <i class=\"fa fa-file-text-o\" ng-if=\"subscore.name=='num_mentions'\"></i>\n" +
     "            <i class=\"fa fa-exchange\" ng-if=\"subscore.name=='pagerank'\"></i>\n" +
     "            <i class=\"fa fa-download\" ng-if=\"subscore.name=='num_downloads'\"></i>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
     "            {{ subscore.display_name }}\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
@@ -1337,7 +1335,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "               popover=\"name: {{ contrib.name }}\"\n" +
     "               popover-trigger=\"mouseenter\"\n" +
     "               class=\"contrib\"\n" +
-    "               ng-repeat=\"contrib in package.contribs | orderBy: '-credit' | limitTo: 3\">{{ contrib.single_name }}<span\n" +
+    "               ng-repeat=\"contrib in package.top_contribs | orderBy: '-credit' | limitTo: 3\">{{ contrib.single_name }}<span\n" +
     "                       ng-hide=\"{{ $last }}\"\n" +
     "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
     "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +

@@ -142,7 +142,8 @@ class Package(db.Model):
             "summary",
             "tags",
             "subscores",
-            "contribs"
+            "contribs",
+            "top_contribs"
         ]
 
         ret = {}
@@ -151,15 +152,10 @@ class Package(db.Model):
                 ret[property_name] = getattr(self, property_name)
 
         # special cases
+        ret["name"] = self.project_name
         if self.credit:
             ret["num_contribs"] = len(self.credit)
 
-        try:
-            ret["top_contribs"] = ret["contribs"][0:5]  # they are already sorted
-        except KeyError:
-            pass
-
-        ret["name"] = self.project_name
 
         return ret
 
@@ -203,6 +199,9 @@ class Package(db.Model):
         return ret
 
 
+    @property
+    def top_contribs(self):
+        return self.contribs[0:5]
 
     @property
     def contribs(self):

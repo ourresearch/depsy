@@ -580,6 +580,7 @@ span.snippet span.left-metrics .vis .subscore .bar-outer {
   background: #fafafa;
   text-align: right;
   position: relative;
+  z-index: -1;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner {
   position: absolute;

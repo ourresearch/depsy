@@ -53,7 +53,7 @@
                popover="name: {{ contrib.name }}"
                popover-trigger="mouseenter"
                class="contrib"
-               ng-repeat="contrib in package.contribs | orderBy: '-credit' | limitTo: 3">{{ contrib.single_name }}<span
+               ng-repeat="contrib in package.top_contribs | orderBy: '-credit' | limitTo: 3">{{ contrib.single_name }}<span
                        ng-hide="{{ $last }}"
                        class="comma">, </span></a><a class="contrib plus-more"
                href="package/{{ package.language }}/{{ package.name }}"
