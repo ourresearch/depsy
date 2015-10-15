@@ -1,4 +1,5 @@
 import hashlib
+import math
 from collections import defaultdict
 from time import sleep
 
@@ -71,17 +72,17 @@ class Person(db.Model):
         ret.append({
                 "name": "num_downloads",
                 "score": self.num_downloads_score,
-                "val": None
+                "val": self.num_downloads_score
             })
         ret.append({
                 "name": "pagerank",
                 "score": self.pagerank_score,
-                "val": None
+                "val": self.pagerank_score
             })
         ret.append({
                 "name": "num_citations",
                 "score": self.num_citations_score,
-                "val": None
+                "val": self.num_citations_score
             })
 
         # select id, name, email, num_citations_score from person where is_organization=false and main_lanugage='python' order by num_downloads_score desc limit 5
@@ -97,9 +98,11 @@ class Person(db.Model):
                 "num_downloads": 18213
             }
         }
+
         for my_dict in ret:
             if my_dict["score"]:
-                my_dict["score"] = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
+                temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
+                my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
 
         return ret
 
@@ -246,17 +249,28 @@ class Person(db.Model):
 
 
     def set_impact(self):
-        self.impact = sum([pp.person_package_impact for pp in self.get_person_packages()])
+        self.impact = 0
+
+        # only count up impact for packages in our main language
+        for pp in self.get_person_packages():
+            if pp.package.language == self.main_language:
+                self.impact += pp.person_package_impact
+
         return self.impact
 
+
     def set_scores(self):
-        person_packages = self.get_person_packages()
+        self.pagerank_score = 0
+        self.num_downloads_score = 0
+        self.num_citations_score = 0
 
-
-        self.pagerank_score = sum([pp.person_package_pagerank_score for pp in person_packages 
-                                        if pp.person_package_pagerank_score])
-        self.num_downloads_score = sum([pp.person_package_num_downloads_score for pp in person_packages])
-        self.num_citations_score = sum([pp.person_package_num_citations_score for pp in person_packages])
+        for pp in self.get_person_packages():
+            # only count up impact for packages in our main language            
+            if pp.package.language == self.main_language:
+                if pp.person_package_pagerank_score:
+                    self.pagerank_score += pp.person_package_pagerank_score
+                self.num_downloads_score += pp.person_package_num_downloads_score
+                self.num_citations_score += pp.person_package_num_citations_score
 
 
     def set_parsed_name(self):
