@@ -1332,7 +1332,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         <span class=\"contribs\">\n" +
     "            <span class=\"by\">by</span>\n" +
     "            <a href=\"person/{{ contrib.id }}\"\n" +
-    "               popover=\"name: {{ contrib.name }}\"\n" +
+    "               popover=\"{{ contrib.name }}\"\n" +
     "               popover-trigger=\"mouseenter\"\n" +
     "               class=\"contrib\"\n" +
     "               ng-repeat=\"contrib in package.top_contribs | orderBy: '-credit' | limitTo: 3\">{{ contrib.single_name }}<span\n" +
