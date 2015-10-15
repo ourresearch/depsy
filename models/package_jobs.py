@@ -443,10 +443,18 @@ update_registry.register(Update(
 ))
 
 
-q = db.session.query(Package.id)
+q = db.session.query(PypiPackage.id)
 # q = q.filter(Package.num_citations_by_source == None)
 update_registry.register(Update(
-    job=Package.set_num_citations_by_source,
+    job=PypiPackage.set_num_citations_by_source,
+    query=q,
+    queue_id=7
+))
+
+q = db.session.query(CranPackage.id)
+# q = q.filter(Package.num_citations_by_source == None)
+update_registry.register(Update(
+    job=CranPackage.set_num_citations_by_source,
     query=q,
     queue_id=7
 ))
