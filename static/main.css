@@ -554,7 +554,6 @@ span.snippet span.left-metrics {
 }
 span.snippet span.left-metrics .rank {
   display: inline-block;
-  width: 58px;
   text-align: right;
   margin-top: 14px;
 }

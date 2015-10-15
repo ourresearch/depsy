@@ -589,10 +589,6 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         popover-trigger=\"mouseenter\"\n" +
     "         popover-template=\"'snippet/person-impact-popover.tpl.html'\">\n" +
     "\n" +
-    "      <span class=\"one-metric metric\">\n" +
-    "         {{ format.short(person.impact) }}\n" +
-    "      </span>\n" +
-    "\n" +
     "\n" +
     "      <div class=\"vis\">\n" +
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
