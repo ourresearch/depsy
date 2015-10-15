@@ -51,7 +51,9 @@ class Package(db.Model):
     github_reverse_deps = db.deferred(db.Column(JSONB))
     dependencies = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
-    bucket2 = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    pmc_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    citeseer_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    ads_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.deferred(db.Column(db.Text))
@@ -503,16 +505,16 @@ class Package(db.Model):
     def set_is_distinctive_name(self):
         self.is_distinctive_name = False
 
-        if not self.bucket:
+        if not self.pmc_distinctiveness:
             return
 
-        if not 'num_hits_raw' in self.bucket:
+        if not 'num_hits_raw' in self.pmc_distinctiveness:
             return
 
-        if self.bucket["num_hits_raw"] <= 0:
+        if self.pmc_distinctiveness["num_hits_raw"] <= 0:
             return
 
-        ratio = float(self.bucket["num_hits_with_language"])/self.bucket["num_hits_raw"]
+        ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
         print "distinctiveness ratio for {} is {}".format(
             self.project_name, ratio)
         if self.host == "cran":
@@ -597,32 +599,44 @@ class Package(db.Model):
 
         return self.num_citations_by_source
 
-
-    def set_distinctiveness(self):
-        source = full_text_source.Citeseer()
-        self.bucket2 = {}
-
-        raw_query = '"{name}"'.format(
+    def set_pmc_distinctiveness(self):
+        source = full_text_source.Pmc()
+        raw_query = '"{name}" NOT AUTH:"{name}"'.format(
             name=self.project_name)
-        # raw_query = '"{name}" NOT AUTH:"{name}"'.format(
-        #     name=self.project_name)
+        self.pmc_distinctiveness = self.calc_distinctiveness(source, raw_query)
+
+    def set_citeseer_distinctiveness(self):
+        source = full_text_source.Citeseer()
+        raw_query = '"{name}"'.format(name=self.project_name)
+        self.citeseer_distinctiveness = self.calc_distinctiveness(source, raw_query)
+
+    def set_ads_distinctiveness(self):
+        source = full_text_source.Ads()
+        raw_query = '"{name}"'.format(name=self.project_name)
+        self.ads_distinctiveness = self.calc_distinctiveness(source, raw_query)
+
+
+    def calc_distinctiveness(self, source, raw_query):
+        distinctiveness = {}
+
         num_hits_raw = source.run_query(raw_query)
+        distinctiveness["num_hits_raw"] = num_hits_raw
 
-        self.bucket2["num_hits_raw"] = num_hits_raw
-
-        num_hits_with_language = source.run_query(self.distinctiveness_query)
-        self.bucket2["num_hits_with_language"] = num_hits_with_language
+        num_hits_with_language = source.run_query(raw_query + self.distinctiveness_query_suffix)
+        distinctiveness["num_hits_with_language"] = num_hits_with_language
         
-        if self.bucket2["num_hits_raw"] > 0:
-            ratio = float(self.bucket2["num_hits_with_language"])/self.bucket2["num_hits_raw"]
+        if distinctiveness["num_hits_raw"] > 0:
+            distinctiveness["ratio"] = float(distinctiveness["num_hits_with_language"])/distinctiveness["num_hits_raw"]
         else:
-            ratio = None
+            distinctiveness["ratio"] = None
 
         print "{}: solo search finds {}, ratio is {}".format(
             self.project_name, 
-            self.bucket2["num_hits_raw"],
-            ratio
+            distinctiveness["num_hits_raw"],
+            distinctiveness["ratio"]
             )
+        return distinctiveness
+
 
 
     def set_igraph_data(self, our_igraph_data):

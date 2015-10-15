@@ -70,4 +70,22 @@ class Citeseer(FullTextSource):
         return hits      
 
 
+class Ads(FullTextSource):
+    def query_url(self, query):
+        query_template = "http://labs.adsabs.harvard.edu/adsabs/search/?q={query}"
+        url = query_template.format(query=query)
+        return url
+
+    def extract_results(self, request_response):
+        page = request_response.text
+        tree = html.fromstring(page)
+        data = {}
+        result_info = tree.xpath('//input[@id="hits"]/@value')
+        try:
+            hits = int(result_info[0])
+            print "got hits!", hits
+        except (IndexError, ValueError):
+            hits = 0
+        return hits      
+
 

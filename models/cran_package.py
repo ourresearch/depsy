@@ -150,11 +150,8 @@ class CranPackage(Package):
         self.tags = tags
 
     @property
-    def distinctiveness_query(self):
-        return '"{name}" AND ("r package" OR "r statistical")'.format(
-            name=self.project_name)
-        # return '"{name}" AND ("r package" OR "r statistical") NOT AUTH:"{name}"'.format(
-        #     name=self.project_name)
+    def distinctiveness_query_suffix(self):
+        return ' AND ("r package" OR "r statistical")'
 
 
     @property
