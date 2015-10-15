@@ -50,7 +50,7 @@
          <span class="contribs">
             <span class="by">by</span>
             <a href="person/{{ contrib.id }}"
-               popover="name: {{ contrib.name }}"
+               popover="{{ contrib.name }}"
                popover-trigger="mouseenter"
                class="contrib"
                ng-repeat="contrib in package.top_contribs | orderBy: '-credit' | limitTo: 3">{{ contrib.single_name }}<span
