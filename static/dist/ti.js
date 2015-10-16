@@ -16,6 +16,7 @@ angular.module('app', [
   'header',
   'snippet',
 
+  'directives.wheel',
   'resourcesModule',
   'pageService',
   'formatterService',
@@ -202,6 +203,54 @@ angular.module("directives.languageIcon", [])
 
         scope.languageName = attrs.language
         scope.languageHue = hueFromString(attrs.language)
+      }
+    }
+
+
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+angular.module("directives.wheel", [])
+.directive("wheel", function(){
+
+    function getWheelVal(credit){
+      if (credit < .08) {
+        return "tiny"
+      }
+      else if (credit === 1) {
+        return 8
+      }
+      else {
+        return Math.floor(credit * 8)
+      }
+
+
+    }
+
+
+
+    return {
+      template: "<img class='wheel' src='static/img/wheel/{{ wheelVal }}.png' />",
+      restrict: "EA",
+      link: function(scope, elem, attrs) {
+
+
+        scope.wheelVal = getWheelVal(attrs.credit)
+        console.log("running the wheel directive. credit: ", attrs.credit, scope.wheelVal)
       }
     }
 
@@ -1138,7 +1187,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "               <span class=\"impact\">\n" +
     "                  {{ format.short(person.impact) }}\n" +
     "               </span>\n" +
-    "               <span class=\"rank\">\n" +
+    "               <span class=\"rank\" ng-show=\"!person.is_organization\">\n" +
     "                  #{{ format.commas(person.impact_rank) }}\n" +
     "               </span>\n" +
     "            </div>\n" +
@@ -1160,7 +1209,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  ng-show=\"person.is_academic\"\n" +
     "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
     "\n" +
-    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github/{{ person.github_login }}\">\n" +
+    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github.com/{{ person.github_login }}\">\n" +
     "                  <i class=\"fa fa-github\"></i>\n" +
     "                  <span class=\"github-url-part\" ng-if=\"!person.is_academic\">\n" +
     "                     github/{{ person.github_login }}\n" +
@@ -1192,7 +1241,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"top-collabs\">\n" +
+    "      <div class=\"top-collabs\" ng-show=\"person.top_collabs.length\">\n" +
     "         <h3>Top collaborators</h3>\n" +
     "         <div class=\"top-collabs-list\">\n" +
     "            <a class=\"collab person-mini\"\n" +
@@ -1226,16 +1275,8 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"packages\">\n" +
     "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "            <div class=\"person-package-stats\">\n" +
-    "               <span class=\"roles\">\n" +
-    "                  <span class=\"role role-{{ role }}\" ng-repeat=\"role in package.roles | orderBy: '-toLowerCase()'\">\n" +
-    "                     <i class=\"fa fa-user\" ng-if=\"role=='author'\"></i>\n" +
-    "                     <i class=\"fa fa-save\"  ng-if=\"role=='github_contributor'\"></i>\n" +
-    "                     <i class=\"fa fa-github\" ng-if=\"role=='github_owner'\"></i>\n" +
-    "                  </span>\n" +
-    "               </span>\n" +
-    "               <div class=\"bar-outside\">\n" +
-    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_package_credit * 100 }}%\"></span>\n" +
-    "               </div>\n" +
+    "               <wheel credit=\"{{ package.person_package_credit }}\"></wheel>\n" +
+    "\n" +
     "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
     "         </div>\n" +

@@ -398,31 +398,13 @@ div.entity-page.person-page .ti-page-body .packages {
   margin-left: 40px;
 }
 div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats {
-  padding: 48px 15px 0 0;
+  padding: 25px 0 0 0;
   text-align: right;
   float: left;
 }
-div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats span.roles {
-  display: block;
-  line-height: 1.0;
-}
-div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats span.roles span.role {
-  font-size: 14px;
-  margin-left: 5px;
-  color: #777;
-}
-div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats .bar-outside {
-  height: 4px;
-  width: 50px;
-  display: inline-block;
-  background: #ddd;
-  margin-top: 5px;
-  text-align: right;
-}
-div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats .bar-outside span.bar-inside {
-  background: #999;
-  height: 100%;
-  display: inline-block;
+div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats img.wheel {
+  height: 20px;
+  opacity: .9;
 }
 div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node {
   border: 1px solid #eee;
