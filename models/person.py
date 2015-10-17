@@ -291,7 +291,7 @@ class Person(db.Model):
             print "UnicodeEncodeError making gravatar url from email"
             hash = 42
 
-        url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=mm".format(
+        url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=retro".format(
             hash=hash,
             size=size
         )

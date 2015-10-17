@@ -96,7 +96,7 @@
       <div class="packages">
          <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
             <div class="person-package-stats">
-               <wheel credit="{{ package.person_package_credit }}"></wheel>
+               <wheel roles="" credit="{{ package.person_package_credit }}"></wheel>
 
             </div>
             <span class="package-snippet-wrapper" ng-include="'snippet/package-snippet.tpl.html'"></span>

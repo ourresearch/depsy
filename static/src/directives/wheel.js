@@ -18,13 +18,15 @@ angular.module("directives.wheel", [])
 
 
     return {
-      template: "<img class='wheel' src='static/img/wheel/{{ wheelVal }}.png' />",
+      templateUrl: "directives/wheel.tpl.html",
       restrict: "EA",
       link: function(scope, elem, attrs) {
 
+        scope.percentCredit = Math.ceil(attrs.credit * 100)
+        scope.wheelData = scope.package.person_package
 
         scope.wheelVal = getWheelVal(attrs.credit)
-        console.log("running the wheel directive. credit: ", attrs.credit, scope.wheelVal)
+        console.log("scope.package.person_package: ", scope.package)
       }
     }
 

@@ -244,13 +244,15 @@ angular.module("directives.wheel", [])
 
 
     return {
-      template: "<img class='wheel' src='static/img/wheel/{{ wheelVal }}.png' />",
+      templateUrl: "directives/wheel.tpl.html",
       restrict: "EA",
       link: function(scope, elem, attrs) {
 
+        scope.percentCredit = Math.ceil(attrs.credit * 100)
+        scope.wheelData = scope.package.person_package
 
         scope.wheelVal = getWheelVal(attrs.credit)
-        console.log("running the wheel directive. credit: ", attrs.credit, scope.wheelVal)
+        console.log("scope.package.person_package: ", scope.package)
       }
     }
 
@@ -878,7 +880,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -887,6 +889,30 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
     "      style=\"background-color: hsl({{ languageHue }}, 80%, 30%)\">\n" +
     "   {{ languageName }}\n" +
     "</span>");
+}]);
+
+angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/wheel-popover.tpl.html",
+    "<div class=\"wheel-popover\">\n" +
+    "   <div class=\"committer\" ng-show=\"wheelData.person_package_commits\">\n" +
+    "      <i class=\"fa fa-save\"></i>\n" +
+    "\n" +
+    "\n" +
+    "      commits: {{ myPersonPackage.person_package_commits }}\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/wheel.tpl.html",
+    "<img class='wheel'\n" +
+    "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
+    "     popover-title=\"{{ percentCredit }}% authorship credit\"\n" +
+    "     popover-trigger=\"mouseenter\"\n" +
+    "     src='static/img/wheel/{{ wheelVal }}.png' />\n" +
+    "");
 }]);
 
 angular.module("header/header.tpl.html", []).run(["$templateCache", function($templateCache) {
@@ -1275,7 +1301,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"packages\">\n" +
     "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "            <div class=\"person-package-stats\">\n" +
-    "               <wheel credit=\"{{ package.person_package_credit }}\"></wheel>\n" +
+    "               <wheel roles=\"\" credit=\"{{ package.person_package_credit }}\"></wheel>\n" +
     "\n" +
     "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
