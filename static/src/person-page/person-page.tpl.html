@@ -41,6 +41,28 @@
          </div>
       </div>
 
+
+      <div class="sidebar-section impact">
+         <h3>Impact</h3>
+         <div class="vis">
+            <div class="subscore {{ subscore.name }}"
+                 ng-if="subscore.val > 0"
+                 ng-repeat="subscore in person.subscores">
+               <div class="bar-outer">
+                  <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
+               </div>
+               <div class="subscore-label">
+                  <span class="val">{{ format.short(subscore.val) }}</span>
+                  <span class="text">{{ subscore.display_name }}</span>
+               </div>
+
+            </div>
+         </div>
+      </div>
+
+
+
+      <!--
       <div class="impact-descr" ng-if="!person.is_organization">
          <h3>Impact</h3>
          <div class="impact-copy" ng-show="person.main_language=='python'">
@@ -50,6 +72,7 @@
             Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. That's based on summed package impacts, adjusted by percent contributions.
          </div>
       </div>
+      -->
 
       <div class="top-tags">
          <h3>Top tags</h3>

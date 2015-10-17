@@ -24,7 +24,7 @@ angular.module("directives.wheel", [])
 
         var personPackage = scope.person_package
 
-        scope.percentCredit = Math.ceil(personPackage.credit * 100)
+        scope.percentCredit = Math.floor(personPackage.credit * 100)
 
         scope.wheelData = personPackage
         scope.wheelVal = getWheelVal(personPackage.credit)

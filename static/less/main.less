@@ -394,7 +394,6 @@ div.entity-page.person-page {
             }
          }
 
-
          .impact-score-info {
             margin: 0px 0 50px 0;
             float: left;
@@ -427,6 +426,46 @@ div.entity-page.person-page {
 
          }
 
+      }
+
+      // copy-pasted from package page sidebar....
+      .sidebar-section.impact {
+         .subscore {
+            margin-bottom: 7px;
+            .clearfix();
+            clear:left;
+            &.num_downloads { color: @downloadsColor;}
+            &.pagerank { color: @pagerankColor;}
+            &.num_citations { color: @citationsColor;}
+            .bar-outer {
+               margin-top: 7px;
+               height: 13px;
+               width: 70px;
+               background: #eee;
+               float:left;
+               .bar-inner {
+                  float:right;
+                  height: 100%;
+                  background: #555;
+                  &.num_downloads { background: @downloadsColor;}
+                  &.pagerank { background: @pagerankColor;}
+                  &.num_citations { background: @citationsColor;}
+               }
+            }
+            .subscore-label {
+               display: inline-block;
+               margin-left: 10px;
+               .val {
+                  font-size: 18px;
+                  min-width: 70px;
+               }
+               .text {
+                  font-size: 12px;
+                  margin-left: 10px;
+                  line-height: 1.3;
+               }
+            }
+         }
       }
 
       .impact-descr {
@@ -510,7 +549,19 @@ div.package-page {
             }
          }
          .scores {
-            margin-top: 80px;
+
+         }
+
+
+      }
+      .sidebar-section {
+         margin-top: 80px;
+
+         h3 {
+//            text-transform: uppercase;
+         }
+         &.impact {
+
             .subscore {
                margin-bottom: 7px;
                .clearfix();
@@ -520,8 +571,8 @@ div.package-page {
                &.num_mentions { color: @citationsColor;}
                .bar-outer {
                   margin-top: 7px;
-                  height: 20px;
-                  width: 100px;
+                  height: 13px;
+                  width: 70px;
                   background: #eee;
                   float:left;
                   .bar-inner {
@@ -534,28 +585,22 @@ div.package-page {
                   }
                }
                .subscore-label {
-                  width: 200px;
-                  float: left;
+                  display: inline-block;
                   margin-left: 10px;
                   .val {
-                     font-size: 24px;
-                     float: left;
+                     font-size: 18px;
+                     min-width: 70px;
                   }
                   .text {
                      font-size: 12px;
-                     width: 100px;
-                     float: left;
-                     line-height: 1.3;
                      margin-left: 10px;
+                     line-height: 1.3;
                   }
                }
             }
          }
 
 
-      }
-      .sidebar-section {
-         margin-top: 80px;
          &.contribs {
             .wheel {
                height: 25px;

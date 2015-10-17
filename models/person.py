@@ -71,16 +71,19 @@ class Person(db.Model):
         ret = []
         ret.append({
                 "name": "num_downloads",
+                "display_name": "Monthly downloads",
                 "score": self.num_downloads_score,
                 "val": self.num_downloads_score
             })
         ret.append({
                 "name": "pagerank",
+                "display_name": "Software reuse",
                 "score": self.pagerank_score,
                 "val": self.pagerank_score
             })
         ret.append({
                 "name": "num_citations",
+                "display_name": "Literature reuse",
                 "score": self.num_citations_score,
                 "val": self.num_citations_score
             })

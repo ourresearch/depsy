@@ -31,25 +31,27 @@
                </a>
             </div>
          </div>
+      </div>
 
-         <div class="scores">
-            <div class="vis">
-               <div class="subscore {{ subscore.name }}"
-                    ng-if="subscore.val > 0"
-                    ng-repeat="subscore in package.subscores">
-                  <div class="bar-outer">
-                     <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
-                  </div>
-                  <div class="subscore-label">
-                     <span class="val">{{ format.short(subscore.val) }}</span>
-                     <span class="text">{{ subscore.display_name }}</span>
-                  </div>
-
+      <div class="sidebar-section impact">
+         <h3>Impact</h3>
+         <div class="vis">
+            <div class="subscore {{ subscore.name }}"
+                 ng-if="subscore.val > 0"
+                 ng-repeat="subscore in package.subscores">
+               <div class="bar-outer">
+                  <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
                </div>
-            </div>
+               <div class="subscore-label">
+                  <span class="val">{{ format.short(subscore.val) }}</span>
+                  <span class="text">{{ subscore.display_name }}</span>
+               </div>
 
+            </div>
          </div>
       </div>
+
+
 
 
       <div class="sidebar-section contribs">

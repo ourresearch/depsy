@@ -250,7 +250,7 @@ angular.module("directives.wheel", [])
 
         var personPackage = scope.person_package
 
-        scope.percentCredit = Math.ceil(personPackage.credit * 100)
+        scope.percentCredit = Math.floor(personPackage.credit * 100)
 
         scope.wheelData = personPackage
         scope.wheelVal = getWheelVal(personPackage.credit)
@@ -1110,25 +1110,27 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "               </a>\n" +
     "            </div>\n" +
     "         </div>\n" +
+    "      </div>\n" +
     "\n" +
-    "         <div class=\"scores\">\n" +
-    "            <div class=\"vis\">\n" +
-    "               <div class=\"subscore {{ subscore.name }}\"\n" +
-    "                    ng-if=\"subscore.val > 0\"\n" +
-    "                    ng-repeat=\"subscore in package.subscores\">\n" +
-    "                  <div class=\"bar-outer\">\n" +
-    "                     <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
-    "                  </div>\n" +
-    "                  <div class=\"subscore-label\">\n" +
-    "                     <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
-    "                     <span class=\"text\">{{ subscore.display_name }}</span>\n" +
-    "                  </div>\n" +
-    "\n" +
+    "      <div class=\"sidebar-section impact\">\n" +
+    "         <h3>Impact</h3>\n" +
+    "         <div class=\"vis\">\n" +
+    "            <div class=\"subscore {{ subscore.name }}\"\n" +
+    "                 ng-if=\"subscore.val > 0\"\n" +
+    "                 ng-repeat=\"subscore in package.subscores\">\n" +
+    "               <div class=\"bar-outer\">\n" +
+    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
     "               </div>\n" +
-    "            </div>\n" +
+    "               <div class=\"subscore-label\">\n" +
+    "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "                  <span class=\"text\">{{ subscore.display_name }}</span>\n" +
+    "               </div>\n" +
     "\n" +
+    "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "\n" +
+    "\n" +
     "\n" +
     "\n" +
     "      <div class=\"sidebar-section contribs\">\n" +
@@ -1256,6 +1258,28 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
+    "\n" +
+    "      <div class=\"sidebar-section impact\">\n" +
+    "         <h3>Impact</h3>\n" +
+    "         <div class=\"vis\">\n" +
+    "            <div class=\"subscore {{ subscore.name }}\"\n" +
+    "                 ng-if=\"subscore.val > 0\"\n" +
+    "                 ng-repeat=\"subscore in person.subscores\">\n" +
+    "               <div class=\"bar-outer\">\n" +
+    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               </div>\n" +
+    "               <div class=\"subscore-label\">\n" +
+    "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "                  <span class=\"text\">{{ subscore.display_name }}</span>\n" +
+    "               </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "      <!--\n" +
     "      <div class=\"impact-descr\" ng-if=\"!person.is_organization\">\n" +
     "         <h3>Impact</h3>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='python'\">\n" +
@@ -1265,6 +1289,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. That's based on summed package impacts, adjusted by percent contributions.\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "      -->\n" +
     "\n" +
     "      <div class=\"top-tags\">\n" +
     "         <h3>Top tags</h3>\n" +
