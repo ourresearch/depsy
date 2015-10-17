@@ -12,7 +12,7 @@ class FullTextSource:
     def run_query(self, query):
         try:
             url = self.query_url(query)
-            print u"calling {} with {}".format(self.__class__.__name__, url)
+            # print u"calling {} with {}".format(self.__class__.__name__, url)
             r = requests.get(url)
         except requests.exceptions.RequestException:
             print "RequestException, failed on", url
@@ -23,7 +23,7 @@ class FullTextSource:
 
 class Pmc(FullTextSource):
     def query_url(self, query):
-        query_template = "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query={query}&pageSize=1000&format=json&resulttype=idlist"
+        query_template = "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query={query}&pageSize=10&format=json&resulttype=idlist"
         url = query_template.format(query=query)
         return url
 
@@ -72,7 +72,7 @@ class Citeseer(FullTextSource):
 
 class Ads(FullTextSource):
     def query_url(self, query):
-        query_template = "http://labs.adsabs.harvard.edu/adsabs/search/?q={query}"
+        query_template = "http://labs.adsabs.harvard.edu/adsabs/search/?q={query}&year_from=1997&month_to=&year_to=2016"
         url = query_template.format(query=query)
         return url
 

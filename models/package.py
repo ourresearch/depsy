@@ -577,8 +577,8 @@ class Package(db.Model):
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
         sources_to_query = [
-                    full_text_source.Ads,
-                    full_text_source.Pmc
+                    full_text_source.Ads
+                    # full_text_source.Pmc
                     # full_text_source.Arxiv,
                     # full_text_source.Citeseer,
                 ]
@@ -599,37 +599,72 @@ class Package(db.Model):
 
 
     def build_full_text_query(self, source, override_with_is_distinctive=None):
-        queries = []
 
-        # add the cran or pypi url to start with
-        host_url = self.host_url.replace("https://", "").replace("http://", "")
-        queries.append('"{}"'.format(host_url))
-
-        # then github url if we know it
-        if self.github_owner:
-            github_url = '"github.com/{}/{}"'.format(self.github_owner, self.github_repo_name)
-            queries.append(github_url)
-
-        if override_with_is_distinctive != None:
-            is_distinctive = override_with_is_distinctive
+        if self.host == "pypi":
+            query = """
+                (
+                    ((="import {name}" 
+                    OR ="github com {name}" 
+                    OR ="pypi python org {name}" 
+                    OR ="available in the {name} project" 
+                    OR ="{name} a community-developed" 
+                    OR ="{name} library" 
+                    OR ="library {name}" 
+                    OR ="libraries {name}" 
+                    OR ="{name} package" 
+                    OR ="package {name}" 
+                    OR ="packages {name}" 
+                    OR ="{name} packages" 
+                    OR ="{name} python" 
+                    OR ="{name} software" 
+                    OR ="{name} api" 
+                    OR ="{name} coded" 
+                    OR ="{name} modeling frameworks" 
+                    OR ="{name} modeling environment" 
+                    OR ="modeling framework {name}" 
+                    OR ="{name} open-source" 
+                    OR ="open source software {name}" 
+                    OR ="{name} new open-source" 
+                    OR ="{name}: sustainable software" 
+                    OR ="{name} component-based modeling framework")  
+                NOT ="{name} software inc")
+            """.format(name=self.project_name)  # missing last paren on purpose
         else:
-            is_distinctive = self.is_distinctive_by_source(source)
-
-        if is_distinctive:
-            queries.append('"{}"'.format(self.project_name))
-        else:
-            print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
-
-        query = " OR ".join(queries)
+            query = """
+                (
+                      ((="github com {name}" 
+                    OR ="web packages {name}" 
+                    OR ="available in the {name} project" 
+                    OR ="{name} a community-developed" 
+                    OR ="{name} r library" 
+                    OR ="r library {name}" 
+                    OR ="r libraries {name}" 
+                    OR ="{name} package" 
+                    OR ="package {name}" 
+                    OR ="packages {name}" 
+                    OR ="{name} packages" 
+                    OR ="{name} software"  
+                    OR ="{name} api" 
+                    OR ="{name} coded" 
+                    OR ="{name} modeling frameworks" 
+                    OR ="{name} modeling environment" 
+                    OR ="modeling framework {name}" 
+                    OR ="{name} open-source" 
+                    OR ="open source software {name}" 
+                    OR ="{name} new open-source" 
+                    OR ="{name}: sustainable software" 
+                    OR ="{name} component-based modeling framework")  
+                        NOT ="{name} software inc")
+                """.format(name=self.project_name) # missing last paren on purpose
 
         if source.__class__.__name__ == "Pmc":
             query += ' NOT AUTH:"{}"'.format(self.project_name)
         elif source.__class__.__name__ == "Ads":
             query += ' -author:"{}"'.format(self.project_name)
-            # exclude journals found via PMC
-            query += ' -pub:PLOS*'
+            # only arxiv
+            query += ' pub:arXiv'
 
-        print "query", query
+        query += ")"
         return query
 
 
@@ -661,20 +696,20 @@ class Package(db.Model):
 
         for source_class in self.get_sources_to_query():
 
-            for override_with_is_distinctive in [True, False]:
-                if source_class.__name__ == "Pmc" and ("-" in self.project_name):
-                    # pmc can't do a query if a hyphen in the name, so just bail
-                    print "is a hyphen name, and pmc can't do those, returning zero citations"
-                    num_found = 0
-                else:
-                    source = source_class()
-                    query = self.build_full_text_query(source, override_with_is_distinctive=override_with_is_distinctive)
-                    num_found = source.run_query(query)
+            if source_class.__name__ == "Pmc" and ("-" in self.project_name):
+                # pmc can't do a query if a hyphen in the name, so just bail
+                print "is a hyphen name, and pmc can't do those, returning zero citations"
+                num_found = 0
+            else:
+                source = source_class()
+                query = self.build_full_text_query(source)
+                num_found = source.run_query(query)
 
-                bucket_key = "{source_name}:include_name_{is_distinctive}".format(
-                    source_name=source.name, is_distinctive=override_with_is_distinctive)
-                self.num_citations_by_source[bucket_key] = num_found
-                print "num citations found", num_found
+            self.num_citations_by_source[source.name] = num_found
+            print "num citations found", num_found
+
+        # do this now so can check
+        self.set_ads_distinctiveness()
 
         return self.num_citations_by_source
 
@@ -707,28 +742,26 @@ class Package(db.Model):
 
     def set_pmc_distinctiveness(self):
         source = full_text_source.Pmc()
-        raw_query = '"{name}" NOT AUTH:"{name}"'.format(
-            name=self.project_name)
-        self.pmc_distinctiveness = self.calc_distinctiveness(source, raw_query)
+        self.pmc_distinctiveness = self.calc_distinctiveness(source)
 
     def set_citeseer_distinctiveness(self):
         source = full_text_source.Citeseer()
-        raw_query = '"{name}"'.format(name=self.project_name)
-        self.citeseer_distinctiveness = self.calc_distinctiveness(source, raw_query)
+        self.citeseer_distinctiveness = self.calc_distinctiveness(source)
 
     def set_ads_distinctiveness(self):
         source = full_text_source.Ads()
-        raw_query = '"{name}"'.format(name=self.project_name)
-        self.ads_distinctiveness = self.calc_distinctiveness(source, raw_query)
+        self.ads_distinctiveness = self.calc_distinctiveness(source)
 
 
-    def calc_distinctiveness(self, source, raw_query):
+    def calc_distinctiveness(self, source):
         distinctiveness = {}
+
+        raw_query = self.build_full_text_query(source)
 
         num_hits_raw = source.run_query(raw_query)
         distinctiveness["num_hits_raw"] = num_hits_raw
 
-        num_hits_with_language = source.run_query(raw_query + self.distinctiveness_query_suffix)
+        num_hits_with_language = source.run_query(self.distinctiveness_query_prefix + raw_query)
         distinctiveness["num_hits_with_language"] = num_hits_with_language
         
         if distinctiveness["num_hits_raw"] > 0:
