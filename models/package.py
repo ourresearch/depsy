@@ -666,7 +666,7 @@ class Package(db.Model):
         elif source.__class__.__name__ == "Ads":
             query += ' -author:"{}"'.format(self.project_name)
             # only arxiv
-            query += ' pub:arXiv'
+            # query += ' pub:arXiv'
 
         query += ")"
         return query
