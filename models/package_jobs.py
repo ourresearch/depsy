@@ -481,7 +481,7 @@ q = db.session.query(PypiPackage.id)
 update_registry.register(Update(
     job=PypiPackage.set_ads_distinctiveness,
     query=q,
-    queue_id=7
+    queue_id=8
 ))
 
 q = db.session.query(CranPackage.id)

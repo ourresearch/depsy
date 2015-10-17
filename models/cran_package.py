@@ -150,8 +150,8 @@ class CranPackage(Package):
         self.tags = tags
 
     @property
-    def distinctiveness_query_suffix(self):
-        return ' AND ("r package" OR "r statistical")'
+    def distinctiveness_query_prefix(self):
+        return '(="r package" OR ="r statistical") AND '
 
 
     @property

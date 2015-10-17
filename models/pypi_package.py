@@ -431,8 +431,8 @@ class PypiPackage(Package):
 
 
     @property
-    def distinctiveness_query_suffix(self):
-        return ' AND python'
+    def distinctiveness_query_prefix(self):
+        return 'python AND '
 
 
 
