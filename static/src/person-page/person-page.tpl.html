@@ -8,7 +8,7 @@
                <span class="impact">
                   {{ format.short(person.impact) }}
                </span>
-               <span class="rank">
+               <span class="rank" ng-show="!person.is_organization">
                   #{{ format.commas(person.impact_rank) }}
                </span>
             </div>
@@ -30,7 +30,7 @@
                   ng-show="person.is_academic"
                   src="static/img/orcid.gif" alt=""/>
 
-               <a ng-if="person.github_login" class="account" href="http://github/{{ person.github_login }}">
+               <a ng-if="person.github_login" class="account" href="http://github.com/{{ person.github_login }}">
                   <i class="fa fa-github"></i>
                   <span class="github-url-part" ng-if="!person.is_academic">
                      github/{{ person.github_login }}
@@ -62,7 +62,7 @@
          </div>
       </div>
 
-      <div class="top-collabs">
+      <div class="top-collabs" ng-show="person.top_collabs.length">
          <h3>Top collaborators</h3>
          <div class="top-collabs-list">
             <a class="collab person-mini"
@@ -96,16 +96,8 @@
       <div class="packages">
          <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
             <div class="person-package-stats">
-               <span class="roles">
-                  <span class="role role-{{ role }}" ng-repeat="role in package.roles | orderBy: '-toLowerCase()'">
-                     <i class="fa fa-user" ng-if="role=='author'"></i>
-                     <i class="fa fa-save"  ng-if="role=='github_contributor'"></i>
-                     <i class="fa fa-github" ng-if="role=='github_owner'"></i>
-                  </span>
-               </span>
-               <div class="bar-outside">
-                  <span class="bar-inside" style="width: {{ package.person_package_credit * 100 }}%"></span>
-               </div>
+               <wheel credit="{{ package.person_package_credit }}"></wheel>
+
             </div>
             <span class="package-snippet-wrapper" ng-include="'snippet/package-snippet.tpl.html'"></span>
          </div>

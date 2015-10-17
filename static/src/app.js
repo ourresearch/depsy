@@ -15,6 +15,7 @@ angular.module('app', [
   'header',
   'snippet',
 
+  'directives.wheel',
   'resourcesModule',
   'pageService',
   'formatterService',
