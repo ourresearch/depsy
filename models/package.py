@@ -17,6 +17,7 @@ from models.person import Person
 from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.rev_dep_node import RevDepNode
+from models.github_repo import GithubRepo
 from jobs import update_registry
 from jobs import Update
 from util import truncate
@@ -43,7 +44,7 @@ class Package(db.Model):
     proxy_papers = db.deferred(db.Column(db.Text))
     is_academic = db.Column(db.Boolean)
 
-    num_citations_by_source = db.Column(MutableDict.as_mutable(JSONB))
+    # num_citations_by_source = db.Column(MutableDict.as_mutable(JSONB))
     is_distinctive_name = db.Column(db.Boolean)
 
     host_reverse_deps = db.deferred(db.Column(JSONB))
@@ -140,6 +141,7 @@ class Package(db.Model):
             "num_stars",
             "impact",
             "tree",
+            "top_neighbors",
             "is_academic",
             "summary",
             "tags",
@@ -167,14 +169,13 @@ class Package(db.Model):
     def tree(self):
         return self.rev_deps_tree
 
-
     @property
     def as_snippet_without_people(self):
-        return self.to_dict(exclude=["contribs", "top_contribs", "tree"])
+        return self.to_dict(exclude=["contribs", "top_contribs", "tree", "top_neighbors"])
 
     @property
     def as_snippet(self):
-        return self.to_dict(exclude=["contribs", "tree"])
+        return self.to_dict(exclude=["contribs", "tree", "top_neighbors"])
 
     @property
     def subscores(self):
@@ -228,6 +229,50 @@ class Package(db.Model):
             ret.append(person_snippet)
 
         return ret
+
+
+
+    @property
+    def top_neighbors(self):
+        num_top_nodes = 5
+
+        command = """select p.id
+                    from dep_nodes_ncol_{host}_reverse d, package p
+                    where d.used_by = p.project_name
+                    and d.package='{package_name}'
+                    order by p.pagerank desc
+                    limit {limit}""".format(
+                            package_name = self.project_name,
+                            host = self.host,
+                            limit = num_top_nodes
+                            )
+
+        # top_packages = db.session.query(Package).from_statement(command).all()
+        # res = [package.as_snippet for package in top_packages]
+
+        rows = db.session.connection().execute(sql.text(command)).fetchall()
+        ids = [row[0] for row in rows]
+        top_packages = db.session.query(Package).filter(Package.id.in_(ids))
+        ret = [package.as_snippet_without_people for package in top_packages]
+
+        command = """select g.id
+                    from dep_nodes_ncol_{host}_reverse d, github_repo g
+                    where d.package='{package_name}'
+                    and d.used_by = 'github:' || g.id
+                    order by coalesce((g.api_raw->>'stargazers_count')::int, 0) desc
+                    limit {limit}""".format(
+                            package_name = self.project_name,
+                            host = self.host,
+                            limit = num_top_nodes
+                            )
+
+        rows = db.session.connection().execute(sql.text(command)).fetchall()
+        ids = [row[0] for row in rows]
+        top_githubs = db.session.query(GithubRepo).filter(GithubRepo.id.in_(ids))
+        ret += [github_repo.as_snippet for github_repo in top_githubs]
+
+        return ret
+
 
 
     @classmethod
@@ -579,6 +624,10 @@ class Package(db.Model):
 
         if source.__class__.__name__ == "Pmc":
             query += ' NOT AUTH:"{}"'.format(self.project_name)
+        elif source.__class__.__name__ == "Ads":
+            query += ' -author:"{}"'.format(self.project_name)
+            # exclude journals found via PMC
+            query += ' -pub:PLOS*'
 
         print "query", query
         return query
