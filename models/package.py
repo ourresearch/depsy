@@ -601,61 +601,65 @@ class Package(db.Model):
     def build_full_text_query(self, source, override_with_is_distinctive=None):
 
         if self.host == "pypi":
+
             query = """
                 (
-                    ((="import {name}" 
+                    (="import {name}" 
                     OR ="github com {name}" 
                     OR ="pypi python org {name}" 
                     OR ="available in the {name} project" 
                     OR ="{name} a community-developed" 
-                    OR ="{name} library" 
                     OR ="library {name}" 
                     OR ="libraries {name}" 
-                    OR ="{name} package" 
                     OR ="package {name}" 
                     OR ="packages {name}" 
+                    OR ="{name} package" 
                     OR ="{name} packages" 
+                    OR ="{name} library" 
+                    OR ="{name} libraries" 
                     OR ="{name} python" 
                     OR ="{name} software" 
                     OR ="{name} api" 
                     OR ="{name} coded" 
+                    OR ="{name} new open-source" 
+                    OR ="{name} open-source" 
+                    OR ="open source software {name}" 
                     OR ="{name} modeling frameworks" 
                     OR ="{name} modeling environment" 
                     OR ="modeling framework {name}" 
-                    OR ="{name} open-source" 
-                    OR ="open source software {name}" 
-                    OR ="{name} new open-source" 
                     OR ="{name}: sustainable software" 
                     OR ="{name} component-based modeling framework")  
-                NOT ="{name} software inc")
             """.format(name=self.project_name)  # missing last paren on purpose
         else:
             query = """
                 (
-                      ((="github com {name}" 
+                      (="github com {name}" 
                     OR ="web packages {name}" 
                     OR ="available in the {name} project" 
                     OR ="{name} a community-developed" 
                     OR ="{name} r library" 
+                    OR ="{name} r libraries" 
                     OR ="r library {name}" 
                     OR ="r libraries {name}" 
                     OR ="{name} package" 
+                    OR ="{name} packages" 
                     OR ="package {name}" 
                     OR ="packages {name}" 
-                    OR ="{name} packages" 
                     OR ="{name} software"  
                     OR ="{name} api" 
                     OR ="{name} coded" 
+                    OR ="{name} new open-source" 
+                    OR ="{name} open-source" 
+                    OR ="open source software {name}" 
                     OR ="{name} modeling frameworks" 
                     OR ="{name} modeling environment" 
                     OR ="modeling framework {name}" 
-                    OR ="{name} open-source" 
-                    OR ="open source software {name}" 
-                    OR ="{name} new open-source" 
                     OR ="{name}: sustainable software" 
                     OR ="{name} component-based modeling framework")  
-                        NOT ="{name} software inc")
                 """.format(name=self.project_name) # missing last paren on purpose
+
+        # replace extra white space so is a shorter url, otherwise errors
+        query = ' '.join(query.split())
 
         if source.__class__.__name__ == "Pmc":
             query += ' NOT AUTH:"{}"'.format(self.project_name)
