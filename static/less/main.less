@@ -483,7 +483,98 @@ div.package-page {
    div.ti-page-sidebar {
       .sidebar-header {
          .about {
+            .meta {
+               .name {
+                  font-size: 38px;
+                  font-weight: bold;
+               }
+               .summary{
+                  font-size: 15px;
+               }
+            }
+            .links {
+               vertical-align: bottom;
+               a {
+                  cursor: pointer;
+                  margin-right: 10px;
+                  color: #555;
+                  &:hover {
+                     color: #333;
+                     text-decoration: none;
+                  }
+                  &.github {
+                     font-size: 20px;
+                     vertical-align: middle;
+                  }
+               }
+            }
+         }
+         .scores {
+            margin-top: 80px;
+            .subscore {
+               margin-bottom: 7px;
+               .clearfix();
+               clear:left;
+               &.num_downloads { color: @downloadsColor;}
+               &.pagerank { color: @pagerankColor;}
+               &.num_mentions { color: @citationsColor;}
+               .bar-outer {
+                  margin-top: 7px;
+                  height: 20px;
+                  width: 100px;
+                  background: #eee;
+                  float:left;
+                  .bar-inner {
+                     float:right;
+                     height: 100%;
+                     background: #555;
+                     &.num_downloads { background: @downloadsColor;}
+                     &.pagerank { background: @pagerankColor;}
+                     &.num_mentions { background: @citationsColor;}
+                  }
+               }
+               .subscore-label {
+                  width: 200px;
+                  float: left;
+                  margin-left: 10px;
+                  .val {
+                     font-size: 24px;
+                     float: left;
+                  }
+                  .text {
+                     font-size: 12px;
+                     width: 100px;
+                     float: left;
+                     line-height: 1.3;
+                     margin-left: 10px;
+                  }
+               }
+            }
+         }
 
+
+      }
+      .sidebar-section {
+         margin-top: 80px;
+         &.contribs {
+            .wheel {
+               height: 25px;
+               margin-right: 5px;
+            }
+            .contrib {
+               margin-bottom: 20px;
+               a {
+                  color: #333;
+                  font-style: italic;
+                  font-size: 16px;
+               }
+
+               img.person-icon {
+                  height: 25px;
+                  margin-right: 5px;
+                  .rounded(20px);
+               }
+            }
          }
       }
 
@@ -725,7 +816,6 @@ span.snippet {
             // for the person
             img.person-icon {
                height: 25px;
-//               margin-bottom: -4px;
                .rounded(20px);
             }
 
@@ -897,7 +987,7 @@ span.snippet {
 }
 
 
-span.language-icon {
+.language-icon {
    font-weight: 100;
    text-align: center;
    width: 16px;
@@ -915,7 +1005,7 @@ span.language-icon {
 //   color: #fff;
 
    &.r {
-      .rounded(15px);
+      .rounded(35px);
    }
 }
 
@@ -954,6 +1044,9 @@ span.language-icon {
    }
 }
 
+img.wheel {
+   height: 20px;
+}
 
 a.tag {
    border: 1px solid #ccc;

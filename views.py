@@ -138,6 +138,8 @@ def package_endpoint(host_or_language, project_name):
 
     my_id = package.make_id(host_or_language, project_name)
 
+    print "my_id", my_id
+
     from models.contribution import Contribution
     my_package = Package.query.options(
         orm.subqueryload_all(Package.contributions, Contribution.person)

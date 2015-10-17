@@ -22,11 +22,14 @@ angular.module("directives.wheel", [])
       restrict: "EA",
       link: function(scope, elem, attrs) {
 
-        scope.percentCredit = Math.ceil(attrs.credit * 100)
-        scope.wheelData = scope.package.person_package
+        var personPackage = scope.person_package
 
-        scope.wheelVal = getWheelVal(attrs.credit)
-        console.log("scope.package.person_package: ", scope.package)
+        scope.percentCredit = Math.ceil(personPackage.credit * 100)
+
+        scope.wheelData = personPackage
+        scope.wheelVal = getWheelVal(personPackage.credit)
+
+        console.log("scope.package.person_package: ", scope.person_package)
       }
     }
 

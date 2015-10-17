@@ -286,7 +286,8 @@ class Person(db.Model):
             if self.email is not None:
                 hash = hashlib.md5(self.email).hexdigest()
             else:
-                hash = hashlib.md5("placeholder@example.com").hexdigest()
+                hash = hashlib.md5(str(self.id)).hexdigest()
+
         except UnicodeEncodeError:
             print "UnicodeEncodeError making gravatar url from email"
             hash = 42

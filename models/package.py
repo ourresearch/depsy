@@ -240,7 +240,7 @@ class Package(db.Model):
                     from dep_nodes_ncol_{host}_reverse d, package p
                     where d.used_by = p.project_name
                     and d.package='{package_name}'
-                    order by p.pagerank desc
+                    order by p.impact desc
                     limit {limit}""".format(
                             package_name = self.project_name,
                             host = self.host,
@@ -1043,7 +1043,7 @@ def make_id(namespace, name):
     namespace = namespace.lower()
 
     if namespace in ["cran", "pypi"]:
-        return namespace + ":" + "name"
+        return namespace + ":" + name
 
     elif namespace == "python":
         return "pypi:" + name
