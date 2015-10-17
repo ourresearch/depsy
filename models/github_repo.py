@@ -65,6 +65,36 @@ class GithubRepo(db.Model):
         return u'<GithubRepo {language} {login}/{repo_name}>'.format(
             language=self.language, login=self.login, repo_name=self.repo_name)
 
+
+    def to_dict(self, exclude=None):
+        if exclude is None:
+            exclude = []
+
+        property_names = [
+            "login",
+            "repo_name",
+            "api_raw",
+            "language"
+        ]
+
+        ret = {}
+        for property_name in property_names:
+            if property_name not in exclude:
+                ret[property_name] = getattr(self, property_name)
+
+        # special cases
+        try:
+            ret["stars"] = self.api_raw["stargazers_count"]
+        except KeyError:
+            ret["stars"] = 0
+        return ret
+
+
+    @property
+    def as_snippet(self):
+        return self.to_dict(exclude=["api_raw"])
+
+
     def set_github_about(self):
         self.api_raw = github_api.get_repo_data(self.login, self.repo_name)
         return self.api_raw

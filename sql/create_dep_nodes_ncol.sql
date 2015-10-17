@@ -34,7 +34,15 @@ create table dep_nodes_ncol_pypi_reverse as
     where package in 
         (select project_name from package where host='pypi' and has_best_import_name=True)
 
-
+CREATE INDEX dep_nodes_cran_package_idx 
+    ON public.dep_nodes_ncol_cran_reverse (package);
+CREATE INDEX dep_nodes_pypi_package_idx 
+    ON public.dep_nodes_ncol_pypi_reverse (package);
+CREATE INDEX dep_nodes_cran_used_by_idx 
+    ON public.dep_nodes_ncol_cran_reverse (used_by);
+CREATE INDEX dep_nodes_pypi_used_by_idx 
+    ON public.dep_nodes_ncol_cran_reverse (used_by) ;   
+    
 
 select * from dep_nodes_ncol_pypi_reverse limit 1000
 
