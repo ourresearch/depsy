@@ -71,16 +71,19 @@ class Person(db.Model):
         ret = []
         ret.append({
                 "name": "num_downloads",
+                "display_name": "Monthly downloads",
                 "score": self.num_downloads_score,
                 "val": self.num_downloads_score
             })
         ret.append({
                 "name": "pagerank",
+                "display_name": "Software reuse",
                 "score": self.pagerank_score,
                 "val": self.pagerank_score
             })
         ret.append({
                 "name": "num_citations",
+                "display_name": "Literature reuse",
                 "score": self.num_citations_score,
                 "val": self.num_citations_score
             })
@@ -286,12 +289,13 @@ class Person(db.Model):
             if self.email is not None:
                 hash = hashlib.md5(self.email).hexdigest()
             else:
-                hash = hashlib.md5("placeholder@example.com").hexdigest()
+                hash = hashlib.md5(str(self.id)).hexdigest()
+
         except UnicodeEncodeError:
             print "UnicodeEncodeError making gravatar url from email"
             hash = 42
 
-        url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=mm".format(
+        url = "http://www.gravatar.com/avatar/{hash}.jpg?s={size}&d=retro".format(
             hash=hash,
             size=size
         )

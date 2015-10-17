@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -7,6 +7,30 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
     "      style=\"background-color: hsl({{ languageHue }}, 80%, 30%)\">\n" +
     "   {{ languageName }}\n" +
     "</span>");
+}]);
+
+angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/wheel-popover.tpl.html",
+    "<div class=\"wheel-popover\">\n" +
+    "   <div class=\"committer\" ng-show=\"wheelData.person_package_commits\">\n" +
+    "      <i class=\"fa fa-save\"></i>\n" +
+    "\n" +
+    "\n" +
+    "      commits: {{ myPersonPackage.person_package_commits }}\n" +
+    "\n" +
+    "   </div>\n" +
+    "\n" +
+    "</div>");
+}]);
+
+angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/wheel.tpl.html",
+    "<img class='wheel'\n" +
+    "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
+    "     popover-title=\"{{ percentCredit }}% credit\"\n" +
+    "     popover-trigger=\"mouseenter\"\n" +
+    "     src='static/img/wheel/{{ wheelVal }}.png' />\n" +
+    "");
 }]);
 
 angular.module("header/header.tpl.html", []).run(["$templateCache", function($templateCache) {
@@ -166,73 +190,80 @@ angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", func
 
 angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/package-page.tpl.html",
-    "<div class=\"page entity-page person-page\">\n" +
+    "<div class=\"page entity-page package-page\">\n" +
     "\n" +
     "\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
     "      <div class=\"sidebar-header\">\n" +
     "\n" +
     "         <div class=\"about\">\n" +
-    "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
-    "            <div class=\"score\">\n" +
-    "               <span class=\"impact\">\n" +
-    "                  {{ format.short(person.impact) }}\n" +
+    "            <div class=\"meta\">\n" +
+    "               <span class=\"name\">\n" +
+    "                  {{ package.name }}\n" +
     "               </span>\n" +
-    "               <span class=\"rank\">\n" +
-    "                  #{{ person.impact_rank }}\n" +
-    "               </span>\n" +
+    "\n" +
+    "               <div class=\"summary\">\n" +
+    "                  {{ package.summary }}\n" +
+    "               </div>\n" +
     "            </div>\n" +
-    "\n" +
-    "            <span class=\"name\">\n" +
-    "               {{ package.name }}\n" +
-    "            </span>\n" +
-    "            <span class=\"accounts\">\n" +
-    "               <i popover-title=\"Academic\"\n" +
-    "                  popover-trigger=\"mouseenter\"\n" +
-    "                  popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
-    "                  ng-show=\"person.is_academic\"\n" +
-    "                  class=\"is-academic account fa fa-graduation-cap\"></i>\n" +
-    "\n" +
-    "               <img class=\"orcid account\"\n" +
-    "                  popover-title=\"ORCiD coming soon\"\n" +
-    "                  popover-trigger=\"mouseenter\"\n" +
-    "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
-    "                  ng-show=\"person.is_academic\"\n" +
-    "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
-    "\n" +
-    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github/{{ person.github_login }}\">\n" +
-    "                  <i class=\"fa fa-github\"></i>\n" +
-    "                  <span class=\"github-url-part\" ng-if=\"!person.is_academic\">\n" +
-    "                     github/{{ person.github_login }}\n" +
-    "                  </span>\n" +
+    "            <div class=\"links\">\n" +
+    "               <a class=\"language-icon r\"\n" +
+    "                  href=\"https://cran.r-project.org/web/packages/{{ package.name }}/index.html\"\n" +
+    "                  ng-if=\"package.language=='r'\">\n" +
+    "                  R\n" +
     "               </a>\n" +
-    "            </span>\n" +
-    "\n" +
+    "               <a class=\"language-icon python\"\n" +
+    "                  href=\"https://pypi.python.org/pypi/{{ package.name }}\"\n" +
+    "                  ng-if=\"package.language=='python'\">\n" +
+    "                  py\n" +
+    "               </a>\n" +
+    "               <a class=\"github\"\n" +
+    "                  href=\"http://github.com/{{ package.github_owner }}/{{ package.github_repo_name }}\">\n" +
+    "                  <i class=\"fa fa-github\"></i>\n" +
+    "               </a>\n" +
+    "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "\n" +
+    "      <div class=\"sidebar-section impact\">\n" +
+    "         <h3>Impact</h3>\n" +
+    "         <div class=\"vis\">\n" +
+    "            <div class=\"subscore {{ subscore.name }}\"\n" +
+    "                 ng-if=\"subscore.val > 0\"\n" +
+    "                 ng-repeat=\"subscore in package.subscores\">\n" +
+    "               <div class=\"bar-outer\">\n" +
+    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               </div>\n" +
+    "               <div class=\"subscore-label\">\n" +
+    "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "                  <span class=\"text\">{{ subscore.display_name }}</span>\n" +
+    "               </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
     "\n" +
     "\n" +
     "      <div class=\"sidebar-section contribs\">\n" +
-    "         <h3>Contributors</h3>\n" +
-    "         <div class=\"tags\">\n" +
-    "            <a class=\"collab\"\n" +
-    "               popover=\"We collaborated\"\n" +
+    "         <h3>Key contributors</h3>\n" +
+    "         <div class=\"contrib\"\n" +
+    "            ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
+    "            <wheel></wheel>\n" +
+    "            <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
+    "            <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
+    "            <i popover-title=\"Academic\"\n" +
     "               popover-trigger=\"mouseenter\"\n" +
-    "               popover-title=\"Top collaborator\"\n" +
-    "               href=\"person/{{ contrib.id }}\"\n" +
-    "               ng-repeat=\"contrib in package.top_contribs | orderBy: '-credit'\">\n" +
-    "               <img src=\"{{ contrib.icon_small }}\" alt=\"\"/>\n" +
-    "               <span class=\"impact\">{{ format.short(contrib.impact) }}</span>\n" +
-    "               <span class=\"name\">{{ contrib.name }}</span>\n" +
-    "               <span class=\"is-academic\" ng-show=\"contrib.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
-    "\n" +
-    "            </a>\n" +
+    "               popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "               ng-show=\"person_package.is_academic\"\n" +
+    "               class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
     "\n" +
     "\n" +
-    "      <div class=\"sidebar-section tags\">\n" +
+    "      <div class=\"sidebar-section tags\" ng-if=\"package.tags.length\">\n" +
     "         <h3>Tags</h3>\n" +
     "         <div class=\"tags\">\n" +
     "            <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
@@ -340,6 +371,28 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
+    "\n" +
+    "      <div class=\"sidebar-section impact\">\n" +
+    "         <h3>Impact</h3>\n" +
+    "         <div class=\"vis\">\n" +
+    "            <div class=\"subscore {{ subscore.name }}\"\n" +
+    "                 ng-if=\"subscore.val > 0\"\n" +
+    "                 ng-repeat=\"subscore in person.subscores\">\n" +
+    "               <div class=\"bar-outer\">\n" +
+    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               </div>\n" +
+    "               <div class=\"subscore-label\">\n" +
+    "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "                  <span class=\"text\">{{ subscore.display_name }}</span>\n" +
+    "               </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "         </div>\n" +
+    "      </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "      <!--\n" +
     "      <div class=\"impact-descr\" ng-if=\"!person.is_organization\">\n" +
     "         <h3>Impact</h3>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='python'\">\n" +
@@ -349,6 +402,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "            Ranked #{{ person.impact_rank }} in impact out of {{ person.impact_rank_max }} R coders on CRAN. That's based on summed package impacts, adjusted by percent contributions.\n" +
     "         </div>\n" +
     "      </div>\n" +
+    "      -->\n" +
     "\n" +
     "      <div class=\"top-tags\">\n" +
     "         <h3>Top tags</h3>\n" +
@@ -395,7 +449,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"packages\">\n" +
     "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "            <div class=\"person-package-stats\">\n" +
-    "               <wheel credit=\"{{ package.person_package_credit }}\"></wheel>\n" +
+    "               <wheel roles=\"\" credit=\"{{ package.person_package_credit }}\"></wheel>\n" +
     "\n" +
     "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +

@@ -1,70 +1,77 @@
-<div class="page entity-page person-page">
+<div class="page entity-page package-page">
 
 
    <div class="ti-page-sidebar">
       <div class="sidebar-header">
 
          <div class="about">
-            <img ng-src="{{ person.icon }}" alt=""/>
-            <div class="score">
-               <span class="impact">
-                  {{ format.short(person.impact) }}
+            <div class="meta">
+               <span class="name">
+                  {{ package.name }}
                </span>
-               <span class="rank">
-                  #{{ person.impact_rank }}
-               </span>
+
+               <div class="summary">
+                  {{ package.summary }}
+               </div>
             </div>
-
-            <span class="name">
-               {{ package.name }}
-            </span>
-            <span class="accounts">
-               <i popover-title="Academic"
-                  popover-trigger="mouseenter"
-                  popover="We infer academic status based on factors like email address, tags, and institution."
-                  ng-show="person.is_academic"
-                  class="is-academic account fa fa-graduation-cap"></i>
-
-               <img class="orcid account"
-                  popover-title="ORCiD coming soon"
-                  popover-trigger="mouseenter"
-                  popover="ORCiD is a unique identifier for researchers. We'll be rolling out support soon."
-                  ng-show="person.is_academic"
-                  src="static/img/orcid.gif" alt=""/>
-
-               <a ng-if="person.github_login" class="account" href="http://github/{{ person.github_login }}">
-                  <i class="fa fa-github"></i>
-                  <span class="github-url-part" ng-if="!person.is_academic">
-                     github/{{ person.github_login }}
-                  </span>
+            <div class="links">
+               <a class="language-icon r"
+                  href="https://cran.r-project.org/web/packages/{{ package.name }}/index.html"
+                  ng-if="package.language=='r'">
+                  R
                </a>
-            </span>
-
+               <a class="language-icon python"
+                  href="https://pypi.python.org/pypi/{{ package.name }}"
+                  ng-if="package.language=='python'">
+                  py
+               </a>
+               <a class="github"
+                  href="http://github.com/{{ package.github_owner }}/{{ package.github_repo_name }}">
+                  <i class="fa fa-github"></i>
+               </a>
+            </div>
          </div>
       </div>
+
+      <div class="sidebar-section impact">
+         <h3>Impact</h3>
+         <div class="vis">
+            <div class="subscore {{ subscore.name }}"
+                 ng-if="subscore.val > 0"
+                 ng-repeat="subscore in package.subscores">
+               <div class="bar-outer">
+                  <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
+               </div>
+               <div class="subscore-label">
+                  <span class="val">{{ format.short(subscore.val) }}</span>
+                  <span class="text">{{ subscore.display_name }}</span>
+               </div>
+
+            </div>
+         </div>
+      </div>
+
+
 
 
       <div class="sidebar-section contribs">
-         <h3>Contributors</h3>
-         <div class="tags">
-            <a class="collab"
-               popover="We collaborated"
+         <h3>Key contributors</h3>
+         <div class="contrib"
+            ng-repeat="person_package in package.top_contribs | orderBy: '-credit'">
+            <wheel></wheel>
+            <img class="person-icon" src="{{ person_package.icon_small }}" alt=""/>
+            <a class="name" href="person/{{ person_package.id }}">{{ person_package.name }}</a>
+            <i popover-title="Academic"
                popover-trigger="mouseenter"
-               popover-title="Top collaborator"
-               href="person/{{ contrib.id }}"
-               ng-repeat="contrib in package.top_contribs | orderBy: '-credit'">
-               <img src="{{ contrib.icon_small }}" alt=""/>
-               <span class="impact">{{ format.short(contrib.impact) }}</span>
-               <span class="name">{{ contrib.name }}</span>
-               <span class="is-academic" ng-show="contrib.is_academic"><i class="fa fa-graduation-cap"></i></span>
-
-            </a>
+               popover="We infer academic status based on factors like email address, tags, and institution."
+               ng-show="person_package.is_academic"
+               class="is-academic fa fa-graduation-cap"></i>
          </div>
       </div>
 
 
 
-      <div class="sidebar-section tags">
+      <div class="sidebar-section tags" ng-if="package.tags.length">
          <h3>Tags</h3>
          <div class="tags">
             <a class="tag" ng-repeat="tag in package.tags">
