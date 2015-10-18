@@ -872,6 +872,7 @@ class Package(db.Model):
             cls.pagerank,
             cls.num_citations
         )
+        q = q.filter(cls.is_academic==True)
         rows = q.all()
 
         ref_list["num_downloads"] = sorted([row[0] for row in rows if row[0] != None])
@@ -910,6 +911,7 @@ class Package(db.Model):
         property_to_rank_by = getattr(cls, name_to_rank_by)
 
         q = db.session.query(cls.id)
+        q = q.filter(cls.is_academic==True)
         q = q.order_by(property_to_rank_by.desc())  # the important part :)
         rows = q.all()
 
@@ -933,6 +935,7 @@ class Package(db.Model):
     def shortcut_num_citations_rank(cls):
         print "getting the lookup for num_citations ranking shortcut...."
         q = db.session.query(cls.id)
+        q = q.filter(cls.is_academic==True)        
         q = q.order_by(cls.num_citations.desc())  # the important part :)
         rows = q.all()
 
