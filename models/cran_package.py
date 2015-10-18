@@ -38,28 +38,38 @@ class CranPackage(Package):
     def host_url(self):
         return "https://cran.r-project.org/web/packages/{}".format(self.project_name)
 
-    @property
-    def pagerank_offset_to_recenter_scores(self):
-        # select log(1.0/max(pagerank)), host from package group by host
-        return 3.72  # brings lowest up to about 0
-
-    @property
-    def num_downloads_offset_to_recenter_scores(self):
-        # select log(1.0/max(num_downloads)), host from package group by host
-        return 4.61  # brings lowest up to about 0
 
     @property
     def num_citations_offset_to_recenter_scores(self):
         # select log(1.0/max(num_citations)), host from package group by host        
         return 3.45  # brings lowest up to about 0
 
+
     @property
     def pagerank_max(self):
         return 0.0601950151409884823  # brings lowest up to about 0
 
     @property
+    def pagerank_99th(self):
+        return 0.00138234111848916795 # 99th percentile
+
+    @property
+    def pagerank_median(self):
+        return 1.16684918795914493e-05
+
+
+    @property
     def num_downloads_max(self):
         return 161454  # brings lowest up to about 0
+
+    @property
+    def num_downloads_99th(self):
+        return 40846  # 99th percentile
+
+    @property
+    def num_downloads_median(self):
+        return 285.0  # 99th percentile
+
 
     @property
     def num_citations_max(self):

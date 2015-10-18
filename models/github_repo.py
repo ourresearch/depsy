@@ -85,8 +85,10 @@ class GithubRepo(db.Model):
         # special cases
         try:
             ret["stars"] = self.api_raw["stargazers_count"]
+            ret["summary"] = self.api_raw["description"]
         except KeyError:
             ret["stars"] = 0
+            ret["summary"] = ""
         return ret
 
 

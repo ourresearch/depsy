@@ -14,6 +14,7 @@ class FullTextSource:
             url = self.query_url(query)
             # print u"calling {} with {}".format(self.__class__.__name__, url)
             r = requests.get(url)
+            print "status code:", r.status_code
         except requests.exceptions.RequestException:
             print "RequestException, failed on", url
             return None
@@ -85,6 +86,7 @@ class Ads(FullTextSource):
             hits = int(result_info[0])
             print "got hits!", hits
         except (IndexError, ValueError):
+            print "no hits"
             hits = 0
         return hits      
 

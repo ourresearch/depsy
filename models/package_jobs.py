@@ -219,9 +219,29 @@ update_registry.register(Update(
 
 
 q = db.session.query(CranPackage.id)
-q = q.filter(~CranPackage.downloads.has_key('last_month'))
 update_registry.register(Update(
-    job=CranPackage.set_num_downloads_since,
+    job=CranPackage.set_num_downloads_score,
+    query=q,
+    queue_id=7
+))
+
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.set_num_downloads_score,
+    query=q,
+    queue_id=7
+))
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_pagerank_score,
+    query=q,
+    queue_id=7
+))
+
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.set_pagerank_score,
     query=q,
     queue_id=7
 ))
