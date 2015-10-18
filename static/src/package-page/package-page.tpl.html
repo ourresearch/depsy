@@ -33,24 +33,16 @@
          </div>
       </div>
 
-      <div class="sidebar-section impact">
-         <h3>Impact</h3>
-         <div class="vis">
-            <div class="subscore {{ subscore.name }}"
-                 ng-if="subscore.val > 0"
-                 ng-repeat="subscore in package.subscores">
-               <div class="bar-outer">
-                  <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
-               </div>
-               <div class="subscore-label">
-                  <span class="val">{{ format.short(subscore.val) }}</span>
-                  <span class="text">{{ subscore.display_name }}</span>
-               </div>
 
-            </div>
+
+      <div class="sidebar-section tags" ng-if="package.tags.length">
+         <h3>Tags</h3>
+         <div class="tags">
+            <a class="tag" ng-repeat="tag in package.tags">
+               {{ tag }}
+            </a>
          </div>
       </div>
-
 
 
 
@@ -71,14 +63,6 @@
 
 
 
-      <div class="sidebar-section tags" ng-if="package.tags.length">
-         <h3>Tags</h3>
-         <div class="tags">
-            <a class="tag" ng-repeat="tag in package.tags">
-               {{ tag }}
-            </a>
-         </div>
-      </div>
 
       <div class="sidebar-section actions">
          <a class="json-link btn btn-default"
@@ -92,6 +76,9 @@
             JSON
          </a>
 
+         <!--
+         <a href="https://twitter.com/share?url={{ encodeURIComponent('http://google.com') }}" >Tweet</a>
+         -->
 
 
       </div>
@@ -102,30 +89,38 @@
 
    <div class="ti-page-body">
 
-   <!--
-
-      <div class="packages">
-         <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
-            <div class="person-package-stats">
-               <span class="roles">
-                  <span class="role role-{{ role }}" ng-repeat="role in package.roles | orderBy: '-toLowerCase()'">
-                     <i class="fa fa-user" ng-if="role=='author'"></i>
-                     <i class="fa fa-save"  ng-if="role=='github_contributor'"></i>
-                     <i class="fa fa-github" ng-if="role=='github_owner'"></i>
+      <div class="subscore {{ subscore.name }}"
+           ng-repeat="subscore in package.subscores">
+         <h3>
+            <i class="fa {{ subscore.icon }}"></i>
+            {{ subscore.display_name }}
+         </h3>
+         <div class="metrics">
+            <div class="summary-metrics">
+               <div class="vis">
+                  <div class="bar-outer">
+                     <div class="bar-inner {{ subscore.name }}" style="height: {{ subscore.score /10 }}%"></div>
+                  </div>
+               </div>
+               <span class="main-metric">
+                  {{ format.short(subscore.val) }}
+               </span>
+               <span class="percentile">
+                  <span class="val">
+                     {{ format.round(subscore.percentile) * 100 }}
+                  </span>
+                  <span class="descr">
+                     percentile
                   </span>
                </span>
-               <div class="bar-outside">
-                  <span class="bar-inside" style="width: {{ package.person_package_credit * 100 }}%"></span>
-               </div>
             </div>
-            <span class="package-snippet-wrapper" ng-include="'snippet/package-snippet.tpl.html'"></span>
+         </div>
+         <div class="explanation">
+
          </div>
 
 
       </div>
-
-
-   -->
 
    </div>
 

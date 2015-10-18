@@ -178,25 +178,54 @@ class Package(db.Model):
         return self.to_dict(exclude=["contribs", "tree", "top_neighbors"])
 
     @property
+    def engagement(self):
+        return self.num_stars
+
+    @property
+    def engagement_score(self):
+        return 442
+
+    @property
+    def engagement_percentile(self):
+        try:
+            return self.num_stars / 100
+        except TypeError:
+            return None
+
+    @property
     def subscores(self):
         ret = [
             {
                 "name": "num_downloads",
                 "score": self.num_downloads_score,
+                "percentile": self.num_downloads_percentile,
                 "val": self.num_downloads,
-                "display_name": "Monthly downloads"
+                "display_name": "Downloads",
+                "icon": "fa-download"
             },
             {
                 "name": "pagerank",
                 "score": self.pagerank_score,
-                "val": self.pagerank,
-                "display_name": "Dependency PageRank"
+                "percentile": self.pagerank_percentile,
+                "val": self.pagerank_score,  # the real val is uselessly tiny.
+                "display_name": "Software reuse",
+                "icon": "fa-recycle"
             },
             {
                 "name": "num_mentions",
                 "score": self.num_citations_score,
+                "percentile": self.num_citations_percentile,
                 "val": self.num_citations,
-                "display_name": "Literature mentions"
+                "display_name": "Citations",
+                "icon": "fa-file-text-o"
+            },
+            {
+                "name": "engagement",
+                "score": self.engagement_score,
+                "percentile": self.engagement_percentile,
+                "val": self.engagement,
+                "display_name": "Engagement",
+                "icon": "fa-comments-o"
             }
         ]
         return ret
