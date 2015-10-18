@@ -51,11 +51,11 @@ class CranPackage(Package):
 
     @property
     def pagerank_99th(self):
-        return 0.00138234111848916795 # 99th percentile
+        return 0.00179763042505234915 # 99th percentile
 
     @property
     def pagerank_median(self):
-        return 1.16684918795914493e-05
+        return 1.24314317332570431e-05
 
 
     @property

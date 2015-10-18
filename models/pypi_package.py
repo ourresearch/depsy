@@ -43,7 +43,7 @@ class PypiPackage(Package):
 
     @property
     def pagerank_99th(self):
-        return 0.00008750214  #99th percentile
+        return 0.000134009339326154561  #99th percentile
 
     @property
     def pagerank_median(self):
