@@ -232,6 +232,20 @@ update_registry.register(Update(
     queue_id=7
 ))
 
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_pagerank_score,
+    query=q,
+    queue_id=7
+))
+
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.set_pagerank_score,
+    query=q,
+    queue_id=7
+))
+
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(

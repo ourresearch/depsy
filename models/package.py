@@ -916,8 +916,12 @@ class Package(db.Model):
 
 
     @property
+    def pagerank_offset_to_recenter_scores(self):
+        return -math.ceil(math.log10(1.0/self.num_downloads_99th))
+
+    @property
     def pagerank_score_multiplier(self):
-        return self.pagerank_score
+        return 1000.0/self.num_downloads_offset_to_recenter_scores # makes it out of 1000
 
     @property
     def num_downloads_offset_to_recenter_scores(self):
@@ -961,7 +965,8 @@ class Package(db.Model):
             adjusted = None
 
         self.pagerank_score = adjusted
-        print u"pagerank score for {} is {}".format(self.id, adjusted)
+        print u"\n**{}:  {} pagerank*1000000, score {}\n".format(
+            self.id, self.pagerank*1000000, self.pagerank_score)        
         return self.pagerank_score
 
 
