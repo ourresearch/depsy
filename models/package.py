@@ -915,36 +915,22 @@ class Package(db.Model):
         return impact_rank_lookup
 
 
-    def set_impact_rank(self, impact_rank_lookup):
-        self.impact_rank = impact_rank_lookup[self.id]
-        print "self.impact_rank", self.impact_rank
-
     @property
     def pagerank_score_multiplier(self):
         return self.pagerank_score
 
     @property
+    def num_downloads_offset_to_recenter_scores(self):
+        return -math.ceil(math.log10(1.0/self.num_downloads_99th))
+
+    @property
     def num_downloads_score_multiplier(self):
-        return 1000.0/self.num_downloads_offset_to_recenter_scores  # makes it out of 1000
+        return 1000.0/self.num_downloads_offset_to_recenter_scores # makes it out of 1000
 
     @property
     def num_citations_score_multiplier(self):
-        return 1000.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1000
+        return 1.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1
 
-
-    def set_pagerank_score(self):
-        if not self.pagerank:
-            self.pagerank_score = None
-            return self.pagerank_score
-            
-        try:
-            raw = math.log10(float(self.pagerank)/self.pagerank_max)
-            adjusted = (raw + self.pagerank_offset_to_recenter_scores) * self.pagerank_score_multiplier
-        except ValueError:
-            adjusted = None
-
-        self.pagerank_score = adjusted
-        return self.pagerank_score
 
     def set_num_downloads_score(self):
         if not self.num_downloads:
@@ -952,13 +938,31 @@ class Package(db.Model):
             return self.num_downloads_score
 
         try:
-            raw = math.log10(float(self.num_downloads)/self.num_downloads_max)
+            raw = math.log10(float(self.num_downloads)/self.num_downloads_99th)
             adjusted = (raw + self.num_downloads_offset_to_recenter_scores) * self.num_downloads_score_multiplier
         except ValueError:
             adjusted = None
 
         self.num_downloads_score = adjusted   
+        print u"\n**{}:  {} downloads, score {}\n".format(
+            self.id, self.num_downloads, self.num_downloads_score)        
         return self.num_downloads_score
+
+
+    def set_pagerank_score(self):
+        if not self.pagerank:
+            self.pagerank_score = None
+            return self.pagerank_score
+
+        try:
+            raw = math.log10(float(self.pagerank)/self.pagerank_99th)
+            adjusted = (raw + self.pagerank_offset_to_recenter_scores) * self.pagerank_score_multiplier
+        except ValueError:
+            adjusted = None
+
+        self.pagerank_score = adjusted
+        print u"pagerank score for {} is {}".format(self.id, adjusted)
+        return self.pagerank_score
 
 
     def set_num_citations_score(self):
@@ -995,7 +999,7 @@ class Package(db.Model):
         num_citations_score = self.set_num_citations_score()
         
         # twice the mean and twenty percent of the scaled citations
-        combo = (pagerank_and_downloads_mean*2 + num_citations_score*0.2) / 2.2
+        combo = (pagerank_and_downloads_mean*2 + num_citations_score) / 3
 
 
         self.impact = combo

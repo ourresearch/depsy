@@ -32,13 +32,9 @@ class PypiPackage(Package):
 
     @property
     def pagerank_offset_to_recenter_scores(self):
-        # select log(1.0/max(pagerank)), host from package group by host        
-        return 4.12  # brings lowest up to about 0
-
-    @property
-    def num_downloads_offset_to_recenter_scores(self):
-        # select log(1.0/max(num_downloads)), host from package group by host        
-        return 5.47  # brings lowest up to about 0
+        # select log(.10*min(pagerank)/max(pagerank)), host from package group by host   
+        # min pagerank =1.99416833587588704e-06     
+        return 2.65  # brings lowest up to about 0
 
     @property
     def num_citations_offset_to_recenter_scores(self):
@@ -50,8 +46,20 @@ class PypiPackage(Package):
         return 0.0262218729908892147  # brings lowest up to about 0
 
     @property
+    def pagerank_99th(self):
+        return 0.00008750214  #99th percentile
+
+    @property
     def num_downloads_max(self):
         return 14940006  # brings lowest up to about 0
+
+    @property
+    def num_downloads_99th(self):
+        return 35853  # 99th percentile
+
+    @property
+    def num_downloads_median(self):
+        return 364.0  # 99th percentile
 
     @property
     def num_citations_max(self):
