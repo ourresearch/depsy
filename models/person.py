@@ -198,7 +198,6 @@ class Person(db.Model):
             q = db.session.query(cls.id)
             q = add_person_leaderboard_filters(q)
             q = q.filter(Person.main_language==main_language)
-            q = q.filter(Person.is_academic==True)
             q = q.order_by(cls.impact.desc())  # the important part :)
             rows = q.all()
 

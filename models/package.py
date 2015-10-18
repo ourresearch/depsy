@@ -886,8 +886,12 @@ class Package(db.Model):
         if value is None:  # distinguish between that and zero
             return None
          
-        matching_index = refset.index(value)
-        percentile = float(matching_index) / len(refset)
+        try:
+            matching_index = refset.index(value)
+            percentile = float(matching_index) / len(refset)
+        except ValueError:
+            # not in index.  maybe isn't academic.
+            percentile = None
         return percentile
 
     def set_num_downloads_percentile(self, refset):
@@ -928,7 +932,11 @@ class Package(db.Model):
         return cls._shortcut_rank("impact")
 
     def set_impact_rank(self, impact_rank_lookup):
-        self.impact_rank = impact_rank_lookup[self.id]
+        try:
+            self.impact_rank = impact_rank_lookup[self.id]
+        except KeyError:
+            # maybe isn't academic
+            self.impact_rank = None
         print "self.impact_rank", self.impact_rank
 
     @classmethod
