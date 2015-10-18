@@ -38,13 +38,10 @@ class Contribution(db.Model):
 
 
     @property
-    def role_dict(self):
+    def as_snippet(self):
         return {
             "name": self.role,
-            "person_name": self.person.name,
-            "quantity": self.quantity,
-            "percent": self.get_percent(),
-            "fractional_sort_score": self.fractional_sort_score
+            "quantity": self.quantity
         }
 
     @property

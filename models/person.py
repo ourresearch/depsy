@@ -404,7 +404,7 @@ class PersonPackage():
 
     def to_dict(self):
         ret = self.package.as_snippet
-        ret["roles"] = [r.role for r in self.roles]
+        ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
         ret["person_package_commits"] = self.person_package_commits
         ret["person_package_impact"] = self.person_package_impact
@@ -416,7 +416,7 @@ class PersonPackage():
     @property
     def as_person_snippet(self):
         ret = self.package.as_snippet_without_people
-        ret["roles"] = [r.role for r in self.roles]
+        ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
         ret["person_package_commits"] = self.person_package_commits
         ret["person_package_impact"] = self.person_package_impact
