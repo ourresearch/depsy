@@ -210,12 +210,6 @@ update_registry.register(Update(
     queue_id=9
 ))
 
-q = db.session.query(CranPackage.id)  # no run marker
-update_registry.register(Update(
-    job=CranPackage.set_is_academic,
-    query=q,
-    queue_id=9
-))
 
 
 q = db.session.query(CranPackage.id)
@@ -378,7 +372,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(PypiPackage.pagerank_percentile == None)
+# q = q.filter(PypiPackage.pagerank_percentile == None)
 update_registry.register(Update(
     job=PypiPackage.set_all_percentiles,
     query=q,
@@ -387,7 +381,7 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(CranPackage.id)
-q = q.filter(CranPackage.pagerank_percentile == None)
+# q = q.filter(CranPackage.pagerank_percentile == None)
 update_registry.register(Update(
     job=CranPackage.set_all_percentiles,
     query=q,

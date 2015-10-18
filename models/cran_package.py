@@ -51,12 +51,20 @@ class CranPackage(Package):
 
     @property
     def pagerank_99th(self):
-        return 0.00179763042505234915 # 99th percentile
+        return 0.000143161687115590276  #95 percentile actually
 
     @property
     def pagerank_median(self):
         return 1.24314317332570431e-05
 
+    @property
+    def pagerank_min(self):
+        return 0.00001166849
+
+    @property
+    def pagerank_min_diff(self):
+        # the smallest minus the next smallest
+        return 7.99856298 * 0.000000001
 
     @property
     def num_downloads_max(self):
@@ -170,46 +178,5 @@ class CranPackage(Package):
             # select count(id) from package where host='cran'
         return 7057
 
-    def set_is_academic(self):
-        self.is_academic = False
-
-        # skip tags for cran, because they are tasks and don't work well here
-
-        # if you have an academic-sounding name, you're academic
-        if is_academic_phrase(self.project_name):
-            self.is_academic = True
-
-        # if you have an academic-sounding summary, you're academic
-        if is_academic_phrase(self.summary):
-            self.is_academic = True
-
-        # if you have an academic-sounding cran description, you're academic
-        try:
-            if is_academic_phrase(self.api_raw["Description"]):
-                self.is_academic = True
-        except KeyError:
-            pass
-
-        # check proxy paper type
-        sciency_proxy_paper_types = [
-            '@Book', 
-            '@InBook',
-            '@InPhdThesis',
-            '@PhdThesis',
-            '@Article',
-            '@InProceedings'
-            # '%@InCollection%'
-            # '%@Manual%'
-            # '%@Misc%'
-            # '%@Unpublished%'
-            # '%@TechReport%'
-        ]
-
-        for proxy_paper_type in sciency_proxy_paper_types:
-            if proxy_paper_type in self.proxy_papers:
-                print "setting is_academic=True due to proxy paper type"
-                self.is_academic = True
-
-        return self.is_academic
 
 

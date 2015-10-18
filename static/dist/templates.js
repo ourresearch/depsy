@@ -105,7 +105,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -299,7 +298,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "               </span>\n" +
     "               <span class=\"percentile\">\n" +
     "                  <span class=\"val\">\n" +
-    "                     {{ format.round(subscore.percentile) * 100 }}\n" +
+    "                     {{ format.round(subscore.percentile * 100) }}\n" +
     "                  </span>\n" +
     "                  <span class=\"descr\">\n" +
     "                     percentile\n" +

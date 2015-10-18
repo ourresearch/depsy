@@ -197,7 +197,7 @@ class Package(db.Model):
         ret = [
             {
                 "name": "num_downloads",
-                "score": self.num_downloads_score,
+                "score": self.display_num_downloads_score,
                 "percentile": self.num_downloads_percentile,
                 "val": self.num_downloads,
                 "display_name": "Downloads",
@@ -205,15 +205,15 @@ class Package(db.Model):
             },
             {
                 "name": "pagerank",
-                "score": self.pagerank_score,
+                "score": self.display_pagerank_score,
                 "percentile": self.pagerank_percentile,
-                "val": self.pagerank_score,  # the real val is uselessly tiny.
+                "val": round(self.display_pagerank_score / 1000.0, 2),  
                 "display_name": "Software reuse",
                 "icon": "fa-recycle"
             },
             {
                 "name": "num_mentions",
-                "score": self.num_citations_score,
+                "score": self.display_num_citations_score,
                 "percentile": self.num_citations_percentile,
                 "val": self.num_citations,
                 "display_name": "Citations",
@@ -253,7 +253,7 @@ class Package(db.Model):
             person_snippet["roles"] = []
             for contrib in self.contributions:
                 if contrib.person_id == person_id:
-                    person_snippet["roles"].append(contrib.role)
+                    person_snippet["roles"].append(contrib.as_snippet)
 
             ret.append(person_snippet)
 
@@ -342,6 +342,7 @@ class Package(db.Model):
     def all_people(self):
         people = list(set([c.person for c in self.contributions]))
         return people
+
 
     def dedup_people(self):
         all_people = self.all_people
@@ -945,12 +946,34 @@ class Package(db.Model):
 
 
     @property
+    def display_num_downloads_score(self):
+        return min(self.num_downloads_score, 1000)
+
+    @property
+    def display_num_citations_score(self):
+        return min(self.num_citations_score, 1000)
+
+    @property
+    def display_pagerank_score(self):
+        #if no pagerank, sub it for downloads
+        if not self.pagerank_score:
+            return self.num_downloads_score
+
+        return min(self.pagerank_score, 1000)
+
+
+
+
+
+    @property
     def pagerank_offset_to_recenter_scores(self):
-        return -math.ceil(math.log10(1.0/self.num_downloads_99th))
+        offset = -math.log10(self.pagerank_min_diff/(self.pagerank_99th))
+        print "offset", offset
+        return offset
 
     @property
     def pagerank_score_multiplier(self):
-        return 1000.0/self.num_downloads_offset_to_recenter_scores # makes it out of 1000
+        return 1000.0/self.pagerank_offset_to_recenter_scores # makes it out of 1000
 
     @property
     def num_downloads_offset_to_recenter_scores(self):
@@ -988,12 +1011,17 @@ class Package(db.Model):
             return self.pagerank_score
 
         try:
-            raw = math.log10(float(self.pagerank)/self.pagerank_99th)
+            raw = math.log10(float(self.pagerank - self.pagerank_min)/(self.pagerank_99th))
+            print "raw", raw
             adjusted = (raw + self.pagerank_offset_to_recenter_scores) * self.pagerank_score_multiplier
         except ValueError:
             adjusted = None
 
+        if adjusted < 0:
+            adjusted = 0
+
         self.pagerank_score = adjusted
+
         print u"\n**{}:  {} pagerank*1000000, score {}\n".format(
             self.id, self.pagerank*1000000, self.pagerank_score)        
         return self.pagerank_score
