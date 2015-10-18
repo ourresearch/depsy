@@ -379,10 +379,10 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscor
   clear: both;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_downloads {
-  color: #377eb8;
+  color: #4daf4a;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.pagerank {
-  color: #4daf4a;
+  color: #377eb8;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_citations {
   color: #984ea3;
@@ -400,10 +400,10 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscor
   background: #555;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_downloads {
-  background: #377eb8;
+  background: #4daf4a;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.pagerank {
-  background: #4daf4a;
+  background: #377eb8;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_citations {
   background: #984ea3;
@@ -462,6 +462,9 @@ div.entity-page.person-page .ti-page-body .packages div.person-package .person-p
   height: 20px;
   opacity: .9;
 }
+div.package-page div.ti-page-sidebar {
+  margin-right: 120px;
+}
 div.package-page div.ti-page-sidebar .sidebar-header .about .meta .name {
   font-size: 38px;
   font-weight: bold;
@@ -501,18 +504,21 @@ div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore:after {
   clear: both;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_downloads {
-  color: #377eb8;
+  color: #4daf4a;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore.pagerank {
-  color: #4daf4a;
+  color: #377eb8;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_mentions {
   color: #984ea3;
 }
+div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore.engagement {
+  color: #ffa500;
+}
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer {
-  margin-top: 7px;
-  height: 13px;
-  width: 70px;
+  margin-top: 9px;
+  height: 10px;
+  width: 50px;
   background: #eee;
   float: left;
 }
@@ -522,21 +528,22 @@ div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-oute
   background: #555;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_downloads {
-  background: #377eb8;
+  background: #4daf4a;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.pagerank {
-  background: #4daf4a;
+  background: #377eb8;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_mentions {
   background: #984ea3;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .subscore-label {
   display: inline-block;
-  margin-left: 10px;
+  margin-left: 7px;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .subscore-label .val {
   font-size: 18px;
   min-width: 70px;
+  font-weight: bold;
 }
 div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .subscore-label .text {
   font-size: 12px;
@@ -562,46 +569,80 @@ div.package-page div.ti-page-sidebar .sidebar-section.contribs .contrib img.pers
   -moz-border-radius: 20px;
   border-radius: 20px;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node {
-  border: 1px solid #eee;
-  margin: -1px;
-  padding: 0;
-  color: #999;
+div.package-page .ti-page-body {
+  float: none;
+}
+div.package-page .ti-page-body .subscore {
+  margin-bottom: 70px;
+  float: left;
+  width: 400px;
+}
+div.package-page .ti-page-body .subscore.num_downloads {
+  color: #4daf4a;
+}
+div.package-page .ti-page-body .subscore.pagerank {
+  color: #377eb8;
+}
+div.package-page .ti-page-body .subscore.num_mentions {
+  color: #984ea3;
+}
+div.package-page .ti-page-body .subscore.engagement {
+  color: #ffa500;
+}
+div.package-page .ti-page-body .subscore h3 {
+  margin-bottom: 0;
+}
+div.package-page .ti-page-body .subscore .metrics {
+  margin-top: 10px;
+}
+div.package-page .ti-page-body .subscore .metrics .summary-metrics {
+  line-height: 1;
+}
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis {
+  float: left;
+}
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis .bar-outer {
+  height: 45px;
+  width: 20px;
+  margin: 10px 10px 0 2px;
+  background: #eee;
   position: relative;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node.is-root-true {
-  font-size: 16px !important;
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis .bar-outer .bar-inner {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node:before,
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node:after {
-  content: " ";
-  display: table;
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis .bar-outer .bar-inner.num_downloads {
+  background: #4daf4a;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node:after {
-  clear: both;
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis .bar-outer .bar-inner.pagerank {
+  background: #377eb8;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node.is-rollup-true {
-  font-style: italic;
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis .bar-outer .bar-inner.num_mentions {
+  background: #984ea3;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node.is-package-true {
-  color: #333;
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .vis .bar-outer .bar-inner.engagement {
+  background: #ffa500;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.about {
-  font-size: 16px;
-  padding-right: 5px;
-  padding: 5px 5px 5px 10px;
-  min-width: 100px;
-  float: left;
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .main-metric {
+  font-size: 60px;
 }
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.about span.metrics {
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .percentile {
+  display: inline-block;
+  width: 50px;
+  line-height: 1.3;
+  margin-left: 7px;
+}
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .percentile span.val {
+  font-size: 25px;
+  font-weight: 100;
+}
+div.package-page .ti-page-body .subscore .metrics .summary-metrics .percentile span.descr {
+  color: #777;
   font-size: 12px;
-}
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.about span.metrics span.pagerank {
-  font-weight: bold;
-  font-style: normal;
-}
-div.package-page div.dep-nodes-tree div.dep-node-container div.dep-node div.children {
-  float: left;
+  font-weight: 100;
 }
 .page.leaderboard div.sidebar {
   width: 200px;
@@ -727,10 +768,10 @@ span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner {
   display: inline-block;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_downloads {
-  background: #377eb8;
+  background: #4daf4a;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.pagerank {
-  background: #4daf4a;
+  background: #377eb8;
 }
 span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_mentions {
   background: #984ea3;
@@ -857,10 +898,10 @@ span.snippet span.contribs a.contrib {
   color: #984ea3;
 }
 .impact-popover.package div.metric.pagerank {
-  color: #4daf4a;
+  color: #377eb8;
 }
 .impact-popover.package div.metric.num_downloads {
-  color: #377eb8;
+  color: #4daf4a;
 }
 .impact-popover.package div.metric span.name {
   display: inline-block;

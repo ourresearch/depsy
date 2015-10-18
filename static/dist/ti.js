@@ -228,7 +228,8 @@ angular.module("directives.wheel", [])
 .directive("wheel", function(){
 
     function getWheelVal(credit){
-      if (credit < .08) {
+      console.log("testing credit", credit)
+      if (credit <= .081) {
         return "tiny"
       }
       else if (credit === 1) {
@@ -356,6 +357,9 @@ angular.module("formatterService", [])
       if (num === null){
         return 0
       }
+      if (num === 0){
+        return 0
+      }
 
       if (num >= 1000000) {
           return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -374,9 +378,25 @@ angular.module("formatterService", [])
       return Math.floor(num);
   }
 
+  var round = function(num){
+    return Math.round(num)
+  }
+
+  // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
+  var ordinal = function(n) {
+    var s=["th","st","nd","rd"],
+      v=n%100;
+    return n+(s[(v-20)%10]||s[v]||s[0]);
+  }
+
+
+
   return {
     short: short,
-    commas: commas
+    commas: commas,
+    round: round,
+    ordinal: ordinal
+
   }
 });
 angular.module('header', [
@@ -1112,24 +1132,16 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"sidebar-section impact\">\n" +
-    "         <h3>Impact</h3>\n" +
-    "         <div class=\"vis\">\n" +
-    "            <div class=\"subscore {{ subscore.name }}\"\n" +
-    "                 ng-if=\"subscore.val > 0\"\n" +
-    "                 ng-repeat=\"subscore in package.subscores\">\n" +
-    "               <div class=\"bar-outer\">\n" +
-    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
-    "               </div>\n" +
-    "               <div class=\"subscore-label\">\n" +
-    "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
-    "                  <span class=\"text\">{{ subscore.display_name }}</span>\n" +
-    "               </div>\n" +
     "\n" +
-    "            </div>\n" +
+    "\n" +
+    "      <div class=\"sidebar-section tags\" ng-if=\"package.tags.length\">\n" +
+    "         <h3>Tags</h3>\n" +
+    "         <div class=\"tags\">\n" +
+    "            <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
+    "               {{ tag }}\n" +
+    "            </a>\n" +
     "         </div>\n" +
     "      </div>\n" +
-    "\n" +
     "\n" +
     "\n" +
     "\n" +
@@ -1150,14 +1162,6 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "\n" +
     "\n" +
-    "      <div class=\"sidebar-section tags\" ng-if=\"package.tags.length\">\n" +
-    "         <h3>Tags</h3>\n" +
-    "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
-    "               {{ tag }}\n" +
-    "            </a>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
     "\n" +
     "      <div class=\"sidebar-section actions\">\n" +
     "         <a class=\"json-link btn btn-default\"\n" +
@@ -1171,6 +1175,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            JSON\n" +
     "         </a>\n" +
     "\n" +
+    "         <!--\n" +
+    "         <a href=\"https://twitter.com/share?url={{ encodeURIComponent('http://google.com') }}\" >Tweet</a>\n" +
+    "         -->\n" +
     "\n" +
     "\n" +
     "      </div>\n" +
@@ -1181,30 +1188,38 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
-    "   <!--\n" +
-    "\n" +
-    "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
-    "            <div class=\"person-package-stats\">\n" +
-    "               <span class=\"roles\">\n" +
-    "                  <span class=\"role role-{{ role }}\" ng-repeat=\"role in package.roles | orderBy: '-toLowerCase()'\">\n" +
-    "                     <i class=\"fa fa-user\" ng-if=\"role=='author'\"></i>\n" +
-    "                     <i class=\"fa fa-save\"  ng-if=\"role=='github_contributor'\"></i>\n" +
-    "                     <i class=\"fa fa-github\" ng-if=\"role=='github_owner'\"></i>\n" +
+    "      <div class=\"subscore {{ subscore.name }}\"\n" +
+    "           ng-repeat=\"subscore in package.subscores\">\n" +
+    "         <h3>\n" +
+    "            <i class=\"fa {{ subscore.icon }}\"></i>\n" +
+    "            {{ subscore.display_name }}\n" +
+    "         </h3>\n" +
+    "         <div class=\"metrics\">\n" +
+    "            <div class=\"summary-metrics\">\n" +
+    "               <div class=\"vis\">\n" +
+    "                  <div class=\"bar-outer\">\n" +
+    "                     <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score /10 }}%\"></div>\n" +
+    "                  </div>\n" +
+    "               </div>\n" +
+    "               <span class=\"main-metric\">\n" +
+    "                  {{ format.short(subscore.val) }}\n" +
+    "               </span>\n" +
+    "               <span class=\"percentile\">\n" +
+    "                  <span class=\"val\">\n" +
+    "                     {{ format.round(subscore.percentile) * 100 }}\n" +
+    "                  </span>\n" +
+    "                  <span class=\"descr\">\n" +
+    "                     percentile\n" +
     "                  </span>\n" +
     "               </span>\n" +
-    "               <div class=\"bar-outside\">\n" +
-    "                  <span class=\"bar-inside\" style=\"width: {{ package.person_package_credit * 100 }}%\"></span>\n" +
-    "               </div>\n" +
     "            </div>\n" +
-    "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
+    "         </div>\n" +
+    "         <div class=\"explanation\">\n" +
+    "\n" +
     "         </div>\n" +
     "\n" +
     "\n" +
     "      </div>\n" +
-    "\n" +
-    "\n" +
-    "   -->\n" +
     "\n" +
     "   </div>\n" +
     "\n" +
@@ -1291,7 +1306,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "      -->\n" +
     "\n" +
-    "      <div class=\"top-tags\">\n" +
+    "      <div class=\"top-tags\" ng-if=\"package.tags.length\">\n" +
     "         <h3>Top tags</h3>\n" +
     "         <div class=\"tags\">\n" +
     "            <a class=\"tag\"\n" +

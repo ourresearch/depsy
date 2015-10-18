@@ -13,6 +13,9 @@ angular.module("formatterService", [])
       if (num === null){
         return 0
       }
+      if (num === 0){
+        return 0
+      }
 
       if (num >= 1000000) {
           return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
@@ -31,8 +34,24 @@ angular.module("formatterService", [])
       return Math.floor(num);
   }
 
+  var round = function(num){
+    return Math.round(num)
+  }
+
+  // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
+  var ordinal = function(n) {
+    var s=["th","st","nd","rd"],
+      v=n%100;
+    return n+(s[(v-20)%10]||s[v]||s[0]);
+  }
+
+
+
   return {
     short: short,
-    commas: commas
+    commas: commas,
+    round: round,
+    ordinal: ordinal
+
   }
 });

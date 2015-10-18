@@ -2,7 +2,8 @@ angular.module("directives.wheel", [])
 .directive("wheel", function(){
 
     function getWheelVal(credit){
-      if (credit < .08) {
+      console.log("testing credit", credit)
+      if (credit <= .081) {
         return "tiny"
       }
       else if (credit === 1) {
