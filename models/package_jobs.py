@@ -81,6 +81,7 @@ def get_people(filters, page_size=25):
 
     total_count = q.count()
 
+    q = q.filter(Person.impact != None)
     q = q.order_by(Person.impact.desc())
     q = q.limit(page_size)
     objects = q.all()
@@ -103,6 +104,7 @@ def get_packages(filters, page_size=25):
 
     total_count = q.count()
 
+    q = q.filter(Package.impact != None)
     q = q.order_by(Package.impact.desc())
     q = q.limit(page_size)
 

@@ -1047,10 +1047,10 @@ class Package(db.Model):
             print u"self.impact for {} is None because isn't academic"
             return 
 
-        use_for_pagerank = self.pagerank_score
+        use_for_pagerank = self.display_pagerank_score
         if not use_for_pagerank:
-            use_for_pagerank = self.num_downloads_score
-        combo = (use_for_pagerank + self.num_downloads_score + self.num_citations_score) / 3.0
+            use_for_pagerank = self.display_num_downloads_score
+        combo = (use_for_pagerank + self.display_num_downloads_score + self.display_num_citations_score) / 3.0
         self.impact = combo
         # print u"self.impact for {} is {} ({}, {}, {}".format(
         #     self.id, 
