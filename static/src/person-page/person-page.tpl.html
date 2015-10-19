@@ -4,14 +4,6 @@
 
          <div class="person-about">
             <img ng-src="{{ person.icon }}" alt=""/>
-            <div class="score">
-               <span class="impact">
-                  {{ format.short(person.impact) }}
-               </span>
-               <span class="rank" ng-show="!person.is_organization">
-                  {{ format.round(person.impact_percentile * 100) }}
-               </span>
-            </div>
 
             <span class="name">
                {{ person.name }}
@@ -21,14 +13,10 @@
                   popover-title="ORCiD coming soon"
                   popover-trigger="mouseenter"
                   popover="ORCiD is a unique identifier for researchers. We'll be rolling out support soon."
-                  ng-show="person.is_academic"
                   src="static/img/orcid.gif" alt=""/>
 
-               <a ng-if="person.github_login" class="account" href="http://github.com/{{ person.github_login }}">
-                  <i class="fa fa-github"></i>
-                  <span class="github-url-part" ng-if="!person.is_academic">
-                     github/{{ person.github_login }}
-                  </span>
+               <a class="account" href="http://github.com/{{ person.github_login }}">
+                  <i class="fa fa-github"></i> github/{{ person.github_login }}
                </a>
             </span>
 
@@ -38,6 +26,8 @@
 
       <div class="sidebar-section impact">
          <h3>Impact</h3>
+          Coming soon...
+          <!--
          <div class="vis">
             <div class="subscore {{ subscore.name }}"
                  ng-if="subscore.val > 0"
@@ -52,6 +42,7 @@
 
             </div>
          </div>
+         -->
       </div>
 
 

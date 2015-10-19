@@ -941,6 +941,10 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
 angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/wheel-popover.tpl.html",
     "<div class=\"wheel-popover\">\n" +
+    "    Credit is based on percent of GitHub commits and number of co-authors.\n" +
+    "    More details coming soon...\n" +
+    "\n" +
+    "    <!--\n" +
     "   <div class=\"committer\" ng-show=\"wheelData.person_package_commits\">\n" +
     "      <i class=\"fa fa-save\"></i>\n" +
     "\n" +
@@ -948,6 +952,7 @@ angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", f
     "      commits: {{ myPersonPackage.person_package_commits }}\n" +
     "\n" +
     "   </div>\n" +
+    "   -->\n" +
     "\n" +
     "</div>");
 }]);
@@ -1369,14 +1374,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "         <div class=\"person-about\">\n" +
     "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
-    "            <div class=\"score\">\n" +
-    "               <span class=\"impact\">\n" +
-    "                  {{ format.short(person.impact) }}\n" +
-    "               </span>\n" +
-    "               <span class=\"rank\" ng-show=\"!person.is_organization\">\n" +
-    "                  {{ format.round(person.impact_percentile * 100) }}\n" +
-    "               </span>\n" +
-    "            </div>\n" +
     "\n" +
     "            <span class=\"name\">\n" +
     "               {{ person.name }}\n" +
@@ -1386,14 +1383,10 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  popover-title=\"ORCiD coming soon\"\n" +
     "                  popover-trigger=\"mouseenter\"\n" +
     "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
-    "                  ng-show=\"person.is_academic\"\n" +
     "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
     "\n" +
-    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github.com/{{ person.github_login }}\">\n" +
-    "                  <i class=\"fa fa-github\"></i>\n" +
-    "                  <span class=\"github-url-part\" ng-if=\"!person.is_academic\">\n" +
-    "                     github/{{ person.github_login }}\n" +
-    "                  </span>\n" +
+    "               <a class=\"account\" href=\"http://github.com/{{ person.github_login }}\">\n" +
+    "                  <i class=\"fa fa-github\"></i> github/{{ person.github_login }}\n" +
     "               </a>\n" +
     "            </span>\n" +
     "\n" +
@@ -1403,6 +1396,8 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "      <div class=\"sidebar-section impact\">\n" +
     "         <h3>Impact</h3>\n" +
+    "          Coming soon...\n" +
+    "          <!--\n" +
     "         <div class=\"vis\">\n" +
     "            <div class=\"subscore {{ subscore.name }}\"\n" +
     "                 ng-if=\"subscore.val > 0\"\n" +
@@ -1417,6 +1412,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "            </div>\n" +
     "         </div>\n" +
+    "         -->\n" +
     "      </div>\n" +
     "\n" +
     "\n" +
