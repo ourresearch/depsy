@@ -4,6 +4,16 @@ angular.module('snippet', [
 
 
   .controller("packageSnippetCtrl", function($scope){
+
+      //if ($scope.dep) {
+      //  $scope.snippetPackage = $scope.dep
+      //}
+      //
+      //else if ($scope.package) {
+      //  //$scope.snippetPackage = $scope.package
+      //}
+
+
 //    var subscoreNames = [
 //      "num_downloads",
 //      "pagerank",
