@@ -6,11 +6,15 @@ angular.module('header', [
   .controller("headerCtrl", function($scope,
                                      $location,
                                      $rootScope,
+                                     FormatterService,
+                                     FilterService,
                                      $http){
 
 
 
     $scope.searchResultSelected = ''
+    $scope.format = FormatterService
+    $scope.foo = 42
 
     $rootScope.$on('$routeChangeSuccess', function(next, current){
       $scope.searchResultSelected = ''
@@ -34,7 +38,8 @@ angular.module('header', [
         $location.path("person/" + item.id)
       }
       else if (item.type=='tag') {
-        $location.path("tag/" + item.name)
+        FilterService.unsetAll()
+        $location.path("tag/" + encodeURIComponent(encodeURIComponent( item.name)))
       }
     }
 
@@ -43,8 +48,12 @@ angular.module('header', [
       return $http.get("/api/search/" + val)
         .then(
           function(resp){
-            console.log("this is the response", resp)
-            return resp.data.list
+            //return resp.data.list
+            return _.map(resp.data.list, function(match){
+              //return match
+              match.urlName = encodeURIComponent(encodeURIComponent(match.name))
+              return match
+            })
 
             var names = _.pluck(resp.data.list, "name")
             console.log(names)
@@ -56,6 +65,7 @@ angular.module('header', [
   })
 
 .controller("searchResultCtrl", function($scope, $sce){
+
 
     $scope.trustHtml = function(str){
       console.log("trustHtml got a thing", str)

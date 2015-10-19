@@ -18,7 +18,7 @@
          </span>
 
          <a class="name"
-            href="tag/{{ tag.name }}">
+            href="tag/{{ format.doubleUrlEncode( tag.name ) }}">
             {{ tag.name }}
          </a>
 
@@ -34,7 +34,7 @@
       <span class="summary tags">
          <span class="tags">
             related tags:
-            <a href="tag/{{ relatedTag.name }}"
+            <a href="tag/{{ format.doubleUrlEncode( relatedTag.name ) }}"
                class="tag"
                ng-repeat="relatedTag in tag.related_tags | orderBy: '-count'">
                {{ relatedTag.name }}
