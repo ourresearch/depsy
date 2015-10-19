@@ -8,11 +8,9 @@
 
 
       <div class="vis impact-stick">
-         <div class="subscore {{ subscore.name }}"
+         <div class="bar-inner {{ subscore.name }}"
+              style="width: {{ subscore.percentile * 33.33333 }}%;"
               ng-repeat="subscore in person.subscores">
-            <div class="bar-outer">
-               <div class="bar-inner {{ subscore.name }}" style="height: {{ subscore.percentile * 33.33333 }}%;"></div>
-            </div>
          </div>
       </div>
 

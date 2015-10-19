@@ -313,7 +313,13 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                </div>\n" +
     "            </div>\n" +
     "            <div class=\"explanation\">\n" +
-    "\n" +
+    "                <div class=\"citations-explanation\" ng-show=\"subscore.name=='num_mentions'\">\n" +
+    "                    Based on term searches in\n" +
+    "                        <span class=\"citation-link\" ng-repeat=\"link in package.citations_dict\">\n" +
+    "                            <a href=\"{{ link.url }}\">{{ link.name }} ({{ link.count }})</a>\n" +
+    "                            <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
+    "                        </span>\n" +
+    "                </div>\n" +
     "            </div>\n" +
     "\n" +
     "            <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
@@ -703,11 +709,9 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
-    "         <div class=\"subscore {{ subscore.name }}\"\n" +
+    "         <div class=\"bar-inner {{ subscore.name }}\"\n" +
+    "              style=\"width: {{ subscore.percentile * 33.33333 }}%;\"\n" +
     "              ng-repeat=\"subscore in person.subscores\">\n" +
-    "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.percentile * 33.33333 }}%;\"></div>\n" +
-    "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +

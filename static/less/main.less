@@ -638,14 +638,13 @@ div.package-page {
     .package-page-subscore {
       margin-bottom: 70px;
       float:left;
-      width: 400px;
+      width: 300px;
       &.num_downloads { color: @downloadsColor;}
       &.pagerank {
         color: @pagerankColor;
         width: 700px;
       }
       &.num_mentions { color: @citationsColor;}
-      &.engagement { color: @engagementColor;}
 
       h3 {
         margin-bottom: 0;
@@ -654,6 +653,7 @@ div.package-page {
         margin-top: 10px;
         float: left;
         min-width: 200px;
+        clear: left;
         .summary-metrics {
           line-height: 1;
           .vis {
@@ -672,7 +672,6 @@ div.package-page {
                 &.num_downloads { background: @downloadsColor;}
                 &.pagerank { background: @pagerankColor;}
                 &.num_mentions { background: @citationsColor;}
-                &.engagement { background: @engagementColor;}
               }
             }
           }
@@ -694,6 +693,15 @@ div.package-page {
               font-weight: 100;
             }
           }
+        }
+      }
+
+
+      .explanation {
+        color: #999;
+        .citations-explanation {
+          float: left;
+          clear:left;
         }
       }
 

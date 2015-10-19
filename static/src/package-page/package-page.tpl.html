@@ -122,7 +122,13 @@
                 </div>
             </div>
             <div class="explanation">
-
+                <div class="citations-explanation" ng-show="subscore.name=='num_mentions'">
+                    Based on term searches in
+                        <span class="citation-link" ng-repeat="link in package.citations_dict">
+                            <a href="{{ link.url }}">{{ link.name }} ({{ link.count }})</a>
+                            <span class="and" ng-show="!$last">and</span>
+                        </span>
+                </div>
             </div>
 
             <div class="top-importers" ng-show="subscore.name=='pagerank' && package.indegree">
