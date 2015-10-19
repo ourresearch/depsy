@@ -773,7 +773,7 @@ class Package(db.Model):
 
         for source in ["pmc", "ads"]:
             if source=="pmc":
-                num_source_citations = self.pmc_distinctiveness["num_hits_with_language"]
+                num_source_citations = self.pmc_distinctiveness["num_hits_raw"]
                 if num_source_citations < 10:
                     self.num_citations += num_source_citations
                 else:
@@ -786,7 +786,7 @@ class Package(db.Model):
                         if ratio > 0.27:
                             self.num_citations += num_source_citations
             elif source=="ads":
-                num_source_citations = self.ads_distinctiveness["num_hits_with_language"]
+                num_source_citations = self.ads_distinctiveness["num_hits_raw"]
                 if num_source_citations < 10:
                     self.num_citations += num_source_citations
                 else:
