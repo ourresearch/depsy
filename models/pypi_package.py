@@ -37,20 +37,11 @@ class PypiPackage(Package):
 
     @property
     def pagerank_99th(self):
-        return 0.00000695418   #actually 90th percentile
-
-    @property
-    def pagerank_median(self):
-        return 1.99416833587588704e-06
+        return 0.000100030869363676781
 
     @property
     def pagerank_min(self):
         return 0.00000199416
-        
-    @property
-    def pagerank_min_diff(self):
-        # the smallest minus the next smallest
-        return 9.63092662 * 0.0000000000000001
 
     @property
     def num_downloads_max(self):

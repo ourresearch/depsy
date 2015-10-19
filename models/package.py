@@ -948,7 +948,8 @@ class Package(db.Model):
 
     @property
     def pagerank_offset_to_recenter_scores(self):
-        offset = -math.log10(self.pagerank_min_diff/(self.pagerank_99th))
+        use_min = self.pagerank_min        
+        offset = -math.log10(use_min/self.pagerank_99th)
         return offset
 
     @property
@@ -975,6 +976,24 @@ class Package(db.Model):
         ret = 1000.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1000
         return ret
 
+    def set_pagerank_score(self):
+        if not self.pagerank:
+            self.pagerank_score = None
+            return self.pagerank_score
+
+        try:
+            raw = math.log10(float(self.pagerank)/self.pagerank_99th)
+            temp = (raw + self.pagerank_offset_to_recenter_scores)
+            adjusted = temp * self.pagerank_score_multiplier
+        except ValueError:
+            adjusted = None
+
+        self.pagerank_score = adjusted
+
+        print u"\n**{}:  {} pagerank*10000, score {}\n".format(
+            self.id, self.pagerank*10000, self.pagerank_score)        
+        return self.pagerank_score
+
 
     def set_num_citations_score(self):
         if not self.num_citations:
@@ -997,7 +1016,7 @@ class Package(db.Model):
 
 
     def set_num_downloads_score(self):
-        if not self.is_academic or not self.num_downloads:
+        if not self.num_downloads:
             self.num_downloads_score = None
             return self.num_downloads_score
 
@@ -1013,25 +1032,6 @@ class Package(db.Model):
         return self.num_downloads_score
 
 
-    def set_pagerank_score(self):
-        if not self.is_academic or not self.pagerank:
-            self.pagerank_score = None
-            return self.pagerank_score
-
-        try:
-            raw = math.log10(float(self.pagerank - self.pagerank_min)/(self.pagerank_99th))
-            adjusted = (raw + self.pagerank_offset_to_recenter_scores) * self.pagerank_score_multiplier
-        except ValueError:
-            adjusted = None
-
-        if adjusted < 0:
-            adjusted = 0
-
-        self.pagerank_score = adjusted
-
-        print u"\n**{}:  {} pagerank*1000000, score {}\n".format(
-            self.id, self.pagerank*1000000, self.pagerank_score)        
-        return self.pagerank_score
 
 
 

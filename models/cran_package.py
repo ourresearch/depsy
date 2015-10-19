@@ -45,20 +45,11 @@ class CranPackage(Package):
 
     @property
     def pagerank_99th(self):
-        return 0.000143161687115590276  #95 percentile actually
-
-    @property
-    def pagerank_median(self):
-        return 1.24314317332570431e-05
+        return 0.000188688596986499657  #95 percentile actually
 
     @property
     def pagerank_min(self):
         return 0.00001166849
-
-    @property
-    def pagerank_min_diff(self):
-        # the smallest minus the next smallest
-        return 7.99856298 * 0.000000001
 
     @property
     def num_downloads_max(self):
