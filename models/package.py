@@ -44,9 +44,6 @@ class Package(db.Model):
     proxy_papers = db.deferred(db.Column(db.Text))
     is_academic = db.Column(db.Boolean)
 
-    # num_citations_by_source = db.Column(MutableDict.as_mutable(JSONB))
-    is_distinctive_name = db.Column(db.Boolean)
-
     host_reverse_deps = db.deferred(db.Column(JSONB))
 
     github_reverse_deps = db.deferred(db.Column(JSONB))
@@ -579,32 +576,6 @@ class Package(db.Model):
         # override in subclass
         raise NotImplementedError
 
-    def set_is_distinctive_name(self):
-        self.is_distinctive_name = False
-
-        if not self.pmc_distinctiveness:
-            return
-
-        if not 'num_hits_raw' in self.pmc_distinctiveness:
-            return
-
-        if self.pmc_distinctiveness["num_hits_raw"] <= 0:
-            return
-
-        ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
-        print "distinctiveness ratio for {} is {}".format(
-            self.project_name, ratio)
-        if self.host == "cran":
-            if ratio > 0.20:
-                self.is_distinctive_name = True
-                print "IS DISTINCTIVE!  going for it"
-        else:
-            if ratio > 0.27:
-                self.is_distinctive_name = True
-                print "IS DISTINCTIVE!  going for it"
-
-        return
-
 
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
@@ -618,13 +589,13 @@ class Package(db.Model):
 
     def get_sources_to_return(self):
         # i bet there is a better way to do this!! :)
-        sources_to_query = [
+        sources_to_return = [
                     full_text_source.Ads,
                     full_text_source.Pmc
                     # full_text_source.Arxiv,
                     # full_text_source.Citeseer,
                 ]
-        return sources_to_query
+        return sources_to_return
 
     @property
     def citations_dict(self):
@@ -645,7 +616,7 @@ class Package(db.Model):
         return response
 
 
-    def build_full_text_query(self, source, override_with_is_distinctive=None):
+    def build_full_text_query(self, source):
 
         if self.host == "pypi":
 
@@ -719,27 +690,6 @@ class Package(db.Model):
         return query
 
 
-    def is_dictinctive_name_by_source(self, source):
-        if source_class.__name__ == "Pmc":
-            ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
-            if self.host == "cran":
-                if ratio > 0.20:
-                    return True
-            else:
-                if ratio > 0.27:
-                    return True
-        elif source_class.__name__ == "Ads":
-            ratio = float(self.ads_distinctiveness["num_hits_with_language"])/self.ads_distinctiveness["num_hits_raw"]
-            if self.host == "cran":
-                if ratio > 0.20:
-                    return True
-            else:
-                if ratio > 0.27:
-                    return True
-        elif source_class.__name__ == "Citeseer":
-            pass
-        return False
-
 
     def set_num_citations_by_source(self):
         if not self.num_citations_by_source:
@@ -768,65 +718,42 @@ class Package(db.Model):
     def set_num_citations(self):
         self.num_citations = 0        
 
-        if not self.num_citations_by_source:
-            return
+        self.num_citations_by_source = {}
 
         for source in ["pmc", "ads"]:
+            add_citations = False
             if source=="pmc":
                 num_source_citations = self.pmc_distinctiveness["num_hits_raw"]
                 if num_source_citations < 10:
-                    self.num_citations += num_source_citations
+                    add_citations = True
                 else:
                     ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
                     print source, "ratio", ratio, num_source_citations
                     if self.host == "cran":
                         if ratio > 0.20:
-                            self.num_citations += num_source_citations
+                            add_citations = True
                     else:
                         if ratio > 0.27:
-                            self.num_citations += num_source_citations
+                            add_citations = True
             elif source=="ads":
                 num_source_citations = self.ads_distinctiveness["num_hits_raw"]
                 if num_source_citations < 10:
-                    self.num_citations += num_source_citations
+                    add_citations = True
                 else:
                     ratio = float(self.ads_distinctiveness["num_hits_with_language"])/self.ads_distinctiveness["num_hits_raw"]
                     print source, "ratio", ratio, num_source_citations
                     if self.host == "cran":
                         if ratio > 0.20:
-                            self.num_citations += num_source_citations
+                            add_citations = True
                     else:
                         if ratio > 0.20:
-                            self.num_citations += num_source_citations
+                            add_citations = True
+            if add_citations:
+                self.num_citations += num_source_citations
+                self.num_citations_by_source[source] = num_source_citations
 
         print "num citations is ", self.num_citations
         return self.num_citations
-
-
-    # def set_num_citations_by_source(self):
-    #     if not self.num_citations_by_source:
-    #         self.num_citations_by_source = {}
-
-    #     self.num_citations = 0
-    #     for source_class in self.get_sources_to_query():
-
-    #         for override_with_is_distinctive in [True, False]:
-    #             if source_class.__name__ == "Pmc" and ("-" in self.project_name):
-    #                 # pmc can't do a query if a hyphen in the name, so just bail
-    #                 print "is a hyphen name, and pmc can't do those, returning zero citations"
-    #                 num_found = 0
-    #             else:
-    #                 source = source_class()
-    #                 query = self.build_full_text_query(source, override_with_is_distinctive=override_with_is_distinctive)
-    #                 num_found = source.run_query(query)
-
-    #             bucket_key = "{source_name}:{is_distinctive}".format(
-    #                 source_name=source.name, is_distinctive=override_with_is_distinctive)
-    #             self.num_citations_by_source[bucket_key] = num_found
-    #             self.num_citations += num_found
-    #             print "num citations found", num_found
-
-    #     return self.num_citations_by_source
 
 
     def set_pmc_distinctiveness(self):

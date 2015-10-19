@@ -493,14 +493,6 @@ update_registry.register(Update(
 
 q = db.session.query(Package.id)
 update_registry.register(Update(
-    job=Package.set_is_distinctive_name,
-    query=q,
-    queue_id=7
-))
-
-
-q = db.session.query(Package.id)
-update_registry.register(Update(
     job=Package.dedup_people,
     query=q,
     queue_id=7
