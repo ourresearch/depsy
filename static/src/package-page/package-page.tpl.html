@@ -150,9 +150,15 @@
                         <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
                     </div>
                     <div class="pagerank-explanation" ng-show="subscore.name=='pagerank'">
-                        PageRank of reverse deps
+                        Measure of how often this package is imported by both GitHub projects,
+                        and other
                         <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
                         <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
+                        packages.
+
+                        The number is scaled, log-transformed PageRank representing
+                        position and importance in the dependency network.
+
                     </div>
                 </div>
 

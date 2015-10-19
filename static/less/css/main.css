@@ -655,6 +655,7 @@ div.package-page .ti-page-body .package-page-subscore .body .explanation {
   color: #999;
   float: left;
   clear: left;
+  max-width: 225px;
 }
 div.package-page .ti-page-body .package-page-subscore .body .explanation .citations-explanation a {
   color: #984ea3;

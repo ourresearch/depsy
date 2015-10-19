@@ -1276,9 +1276,15 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
     "                    </div>\n" +
     "                    <div class=\"pagerank-explanation\" ng-show=\"subscore.name=='pagerank'\">\n" +
-    "                        PageRank of reverse deps\n" +
+    "                        Measure of how often this package is imported by both GitHub projects,\n" +
+    "                        and other\n" +
     "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
     "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                        packages.\n" +
+    "\n" +
+    "                        The number is scaled, log-transformed PageRank representing\n" +
+    "                        position and importance in the dependency network.\n" +
+    "\n" +
     "                    </div>\n" +
     "                </div>\n" +
     "\n" +
@@ -1788,8 +1794,9 @@ angular.module("static-pages/about.tpl.html", []).run(["$templateCache", functio
   $templateCache.put("static-pages/about.tpl.html",
     "<div class=\"about-page static-page\">\n" +
     "   <div class=\"coming-soon\">\n" +
-    "      <h1>Coming soon</h1>\n" +
-    "      <h2>Many explanations of many things.</h2>\n" +
+    "      <h1>Coming soon:</h1>\n" +
+    "      <h2>So many things! We're adding so much over the next few days.</h2>\n" +
+    "       <h3>follow us at <a href=\"http://twitter.com/depsy_org\">@depsy_org</a> for updates!</h3>\n" +
     "   </div>\n" +
     "\n" +
     "</div>\n" +
