@@ -57,6 +57,7 @@ class Package(db.Model):
     setup_py_hash = db.deferred(db.Column(db.Text))
 
     impact = db.Column(db.Float)
+    impact_percentile = db.Column(db.Float)
     impact_rank = db.Column(db.Integer)
 
     num_downloads = db.Column(db.Integer)
@@ -130,6 +131,7 @@ class Package(db.Model):
             "github_repo_name",
             "host",
             "impact_rank",
+            "impact_percentile",
             "language",
             "indegree",
             "neighborhood_size",
@@ -856,7 +858,8 @@ class Package(db.Model):
         q = db.session.query(
             cls.num_downloads,
             cls.pagerank,
-            cls.num_citations
+            cls.num_citations,
+            cls.impact
         )
         q = q.filter(cls.is_academic==True)
         rows = q.all()
@@ -864,6 +867,7 @@ class Package(db.Model):
         ref_list["num_downloads"] = sorted([row[0] for row in rows if row[0] != None])
         ref_list["pagerank"] = sorted([row[1] for row in rows if row[1] != None])
         ref_list["num_citations"] = sorted([row[2] for row in rows if row[2] != None])
+        ref_list["impact"] = sorted([row[3] for row in rows if row[3] != None])
 
         return ref_list
 
@@ -889,10 +893,14 @@ class Package(db.Model):
     def set_num_citations_percentile(self, refset):
         self.num_citations_percentile = self._calc_percentile(refset, self.num_citations)
 
+    def set_impact_percentile(self, refset):
+        self.impact_percentile = self._calc_percentile(refset, self.impact)
+
     def set_all_percentiles(self, refsets_dict):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
         self.set_pagerank_percentile(refsets_dict["pagerank"])
         self.set_num_citations_percentile(refsets_dict["num_citations"])
+        self.set_impact_percentile(refsets_dict["impact"])
 
 
     @classmethod
