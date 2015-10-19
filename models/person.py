@@ -242,6 +242,7 @@ class Person(db.Model):
             cls.impact
         )
         q = q.filter(cls.impact != None)  # only academic contributions
+        q = q.filter(cls.impact > 0)  # only academic contributions
         rows = q.all()
 
         ref_list["impact"] = sorted([row[0] for row in rows if row[0] != None])
@@ -263,6 +264,7 @@ class Person(db.Model):
 
     def set_impact_percentile(self, refsets_dict):
         self.impact_percentile = self._calc_percentile(refsets_dict["impact"], self.impact)
+        print "calculated impact_percentile is", self.impact_percentile
 
 
     def set_github_about(self):
