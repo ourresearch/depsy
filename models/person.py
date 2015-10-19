@@ -381,7 +381,10 @@ class PersonPackage():
 
     @property
     def person_package_impact(self):
-        ret = self.person_package_credit * self.package.impact
+        try:
+            ret = self.person_package_credit * self.package.impact
+        except TypeError:
+            ret = 0
         return ret
 
     @property
