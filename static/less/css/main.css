@@ -647,8 +647,16 @@ div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics 
   font-weight: 100;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers {
-  background: red;
   float: left;
+  margin: -40px 0 0 40px;
+  width: 400px;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers h4 {
+  font-size: 25px;
+  font-weight: 100;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers h4 div.subheading {
+  font-size: 14px;
 }
 .page.leaderboard div.sidebar {
   width: 200px;
