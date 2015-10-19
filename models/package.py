@@ -1115,7 +1115,7 @@ class Package(db.Model):
         num_citations_score = self.set_num_citations_score()
         
         # twice the mean and twenty percent of the scaled citations
-        combo = (pagerank_and_downloads_mean*2 + num_citations_score) / 3
+        combo = (pagerank_and_downloads_mean*2.0 + num_citations_score) / 3.0
 
 
         self.impact = combo
