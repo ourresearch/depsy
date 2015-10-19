@@ -715,7 +715,13 @@ class Package(db.Model):
         for source in ["pmc", "ads"]:
             add_citations = False
             if source=="pmc":
-                num_source_citations = self.pmc_distinctiveness["num_hits_raw"]
+                try:
+                    num_source_citations = self.pmc_distinctiveness["num_hits_raw"]
+                except KeyError:
+                    # no citations here
+                    print "didn't collect citations for pmc, skipping"
+                    continue
+                    
                 if num_source_citations < 10:
                     add_citations = True
                 else:
@@ -728,7 +734,13 @@ class Package(db.Model):
                         if ratio > 0.27:
                             add_citations = True
             elif source=="ads":
-                num_source_citations = self.ads_distinctiveness["num_hits_raw"]
+                try:
+                    num_source_citations = self.ads_distinctiveness["num_hits_raw"]
+                except KeyError:
+                    # no citations here
+                    print "didn't collect citations for pmc, skipping"
+                    continue
+
                 if num_source_citations < 10:
                     add_citations = True
                 else:
@@ -948,13 +960,42 @@ class Package(db.Model):
     def num_downloads_offset_to_recenter_scores(self):
         return -math.ceil(math.log10(1.0/self.num_downloads_99th))
 
+
     @property
     def num_downloads_score_multiplier(self):
         return 1000.0/self.num_downloads_offset_to_recenter_scores # makes it out of 1000
 
     @property
+    def num_citations_offset_to_recenter_scores(self):
+        use_min = 0.5
+        ret = (math.log10(use_min/self.num_citations_99th))
+        print "ret", ret
+        return ret
+
+    @property
     def num_citations_score_multiplier(self):
-        return 1.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1
+        ret = 1000.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1000
+        print "ret", ret
+        return ret
+
+
+    def set_num_citations_score(self):
+        if not self.num_citations:
+            self.num_citations_score = 0
+            print u"\n**{}:  {} num_citations, score {}\n".format(
+                self.id, self.num_citations, self.num_citations_score)                    
+            return self.num_citations_score
+
+        try:
+            raw = math.log10(float(self.num_citations)/self.num_citations_99th)
+            adjusted = (raw + self.num_citations_offset_to_recenter_scores) * self.num_citations_score_multiplier
+        except ValueError:
+            adjusted = None
+
+        self.num_citations_score = adjusted
+        print u"\n**{}:  {} num_citations, score {}\n".format(
+            self.id, self.num_citations, self.num_citations_score)        
+        return self.num_citations_score
 
 
     def set_num_downloads_score(self):
@@ -996,19 +1037,7 @@ class Package(db.Model):
         return self.pagerank_score
 
 
-    def set_num_citations_score(self):
-        if not self.num_citations:
-            self.num_citations_score = 0
-            return self.num_citations_score
 
-        try:
-            raw = math.log10(float(self.num_citations)/self.num_citations_max)
-            adjusted = (raw + self.num_citations_offset_to_recenter_scores) * self.num_citations_score_multiplier
-        except ValueError:
-            adjusted = None
-
-        self.num_citations_score = adjusted
-        return self.num_citations_score
 
 
     def set_impact(self):

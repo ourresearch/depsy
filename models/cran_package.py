@@ -40,12 +40,6 @@ class CranPackage(Package):
 
 
     @property
-    def num_citations_offset_to_recenter_scores(self):
-        # select log(1.0/max(num_citations)), host from package group by host        
-        return 3.45  # brings lowest up to about 0
-
-
-    @property
     def pagerank_max(self):
         return 0.0601950151409884823  # brings lowest up to about 0
 
@@ -78,6 +72,10 @@ class CranPackage(Package):
     def num_downloads_median(self):
         return 285.0  # 99th percentile
 
+
+    @property
+    def num_citations_99th(self):
+        return 85
 
     @property
     def num_citations_max(self):

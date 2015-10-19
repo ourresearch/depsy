@@ -32,12 +32,6 @@ class PypiPackage(Package):
 
 
     @property
-    def num_citations_offset_to_recenter_scores(self):
-        # select log(1.0/max(num_citations)), host from package group by host        
-        return 2.84  # brings lowest up to about 0
-
-
-    @property
     def pagerank_max(self):
         return 0.0262218729908892147  # brings lowest up to about 0
 
