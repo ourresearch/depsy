@@ -509,7 +509,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(CranPackage.ads_distinctiveness is None)
+q = q.filter(PypiPackage.ads_distinctiveness == None)
 update_registry.register(Update(
     job=PypiPackage.set_ads_distinctiveness,
     query=q,
@@ -517,7 +517,7 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(CranPackage.id)
-q = q.filter(CranPackage.ads_distinctiveness is None)
+q = q.filter(CranPackage.ads_distinctiveness == None)
 update_registry.register(Update(
     job=CranPackage.set_ads_distinctiveness,
     query=q,
