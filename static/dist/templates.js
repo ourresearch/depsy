@@ -1019,28 +1019,6 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "         </ul>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"language-type-select facet\">\n" +
-    "         <h3 ng-show=\"filters.d.type=='packages'\">that are</h3>\n" +
-    "         <h3 ng-show=\"filters.d.type=='people'\">and who are</h3>\n" +
-    "         <h3 ng-show=\"filters.d.type=='tags'\">that are</h3>\n" +
-    "         <ul>\n" +
-    "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
-    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
-    "               </span>\n" +
-    "               <span class=\"status\" ng-if=\"!filters.d.only_academic\">\n" +
-    "                  <i class=\"fa fa-square-o\"></i>\n" +
-    "               </span>\n" +
-    "               <!--\n" +
-    "               <i class=\"fa fa-graduation-cap\"></i>\n" +
-    "               -->\n" +
-    "\n" +
-    "               <span class=\"text\" ng-show=\"filters.d.type=='packages'\">academic projects</span>\n" +
-    "               <span class=\"text\" ng-show=\"filters.d.type=='people'\">academics</span>\n" +
-    "               <span class=\"text\" ng-show=\"filters.d.type=='tags'\">academic</span>\n" +
-    "            </li>\n" +
-    "         </ul>\n" +
-    "      </div>\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
     "         popover-title=\"View this page as JSON\"\n" +
@@ -1066,7 +1044,6 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "            </span>\n" +
     "            <span class=\"text\">\n" +
     "               Highest-impact\n" +
-    "               <span class=\"is-academic\" ng-if=\"filters.d.is_academic\">academic</span>\n" +
     "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
     "               <span class=\"leaders-type\">{{ filters.d.type }}</span>\n" +
     "            </span>\n" +
