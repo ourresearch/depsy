@@ -509,7 +509,6 @@ update_registry.register(Update(
 
 
 q = db.session.query(PypiPackage.id)
-q = q.filter(Package.id > 'pypi:pyearthquake')
 update_registry.register(Update(
     job=PypiPackage.set_ads_distinctiveness,
     query=q,
