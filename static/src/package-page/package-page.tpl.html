@@ -130,7 +130,8 @@
                     </div>
                 </h4>
 
-                <div class="dep-container" ng-repeat="dep in package.top_neighbors">
+                <div class="dep-container"
+                     ng-repeat="dep in package.top_neighbors | orderBy: ['-is_github', '-impact']">
 
 
                     <!-- CRAN or PyPi package -->

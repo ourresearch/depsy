@@ -384,6 +384,7 @@ angular.module("formatterService", [])
 
   // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
   var ordinal = function(n) {
+      n = Math.round(n)
     var s=["th","st","nd","rd"],
       v=n%100;
     return n+(s[(v-20)%10]||s[v]||s[0]);
@@ -1239,7 +1240,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    </div>\n" +
     "                </h4>\n" +
     "\n" +
-    "                <div class=\"dep-container\" ng-repeat=\"dep in package.top_neighbors\">\n" +
+    "                <div class=\"dep-container\"\n" +
+    "                     ng-repeat=\"dep in package.top_neighbors | orderBy: ['-is_github', '-impact']\">\n" +
     "\n" +
     "\n" +
     "                    <!-- CRAN or PyPi package -->\n" +
@@ -1482,7 +1484,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
-    "         popover-title=\"Impact\"\n" +
+    "         popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
@@ -1493,9 +1495,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "\n" +
     "      <div class=\"rank\">\n" +
-    "         <span class=\"octothorpe\">#</span>\n" +
     "         <span class=\"val\">\n" +
-    "            {{ format.commas(package.impact_rank) }}\n" +
+    "            {{ format.round(package.impact_percentile * 100) }}\n" +
     "         </span>\n" +
     "      </div>\n" +
     "\n" +

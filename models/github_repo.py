@@ -74,7 +74,8 @@ class GithubRepo(db.Model):
             "login",
             "repo_name",
             "api_raw",
-            "language"
+            "language",
+            "impact"
         ]
 
         ret = {}
@@ -83,6 +84,7 @@ class GithubRepo(db.Model):
                 ret[property_name] = getattr(self, property_name)
 
         # special cases
+        ret["is_github"] = True
         try:
             ret["stars"] = self.api_raw["stargazers_count"]
             ret["summary"] = self.api_raw["description"]
@@ -91,6 +93,18 @@ class GithubRepo(db.Model):
             ret["summary"] = ""
         return ret
 
+
+    @property
+    def stars(self):
+        try:
+            return self.api_raw["stargazers_count"]
+        except KeyError:
+            return 0
+
+
+    @property
+    def impact(self):
+        return self.stars
 
     @property
     def as_snippet(self):

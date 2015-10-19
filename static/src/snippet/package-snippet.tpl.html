@@ -2,7 +2,7 @@
      ng-controller="packageSnippetCtrl">
    <span class="left-metrics"
          popover-trigger="mouseenter"
-         popover-title="Impact"
+         popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
          popover-template="'snippet/package-impact-popover.tpl.html'">
 
       <div class="vis impact-stick">
@@ -13,9 +13,8 @@
         </div>
 
       <div class="rank">
-         <span class="octothorpe">#</span>
          <span class="val">
-            {{ format.commas(package.impact_rank) }}
+            {{ format.round(package.impact_percentile * 100) }}
          </span>
       </div>
 
