@@ -322,7 +322,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    </div>\n" +
     "                </h4>\n" +
     "\n" +
-    "                <div class=\"dep-container\" ng-repeat=\"dep in package.top_neighbors\">\n" +
+    "                <div class=\"dep-container\"\n" +
+    "                     ng-repeat=\"dep in package.top_neighbors | orderBy: ['-is_github', '-impact']\">\n" +
     "\n" +
     "\n" +
     "                    <!-- CRAN or PyPi package -->\n" +
