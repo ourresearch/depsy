@@ -195,6 +195,9 @@ class Package(db.Model):
 
     @property
     def subscores(self):
+        if not self.is_academic:
+            return []
+
         ret = [
             {
                 "name": "num_downloads",
