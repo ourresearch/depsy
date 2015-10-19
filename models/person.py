@@ -429,16 +429,22 @@ class PersonPackage():
     def person_package_pagerank_score(self):
         if self.package.pagerank_percentile == None:
             return None
+            
         ret = self.person_package_credit * self.package.pagerank_percentile
         return ret
 
     @property
     def person_package_num_citations_score(self):
+        if not self.package.num_citations_percentile:
+            return None        
         ret = self.person_package_credit * self.package.num_citations_percentile
         return ret
 
     @property
     def person_package_num_downloads_score(self):
+        if not self.package.num_downloads_percentile:
+            return None
+
         ret = self.person_package_credit * self.package.num_downloads_percentile
         return ret
 
