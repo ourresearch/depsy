@@ -721,7 +721,7 @@ class Package(db.Model):
                     # no citations here
                     print "didn't collect citations for pmc, skipping"
                     continue
-                    
+
                 if num_source_citations < 10:
                     add_citations = True
                 else:
@@ -949,7 +949,6 @@ class Package(db.Model):
     @property
     def pagerank_offset_to_recenter_scores(self):
         offset = -math.log10(self.pagerank_min_diff/(self.pagerank_99th))
-        print "offset", offset
         return offset
 
     @property
@@ -967,15 +966,13 @@ class Package(db.Model):
 
     @property
     def num_citations_offset_to_recenter_scores(self):
-        use_min = 0.5
-        ret = (math.log10(use_min/self.num_citations_99th))
-        print "ret", ret
+        use_min = 0.25
+        ret = -math.log10(use_min/self.num_citations_99th)
         return ret
 
     @property
     def num_citations_score_multiplier(self):
         ret = 1000.0/self.num_citations_offset_to_recenter_scores  # makes it out of 1000
-        print "ret", ret
         return ret
 
 
@@ -988,7 +985,8 @@ class Package(db.Model):
 
         try:
             raw = math.log10(float(self.num_citations)/self.num_citations_99th)
-            adjusted = (raw + self.num_citations_offset_to_recenter_scores) * self.num_citations_score_multiplier
+            temp = (raw + self.num_citations_offset_to_recenter_scores)
+            adjusted = temp * self.num_citations_score_multiplier
         except ValueError:
             adjusted = None
 
@@ -1022,7 +1020,6 @@ class Package(db.Model):
 
         try:
             raw = math.log10(float(self.pagerank - self.pagerank_min)/(self.pagerank_99th))
-            print "raw", raw
             adjusted = (raw + self.pagerank_offset_to_recenter_scores) * self.pagerank_score_multiplier
         except ValueError:
             adjusted = None
@@ -1043,32 +1040,16 @@ class Package(db.Model):
     def set_impact(self):
         if not self.is_academic:
             self.impact = None
+            print u"self.impact for {} is None because isn't academic"
             return 
 
-        score_components = []
-
-        pagerank_score = self.set_pagerank_score()
-        if pagerank_score != None:
-            score_components.append(pagerank_score)
-
-        num_downloads_score = self.set_num_downloads_score()
-        if num_downloads_score != None:
-            score_components.append(num_downloads_score)
-
-        if score_components:
-            pagerank_and_downloads_mean = numpy.mean(score_components)
-        else:
-            pagerank_and_downloads_mean = None
-        
-        num_citations_score = self.set_num_citations_score()
-        
-        # twice the mean and twenty percent of the scaled citations
-        combo = (pagerank_and_downloads_mean*2.0 + num_citations_score) / 3.0
-
-
+        combo = (self.pagerank_score + self.num_downloads_score + self.num_citations_score) / 3.0
         self.impact = combo
+        # print u"self.impact for {} is {} ({}, {}, {}".format(
+        #     self.id, 
+        #     self.impact, 
+        #     self.pagerank_score, self.num_downloads_score, self.num_citations_score)
 
-        print u"self.impact for {} is {}".format(self.id, self.impact)
 
 
     @classmethod

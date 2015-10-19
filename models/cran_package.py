@@ -75,7 +75,7 @@ class CranPackage(Package):
 
     @property
     def num_citations_99th(self):
-        return 85
+        return 189
 
     @property
     def num_citations_max(self):

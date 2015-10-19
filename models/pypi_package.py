@@ -68,6 +68,10 @@ class PypiPackage(Package):
     def num_citations_max(self):
         return 691  # brings lowest up to about 0
 
+    @property
+    def num_citations_99th(self):
+        return 44 
+
 
     @property
     def language(self):
