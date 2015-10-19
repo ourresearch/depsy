@@ -371,6 +371,10 @@ angular.module("formatterService", [])
       if (num >= 1000000) {
           return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
       }
+      if (num >= 100000) { // no decimal if greater than 100thou
+          return (num / 1000).toFixed(0).replace(/\.0$/, '') + 'k';
+      }
+
       if (num >= 1000) {
           return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
       }
@@ -937,6 +941,10 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
 angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/wheel-popover.tpl.html",
     "<div class=\"wheel-popover\">\n" +
+    "    Credit is based on percent of GitHub commits and number of co-authors.\n" +
+    "    More details coming soon...\n" +
+    "\n" +
+    "    <!--\n" +
     "   <div class=\"committer\" ng-show=\"wheelData.person_package_commits\">\n" +
     "      <i class=\"fa fa-save\"></i>\n" +
     "\n" +
@@ -944,6 +952,7 @@ angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", f
     "      commits: {{ myPersonPackage.person_package_commits }}\n" +
     "\n" +
     "   </div>\n" +
+    "   -->\n" +
     "\n" +
     "</div>");
 }]);
@@ -1030,6 +1039,7 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
+    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -1125,10 +1135,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "               <span class=\"name\">\n" +
     "                  {{ package.name }}\n" +
     "                   <i popover-title=\"Research software\"\n" +
-    "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"We decide if something is research software based on language, as well as words in project tags, titles, and summaries.\"\n" +
-    "            ng-show=\"package.is_academic\"\n" +
-    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "                      popover-trigger=\"mouseenter\"\n" +
+    "                      popover=\"We decide if something is research software based on language, as well as words in project tags, titles, and summaries.\"\n" +
+    "                      ng-show=\"package.is_academic\"\n" +
+    "                      class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "               </span>\n" +
     "\n" +
     "                    <div class=\"summary\">\n" +
@@ -1175,11 +1185,6 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <wheel></wheel>\n" +
     "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
     "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
-    "                <i popover-title=\"Research software\"\n" +
-    "                   popover-trigger=\"mouseenter\"\n" +
-    "                   popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
-    "                   ng-show=\"person_package.is_academic\"\n" +
-    "                   class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -1211,45 +1216,84 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "    <div class=\"ti-page-body\">\n" +
     "\n" +
+    "\n" +
+    "        <div class=\"subscore package-page-subscore overall\">\n" +
+    "            <div class=\"body\">\n" +
+    "                <div class=\"metrics\">\n" +
+    "                    <span class=\"package-percentile\">\n" +
+    "                        {{ format.round(package.impact_percentile * 100) }}\n" +
+    "                    </span>\n" +
+    "                </div>\n" +
+    "                <div class=\"explanation\">\n" +
+    "                    Overall impact percentile compared to all research software on\n" +
+    "                    <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
+    "                    <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>,\n" +
+    "                    based on relative\n" +
+    "                    <span class=\"num_downloads\">downloads,</span>\n" +
+    "                    <span class=\"pagerank\">software reuse,</span> and\n" +
+    "                    <span class=\"num_mentions\">citation.</span>\n" +
+    "                </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "\n" +
     "        <div class=\"subscore package-page-subscore {{ subscore.name }}\"\n" +
     "             ng-repeat=\"subscore in package.subscores\">\n" +
     "            <h3>\n" +
     "                <i class=\"fa {{ subscore.icon }}\"></i>\n" +
     "                {{ subscore.display_name }}\n" +
     "            </h3>\n" +
-    "            <div class=\"metrics\">\n" +
-    "                <div class=\"summary-metrics\">\n" +
-    "                    <div class=\"vis\">\n" +
-    "                        <div class=\"bar-outer\">\n" +
-    "                            <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\"></div>\n" +
+    "            <div class=\"body\">\n" +
+    "                <div class=\"metrics\">\n" +
+    "                    <div class=\"impact-stick vis\">\n" +
+    "                        <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\">\n" +
     "                        </div>\n" +
+    "\n" +
     "                    </div>\n" +
-    "               <span class=\"main-metric\">\n" +
-    "                  {{ format.short(subscore.val) }}\n" +
-    "               </span>\n" +
-    "               <span class=\"percentile\">\n" +
-    "                  <span class=\"val\">\n" +
-    "                     {{ format.round(subscore.percentile * 100) }}\n" +
-    "                  </span>\n" +
-    "                  <span class=\"descr\">\n" +
-    "                     percentile\n" +
-    "                  </span>\n" +
-    "               </span>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
-    "            <div class=\"explanation\">\n" +
-    "                <div class=\"citations-explanation\" ng-show=\"subscore.name=='num_mentions'\">\n" +
-    "                    Based on term searches in <br>\n" +
-    "                        <span class=\"citation-link\" ng-repeat=\"link in package.citations_dict\">\n" +
-    "                            <a href=\"{{ link.url }}\">{{ link.display_name }} ({{ link.count }})</a>\n" +
-    "                            <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
+    "                    <span class=\"main-metric\">\n" +
+    "                        {{ format.short(subscore.val) }}\n" +
+    "                    </span>\n" +
+    "                    <span class=\"percentile\">\n" +
+    "                        <span class=\"val\">\n" +
+    "                            {{ format.round(subscore.percentile * 100) }}\n" +
     "                        </span>\n" +
+    "                        <span class=\"descr\">\n" +
+    "                            percentile\n" +
+    "                        </span>\n" +
+    "                    </span>\n" +
     "                </div>\n" +
+    "\n" +
+    "                <div class=\"explanation\">\n" +
+    "                    <div class=\"citations-explanation\" ng-show=\"subscore.name=='num_mentions'\">\n" +
+    "                        Based on term searches in <br>\n" +
+    "                            <span class=\"citation-link\" ng-repeat=\"link in package.citations_dict\">\n" +
+    "                                <a href=\"{{ link.url }}\">{{ link.display_name }} ({{ link.count }})</a>\n" +
+    "                                <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
+    "                            </span>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"downloads-explanation\" ng-show=\"subscore.name=='num_downloads'\">\n" +
+    "                        Based on latest monthly downloads stats from\n" +
+    "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
+    "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"pagerank-explanation\" ng-show=\"subscore.name=='pagerank'\">\n" +
+    "                        PageRank of reverse deps\n" +
+    "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
+    "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "\n" +
+    "\n" +
     "            </div>\n" +
     "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "            <!-- Top Importers. This is just for the pagerank subscore -->\n" +
     "            <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
     "                <h4>\n" +
-    "                    <div class=\"main\">Reused by </div>\n" +
+    "                    <div class=\"main\"><i class=\"fa fa-recycle\"></i> Reused by</div>\n" +
     "                    <div class=\"subheading\">\n" +
     "                        <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
     "                      <span class=\"more\" ng-show=\"package.top_neighbors.length < package.indegree\">\n" +
@@ -1266,9 +1310,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <div class=\"package dep\" ng-if=\"dep.host\">\n" +
     "                        <div class=\"top-line\">\n" +
     "                            <div class=\"vis impact-stick is-academic-{{ dep.is_academic }}\"\n" +
-    "                             popover-trigger=\"mouseenter\"\n" +
-    "                             popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
-    "                             popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
+    "                                 popover-trigger=\"mouseenter\"\n" +
+    "                                 popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
+    "                                 popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "                                <div ng-repeat=\"subscore in dep.subscores\"\n" +
     "                                     class=\"bar-inner {{ subscore.name }}\"\n" +
     "                                     style=\"width: {{ subscore.percentile * 33.333 }}%;\">\n" +
@@ -1314,20 +1358,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                            {{ dep.summary }}\n" +
     "                        </div>\n" +
     "                    </div>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "\n" +
     "                </div>\n" +
-    "\n" +
-    "\n" +
     "            </div>\n" +
-    "\n" +
     "        </div>\n" +
-    "\n" +
     "    </div>\n" +
-    "\n" +
-    "\n" +
     "</div>\n" +
     "");
 }]);
@@ -1340,14 +1374,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "         <div class=\"person-about\">\n" +
     "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
-    "            <div class=\"score\">\n" +
-    "               <span class=\"impact\">\n" +
-    "                  {{ format.short(person.impact) }}\n" +
-    "               </span>\n" +
-    "               <span class=\"rank\" ng-show=\"!person.is_organization\">\n" +
-    "                  {{ format.round(person.impact_percentile * 100) }}\n" +
-    "               </span>\n" +
-    "            </div>\n" +
     "\n" +
     "            <span class=\"name\">\n" +
     "               {{ person.name }}\n" +
@@ -1357,14 +1383,10 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  popover-title=\"ORCiD coming soon\"\n" +
     "                  popover-trigger=\"mouseenter\"\n" +
     "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
-    "                  ng-show=\"person.is_academic\"\n" +
     "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
     "\n" +
-    "               <a ng-if=\"person.github_login\" class=\"account\" href=\"http://github.com/{{ person.github_login }}\">\n" +
-    "                  <i class=\"fa fa-github\"></i>\n" +
-    "                  <span class=\"github-url-part\" ng-if=\"!person.is_academic\">\n" +
-    "                     github/{{ person.github_login }}\n" +
-    "                  </span>\n" +
+    "               <a class=\"account\" href=\"http://github.com/{{ person.github_login }}\">\n" +
+    "                  <i class=\"fa fa-github\"></i> github/{{ person.github_login }}\n" +
     "               </a>\n" +
     "            </span>\n" +
     "\n" +
@@ -1374,6 +1396,8 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "      <div class=\"sidebar-section impact\">\n" +
     "         <h3>Impact</h3>\n" +
+    "          Coming soon...\n" +
+    "          <!--\n" +
     "         <div class=\"vis\">\n" +
     "            <div class=\"subscore {{ subscore.name }}\"\n" +
     "                 ng-if=\"subscore.val > 0\"\n" +
@@ -1388,6 +1412,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "            </div>\n" +
     "         </div>\n" +
+    "         -->\n" +
     "      </div>\n" +
     "\n" +
     "\n" +
@@ -1967,14 +1992,23 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "               <!-- put icons here based on filters -->\n" +
     "            </span>\n" +
     "            <span class=\"text\">\n" +
-    "               Highest-impact\n" +
+    "                 <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
+    "                     Top research software contributors\n" +
+    "                 </span>\n" +
+    "                  <span class=\"packages\" ng-show=\"filters.d.type=='packages'\">\n" +
+    "                     Top research software packages\n" +
+    "                  </span>\n" +
+    "                 <span class=\"people\" ng-show=\"filters.d.type=='tags'\">\n" +
+    "                     Top research software tags\n" +
+    "                 </span>\n" +
+    "\n" +
+    "                in\n" +
     "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
-    "               <span class=\"leaders-type\">{{ filters.d.type }}</span>\n" +
     "            </span>\n" +
     "         </h2>\n" +
     "         <div class=\"descr\">\n" +
     "            <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
-    "               Based on the impact of packages they've worked on.\n" +
+    "               Based on the impact of research software they've worked on.\n" +
     "            </span>\n" +
     "            <span class=\"tags\" ng-show=\"filters.d.type=='tags'\">\n" +
     "               Based on the number of packages associated with the tag.\n" +

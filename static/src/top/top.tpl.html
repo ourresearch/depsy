@@ -96,14 +96,23 @@
                <!-- put icons here based on filters -->
             </span>
             <span class="text">
-               Highest-impact
+                 <span class="people" ng-show="filters.d.type=='people'">
+                     Top research software contributors
+                 </span>
+                  <span class="packages" ng-show="filters.d.type=='packages'">
+                     Top research software packages
+                  </span>
+                 <span class="people" ng-show="filters.d.type=='tags'">
+                     Top research software tags
+                 </span>
+
+                in
                <span class="language">{{ filters.d.language }}</span>
-               <span class="leaders-type">{{ filters.d.type }}</span>
             </span>
          </h2>
          <div class="descr">
             <span class="people" ng-show="filters.d.type=='people'">
-               Based on the impact of packages they've worked on.
+               Based on the impact of research software they've worked on.
             </span>
             <span class="tags" ng-show="filters.d.type=='tags'">
                Based on the number of packages associated with the tag.
