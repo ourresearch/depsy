@@ -30,38 +30,21 @@ class PypiPackage(Package):
         return u'<PypiPackage {name}>'.format(
             name=self.id)
 
-
-    @property
-    def pagerank_max(self):
-        return 0.0262218729908892147  # brings lowest up to about 0
-
-    @property
-    def pagerank_99th(self):
-        return 0.000100030869363676781
-
     @property
     def pagerank_min(self):
         return 0.00000199416
 
     @property
-    def num_downloads_max(self):
-        return 14940006  # brings lowest up to about 0
+    def pagerank_99th(self):
+        return 0.00210512287367236282  #academic
 
     @property
     def num_downloads_99th(self):
-        return 35853  # 99th percentile
-
-    @property
-    def num_downloads_median(self):
-        return 364.0  # 99th percentile
-
-    @property
-    def num_citations_max(self):
-        return 691  # brings lowest up to about 0
+        return 716743 #academic
 
     @property
     def num_citations_99th(self):
-        return 44 
+        return 81 #academic
 
 
     @property
