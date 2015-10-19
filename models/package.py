@@ -193,6 +193,10 @@ class Package(db.Model):
 
     @property
     def subscores(self):
+        if self.pagerank_score:
+            pagerank_score = self.pagerank_score/100.0
+        else:
+            pagerank_score = None
         ret = [
             {
                 "name": "num_downloads",
@@ -214,7 +218,7 @@ class Package(db.Model):
                 "name": "pagerank",
                 "score": self.display_pagerank_score,
                 "percentile": self.pagerank_percentile,
-                "val": round(self.display_pagerank_score / 1000.0, 2),
+                "val": pagerank_score,
                 "display_name": "Software reuse",
                 "icon": "fa-recycle"
             }
