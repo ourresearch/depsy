@@ -29,7 +29,7 @@ angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function(
     "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
     "     popover-title=\"{{ percentCredit }}% credit\"\n" +
     "     popover-trigger=\"mouseenter\"\n" +
-    "     src='static/img/wheel/{{ wheelVal }}.png' />\n" +
+    "     ng-src='static/img/wheel/{{ wheelVal }}.png' />\n" +
     "");
 }]);
 
@@ -200,6 +200,11 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <div class=\"meta\">\n" +
     "               <span class=\"name\">\n" +
     "                  {{ package.name }}\n" +
+    "                   <i popover-title=\"Research software\"\n" +
+    "            popover-trigger=\"mouseenter\"\n" +
+    "            popover=\"We decide if something is research software based on language, as well as words in project tags, titles, and summaries.\"\n" +
+    "            ng-show=\"package.is_academic\"\n" +
+    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "               </span>\n" +
     "\n" +
     "                    <div class=\"summary\">\n" +
@@ -218,6 +223,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        py\n" +
     "                    </a>\n" +
     "                    <a class=\"github\"\n" +
+    "                       ng-show=\"package.github_repo_name\"\n" +
     "                       href=\"http://github.com/{{ package.github_owner }}/{{ package.github_repo_name }}\">\n" +
     "                        <i class=\"fa fa-github\"></i>\n" +
     "                    </a>\n" +
@@ -245,9 +251,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <wheel></wheel>\n" +
     "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
     "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
-    "                <i popover-title=\"Academic\"\n" +
+    "                <i popover-title=\"Research software\"\n" +
     "                   popover-trigger=\"mouseenter\"\n" +
-    "                   popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                   popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
     "                   ng-show=\"person_package.is_academic\"\n" +
     "                   class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "            </div>\n" +
@@ -329,10 +335,13 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <!-- CRAN or PyPi package -->\n" +
     "                    <div class=\"package dep\" ng-if=\"dep.host\">\n" +
     "                        <div class=\"top-line\">\n" +
-    "                            <div class=\"vis impact-stick\">\n" +
+    "                            <div class=\"vis impact-stick is-academic-{{ dep.is_academic }}\"\n" +
+    "                             popover-trigger=\"mouseenter\"\n" +
+    "                             popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
+    "                             popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "                                <div ng-repeat=\"subscore in dep.subscores\"\n" +
     "                                     class=\"bar-inner {{ subscore.name }}\"\n" +
-    "                                     style=\"width: {{ subscore.score / 33.3333 }}%;\">\n" +
+    "                                     style=\"width: {{ subscore.percentile * 33.333 }}%;\">\n" +
     "                                </div>\n" +
     "                            </div>\n" +
     "\n" +
@@ -340,9 +349,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                                {{ dep.name }}\n" +
     "                            </a>\n" +
     "\n" +
-    "                            <i popover-title=\"Academic\"\n" +
+    "                            <i popover-title=\"Research software\"\n" +
     "                               popover-trigger=\"mouseenter\"\n" +
-    "                               popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                               popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
     "                               ng-show=\"dep.is_academic\"\n" +
     "                               class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "                        </div>\n" +
@@ -414,9 +423,9 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "               {{ person.name }}\n" +
     "            </span>\n" +
     "            <span class=\"accounts\">\n" +
-    "               <i popover-title=\"Academic\"\n" +
+    "               <i popover-title=\"Research software\"\n" +
     "                  popover-trigger=\"mouseenter\"\n" +
-    "                  popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                  popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
     "                  ng-show=\"person.is_academic\"\n" +
     "                  class=\"is-academic account fa fa-graduation-cap\"></i>\n" +
     "\n" +
@@ -547,9 +556,7 @@ angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCac
     "           ng-if=\"subscore.val > 0\"\n" +
     "           ng-repeat=\"subscore in package.subscores\">\n" +
     "         <span class=\"name\">\n" +
-    "            <i class=\"fa fa-file-text-o\" ng-if=\"subscore.name=='num_mentions'\"></i>\n" +
-    "            <i class=\"fa fa-exchange\" ng-if=\"subscore.name=='pagerank'\"></i>\n" +
-    "            <i class=\"fa fa-download\" ng-if=\"subscore.name=='num_downloads'\"></i>\n" +
+    "            <i class=\"fa {{ subscore.icon }}\"></i>\n" +
     "            {{ subscore.display_name }}\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
@@ -576,7 +583,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"vis impact-stick\">\n" +
     "            <div ng-repeat=\"subscore in package.subscores\"\n" +
     "                 class=\"bar-inner {{ subscore.name }}\"\n" +
-    "                 style=\"width: {{ subscore.score / 33.3333 }}%;\">\n" +
+    "                 style=\"width: {{ subscore.percentile * 33.3333 }}%;\">\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -606,9 +613,9 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         <a class=\"name\" href=\"package/{{ package.language }}/{{ package.name }}\">\n" +
     "            {{ package.name }}\n" +
     "         </a>\n" +
-    "         <i popover-title=\"Academic\"\n" +
+    "         <i popover-title=\"Research software\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "            popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
     "            ng-show=\"package.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
@@ -708,7 +715,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
     "              ng-repeat=\"subscore in person.subscores\">\n" +
     "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.percentile * 33.33333 }}%;\"></div>\n" +
     "            </div>\n" +
     "         </div>\n" +
     "      </div>\n" +
@@ -735,9 +742,9 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         </a>\n" +
     "\n" +
     "\n" +
-    "         <i popover-title=\"Academic\"\n" +
+    "         <i popover-title=\"Research software\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "            popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
     "            ng-show=\"person.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
@@ -804,7 +811,7 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "         </a>\n" +
     "\n" +
     "\n" +
-    "         <i popover-title=\"Academic\"\n" +
+    "         <i popover-title=\"Research software\"\n" +
     "            popover-trigger=\"mouseenter\"\n" +
     "            popover=\"This tag is often applied to academic projects.\"\n" +
     "            ng-show=\"tag.is_academic\"\n" +

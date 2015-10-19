@@ -8,7 +8,7 @@
       <div class="vis impact-stick">
             <div ng-repeat="subscore in package.subscores"
                  class="bar-inner {{ subscore.name }}"
-                 style="width: {{ subscore.score / 33.3333 }}%;">
+                 style="width: {{ subscore.percentile * 33.3333 }}%;">
             </div>
         </div>
 
@@ -38,9 +38,9 @@
          <a class="name" href="package/{{ package.language }}/{{ package.name }}">
             {{ package.name }}
          </a>
-         <i popover-title="Academic"
+         <i popover-title="Research software"
             popover-trigger="mouseenter"
-            popover="We infer academic status based on factors like email address, tags, and institution."
+            popover="We decide projects are research software based on their names, tags, and summaries."
             ng-show="package.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
 

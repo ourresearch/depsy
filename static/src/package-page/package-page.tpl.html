@@ -8,6 +8,11 @@
                 <div class="meta">
                <span class="name">
                   {{ package.name }}
+                   <i popover-title="Research software"
+            popover-trigger="mouseenter"
+            popover="We decide if something is research software based on language, as well as words in project tags, titles, and summaries."
+            ng-show="package.is_academic"
+            class="is-academic fa fa-graduation-cap"></i>
                </span>
 
                     <div class="summary">
@@ -26,6 +31,7 @@
                         py
                     </a>
                     <a class="github"
+                       ng-show="package.github_repo_name"
                        href="http://github.com/{{ package.github_owner }}/{{ package.github_repo_name }}">
                         <i class="fa fa-github"></i>
                     </a>
@@ -53,9 +59,9 @@
                 <wheel></wheel>
                 <img class="person-icon" src="{{ person_package.icon_small }}" alt=""/>
                 <a class="name" href="person/{{ person_package.id }}">{{ person_package.name }}</a>
-                <i popover-title="Academic"
+                <i popover-title="Research software"
                    popover-trigger="mouseenter"
-                   popover="We infer academic status based on factors like email address, tags, and institution."
+                   popover="We decide projects are research software based on their names, tags, and summaries."
                    ng-show="person_package.is_academic"
                    class="is-academic fa fa-graduation-cap"></i>
             </div>
@@ -137,10 +143,13 @@
                     <!-- CRAN or PyPi package -->
                     <div class="package dep" ng-if="dep.host">
                         <div class="top-line">
-                            <div class="vis impact-stick">
+                            <div class="vis impact-stick is-academic-{{ dep.is_academic }}"
+                             popover-trigger="mouseenter"
+                             popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
+                             popover-template="'snippet/package-impact-popover.tpl.html'">
                                 <div ng-repeat="subscore in dep.subscores"
                                      class="bar-inner {{ subscore.name }}"
-                                     style="width: {{ subscore.score / 33.3333 }}%;">
+                                     style="width: {{ subscore.percentile * 33.333 }}%;">
                                 </div>
                             </div>
 
@@ -148,9 +157,9 @@
                                 {{ dep.name }}
                             </a>
 
-                            <i popover-title="Academic"
+                            <i popover-title="Research software"
                                popover-trigger="mouseenter"
-                               popover="We infer academic status based on factors like email address, tags, and institution."
+                               popover="We decide projects are research software based on their names, tags, and summaries."
                                ng-show="dep.is_academic"
                                class="is-academic fa fa-graduation-cap"></i>
                         </div>

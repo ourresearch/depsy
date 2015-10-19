@@ -6,9 +6,7 @@
            ng-if="subscore.val > 0"
            ng-repeat="subscore in package.subscores">
          <span class="name">
-            <i class="fa fa-file-text-o" ng-if="subscore.name=='num_mentions'"></i>
-            <i class="fa fa-exchange" ng-if="subscore.name=='pagerank'"></i>
-            <i class="fa fa-download" ng-if="subscore.name=='num_downloads'"></i>
+            <i class="fa {{ subscore.icon }}"></i>
             {{ subscore.display_name }}
          </span>
          <span class="descr">

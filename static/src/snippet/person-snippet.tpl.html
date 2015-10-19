@@ -11,7 +11,7 @@
          <div class="subscore {{ subscore.name }}"
               ng-repeat="subscore in person.subscores">
             <div class="bar-outer">
-               <div class="bar-inner {{ subscore.name }}" style="height: {{ subscore.score / 10 }}%;"></div>
+               <div class="bar-inner {{ subscore.name }}" style="height: {{ subscore.percentile * 33.33333 }}%;"></div>
             </div>
          </div>
       </div>
@@ -38,9 +38,9 @@
          </a>
 
 
-         <i popover-title="Academic"
+         <i popover-title="Research software"
             popover-trigger="mouseenter"
-            popover="We infer academic status based on factors like email address, tags, and institution."
+            popover="We decide projects are research software based on their names, tags, and summaries."
             ng-show="person.is_academic"
             class="is-academic fa fa-graduation-cap"></i>
 

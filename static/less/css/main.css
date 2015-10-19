@@ -470,6 +470,9 @@ div.package-page div.ti-page-sidebar .sidebar-header .about .meta .name {
   font-size: 38px;
   font-weight: bold;
 }
+div.package-page div.ti-page-sidebar .sidebar-header .about .meta .name i {
+  font-size: 50%;
+}
 div.package-page div.ti-page-sidebar .sidebar-header .about .meta .summary {
   font-size: 15px;
 }
@@ -921,7 +924,7 @@ span.snippet span.contribs a.contrib {
   font-weight: 900;
 }
 .impact-popover.package div.metric.head span.val {
-  font-size: 18px;
+  font-size: 12px;
 }
 .impact-popover.package div.metric.head span.val span.small {
   font-size: 12px;
