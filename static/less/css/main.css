@@ -648,15 +648,44 @@ div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics 
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers {
   float: left;
-  margin: -40px 0 0 40px;
+  margin: -30px 0 0 60px;
   width: 400px;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers h4 {
-  font-size: 25px;
-  font-weight: 100;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers h4 div.subheading {
   font-size: 14px;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container {
+  color: #333;
+  margin-bottom: 20px;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep .vis {
+  display: inline-block;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep .name {
+  font-size: 22px;
+  margin: 0 5px;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep .underline {
+  font-size: 12px;
+  color: #999;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep.package a.name {
+  color: #333;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep.github i.fa-star {
+  color: gold;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep.github .name {
+  font-weight: 100;
+  font-size: 18px;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep.github .name a.github-link {
+  color: #333;
+  font-size: 16px;
 }
 .page.leaderboard div.sidebar {
   width: 200px;
@@ -758,38 +787,6 @@ span.snippet span.left-metrics .rank span.octothorpe {
   font-size: 10px;
   font-weight: 100;
 }
-span.snippet span.left-metrics .vis {
-  margin-top: 9px;
-}
-span.snippet span.left-metrics .vis .subscore {
-  line-height: .7;
-  float: right;
-}
-span.snippet span.left-metrics .vis .subscore .bar-outer {
-  width: 8px;
-  display: inline-block;
-  height: 17px;
-  background: #fafafa;
-  text-align: right;
-  position: relative;
-  z-index: -1;
-}
-span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: inline-block;
-}
-span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_downloads {
-  background: #4daf4a;
-}
-span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.pagerank {
-  background: #377eb8;
-}
-span.snippet span.left-metrics .vis .subscore .bar-outer .bar-inner.num_mentions {
-  background: #984ea3;
-}
 span.snippet span.metadata {
   display: inline-block;
   float: left;
@@ -869,6 +866,27 @@ span.snippet span.contribs a.contrib {
   width: 500px;
   margin: 200px auto;
   text-align: center;
+}
+.impact-stick {
+  width: 30px;
+  display: inline-block;
+  height: 15px;
+  background: #fafafa;
+  text-align: right;
+  z-index: -1;
+}
+.impact-stick .bar-inner {
+  display: inline-block;
+  height: 100%;
+}
+.impact-stick .bar-inner.num_downloads {
+  background: #4daf4a;
+}
+.impact-stick .bar-inner.pagerank {
+  background: #377eb8;
+}
+.impact-stick .bar-inner.num_mentions {
+  background: #984ea3;
 }
 .impact-popover.package div.metric {
   font-size: 14px;

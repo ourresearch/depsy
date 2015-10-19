@@ -725,6 +725,16 @@ angular.module('snippet', [
 
 
   .controller("packageSnippetCtrl", function($scope){
+
+      //if ($scope.dep) {
+      //  $scope.snippetPackage = $scope.dep
+      //}
+      //
+      //else if ($scope.package) {
+      //  //$scope.snippetPackage = $scope.package
+      //}
+
+
 //    var subscoreNames = [
 //      "num_downloads",
 //      "pagerank",
@@ -1100,107 +1110,107 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "<div class=\"page entity-page package-page\">\n" +
     "\n" +
     "\n" +
-    "   <div class=\"ti-page-sidebar\">\n" +
-    "      <div class=\"sidebar-header\">\n" +
+    "    <div class=\"ti-page-sidebar\">\n" +
+    "        <div class=\"sidebar-header\">\n" +
     "\n" +
-    "         <div class=\"about\">\n" +
-    "            <div class=\"meta\">\n" +
+    "            <div class=\"about\">\n" +
+    "                <div class=\"meta\">\n" +
     "               <span class=\"name\">\n" +
     "                  {{ package.name }}\n" +
     "               </span>\n" +
     "\n" +
-    "               <div class=\"summary\">\n" +
-    "                  {{ package.summary }}\n" +
-    "               </div>\n" +
+    "                    <div class=\"summary\">\n" +
+    "                        {{ package.summary }}\n" +
+    "                    </div>\n" +
+    "                </div>\n" +
+    "                <div class=\"links\">\n" +
+    "                    <a class=\"language-icon r\"\n" +
+    "                       href=\"https://cran.r-project.org/web/packages/{{ package.name }}/index.html\"\n" +
+    "                       ng-if=\"package.language=='r'\">\n" +
+    "                        R\n" +
+    "                    </a>\n" +
+    "                    <a class=\"language-icon python\"\n" +
+    "                       href=\"https://pypi.python.org/pypi/{{ package.name }}\"\n" +
+    "                       ng-if=\"package.language=='python'\">\n" +
+    "                        py\n" +
+    "                    </a>\n" +
+    "                    <a class=\"github\"\n" +
+    "                       href=\"http://github.com/{{ package.github_owner }}/{{ package.github_repo_name }}\">\n" +
+    "                        <i class=\"fa fa-github\"></i>\n" +
+    "                    </a>\n" +
+    "                </div>\n" +
     "            </div>\n" +
-    "            <div class=\"links\">\n" +
-    "               <a class=\"language-icon r\"\n" +
-    "                  href=\"https://cran.r-project.org/web/packages/{{ package.name }}/index.html\"\n" +
-    "                  ng-if=\"package.language=='r'\">\n" +
-    "                  R\n" +
-    "               </a>\n" +
-    "               <a class=\"language-icon python\"\n" +
-    "                  href=\"https://pypi.python.org/pypi/{{ package.name }}\"\n" +
-    "                  ng-if=\"package.language=='python'\">\n" +
-    "                  py\n" +
-    "               </a>\n" +
-    "               <a class=\"github\"\n" +
-    "                  href=\"http://github.com/{{ package.github_owner }}/{{ package.github_repo_name }}\">\n" +
-    "                  <i class=\"fa fa-github\"></i>\n" +
-    "               </a>\n" +
+    "        </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "        <div class=\"sidebar-section tags\" ng-if=\"package.tags.length\">\n" +
+    "            <h3>Tags</h3>\n" +
+    "            <div class=\"tags\">\n" +
+    "                <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
+    "                    {{ tag }}\n" +
+    "                </a>\n" +
     "            </div>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
     "\n" +
-    "      <div class=\"sidebar-section tags\" ng-if=\"package.tags.length\">\n" +
-    "         <h3>Tags</h3>\n" +
-    "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
-    "               {{ tag }}\n" +
-    "            </a>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "        <div class=\"sidebar-section contribs\">\n" +
+    "            <h3>Key contributors</h3>\n" +
+    "            <div class=\"contrib\"\n" +
+    "                 ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
+    "                <wheel></wheel>\n" +
+    "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
+    "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
+    "                <i popover-title=\"Academic\"\n" +
+    "                   popover-trigger=\"mouseenter\"\n" +
+    "                   popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                   ng-show=\"person_package.is_academic\"\n" +
+    "                   class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
     "\n" +
-    "      <div class=\"sidebar-section contribs\">\n" +
-    "         <h3>Key contributors</h3>\n" +
-    "         <div class=\"contrib\"\n" +
-    "            ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
-    "            <wheel></wheel>\n" +
-    "            <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
-    "            <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
-    "            <i popover-title=\"Academic\"\n" +
+    "\n" +
+    "        <div class=\"sidebar-section actions\">\n" +
+    "            <a class=\"json-link btn btn-default\"\n" +
+    "               popover-title=\"View this page as JSON\"\n" +
+    "               popover-placement=\"right\"\n" +
     "               popover-trigger=\"mouseenter\"\n" +
-    "               popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
-    "               ng-show=\"person_package.is_academic\"\n" +
-    "               class=\"is-academic fa fa-graduation-cap\"></i>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "               target=\"_self\"\n" +
+    "               popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
+    "               href=\"api/package/{{ package.host }}/{{ package.name }}\">\n" +
+    "                <i class=\"fa fa-download\"></i>\n" +
+    "                JSON\n" +
+    "            </a>\n" +
     "\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "      <div class=\"sidebar-section actions\">\n" +
-    "         <a class=\"json-link btn btn-default\"\n" +
-    "            popover-title=\"View this page as JSON\"\n" +
-    "            popover-placement=\"right\"\n" +
-    "            popover-trigger=\"mouseenter\"\n" +
-    "            target=\"_self\"\n" +
-    "            popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
-    "            href=\"api/package/{{ package.host }}/{{ package.name }}\">\n" +
-    "            <i class=\"fa fa-download\"></i>\n" +
-    "            JSON\n" +
-    "         </a>\n" +
-    "\n" +
-    "         <!--\n" +
+    "            <!--\n" +
     "         <a href=\"https://twitter.com/share?url={{ encodeURIComponent('http://google.com') }}\" >Tweet</a>\n" +
     "         -->\n" +
     "\n" +
     "\n" +
-    "      </div>\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
-    "   </div>\n" +
+    "    </div>\n" +
     "\n" +
     "\n" +
-    "   <div class=\"ti-page-body\">\n" +
+    "    <div class=\"ti-page-body\">\n" +
     "\n" +
-    "      <div class=\"subscore package-page-subscore {{ subscore.name }}\"\n" +
-    "           ng-repeat=\"subscore in package.subscores\">\n" +
-    "         <h3>\n" +
-    "            <i class=\"fa {{ subscore.icon }}\"></i>\n" +
-    "            {{ subscore.display_name }}\n" +
-    "         </h3>\n" +
-    "         <div class=\"metrics\">\n" +
-    "            <div class=\"summary-metrics\">\n" +
-    "               <div class=\"vis\">\n" +
-    "                  <div class=\"bar-outer\">\n" +
-    "                     <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score /10 }}%\"></div>\n" +
-    "                  </div>\n" +
-    "               </div>\n" +
+    "        <div class=\"subscore package-page-subscore {{ subscore.name }}\"\n" +
+    "             ng-repeat=\"subscore in package.subscores\">\n" +
+    "            <h3>\n" +
+    "                <i class=\"fa {{ subscore.icon }}\"></i>\n" +
+    "                {{ subscore.display_name }}\n" +
+    "            </h3>\n" +
+    "            <div class=\"metrics\">\n" +
+    "                <div class=\"summary-metrics\">\n" +
+    "                    <div class=\"vis\">\n" +
+    "                        <div class=\"bar-outer\">\n" +
+    "                            <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score /10 }}%\"></div>\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
     "               <span class=\"main-metric\">\n" +
     "                  {{ format.short(subscore.val) }}\n" +
     "               </span>\n" +
@@ -1212,28 +1222,87 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                     percentile\n" +
     "                  </span>\n" +
     "               </span>\n" +
+    "                </div>\n" +
     "            </div>\n" +
-    "         </div>\n" +
-    "         <div class=\"explanation\">\n" +
+    "            <div class=\"explanation\">\n" +
     "\n" +
-    "         </div>\n" +
+    "            </div>\n" +
     "\n" +
-    "          <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
-    "              <h4>\n" +
-    "                  <div class=\"main\">Imported by </div>\n" +
-    "                  <div class=\"subheading\">\n" +
-    "                      <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
+    "            <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
+    "                <h4>\n" +
+    "                    <div class=\"main\">Reused by </div>\n" +
+    "                    <div class=\"subheading\">\n" +
+    "                        <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
     "                      <span class=\"more\" ng-show=\"package.top_neighbors.length < package.indegree\">\n" +
     "                          (showing the top {{ package.top_neighbors.length }})\n" +
     "                      </span>\n" +
-    "                  </div>\n" +
+    "                    </div>\n" +
+    "                </h4>\n" +
     "\n" +
-    "              </h4>\n" +
-    "          </div>\n" +
+    "                <div class=\"dep-container\" ng-repeat=\"dep in package.top_neighbors\">\n" +
     "\n" +
-    "      </div>\n" +
     "\n" +
-    "   </div>\n" +
+    "                    <!-- CRAN or PyPi package -->\n" +
+    "                    <div class=\"package dep\" ng-if=\"dep.host\">\n" +
+    "                        <div class=\"top-line\">\n" +
+    "                            <div class=\"vis impact-stick\">\n" +
+    "                                <div ng-repeat=\"subscore in dep.subscores\"\n" +
+    "                                     class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                                     style=\"width: {{ subscore.score / 33.3333 }}%;\">\n" +
+    "                                </div>\n" +
+    "                            </div>\n" +
+    "\n" +
+    "                            <a class=\"name\" href=\"package/{{ dep.language }}/{{ dep.name }}\">\n" +
+    "                                {{ dep.name }}\n" +
+    "                            </a>\n" +
+    "\n" +
+    "                            <i popover-title=\"Academic\"\n" +
+    "                               popover-trigger=\"mouseenter\"\n" +
+    "                               popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
+    "                               ng-show=\"dep.is_academic\"\n" +
+    "                               class=\"is-academic fa fa-graduation-cap\"></i>\n" +
+    "                        </div>\n" +
+    "                        <div class=\"underline\">\n" +
+    "                            {{ dep.summary }}\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "                    <!-- GitHub repo -->\n" +
+    "                    <div class=\"github dep\" ng-if=\"!dep.host\">\n" +
+    "                        <div class=\"top-line\">\n" +
+    "                            <div class=\"vis\"\n" +
+    "                                 popover-trigger=\"mouseenter\"\n" +
+    "                                 popover=\"{{ dep.stars }} GitHub stars\">\n" +
+    "                                {{ dep.stars }}\n" +
+    "                                <i class=\"fa fa-star\"></i>\n" +
+    "                            </div>\n" +
+    "\n" +
+    "                            <span class=\"name\">\n" +
+    "                                <a href=\"http://github.com/{{ dep.login }}/{{ dep.repo_name }}\"\n" +
+    "                                   popover-trigger=\"mouseenter\"\n" +
+    "                                   popover=\"This {{ dep.language }} project is not in CRAN or PyPi, but it is viewable on GitHub\"\n" +
+    "                                   class=\"github-link\">\n" +
+    "                                    <i class=\"fa fa-github\"></i>\n" +
+    "                                </a>\n" +
+    "                                {{ dep.repo_name }}\n" +
+    "                            </span>\n" +
+    "                        </div>\n" +
+    "                        <div class=\"underline\">\n" +
+    "                            {{ dep.summary }}\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "                </div>\n" +
+    "\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
+    "        </div>\n" +
+    "\n" +
+    "    </div>\n" +
     "\n" +
     "\n" +
     "</div>\n" +
@@ -1416,7 +1485,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         popover-title=\"Impact\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
-    "      <div class=\"vis\">\n" +
+    "      <div class=\"vis impact-stick\">\n" +
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
     "              ng-repeat=\"subscore in package.subscores\">\n" +
     "            <div class=\"bar-outer\">\n" +
@@ -1550,7 +1619,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         popover-template=\"'snippet/person-impact-popover.tpl.html'\">\n" +
     "\n" +
     "\n" +
-    "      <div class=\"vis\">\n" +
+    "      <div class=\"vis impact-stick\">\n" +
     "         <div class=\"subscore {{ subscore.name }}\"\n" +
     "              ng-repeat=\"subscore in person.subscores\">\n" +
     "            <div class=\"bar-outer\">\n" +
