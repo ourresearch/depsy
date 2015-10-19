@@ -40,6 +40,7 @@ angular.module("formatterService", [])
 
   // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
   var ordinal = function(n) {
+      n = Math.round(n)
     var s=["th","st","nd","rd"],
       v=n%100;
     return n+(s[(v-20)%10]||s[v]||s[0]);

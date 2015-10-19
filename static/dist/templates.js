@@ -566,7 +566,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "     ng-controller=\"packageSnippetCtrl\">\n" +
     "   <span class=\"left-metrics\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
-    "         popover-title=\"Impact\"\n" +
+    "         popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
@@ -577,9 +577,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "        </div>\n" +
     "\n" +
     "      <div class=\"rank\">\n" +
-    "         <span class=\"octothorpe\">#</span>\n" +
     "         <span class=\"val\">\n" +
-    "            {{ format.commas(package.impact_rank) }}\n" +
+    "            {{ format.round(package.impact_percentile * 100) }}\n" +
     "         </span>\n" +
     "      </div>\n" +
     "\n" +

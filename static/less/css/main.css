@@ -787,11 +787,6 @@ span.snippet span.left-metrics .rank span.val {
   font-size: 14px;
   font-weight: bold;
 }
-span.snippet span.left-metrics .rank span.octothorpe {
-  display: none;
-  font-size: 10px;
-  font-weight: 100;
-}
 span.snippet span.metadata {
   display: inline-block;
   float: left;
