@@ -1486,13 +1486,11 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
-    "         <div class=\"subscore {{ subscore.name }}\"\n" +
-    "              ng-repeat=\"subscore in package.subscores\">\n" +
-    "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "            <div ng-repeat=\"subscore in package.subscores\"\n" +
+    "                 class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                 style=\"width: {{ subscore.score / 33.3333 }}%;\">\n" +
     "            </div>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "        </div>\n" +
     "\n" +
     "      <div class=\"rank\">\n" +
     "         <span class=\"octothorpe\">#</span>\n" +
