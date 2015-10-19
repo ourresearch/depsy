@@ -71,6 +71,7 @@ class Package(db.Model):
     num_citations = db.Column(db.Integer)
     num_citations_percentile = db.Column(db.Float)
     num_citations_score = db.Column(db.Float)
+    num_citations_by_source = db.Column(MutableDict.as_mutable(JSONB))
 
     neighborhood_size = db.Column(db.Float)
     indegree = db.Column(db.Float)
@@ -140,6 +141,7 @@ class Package(db.Model):
             "num_committers",
             "num_stars",
             "impact",
+            "citations_dict",
             "tree",
             "top_neighbors",
             "is_academic",
@@ -171,11 +173,11 @@ class Package(db.Model):
 
     @property
     def as_snippet_without_people(self):
-        return self.to_dict(exclude=["contribs", "top_contribs", "tree", "top_neighbors"])
+        return self.to_dict(exclude=["contribs", "top_contribs", "tree", "top_neighbors", "citations_dict"])
 
     @property
     def as_snippet(self):
-        return self.to_dict(exclude=["contribs", "tree", "top_neighbors"])
+        return self.to_dict(exclude=["contribs", "tree", "top_neighbors", "citations_dict"])
 
     @property
     def engagement(self):
@@ -607,8 +609,18 @@ class Package(db.Model):
     def get_sources_to_query(self):
         # i bet there is a better way to do this!! :)
         sources_to_query = [
-                    full_text_source.Ads
-                    # full_text_source.Pmc
+                    full_text_source.Ads,
+                    full_text_source.Pmc
+                    # full_text_source.Arxiv,
+                    # full_text_source.Citeseer,
+                ]
+        return sources_to_query
+
+    def get_sources_to_return(self):
+        # i bet there is a better way to do this!! :)
+        sources_to_query = [
+                    full_text_source.Ads,
+                    full_text_source.Pmc
                     # full_text_source.Arxiv,
                     # full_text_source.Citeseer,
                 ]
@@ -617,15 +629,20 @@ class Package(db.Model):
     @property
     def citations_dict(self):
         citations_dict = self.num_citations_by_source
-        response_dict = defaultdict(dict)
-        for source_class in self.get_sources_to_query():
+        response = []
+        for source_class in self.get_sources_to_return():
             source = source_class()
+            try:
+                citation_count = citations_dict[source.name]
+            except KeyError:
+                citation_count = 0
             query = self.build_full_text_query(source)
-            response_dict[source.name] = {
-                "count": citations_dict[source.name], 
+            response.append({
+                "name": source.name,
+                "count": citation_count, 
                 "url": source.query_url(query)
-                }
-        return response_dict
+                })
+        return response
 
 
     def build_full_text_query(self, source, override_with_is_distinctive=None):
@@ -746,6 +763,44 @@ class Package(db.Model):
         self.set_ads_distinctiveness()
 
         return self.num_citations_by_source
+
+
+    def set_num_citations(self):
+        self.num_citations = 0        
+
+        if not self.num_citations_by_source:
+            return
+
+        for source in ["pmc", "ads"]:
+            if source=="pmc":
+                num_source_citations = self.pmc_distinctiveness["num_hits_with_language"]
+                if num_source_citations < 10:
+                    self.num_citations += num_source_citations
+                else:
+                    ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
+                    print source, "ratio", ratio, num_source_citations
+                    if self.host == "cran":
+                        if ratio > 0.20:
+                            self.num_citations += num_source_citations
+                    else:
+                        if ratio > 0.27:
+                            self.num_citations += num_source_citations
+            elif source=="ads":
+                num_source_citations = self.ads_distinctiveness["num_hits_with_language"]
+                if num_source_citations < 10:
+                    self.num_citations += num_source_citations
+                else:
+                    ratio = float(self.ads_distinctiveness["num_hits_with_language"])/self.ads_distinctiveness["num_hits_raw"]
+                    print source, "ratio", ratio, num_source_citations
+                    if self.host == "cran":
+                        if ratio > 0.20:
+                            self.num_citations += num_source_citations
+                    else:
+                        if ratio > 0.20:
+                            self.num_citations += num_source_citations
+
+        print "num citations is ", self.num_citations
+        return self.num_citations
 
 
     # def set_num_citations_by_source(self):
@@ -1000,7 +1055,7 @@ class Package(db.Model):
 
 
     def set_num_downloads_score(self):
-        if not self.num_downloads:
+        if not self.is_academic or not self.num_downloads:
             self.num_downloads_score = None
             return self.num_downloads_score
 
@@ -1017,7 +1072,7 @@ class Package(db.Model):
 
 
     def set_pagerank_score(self):
-        if not self.pagerank:
+        if not self.is_academic or not self.pagerank:
             self.pagerank_score = None
             return self.pagerank_score
 
@@ -1054,6 +1109,10 @@ class Package(db.Model):
 
 
     def set_impact(self):
+        if not self.is_academic:
+            self.impact = None
+            return 
+
         score_components = []
 
         pagerank_score = self.set_pagerank_score()
