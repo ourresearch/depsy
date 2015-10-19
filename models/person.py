@@ -71,42 +71,45 @@ class Person(db.Model):
     def subscores(self):
         ret = []
         ret.append({
+                "display_name": "Downloads", 
+                "icon": "fa-download", 
                 "name": "num_downloads",
-                "display_name": "Monthly downloads",
                 "score": self.num_downloads_score,
                 "val": self.num_downloads_score
             })
         ret.append({
-                "name": "pagerank",
-                "display_name": "Software reuse",
+                "display_name": "Software reuse", 
+                "icon": "fa-recycle", 
+                "name": "pagerank", 
                 "score": self.pagerank_score,
                 "val": self.pagerank_score
             })
         ret.append({
-                "name": "num_citations",
-                "display_name": "Literature reuse",
+                "display_name": "Citations", 
+                "icon": "fa-file-text-o", 
+                "name": "num_mentions", 
                 "score": self.num_citations_score,
                 "val": self.num_citations_score
             })
 
         # select id, name, email, num_citations_score from person where is_organization=false and main_lanugage='python' order by num_downloads_score desc limit 5
-        maxes = {
-            "python": {
-                "num_citations": 1312.07783912007676,
-                "pagerank": 6828.41972274044019,
-                "num_downloads": 16419.5532038200363
-            },
-            "r": {
-                "num_citations": 1866,
-                "pagerank": 9270,
-                "num_downloads": 18213
-            }
-        }
+        # maxes = {
+        #     "python": {
+        #         "num_mentions": 1312.07783912007676,
+        #         "pagerank": 6828.41972274044019,
+        #         "num_downloads": 16419.5532038200363
+        #     },
+        #     "r": {
+        #         "num_mentions": 1866,
+        #         "pagerank": 9270,
+        #         "num_downloads": 18213
+        #     }
+        # }
 
-        for my_dict in ret:
-            if my_dict["score"]:
-                temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
-                my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
+        # for my_dict in ret:
+        #     if my_dict["score"]:
+        #         temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
+        #         my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
 
         return ret
 
@@ -424,19 +427,19 @@ class PersonPackage():
 
     @property
     def person_package_pagerank_score(self):
-        if self.package.pagerank_score == None:
+        if self.package.pagerank_percentile == None:
             return None
-        ret = self.person_package_credit * self.package.pagerank_score
+        ret = self.person_package_credit * self.package.pagerank_percentile
         return ret
 
     @property
     def person_package_num_citations_score(self):
-        ret = self.person_package_credit * self.package.num_citations_score
+        ret = self.person_package_credit * self.package.num_citations_percentile
         return ret
 
     @property
     def person_package_num_downloads_score(self):
-        ret = self.person_package_credit * self.package.num_downloads_score
+        ret = self.person_package_credit * self.package.num_downloads_percentile
         return ret
 
 
