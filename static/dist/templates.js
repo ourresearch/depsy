@@ -1063,14 +1063,23 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "               <!-- put icons here based on filters -->\n" +
     "            </span>\n" +
     "            <span class=\"text\">\n" +
-    "               Highest-impact\n" +
+    "                 <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
+    "                     Top research software contributors\n" +
+    "                 </span>\n" +
+    "                  <span class=\"packages\" ng-show=\"filters.d.type=='packages'\">\n" +
+    "                     Top research software packages\n" +
+    "                  </span>\n" +
+    "                 <span class=\"people\" ng-show=\"filters.d.type=='tags'\">\n" +
+    "                     Top research software tags\n" +
+    "                 </span>\n" +
+    "\n" +
+    "                in\n" +
     "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
-    "               <span class=\"leaders-type\">{{ filters.d.type }}</span>\n" +
     "            </span>\n" +
     "         </h2>\n" +
     "         <div class=\"descr\">\n" +
     "            <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
-    "               Based on the impact of packages they've worked on.\n" +
+    "               Based on the impact of research software they've worked on.\n" +
     "            </span>\n" +
     "            <span class=\"tags\" ng-show=\"filters.d.type=='tags'\">\n" +
     "               Based on the number of packages associated with the tag.\n" +
