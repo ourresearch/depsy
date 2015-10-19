@@ -614,6 +614,7 @@ class Package(db.Model):
             query = self.build_full_text_query(source)
             response.append({
                 "name": source.name,
+                "display_name": source.display_name,
                 "count": citation_count, 
                 "url": source.query_url(query)
                 })

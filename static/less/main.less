@@ -688,7 +688,7 @@ div.package-page {
               font-weight: 100;
             }
             span.descr {
-              color: #777;
+              //color: #777;
               font-size: 12px;
               font-weight: 100;
             }
@@ -698,10 +698,14 @@ div.package-page {
 
 
       .explanation {
+        margin-top: 10px;
         color: #999;
+        float: left;
+        clear:left;
         .citations-explanation {
-          float: left;
-          clear:left;
+          a {
+            color: @citationsColor;
+          }
         }
       }
 

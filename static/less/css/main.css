@@ -642,16 +642,17 @@ div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics 
   font-weight: 100;
 }
 div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics .percentile span.descr {
-  color: #777;
   font-size: 12px;
   font-weight: 100;
 }
 div.package-page .ti-page-body .package-page-subscore .explanation {
+  margin-top: 10px;
   color: #999;
-}
-div.package-page .ti-page-body .package-page-subscore .explanation .citations-explanation {
   float: left;
   clear: left;
+}
+div.package-page .ti-page-body .package-page-subscore .explanation .citations-explanation a {
+  color: #984ea3;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers {
   float: left;

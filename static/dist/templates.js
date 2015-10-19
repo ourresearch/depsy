@@ -314,9 +314,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            </div>\n" +
     "            <div class=\"explanation\">\n" +
     "                <div class=\"citations-explanation\" ng-show=\"subscore.name=='num_mentions'\">\n" +
-    "                    Based on term searches in\n" +
+    "                    Based on term searches in <br>\n" +
     "                        <span class=\"citation-link\" ng-repeat=\"link in package.citations_dict\">\n" +
-    "                            <a href=\"{{ link.url }}\">{{ link.name }} ({{ link.count }})</a>\n" +
+    "                            <a href=\"{{ link.url }}\">{{ link.display_name }} ({{ link.count }})</a>\n" +
     "                            <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
     "                        </span>\n" +
     "                </div>\n" +

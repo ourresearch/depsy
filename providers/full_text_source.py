@@ -34,7 +34,11 @@ class Pmc(FullTextSource):
             hits = int(results["hitCount"])
         except KeyError:
             hits = 0
-        return hits   
+        return hits
+
+    @property
+    def display_name(self):
+        return "Europe PMC"
 
 
 class Arxiv(FullTextSource):
@@ -90,4 +94,7 @@ class Ads(FullTextSource):
             hits = 0
         return hits      
 
+    @property
+    def display_name(self):
+        return "ADS"
 
