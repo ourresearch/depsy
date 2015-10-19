@@ -80,13 +80,7 @@ def abort_json(status_code, msg):
 @app.route("/<path:page>")  # from http://stackoverflow.com/a/14023930/226013
 @app.route("/")
 def index_view(path="index", page=""):
-    if "localhost" in request.url or "dev.depsy.org" in request.url:
-        # it's us, send the real one
-        return render_template('index.html')
-    else:
-
-        # it's someone else, send a Coming Soon page.
-        return render_template('coming-soon.html')
+    return render_template('index.html')
 
 
 
