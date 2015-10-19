@@ -636,9 +636,17 @@ div.package-page {
   .ti-page-body {
     float: none;
     .package-page-subscore {
-      margin-bottom: 70px;
+      margin: 20px 40px 50px 0;
       float:left;
-      width: 300px;
+      width: 250px;
+      &.overall {
+        .package-percentile {
+          font-size: 106px;
+          line-height: 1;
+          font-weight: bold;
+          color: #999;
+        }
+      }
       &.num_downloads { color: @downloadsColor;}
       &.pagerank {
         color: @pagerankColor;
@@ -649,65 +657,65 @@ div.package-page {
       h3 {
         margin-bottom: 0;
       }
-      .metrics {
+      .body {
         margin-top: 10px;
         float: left;
         min-width: 200px;
         clear: left;
-        .summary-metrics {
-          line-height: 1;
-          .vis {
-            float: left;
-            .bar-outer {
-              height: 35px;
-              width: 35px;
-              margin: 15px 10px 0 2px;
-              background: #eee;
-              position: relative;
-              .bar-inner {
-                position: absolute;
-                bottom: 0;
-                top: 0;
-                right: 0;
-                &.num_downloads { background: @downloadsColor;}
-                &.pagerank { background: @pagerankColor;}
-                &.num_mentions { background: @citationsColor;}
-              }
-            }
-          }
-          .main-metric {
-            font-size: 60px;
-          }
-          .percentile {
+        line-height: 1;
+        .vis {
+          float: left;
+          .bar-outer {
+            height: 35px;
+            width: 35px;
+            margin: 15px 10px 0 2px;
+            background: #eee;
+            position: relative;
             display: inline-block;
-            width: 50px;
-            line-height: 1.3;
-            margin-left: 7px;
-            span.val {
-              font-size: 25px;
-              font-weight: 100;
+            .bar-inner {
+              position: absolute;
+              bottom: 0;
+              top: 0;
+              right: 0;
+              &.num_downloads { background: @downloadsColor;}
+              &.pagerank { background: @pagerankColor;}
+              &.num_mentions { background: @citationsColor;}
             }
-            span.descr {
-              //color: #777;
-              font-size: 12px;
-              font-weight: 100;
+          }
+        }
+        .main-metric {
+          font-size: 60px;
+        }
+        .percentile {
+          display: inline-block;
+          width: 50px;
+          line-height: 1.3;
+          margin-left: 7px;
+          span.val {
+            font-size: 25px;
+            font-weight: 100;
+          }
+          span.descr {
+            //color: #777;
+            font-size: 12px;
+            font-weight: 100;
+          }
+        }
+        .explanation {
+          margin-top: 10px;
+          line-height: 1.3;
+          color: #999;
+          float: left;
+          clear:left;
+          .citations-explanation {
+            a {
+              color: @citationsColor;
             }
           }
         }
       }
 
 
-      .explanation {
-        margin-top: 10px;
-        color: #999;
-        float: left;
-        clear:left;
-        .citations-explanation {
-          a {
-            color: @citationsColor;
-          }
-        }
-      }
 
 
       .top-importers {
