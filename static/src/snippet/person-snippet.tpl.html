@@ -38,13 +38,6 @@
          </a>
 
 
-         <i popover-title="Academic"
-            popover-trigger="mouseenter"
-            popover="We infer academic status based on factors like email address, tags, and institution."
-            ng-show="person.is_academic"
-            class="is-academic fa fa-graduation-cap"></i>
-
-
          <span class="person-packages">
             <span class="works-on">{{ person.num_packages }} packages including: </span>
             <span class="package" ng-repeat="package in person.person_packages | orderBy: '-person_package_impact'">

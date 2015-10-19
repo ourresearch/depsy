@@ -1338,12 +1338,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "               {{ person.name }}\n" +
     "            </span>\n" +
     "            <span class=\"accounts\">\n" +
-    "               <i popover-title=\"Academic\"\n" +
-    "                  popover-trigger=\"mouseenter\"\n" +
-    "                  popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
-    "                  ng-show=\"person.is_academic\"\n" +
-    "                  class=\"is-academic account fa fa-graduation-cap\"></i>\n" +
-    "\n" +
     "               <img class=\"orcid account\"\n" +
     "                  popover-title=\"ORCiD coming soon\"\n" +
     "                  popover-trigger=\"mouseenter\"\n" +
@@ -1419,7 +1413,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
     "               -->\n" +
     "               <span class=\"name\">{{ collab.name }}</span>\n" +
-    "               <span class=\"is-academic\" ng-show=\"collab.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
     "\n" +
     "            </a>\n" +
     "         </div>\n" +
@@ -1613,7 +1606,6 @@ angular.module("snippet/person-mini.tpl.html", []).run(["$templateCache", functi
     "   <img src=\"{{ contrib.icon_small }}\" alt=\"\"/>\n" +
     "   <span class=\"impact\">{{ format.short(contrib.impact) }}</span>\n" +
     "   <span class=\"name\">{{ contrib.name }}</span>\n" +
-    "   <span class=\"is-academic\" ng-show=\"contrib.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
     "</span>");
 }]);
 
@@ -1657,13 +1649,6 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "         <a class=\"name\" tooltip=\"click for more info\" href=\"person/{{ person.id }}\">\n" +
     "            {{ person.name }}\n" +
     "         </a>\n" +
-    "\n" +
-    "\n" +
-    "         <i popover-title=\"Academic\"\n" +
-    "            popover-trigger=\"mouseenter\"\n" +
-    "            popover=\"We infer academic status based on factors like email address, tags, and institution.\"\n" +
-    "            ng-show=\"person.is_academic\"\n" +
-    "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
     "\n" +
     "         <span class=\"person-packages\">\n" +
