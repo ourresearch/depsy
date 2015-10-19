@@ -994,22 +994,6 @@ class Package(db.Model):
             self.impact_rank = None
         print "self.impact_rank", self.impact_rank
 
-    @classmethod
-    def shortcut_num_citations_rank(cls):
-        print "getting the lookup for num_citations ranking shortcut...."
-        q = db.session.query(cls.id)
-        q = q.filter(cls.is_academic==True)        
-        q = q.order_by(cls.num_citations.desc())  # the important part :)
-        rows = q.all()
-
-        impact_rank_lookup = {}
-        ids_sorted_by_impact = [row[0] for row in rows]
-        for my_id in ids_sorted_by_impact:
-            zero_based_rank = ids_sorted_by_impact.index(my_id)
-            impact_rank_lookup[my_id] = zero_based_rank + 1
-
-        return impact_rank_lookup
-
 
     @property
     def display_num_downloads_score(self):
