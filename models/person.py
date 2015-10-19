@@ -73,48 +73,54 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
+
     @property
     def subscores(self):
         ret = []
+
+        if not self.impact:
+            # no academic impact, so don't return subscores
+            return ret
+
         ret.append({
                 "display_name": "Downloads", 
                 "icon": "fa-download", 
                 "name": "num_downloads",
-                "score": self.num_downloads_score,
-                "val": self.num_downloads_score
+                "score": self.num_downloads_percentile * 1000.0,
+                "val": self.num_downloads
             })
         ret.append({
                 "display_name": "Software reuse", 
                 "icon": "fa-recycle", 
                 "name": "pagerank", 
-                "score": self.pagerank_score,
-                "val": self.pagerank_score
+                "score": self.pagerank_percentile * 1000.0,
+                "val": self.pagerank
             })
         ret.append({
                 "display_name": "Citations", 
                 "icon": "fa-file-text-o", 
                 "name": "num_mentions", 
-                "score": self.num_citations_score,
-                "val": self.num_citations_score
+                "score": self.num_citations_percentile * 1000.0,
+                "val": self.num_citations
             })
 
-        maxes = {
-            "python": {
-                "num_mentions": 119.641405559105493,
-                "pagerank": 83.0739047134858737,
-                "num_downloads": 274.281733726360983
-            },
-            "r": {
-                "num_mentions": 11.2754064239907574,
-                "pagerank": 21.3693547599769573,
-                "num_downloads": 22.9865765385218843
-            }
-        }
+        # maxes = {
+        #     "python": {
+        #         "num_mentions": 119.641405559105493,
+        #         "pagerank": 83.0739047134858737,
+        #         "num_downloads": 274.281733726360983
+        #     },
+        #     "r": {
+        #         "num_mentions": 11.2754064239907574,
+        #         "pagerank": 21.3693547599769573,
+        #         "num_downloads": 22.9865765385218843
+        #     }
+        # }
 
-        for my_dict in ret:
-            if my_dict["score"]:
-                temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
-                my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
+        # for my_dict in ret:
+        #     if my_dict["score"]:
+        #         temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
+        #         my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
 
         return ret
 
@@ -185,9 +191,9 @@ class Person(db.Model):
             "impact_rank": self.impact_rank, 
             "impact_percentile": self.impact_percentile, 
             "impact_rank_max": self.impact_rank_max, 
-            "pagerank_score": self.pagerank_score, 
-            "num_downloads_score": self.num_downloads_score, 
-            "num_citations_score": self.num_citations_score, 
+            "pagerank_score": self.pagerank_percentile, 
+            "num_downloads_percentile": self.num_downloads_percentile, 
+            "num_citations_percentile": self.num_citations_percentile, 
             "id": self.id
         }
         return ret
@@ -476,10 +482,10 @@ class PersonPackage():
 
     @property
     def person_package_pagerank(self):
-        if self.package.pagerank == None:
+        if self.package.pagerank_score == None:
             return None
 
-        ret = self.person_package_credit * self.package.pagerank
+        ret = self.person_package_credit * self.package.pagerank_score
         return ret
 
     @property
