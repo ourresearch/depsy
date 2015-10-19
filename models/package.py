@@ -242,7 +242,7 @@ class Package(db.Model):
             # query is v. fast, cos Persons are in the Session (in memory).
             person = Person.query.get(person_id)
             person_snippet = person.as_package_snippet
-            person_snippet["credit"] = self.credit[str(person_id)]
+            person_snippet["person_package_credit"] = self.credit[str(person_id)]
             person_snippet["roles"] = []
             for contrib in self.contributions:
                 if contrib.person_id == person_id:
