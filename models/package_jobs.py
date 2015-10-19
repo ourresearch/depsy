@@ -320,6 +320,14 @@ update_registry.register(Update(
     queue_id=3
 ))
 
+q = db.session.query(Person.id)
+update_registry.register(Update(
+    job=Person.set_impact_percentile,
+    query=q,
+    queue_id=3,
+    shortcut_fn=Person.shortcut_percentile_refsets    
+))
+
 
 q = db.session.query(Person.id)
 q = q.filter(Person.parsed_name == None)

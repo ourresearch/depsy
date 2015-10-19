@@ -216,7 +216,7 @@ class Package(db.Model):
                 "name": "pagerank",
                 "score": self.display_pagerank_score,
                 "percentile": self.pagerank_percentile,
-                "val": self.pagerank_score,
+                "val": self.display_pagerank_score,
                 "display_name": "Software reuse",
                 "icon": "fa-recycle"
             }
@@ -275,7 +275,10 @@ class Package(db.Model):
 
         rows = db.session.connection().execute(sql.text(command)).fetchall()
         ids = [row[0] for row in rows]
-        top_packages = db.session.query(Package).filter(Package.id.in_(ids))
+        if ids:
+            top_packages = db.session.query(Package).filter(Package.id.in_(ids))
+        else:
+            top_packages = []
         ret = [package.as_snippet_without_people for package in top_packages]
 
         command = """select g.id
@@ -291,7 +294,10 @@ class Package(db.Model):
 
         rows = db.session.connection().execute(sql.text(command)).fetchall()
         ids = [row[0] for row in rows]
-        top_githubs = db.session.query(GithubRepo).filter(GithubRepo.id.in_(ids))
+        if ids:
+            top_githubs = db.session.query(GithubRepo).filter(GithubRepo.id.in_(ids))
+        else:
+            top_githubs = []
         ret += [github_repo.as_snippet for github_repo in top_githubs]
 
         return ret

@@ -31,6 +31,7 @@ class Person(db.Model):
     bucket = db.Column(JSONB)
     impact = db.Column(db.Float)
     impact_rank = db.Column(db.Integer)
+    impact_percentile = db.Column(db.Float)
     pagerank_score = db.Column(db.Float)
     num_downloads_score = db.Column(db.Float)
     num_citations_score = db.Column(db.Float)
@@ -174,6 +175,7 @@ class Person(db.Model):
             "main_language": self.main_language,             
             "impact": self.impact, 
             "impact_rank": self.impact_rank, 
+            "impact_percentile": self.impact_percentile, 
             "impact_rank_max": self.impact_rank_max, 
             "pagerank_score": self.pagerank_score, 
             "num_downloads_score": self.num_downloads_score, 
@@ -231,6 +233,37 @@ class Person(db.Model):
             return 62951
         elif self.main_language == "r":
             return 10447
+
+    @classmethod
+    def shortcut_percentile_refsets(cls):
+        print "getting the percentile refsets...."
+        ref_list = defaultdict(dict)
+        q = db.session.query(
+            cls.impact
+        )
+        q = q.filter(cls.impact != None)  # only academic contributions
+        rows = q.all()
+
+        ref_list["impact"] = sorted([row[0] for row in rows if row[0] != None])
+
+        return ref_list
+
+
+    def _calc_percentile(self, refset, value):
+        if value is None:  # distinguish between that and zero
+            return None
+         
+        try:
+            matching_index = refset.index(value)
+            percentile = float(matching_index) / len(refset)
+        except ValueError:
+            # not in index.  maybe has no impact because no academic contributions
+            percentile = None
+        return percentile
+
+    def set_impact_percentile(self, refsets_dict):
+        self.impact_percentile = self._calc_percentile(refsets_dict["impact"], self.impact)
+
 
     def set_github_about(self):
         if self.github_login is None:
