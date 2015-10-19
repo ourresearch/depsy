@@ -606,17 +606,17 @@ div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics 
   float: left;
 }
 div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics .vis .bar-outer {
-  height: 45px;
-  width: 20px;
-  margin: 10px 10px 0 2px;
+  height: 35px;
+  width: 35px;
+  margin: 15px 10px 0 2px;
   background: #eee;
   position: relative;
 }
 div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics .vis .bar-outer .bar-inner {
   position: absolute;
   bottom: 0;
+  top: 0;
   right: 0;
-  left: 0;
 }
 div.package-page .ti-page-body .package-page-subscore .metrics .summary-metrics .vis .bar-outer .bar-inner.num_downloads {
   background: #4daf4a;

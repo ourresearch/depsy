@@ -249,14 +249,20 @@ angular.module("directives.wheel", [])
       restrict: "EA",
       link: function(scope, elem, attrs) {
 
-        var personPackage = scope.person_package
+        if (scope.contrib){
+          var personPackage = scope.contrib
+        }
+        else if (scope.package){
+          var personPackage = scope.package
 
-        scope.percentCredit = Math.floor(personPackage.credit * 100)
+        }
+
+        console.log("personPackage", personPackage)
+        scope.percentCredit = Math.floor(personPackage.person_package_credit * 100)
+        scope.wheelVal = getWheelVal(personPackage.person_package_credit)
 
         scope.wheelData = personPackage
-        scope.wheelVal = getWheelVal(personPackage.credit)
 
-        console.log("scope.package.person_package: ", scope.person_package)
       }
     }
 
@@ -1209,7 +1215,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <div class=\"summary-metrics\">\n" +
     "                    <div class=\"vis\">\n" +
     "                        <div class=\"bar-outer\">\n" +
-    "                            <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score /10 }}%\"></div>\n" +
+    "                            <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\"></div>\n" +
     "                        </div>\n" +
     "                    </div>\n" +
     "               <span class=\"main-metric\">\n" +
@@ -1401,13 +1407,17 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "\n" +
     "      <div class=\"top-collabs\" ng-show=\"person.top_collabs.length\">\n" +
-    "         <h3>Top collaborators</h3>\n" +
+    "         <h3>\n" +
+    "             Top collaborators\n" +
+    "         </h3>\n" +
     "         <div class=\"top-collabs-list\">\n" +
     "            <a class=\"collab person-mini\"\n" +
     "               href=\"person/{{ collab.id }}\"\n" +
     "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
     "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
+    "                <!--\n" +
     "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
+    "               -->\n" +
     "               <span class=\"name\">{{ collab.name }}</span>\n" +
     "               <span class=\"is-academic\" ng-show=\"collab.is_academic\"><i class=\"fa fa-graduation-cap\"></i></span>\n" +
     "\n" +
@@ -1434,7 +1444,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      <div class=\"packages\">\n" +
     "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "            <div class=\"person-package-stats\">\n" +
-    "               <wheel roles=\"\" credit=\"{{ package.person_package_credit }}\"></wheel>\n" +
+    "               <wheel></wheel>\n" +
     "\n" +
     "            </div>\n" +
     "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +

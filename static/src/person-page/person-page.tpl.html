@@ -86,13 +86,17 @@
       </div>
 
       <div class="top-collabs" ng-show="person.top_collabs.length">
-         <h3>Top collaborators</h3>
+         <h3>
+             Top collaborators
+         </h3>
          <div class="top-collabs-list">
             <a class="collab person-mini"
                href="person/{{ collab.id }}"
                ng-repeat="collab in person.top_collabs | orderBy: '-collab_score'">
                <img src="{{ collab.icon_small }}" alt=""/>
+                <!--
                <span class="impact">{{ format.short(collab.impact) }}</span>
+               -->
                <span class="name">{{ collab.name }}</span>
                <span class="is-academic" ng-show="collab.is_academic"><i class="fa fa-graduation-cap"></i></span>
 
@@ -119,7 +123,7 @@
       <div class="packages">
          <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
             <div class="person-package-stats">
-               <wheel roles="" credit="{{ package.person_package_credit }}"></wheel>
+               <wheel></wheel>
 
             </div>
             <span class="package-snippet-wrapper" ng-include="'snippet/package-snippet.tpl.html'"></span>
