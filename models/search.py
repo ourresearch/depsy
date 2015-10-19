@@ -31,7 +31,7 @@ def autocomplete(search_str):
     where unique_tag ilike '{str}%'
     or unique_tag ilike '% {str}%'
     or unique_tag ilike '/{str}%'
-    order by coalesce(impact, impact, 0) desc
+    order by coalesce("count", "count", 0) desc
     limit 3)
     order by first_sort, impact desc""".format(str=search_str)
 
