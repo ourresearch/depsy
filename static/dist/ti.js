@@ -249,8 +249,9 @@ angular.module("directives.wheel", [])
       restrict: "EA",
       link: function(scope, elem, attrs) {
 
-        if (scope.contrib){
-          var personPackage = scope.contrib
+        if (scope.person_package){
+          console.log("personPackage = scope.person_package")
+          var personPackage = scope.person_package
         }
         else if (scope.package){
           var personPackage = scope.package
