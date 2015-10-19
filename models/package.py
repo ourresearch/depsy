@@ -195,6 +195,9 @@ class Package(db.Model):
 
     @property
     def subscores(self):
+        if not self.is_academic:
+            return []
+
         ret = [
             {
                 "name": "num_downloads",
@@ -263,7 +266,7 @@ class Package(db.Model):
                     where d.used_by = p.project_name
                     and d.package='{package_name}'
                     and p.host = '{host}'
-                    order by p.impact desc
+                    order by coalesce(p.impact, p.impact, 0) desc, p.num_downloads
                     limit {limit}""".format(
                             package_name = self.project_name,
                             host = self.host,

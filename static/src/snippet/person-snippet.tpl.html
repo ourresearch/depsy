@@ -17,7 +17,7 @@
       </div>
 
       <span class="rank">
-         #{{ format.commas(person.impact_rank) }}
+         {{ format.round(person.impact_percentile * 100) }}
       </span>
 
    </span>
@@ -36,13 +36,6 @@
          <a class="name" tooltip="click for more info" href="person/{{ person.id }}">
             {{ person.name }}
          </a>
-
-
-         <i popover-title="Research software"
-            popover-trigger="mouseenter"
-            popover="We decide projects are research software based on their names, tags, and summaries."
-            ng-show="person.is_academic"
-            class="is-academic fa fa-graduation-cap"></i>
 
 
          <span class="person-packages">

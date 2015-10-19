@@ -38,11 +38,11 @@ def get_tags(filters, page_size=25):
     q = Tags.query
     for k, v in filters.iteritems():
 
-        order_by_column = Tags.count.desc()
+        order_by_column = Tags.count_academic.desc()
 
         # handle only_academic differently, is an order_by
         if k == "is_academic":
-            order_by_column = Tags.count_academic.desc()
+            pass
         else:
             # tags table is named a little differently        
             if k == "host":

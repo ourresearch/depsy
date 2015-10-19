@@ -9,7 +9,7 @@
                   {{ format.short(person.impact) }}
                </span>
                <span class="rank" ng-show="!person.is_organization">
-                  #{{ format.commas(person.impact_rank) }}
+                  {{ format.round(person.impact_percentile * 100) }}
                </span>
             </div>
 
@@ -17,12 +17,6 @@
                {{ person.name }}
             </span>
             <span class="accounts">
-               <i popover-title="Research software"
-                  popover-trigger="mouseenter"
-                  popover="We decide projects are research software based on their names, tags, and summaries."
-                  ng-show="person.is_academic"
-                  class="is-academic account fa fa-graduation-cap"></i>
-
                <img class="orcid account"
                   popover-title="ORCiD coming soon"
                   popover-trigger="mouseenter"
@@ -98,7 +92,6 @@
                <span class="impact">{{ format.short(collab.impact) }}</span>
                -->
                <span class="name">{{ collab.name }}</span>
-               <span class="is-academic" ng-show="collab.is_academic"><i class="fa fa-graduation-cap"></i></span>
 
             </a>
          </div>

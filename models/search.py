@@ -9,21 +9,21 @@ def autocomplete(search_str):
     from package
     where host='pypi'
     and project_name ilike '{str}%'
-    order by impact desc
+    order by coalesce(impact, impact, 0) desc
     limit 3)
     union
     (select project_name, impact, api_raw->>'Title' as summary, 'cran_project' as type, 2 as first_sort, id
     from package
     where host='cran'
     and project_name ilike '{str}%'
-    order by impact desc
+    order by coalesce(impact, impact, 0) desc
     limit 3)
     union
     (select name, impact, github_about->>'company' as summary, 'person' as type, 3 as first_sort, id::text as id
     from person
     where name ilike '{str}%'
     or name ilike '% {str}%'
-    order by impact desc
+    order by coalesce(impact, impact, 0) desc
     limit 3)
     union
     (select unique_tag, "count" as impact, namespace as summary, 'tag' as type, 4 as first_sort, id
@@ -31,7 +31,7 @@ def autocomplete(search_str):
     where unique_tag ilike '{str}%'
     or unique_tag ilike '% {str}%'
     or unique_tag ilike '/{str}%'
-    order by impact desc
+    order by coalesce("count", "count", 0) desc
     limit 3)
     order by first_sort, impact desc""".format(str=search_str)
 
