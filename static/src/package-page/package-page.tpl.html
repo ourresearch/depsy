@@ -59,11 +59,6 @@
                 <wheel></wheel>
                 <img class="person-icon" src="{{ person_package.icon_small }}" alt=""/>
                 <a class="name" href="person/{{ person_package.id }}">{{ person_package.name }}</a>
-                <i popover-title="Research software"
-                   popover-trigger="mouseenter"
-                   popover="We decide projects are research software based on their names, tags, and summaries."
-                   ng-show="person_package.is_academic"
-                   class="is-academic fa fa-graduation-cap"></i>
             </div>
         </div>
 
@@ -123,7 +118,7 @@
             </h3>
             <div class="body">
                 <div class="metrics">
-                    <div class="vis">
+                    <div class="impact-stick vis">
                         <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.percentile * 100 }}%">
                         </div>
 
@@ -172,7 +167,7 @@
             <!-- Top Importers. This is just for the pagerank subscore -->
             <div class="top-importers" ng-show="subscore.name=='pagerank' && package.indegree">
                 <h4>
-                    <div class="main">Reused by </div>
+                    <div class="main"><i class="fa fa-recycle"></i> Reused by</div>
                     <div class="subheading">
                         <span class="val">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.
                       <span class="more" ng-show="package.top_neighbors.length < package.indegree">

@@ -465,6 +465,7 @@ div.entity-page.person-page .ti-page-body .packages div.person-package .person-p
 }
 div.package-page div.ti-page-sidebar {
   margin-right: 120px;
+  width: 350px;
 }
 div.package-page div.ti-page-sidebar .sidebar-header .about .meta .name {
   font-size: 38px;
@@ -579,7 +580,7 @@ div.package-page .ti-page-body {
 div.package-page .ti-page-body .package-page-subscore {
   margin: 20px 40px 50px 0;
   float: left;
-  width: 250px;
+  width: 275px;
 }
 div.package-page .ti-page-body .package-page-subscore.overall .package-percentile {
   font-size: 106px;
@@ -607,10 +608,8 @@ div.package-page .ti-page-body .package-page-subscore .body {
   clear: left;
   line-height: 1;
 }
-div.package-page .ti-page-body .package-page-subscore .body .vis {
+div.package-page .ti-page-body .package-page-subscore .body .impact-stick {
   float: left;
-}
-div.package-page .ti-page-body .package-page-subscore .body .vis .bar-outer {
   height: 35px;
   width: 35px;
   margin: 15px 10px 0 2px;
@@ -618,19 +617,19 @@ div.package-page .ti-page-body .package-page-subscore .body .vis .bar-outer {
   position: relative;
   display: inline-block;
 }
-div.package-page .ti-page-body .package-page-subscore .body .vis .bar-outer .bar-inner {
+div.package-page .ti-page-body .package-page-subscore .body .impact-stick .bar-inner {
   position: absolute;
   bottom: 0;
   top: 0;
   right: 0;
 }
-div.package-page .ti-page-body .package-page-subscore .body .vis .bar-outer .bar-inner.num_downloads {
+div.package-page .ti-page-body .package-page-subscore .body .impact-stick .bar-inner.num_downloads {
   background: #4daf4a;
 }
-div.package-page .ti-page-body .package-page-subscore .body .vis .bar-outer .bar-inner.pagerank {
+div.package-page .ti-page-body .package-page-subscore .body .impact-stick .bar-inner.pagerank {
   background: #377eb8;
 }
-div.package-page .ti-page-body .package-page-subscore .body .vis .bar-outer .bar-inner.num_mentions {
+div.package-page .ti-page-body .package-page-subscore .body .impact-stick .bar-inner.num_mentions {
   background: #984ea3;
 }
 div.package-page .ti-page-body .package-page-subscore .body .main-metric {
@@ -640,7 +639,6 @@ div.package-page .ti-page-body .package-page-subscore .body .percentile {
   display: inline-block;
   width: 50px;
   line-height: 1.3;
-  margin-left: 7px;
 }
 div.package-page .ti-page-body .package-page-subscore .body .percentile span.val {
   font-size: 25px;
@@ -662,11 +660,11 @@ div.package-page .ti-page-body .package-page-subscore .body .explanation .citati
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers {
   float: left;
-  margin: -30px 0 0 60px;
+  margin: -40px 0 0 60px;
   width: 400px;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers h4 {
-  font-size: 20px;
+  font-size: 24px;
   margin-bottom: 20px;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers h4 div.subheading {

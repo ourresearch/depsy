@@ -371,6 +371,10 @@ angular.module("formatterService", [])
       if (num >= 1000000) {
           return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
       }
+      if (num >= 100000) { // no decimal if greater than 100thou
+          return (num / 1000).toFixed(0).replace(/\.0$/, '') + 'k';
+      }
+
       if (num >= 1000) {
           return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
       }
@@ -1176,11 +1180,6 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <wheel></wheel>\n" +
     "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
     "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
-    "                <i popover-title=\"Research software\"\n" +
-    "                   popover-trigger=\"mouseenter\"\n" +
-    "                   popover=\"We decide projects are research software based on their names, tags, and summaries.\"\n" +
-    "                   ng-show=\"person_package.is_academic\"\n" +
-    "                   class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -1240,7 +1239,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            </h3>\n" +
     "            <div class=\"body\">\n" +
     "                <div class=\"metrics\">\n" +
-    "                    <div class=\"vis\">\n" +
+    "                    <div class=\"impact-stick vis\">\n" +
     "                        <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\">\n" +
     "                        </div>\n" +
     "\n" +
@@ -1289,7 +1288,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            <!-- Top Importers. This is just for the pagerank subscore -->\n" +
     "            <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
     "                <h4>\n" +
-    "                    <div class=\"main\">Reused by </div>\n" +
+    "                    <div class=\"main\"><i class=\"fa fa-recycle\"></i> Reused by</div>\n" +
     "                    <div class=\"subheading\">\n" +
     "                        <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
     "                      <span class=\"more\" ng-show=\"package.top_neighbors.length < package.indegree\">\n" +
