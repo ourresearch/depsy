@@ -322,7 +322,7 @@ update_registry.register(Update(
 
 q = db.session.query(Person.id)
 update_registry.register(Update(
-    job=Person.set_impact_percentile,
+    job=Person.set_all_percentiles,
     query=q,
     queue_id=3,
     shortcut_fn=Person.shortcut_percentile_refsets    
@@ -549,7 +549,7 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(Person.id)
-q = q.filter(Person.pagerank_score == None)
+# q = q.filter(Person.pagerank_score == None)
 update_registry.register(Update(
     job=Person.set_scores,
     query=q,

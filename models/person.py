@@ -32,9 +32,15 @@ class Person(db.Model):
     impact = db.Column(db.Float)
     impact_rank = db.Column(db.Integer)
     impact_percentile = db.Column(db.Float)
+    pagerank_percentile = db.Column(db.Float)
+    num_downloads_percentile = db.Column(db.Float)
+    num_citations_percentile = db.Column(db.Float)   
+    pagerank = db.Column(db.Float)
+    num_downloads = db.Column(db.Integer)
+    num_citations = db.Column(db.Integer)
     pagerank_score = db.Column(db.Float)
     num_downloads_score = db.Column(db.Float)
-    num_citations_score = db.Column(db.Float)
+    num_citations_score = db.Column(db.Float)            
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
@@ -92,24 +98,23 @@ class Person(db.Model):
                 "val": self.num_citations_score
             })
 
-        # select id, name, email, num_citations_score from person where is_organization=false and main_lanugage='python' order by num_downloads_score desc limit 5
-        # maxes = {
-        #     "python": {
-        #         "num_mentions": 1312.07783912007676,
-        #         "pagerank": 6828.41972274044019,
-        #         "num_downloads": 16419.5532038200363
-        #     },
-        #     "r": {
-        #         "num_mentions": 1866,
-        #         "pagerank": 9270,
-        #         "num_downloads": 18213
-        #     }
-        # }
+        maxes = {
+            "python": {
+                "num_mentions": 119.641405559105493,
+                "pagerank": 83.0739047134858737,
+                "num_downloads": 274.281733726360983
+            },
+            "r": {
+                "num_mentions": 11.2754064239907574,
+                "pagerank": 21.3693547599769573,
+                "num_downloads": 22.9865765385218843
+            }
+        }
 
-        # for my_dict in ret:
-        #     if my_dict["score"]:
-        #         temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
-        #         my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
+        for my_dict in ret:
+            if my_dict["score"]:
+                temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
+                my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
 
         return ret
 
@@ -242,13 +247,19 @@ class Person(db.Model):
         print "getting the percentile refsets...."
         ref_list = defaultdict(dict)
         q = db.session.query(
+            cls.num_downloads,
+            cls.pagerank,
+            cls.num_citations,
             cls.impact
         )
         q = q.filter(cls.impact != None)  # only academic contributions
         q = q.filter(cls.impact > 0)  # only academic contributions
         rows = q.all()
 
-        ref_list["impact"] = sorted([row[0] for row in rows if row[0] != None])
+        ref_list["num_downloads"] = sorted([row[0] for row in rows if row[0] != None])
+        ref_list["pagerank"] = sorted([row[1] for row in rows if row[1] != None])
+        ref_list["num_citations"] = sorted([row[2] for row in rows if row[2] != None])
+        ref_list["impact"] = sorted([row[3] for row in rows if row[3] != None])
 
         return ref_list
 
@@ -265,10 +276,23 @@ class Person(db.Model):
             percentile = None
         return percentile
 
-    def set_impact_percentile(self, refsets_dict):
-        self.impact_percentile = self._calc_percentile(refsets_dict["impact"], self.impact)
-        print "calculated impact_percentile is", self.impact_percentile
+    def set_num_downloads_percentile(self, refset):
+        self.num_downloads_percentile = self._calc_percentile(refset, self.num_downloads)
 
+    def set_pagerank_percentile(self, refset):
+        self.pagerank_percentile = self._calc_percentile(refset, self.pagerank)
+
+    def set_num_citations_percentile(self, refset):
+        self.num_citations_percentile = self._calc_percentile(refset, self.num_citations)
+
+    def set_impact_percentile(self, refset):
+        self.impact_percentile = self._calc_percentile(refset, self.impact)
+
+    def set_all_percentiles(self, refsets_dict):
+        self.set_num_downloads_percentile(refsets_dict["num_downloads"])
+        self.set_pagerank_percentile(refsets_dict["pagerank"])
+        self.set_num_citations_percentile(refsets_dict["num_citations"])
+        self.set_impact_percentile(refsets_dict["impact"])
 
     def set_github_about(self):
         if self.github_login is None:
@@ -301,19 +325,19 @@ class Person(db.Model):
 
 
     def set_scores(self):
-        self.pagerank_score = 0
-        self.num_downloads_score = 0
-        self.num_citations_score = 0
+        self.pagerank = 0
+        self.num_downloads = 0
+        self.num_citations = 0
 
         for pp in self.get_person_packages():
             # only count up impact for packages in our main language            
             if pp.package.language == self.main_language:
-                if pp.person_package_pagerank_score:
-                    self.pagerank_score += pp.person_package_pagerank_score
+                if pp.person_package_pagerank:
+                    self.pagerank += pp.person_package_pagerank
                 if pp.person_package_num_downloads_score:
-                    self.num_downloads_score += pp.person_package_num_downloads_score
+                    self.num_downloads += pp.person_package_num_downloads
                 if pp.person_package_num_citations_score:
-                    self.num_citations_score += pp.person_package_num_citations_score
+                    self.num_citations += pp.person_package_num_citations
 
 
     def set_parsed_name(self):
@@ -450,6 +474,29 @@ class PersonPackage():
         ret = self.person_package_credit * self.package.num_downloads_percentile
         return ret
 
+    @property
+    def person_package_pagerank(self):
+        if self.package.pagerank == None:
+            return None
+
+        ret = self.person_package_credit * self.package.pagerank
+        return ret
+
+    @property
+    def person_package_num_citations(self):
+        if not self.package.num_citations:
+            return None        
+        ret = self.person_package_credit * self.package.num_citations
+        return ret
+
+    @property
+    def person_package_num_downloads(self):
+        if not self.package.num_downloads:
+            return None
+
+        ret = self.person_package_credit * self.package.num_downloads
+        return ret
+
 
     def to_dict(self):
         ret = self.package.as_snippet
@@ -457,9 +504,9 @@ class PersonPackage():
         ret["person_package_credit"] = self.person_package_credit
         ret["person_package_commits"] = self.person_package_commits
         ret["person_package_impact"] = self.person_package_impact
-        ret["person_package_pagerank_score"] = self.person_package_pagerank_score
-        ret["person_package_num_citations_score"] = self.person_package_num_citations_score
-        ret["person_package_num_downloads_score"] = self.person_package_num_downloads_score
+        ret["person_package_pagerank"] = self.person_package_pagerank
+        ret["person_package_num_citations"] = self.person_package_num_citations
+        ret["person_package_num_downloads"] = self.person_package_num_downloads     
         return ret
 
     @property
@@ -469,9 +516,9 @@ class PersonPackage():
         ret["person_package_credit"] = self.person_package_credit
         ret["person_package_commits"] = self.person_package_commits
         ret["person_package_impact"] = self.person_package_impact
-        ret["person_package_pagerank_score"] = self.person_package_pagerank_score
-        ret["person_package_num_citations_score"] = self.person_package_num_citations_score
-        ret["person_package_num_downloads_score"] = self.person_package_num_downloads_score
+        ret["person_package_pagerank"] = self.person_package_pagerank
+        ret["person_package_num_citations"] = self.person_package_num_citations
+        ret["person_package_num_downloads"] = self.person_package_num_downloads 
         return ret
 
 
