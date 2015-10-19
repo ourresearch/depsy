@@ -191,7 +191,7 @@ class Person(db.Model):
             "impact_rank": self.impact_rank, 
             "impact_percentile": self.impact_percentile, 
             "impact_rank_max": self.impact_rank_max, 
-            "pagerank_score": self.pagerank_percentile, 
+            "pagerank_percentile": self.pagerank_percentile, 
             "num_downloads_percentile": self.num_downloads_percentile, 
             "num_citations_percentile": self.num_citations_percentile, 
             "id": self.id
@@ -320,14 +320,12 @@ class Person(db.Model):
 
 
     def set_impact(self):
-        self.impact = 0
 
-        # only count up impact for packages in our main language
-        for pp in self.get_person_packages():
-            if pp.package.language == self.main_language:
-                self.impact += pp.person_package_impact
-
-        return self.impact
+        use_for_pagerank = self.pagerank_percentile
+        if not use_for_pagerank:
+            use_for_pagerank = self.num_downloads_percentile
+        combo = (use_for_pagerank + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
+        self.impact = combo
 
 
     def set_scores(self):
@@ -340,9 +338,9 @@ class Person(db.Model):
             if pp.package.language == self.main_language:
                 if pp.person_package_pagerank:
                     self.pagerank += pp.person_package_pagerank
-                if pp.person_package_num_downloads_score:
+                if pp.person_package_num_downloads:
                     self.num_downloads += pp.person_package_num_downloads
-                if pp.person_package_num_citations_score:
+                if pp.person_package_num_citations:
                     self.num_citations += pp.person_package_num_citations
 
 
@@ -458,34 +456,11 @@ class PersonPackage():
         return ret
 
     @property
-    def person_package_pagerank_score(self):
-        if self.package.pagerank_percentile == None:
-            return None
-
-        ret = self.person_package_credit * self.package.pagerank_percentile
-        return ret
-
-    @property
-    def person_package_num_citations_score(self):
-        if not self.package.num_citations_percentile:
-            return None        
-        ret = self.person_package_credit * self.package.num_citations_percentile
-        return ret
-
-    @property
-    def person_package_num_downloads_score(self):
-        if not self.package.num_downloads_percentile:
-            return None
-
-        ret = self.person_package_credit * self.package.num_downloads_percentile
-        return ret
-
-    @property
     def person_package_pagerank(self):
-        if self.package.pagerank_score == None:
+        if self.package.display_pagerank_score == None:
             return None
 
-        ret = self.person_package_credit * self.package.pagerank_score
+        ret = self.person_package_credit * self.package.display_pagerank_score
         return ret
 
     @property
@@ -505,6 +480,8 @@ class PersonPackage():
 
 
     def to_dict(self):
+        print "in to_dict"
+
         ret = self.package.as_snippet
         ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
@@ -517,6 +494,8 @@ class PersonPackage():
 
     @property
     def as_person_snippet(self):
+        print "in as_person_snippet"
+
         ret = self.package.as_snippet_without_people
         ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
