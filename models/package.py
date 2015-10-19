@@ -217,14 +217,6 @@ class Package(db.Model):
                 "val": self.num_citations,
                 "display_name": "Citations",
                 "icon": "fa-file-text-o"
-            },
-            {
-                "name": "engagement",
-                "score": self.engagement_score,
-                "percentile": self.engagement_percentile,
-                "val": self.engagement,
-                "display_name": "Engagement",
-                "icon": "fa-comments-o"
             }
         ]
         return ret
