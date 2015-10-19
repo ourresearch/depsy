@@ -262,6 +262,7 @@ class Package(db.Model):
                     from dep_nodes_ncol_{host}_reverse d, package p
                     where d.used_by = p.project_name
                     and d.package='{package_name}'
+                    and p.host = '{host}'
                     order by p.impact desc
                     limit {limit}""".format(
                             package_name = self.project_name,
