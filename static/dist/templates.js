@@ -569,13 +569,11 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
-    "         <div class=\"subscore {{ subscore.name }}\"\n" +
-    "              ng-repeat=\"subscore in package.subscores\">\n" +
-    "            <div class=\"bar-outer\">\n" +
-    "               <div class=\"bar-inner {{ subscore.name }}\" style=\"height: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "            <div ng-repeat=\"subscore in package.subscores\"\n" +
+    "                 class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                 style=\"width: {{ subscore.score / 33.3333 }}%;\">\n" +
     "            </div>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "        </div>\n" +
     "\n" +
     "      <div class=\"rank\">\n" +
     "         <span class=\"octothorpe\">#</span>\n" +
@@ -1021,28 +1019,6 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "         </ul>\n" +
     "      </div>\n" +
     "\n" +
-    "      <div class=\"language-type-select facet\">\n" +
-    "         <h3 ng-show=\"filters.d.type=='packages'\">that are</h3>\n" +
-    "         <h3 ng-show=\"filters.d.type=='people'\">and who are</h3>\n" +
-    "         <h3 ng-show=\"filters.d.type=='tags'\">that are</h3>\n" +
-    "         <ul>\n" +
-    "            <li class=\"filter-option\" ng-click=\"filters.toggle('only_academic')\">\n" +
-    "               <span class=\"status\" ng-if=\"filters.d.only_academic\">\n" +
-    "                  <i class=\"fa fa-check-square-o\"></i>\n" +
-    "               </span>\n" +
-    "               <span class=\"status\" ng-if=\"!filters.d.only_academic\">\n" +
-    "                  <i class=\"fa fa-square-o\"></i>\n" +
-    "               </span>\n" +
-    "               <!--\n" +
-    "               <i class=\"fa fa-graduation-cap\"></i>\n" +
-    "               -->\n" +
-    "\n" +
-    "               <span class=\"text\" ng-show=\"filters.d.type=='packages'\">academic projects</span>\n" +
-    "               <span class=\"text\" ng-show=\"filters.d.type=='people'\">academics</span>\n" +
-    "               <span class=\"text\" ng-show=\"filters.d.type=='tags'\">academic</span>\n" +
-    "            </li>\n" +
-    "         </ul>\n" +
-    "      </div>\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
     "         popover-title=\"View this page as JSON\"\n" +
@@ -1068,7 +1044,6 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "            </span>\n" +
     "            <span class=\"text\">\n" +
     "               Highest-impact\n" +
-    "               <span class=\"is-academic\" ng-if=\"filters.d.is_academic\">academic</span>\n" +
     "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
     "               <span class=\"leaders-type\">{{ filters.d.type }}</span>\n" +
     "            </span>\n" +

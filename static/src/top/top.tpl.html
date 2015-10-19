@@ -72,28 +72,6 @@
          </ul>
       </div>
 
-      <div class="language-type-select facet">
-         <h3 ng-show="filters.d.type=='packages'">that are</h3>
-         <h3 ng-show="filters.d.type=='people'">and who are</h3>
-         <h3 ng-show="filters.d.type=='tags'">that are</h3>
-         <ul>
-            <li class="filter-option" ng-click="filters.toggle('only_academic')">
-               <span class="status" ng-if="filters.d.only_academic">
-                  <i class="fa fa-check-square-o"></i>
-               </span>
-               <span class="status" ng-if="!filters.d.only_academic">
-                  <i class="fa fa-square-o"></i>
-               </span>
-               <!--
-               <i class="fa fa-graduation-cap"></i>
-               -->
-
-               <span class="text" ng-show="filters.d.type=='packages'">academic projects</span>
-               <span class="text" ng-show="filters.d.type=='people'">academics</span>
-               <span class="text" ng-show="filters.d.type=='tags'">academic</span>
-            </li>
-         </ul>
-      </div>
 
       <a class="json-link btn btn-default"
          popover-title="View this page as JSON"
@@ -119,7 +97,6 @@
             </span>
             <span class="text">
                Highest-impact
-               <span class="is-academic" ng-if="filters.d.is_academic">academic</span>
                <span class="language">{{ filters.d.language }}</span>
                <span class="leaders-type">{{ filters.d.type }}</span>
             </span>
