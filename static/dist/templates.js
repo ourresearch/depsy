@@ -105,7 +105,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
@@ -406,7 +405,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  {{ format.short(person.impact) }}\n" +
     "               </span>\n" +
     "               <span class=\"rank\" ng-show=\"!person.is_organization\">\n" +
-    "                  #{{ format.commas(person.impact_rank) }}\n" +
+    "                  {{ format.round(person.impact_percentile * 100) }}\n" +
     "               </span>\n" +
     "            </div>\n" +
     "\n" +
@@ -710,7 +709,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "      </div>\n" +
     "\n" +
     "      <span class=\"rank\">\n" +
-    "         #{{ format.commas(person.impact_rank) }}\n" +
+    "         {{ format.round(person.impact_percentile * 100) }}\n" +
     "      </span>\n" +
     "\n" +
     "   </span>\n" +

@@ -17,7 +17,7 @@
       </div>
 
       <span class="rank">
-         #{{ format.commas(person.impact_rank) }}
+         {{ format.round(person.impact_percentile * 100) }}
       </span>
 
    </span>

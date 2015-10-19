@@ -9,7 +9,7 @@
                   {{ format.short(person.impact) }}
                </span>
                <span class="rank" ng-show="!person.is_organization">
-                  #{{ format.commas(person.impact_rank) }}
+                  {{ format.round(person.impact_percentile * 100) }}
                </span>
             </div>
 
