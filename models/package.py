@@ -203,20 +203,20 @@ class Package(db.Model):
                 "icon": "fa-download"
             },
             {
-                "name": "pagerank",
-                "score": self.display_pagerank_score,
-                "percentile": self.pagerank_percentile,
-                "val": round(self.display_pagerank_score / 1000.0, 2),  
-                "display_name": "Software reuse",
-                "icon": "fa-recycle"
-            },
-            {
                 "name": "num_mentions",
                 "score": self.display_num_citations_score,
                 "percentile": self.num_citations_percentile,
                 "val": self.num_citations,
                 "display_name": "Citations",
                 "icon": "fa-file-text-o"
+            },
+            {
+                "name": "pagerank",
+                "score": self.display_pagerank_score,
+                "percentile": self.pagerank_percentile,
+                "val": round(self.display_pagerank_score / 1000.0, 2),
+                "display_name": "Software reuse",
+                "icon": "fa-recycle"
             }
         ]
         return ret

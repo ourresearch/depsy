@@ -631,12 +631,15 @@ div.package-page {
 
   .ti-page-body {
     float: none;
-    .subscore {
+    .package-page-subscore {
       margin-bottom: 70px;
       float:left;
       width: 400px;
       &.num_downloads { color: @downloadsColor;}
-      &.pagerank { color: @pagerankColor;}
+      &.pagerank {
+        color: @pagerankColor;
+        width: 700px;
+      }
       &.num_mentions { color: @citationsColor;}
       &.engagement { color: @engagementColor;}
 
@@ -645,6 +648,7 @@ div.package-page {
       }
       .metrics {
         margin-top: 10px;
+        float: left;
         .summary-metrics {
           line-height: 1;
           .vis {
@@ -686,6 +690,12 @@ div.package-page {
             }
           }
         }
+      }
+
+
+      .top-importers {
+        background: red;
+        float: left;
       }
 
     }

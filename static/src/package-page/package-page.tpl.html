@@ -89,7 +89,7 @@
 
    <div class="ti-page-body">
 
-      <div class="subscore {{ subscore.name }}"
+      <div class="subscore package-page-subscore {{ subscore.name }}"
            ng-repeat="subscore in package.subscores">
          <h3>
             <i class="fa {{ subscore.icon }}"></i>
@@ -119,6 +119,18 @@
 
          </div>
 
+          <div class="top-importers" ng-show="subscore.name=='pagerank' && package.indegree">
+              <h4>
+                  <div class="main">Imported by </div>
+                  <div class="subheading">
+                      <span class="val">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.
+                      <span class="more" ng-show="package.top_neighbors.length < package.indegree">
+                          (showing the top {{ package.top_neighbors.length }})
+                      </span>
+                  </div>
+
+              </h4>
+          </div>
 
       </div>
 

@@ -281,7 +281,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "   <div class=\"ti-page-body\">\n" +
     "\n" +
-    "      <div class=\"subscore {{ subscore.name }}\"\n" +
+    "      <div class=\"subscore package-page-subscore {{ subscore.name }}\"\n" +
     "           ng-repeat=\"subscore in package.subscores\">\n" +
     "         <h3>\n" +
     "            <i class=\"fa {{ subscore.icon }}\"></i>\n" +
@@ -311,6 +311,18 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "         </div>\n" +
     "\n" +
+    "          <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
+    "              <h4>\n" +
+    "                  <div class=\"main\">Imported by </div>\n" +
+    "                  <div class=\"subheading\">\n" +
+    "                      <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
+    "                      <span class=\"more\" ng-show=\"package.top_neighbors.length < package.indegree\">\n" +
+    "                          (showing the top {{ package.top_neighbors.length }})\n" +
+    "                      </span>\n" +
+    "                  </div>\n" +
+    "\n" +
+    "              </h4>\n" +
+    "          </div>\n" +
     "\n" +
     "      </div>\n" +
     "\n" +
