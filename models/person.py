@@ -310,8 +310,10 @@ class Person(db.Model):
             if pp.package.language == self.main_language:
                 if pp.person_package_pagerank_score:
                     self.pagerank_score += pp.person_package_pagerank_score
-                self.num_downloads_score += pp.person_package_num_downloads_score
-                self.num_citations_score += pp.person_package_num_citations_score
+                if pp.person_package_num_downloads_score:
+                    self.num_downloads_score += pp.person_package_num_downloads_score
+                if pp.person_package_num_citations_score:
+                    self.num_citations_score += pp.person_package_num_citations_score
 
 
     def set_parsed_name(self):
@@ -429,7 +431,7 @@ class PersonPackage():
     def person_package_pagerank_score(self):
         if self.package.pagerank_percentile == None:
             return None
-            
+
         ret = self.person_package_credit * self.package.pagerank_percentile
         return ret
 
