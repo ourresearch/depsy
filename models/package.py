@@ -1032,10 +1032,10 @@ class Package(db.Model):
         return ret
 
     def set_pagerank_score(self):
-        if self.pagerank==None:
+        if self.pagerank is None:
             self.pagerank_score = None
             return self.pagerank_score
-        elif self.pagerank==0
+        elif self.pagerank == 0:
             self.pagerank_score = 0
             return self.pagerank_score
 
