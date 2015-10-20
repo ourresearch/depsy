@@ -1,6 +1,8 @@
-<span class="snippet package-snippet"
+<span class="snippet package-snippet is-academic-{{ package.is_academic }}"
      ng-controller="packageSnippetCtrl">
-   <span class="left-metrics"
+
+    <span class="left-metrics is-academic"
+          ng-show="package.is_academic"
          popover-trigger="mouseenter"
          popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
          popover-template="'snippet/package-impact-popover.tpl.html'">
@@ -20,7 +22,19 @@
 
    </span>
 
-   <span class="metadata">
+
+    <span class="left-metrics not-academic"
+          ng-show="!package.is_academic"
+          popover="Based on name, tags, and description, we're guessing this isn't research software—so we haven't collected detailed impact info."
+          popover-trigger="mouseenter">
+        <span class="non-research">
+            non- research
+        </span>
+
+    </span>
+
+
+   <span class="metadata is-academic-{{ package.is_academic }}">
       <span class="name-container">
 
          <span class="icon">

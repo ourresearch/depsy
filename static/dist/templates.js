@@ -598,9 +598,11 @@ angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCac
 
 angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("snippet/package-snippet.tpl.html",
-    "<span class=\"snippet package-snippet\"\n" +
+    "<span class=\"snippet package-snippet is-academic-{{ package.is_academic }}\"\n" +
     "     ng-controller=\"packageSnippetCtrl\">\n" +
-    "   <span class=\"left-metrics\"\n" +
+    "\n" +
+    "    <span class=\"left-metrics is-academic\"\n" +
+    "          ng-show=\"package.is_academic\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
     "         popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
@@ -620,7 +622,19 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "   </span>\n" +
     "\n" +
-    "   <span class=\"metadata\">\n" +
+    "\n" +
+    "    <span class=\"left-metrics not-academic\"\n" +
+    "          ng-show=\"!package.is_academic\"\n" +
+    "          popover=\"Based on name, tags, and description, we're guessing this isn't research software—so we haven't collected detailed impact info.\"\n" +
+    "          popover-trigger=\"mouseenter\">\n" +
+    "        <span class=\"non-research\">\n" +
+    "            non- research\n" +
+    "        </span>\n" +
+    "\n" +
+    "    </span>\n" +
+    "\n" +
+    "\n" +
+    "   <span class=\"metadata is-academic-{{ package.is_academic }}\">\n" +
     "      <span class=\"name-container\">\n" +
     "\n" +
     "         <span class=\"icon\">\n" +

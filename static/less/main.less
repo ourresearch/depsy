@@ -871,8 +871,6 @@ span.snippet {
   display: inline-block;
 
 
-
-
   span.left-icons {
     display: inline-block;
   }
@@ -885,7 +883,17 @@ span.snippet {
     float: left;
     margin-top: 8px;
     line-height: 1.3;
-    width: 30px;
+    width: 36px;
+
+    &.not-academic {
+      span.non-research {
+        font-size: 10px;
+        line-height: 1;
+        margin-top: -3px;
+        display: inline-block;
+        cursor: default;
+      }
+    }
 
     .rank {
       display: inline-block;
@@ -907,6 +915,10 @@ span.snippet {
     float: left;
     width: 300px;
     margin-left: 15px;
+    
+    &.is-academic-false {
+      opacity: .8;
+    }
 
     span.name-container {
       float: left;

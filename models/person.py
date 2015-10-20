@@ -490,7 +490,6 @@ class PersonPackage():
 
 
     def to_dict(self):
-        print "in to_dict"
 
         ret = self.package.as_snippet
         ret["roles"] = [r.as_snippet for r in self.roles]
