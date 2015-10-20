@@ -296,7 +296,6 @@ class Package(db.Model):
                             package_limit = limit, 
                             github_limit = limit
                             )
-        print command
         rows = db.session.connection().execute(sql.text(command)).fetchall()
         ids = [row[0] for row in rows]
         return ids
