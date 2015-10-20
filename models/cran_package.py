@@ -161,11 +161,5 @@ class CranPackage(Package):
         return '(="r package" OR ="r statistical") AND '
 
 
-    @property
-    def impact_rank_max(self):
-        # get these with this sql:
-            # select count(id) from package where host='cran'
-        return 7057
-
 
 

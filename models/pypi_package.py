@@ -254,12 +254,6 @@ class PypiPackage(Package):
         self.bucket["intended_audience"] = self._get_intended_audience()
 
 
-    @property
-    def impact_rank_max(self):
-        # get these with this sql:
-            # select count(id) from package where host='pypi'
-        return 57244
-
     def set_is_academic(self):
         self.is_academic = False
 
