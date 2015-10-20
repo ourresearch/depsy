@@ -28,22 +28,21 @@ class Person(db.Model):
     other_names = db.Column(JSONB)
     github_login = db.Column(db.Text)
     github_about = db.deferred(db.Column(JSONB))
-    bucket = db.Column(JSONB)
-    num_packages = db.Column(db.Integer)
+    parsed_name = db.Column(JSONB)
+
     impact = db.Column(db.Float)
     impact_percentile = db.Column(db.Float)
-    pagerank_percentile = db.Column(db.Float)
+    num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
+    num_citations = db.Column(db.Integer)
     num_citations_percentile = db.Column(db.Float)   
     pagerank = db.Column(db.Float)
-    num_downloads = db.Column(db.Integer)
-    num_citations = db.Column(db.Integer)
-    parsed_name = db.Column(JSONB)
+    pagerank_percentile = db.Column(db.Float)
+
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
     main_language = db.Column(db.Text)
-
-    type = db.Column(db.Text)
+    num_packages = db.Column(db.Integer)
 
 
     def __repr__(self):
