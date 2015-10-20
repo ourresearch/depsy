@@ -47,7 +47,7 @@
 
       <span class="summary tags">
          <span class="tags">
-            <a href="tag/{{ tag.name }}"
+            <a href="tag/{{ format.doubleUrlEncode(tag.name) }}"
                class="tag"
                ng-repeat="tag in person.top_person_tags | orderBy: '-count'">
                {{ tag.name }}

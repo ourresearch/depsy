@@ -328,6 +328,13 @@ angular.module("filterService", [])
     var unset = function(k){
       filters[k] = null
     }
+    var unsetAll = function(){
+        console.log("unset all!")
+        _.each(filters, function(v, k){
+            filters[k] = null
+            $location.search(k, null)
+        })
+    }
 
     var asQueryStr = function(){
       var ret = []
@@ -346,71 +353,75 @@ angular.module("filterService", [])
     toggle: toggle,
     unset: unset,
     setFromUrl: setFromUrl,
-    asQueryStr: asQueryStr
+    asQueryStr: asQueryStr,
+    unsetAll: unsetAll
   }
 });
 angular.module("formatterService", [])
 
-.factory("FormatterService", function($location){
+    .factory("FormatterService", function($location){
 
-  var commas = function(x) { // from stackoverflow
-    var parts = x.toString().split(".");
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return parts.join(".");
-}
+        var commas = function(x) { // from stackoverflow
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join(".");
+        }
 
-  var short = function(num){
-      // from http://stackoverflow.com/a/14994860/226013
-      if (num === null){
-        return 0
-      }
-      if (num === 0){
-        return 0
-      }
+        var short = function(num){
+            // from http://stackoverflow.com/a/14994860/226013
+            if (num === null){
+                return 0
+            }
+            if (num === 0){
+                return 0
+            }
 
-      if (num >= 1000000) {
-          return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-      }
-      if (num >= 100000) { // no decimal if greater than 100thou
-          return (num / 1000).toFixed(0).replace(/\.0$/, '') + 'k';
-      }
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            }
+            if (num >= 100000) { // no decimal if greater than 100thou
+                return (num / 1000).toFixed(0).replace(/\.0$/, '') + 'k';
+            }
 
-      if (num >= 1000) {
-          return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
-      }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+            }
 
-      if (num < .01) {
-        return num.toExponential(1)
-      }
-      if (num < 1) {
-        return Math.round(num * 100) / 100
-      }
+            if (num < .01) {
+                return num.toExponential(1)
+            }
+            if (num < 1) {
+                return Math.round(num * 100) / 100
+            }
 
-      return Math.floor(num);
-  }
+            return Math.floor(num);
+        }
 
-  var round = function(num){
-    return Math.round(num)
-  }
+        var round = function(num){
+            return Math.round(num)
+        }
 
-  // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
-  var ordinal = function(n) {
-      n = Math.round(n)
-    var s=["th","st","nd","rd"],
-      v=n%100;
-    return n+(s[(v-20)%10]||s[v]||s[0]);
-  }
+        var doubleUrlEncode = function(str){
+            return encodeURIComponent( encodeURIComponent(str) )
+        }
 
+        // from http://cwestblog.com/2012/09/28/javascript-number-getordinalfor/
+        var ordinal = function(n) {
+            n = Math.round(n)
+            var s=["th","st","nd","rd"],
+                v=n%100;
+            return n+(s[(v-20)%10]||s[v]||s[0]);
+        }
 
+        return {
+            short: short,
+            commas: commas,
+            round: round,
+            ordinal: ordinal,
+            doubleUrlEncode: doubleUrlEncode
 
-  return {
-    short: short,
-    commas: commas,
-    round: round,
-    ordinal: ordinal
-
-  }
-});
+        }
+    });
 angular.module('header', [
   ])
 
@@ -419,11 +430,15 @@ angular.module('header', [
   .controller("headerCtrl", function($scope,
                                      $location,
                                      $rootScope,
+                                     FormatterService,
+                                     FilterService,
                                      $http){
 
 
 
     $scope.searchResultSelected = ''
+    $scope.format = FormatterService
+    $scope.foo = 42
 
     $rootScope.$on('$routeChangeSuccess', function(next, current){
       $scope.searchResultSelected = ''
@@ -447,7 +462,8 @@ angular.module('header', [
         $location.path("person/" + item.id)
       }
       else if (item.type=='tag') {
-        $location.path("tag/" + item.name)
+        FilterService.unsetAll()
+        $location.path("tag/" + encodeURIComponent(encodeURIComponent( item.name)))
       }
     }
 
@@ -456,8 +472,12 @@ angular.module('header', [
       return $http.get("/api/search/" + val)
         .then(
           function(resp){
-            console.log("this is the response", resp)
-            return resp.data.list
+            //return resp.data.list
+            return _.map(resp.data.list, function(match){
+              //return match
+              match.urlName = encodeURIComponent(encodeURIComponent(match.name))
+              return match
+            })
 
             var names = _.pluck(resp.data.list, "name")
             console.log(names)
@@ -469,6 +489,7 @@ angular.module('header', [
   })
 
 .controller("searchResultCtrl", function($scope, $sce){
+
 
     $scope.trustHtml = function(str){
       console.log("trustHtml got a thing", str)
@@ -1080,7 +1101,7 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
     "</a>\n" +
-    "<a ng-href=\"tag/{{ match.model.name }}\" ng-if=\"match.model.type=='tag'\">\n" +
+    "<a ng-href=\"tag/{{ match.model.urlName }}\" ng-if=\"match.model.type=='tag'\">\n" +
     "   <span class=\"name\">\n" +
     "      {{ match.model.name }}\n" +
     "   </span>\n" +
@@ -1391,7 +1412,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
     "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
     "\n" +
-    "               <a class=\"account\" href=\"http://github.com/{{ person.github_login }}\">\n" +
+    "               <a class=\"account\" ng-if=\"person.github_login\" href=\"http://github.com/{{ person.github_login }}\">\n" +
     "                  <i class=\"fa fa-github\"></i> github/{{ person.github_login }}\n" +
     "               </a>\n" +
     "            </span>\n" +
@@ -1435,11 +1456,11 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "      -->\n" +
     "\n" +
-    "      <div class=\"top-tags\" ng-if=\"package.tags.length\">\n" +
+    "      <div class=\"top-tags\" ng-if=\"person.top_person_tags.length\">\n" +
     "         <h3>Top tags</h3>\n" +
     "         <div class=\"tags\">\n" +
     "            <a class=\"tag\"\n" +
-    "               href=\"tag/{{ tag.name }}\"\n" +
+    "               href=\"tag/{{ format.doubleUrlEncode(tag.name) }}\"\n" +
     "               ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
     "               {{ tag.name }}\n" +
     "            </a>\n" +
@@ -1704,7 +1725,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "      <span class=\"summary tags\">\n" +
     "         <span class=\"tags\">\n" +
-    "            <a href=\"tag/{{ tag.name }}\"\n" +
+    "            <a href=\"tag/{{ format.doubleUrlEncode(tag.name) }}\"\n" +
     "               class=\"tag\"\n" +
     "               ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
     "               {{ tag.name }}\n" +
@@ -1750,7 +1771,7 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "         </span>\n" +
     "\n" +
     "         <a class=\"name\"\n" +
-    "            href=\"tag/{{ tag.name }}\">\n" +
+    "            href=\"tag/{{ format.doubleUrlEncode( tag.name ) }}\">\n" +
     "            {{ tag.name }}\n" +
     "         </a>\n" +
     "\n" +
@@ -1766,7 +1787,7 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
     "      <span class=\"summary tags\">\n" +
     "         <span class=\"tags\">\n" +
     "            related tags:\n" +
-    "            <a href=\"tag/{{ relatedTag.name }}\"\n" +
+    "            <a href=\"tag/{{ format.doubleUrlEncode( relatedTag.name ) }}\"\n" +
     "               class=\"tag\"\n" +
     "               ng-repeat=\"relatedTag in tag.related_tags | orderBy: '-count'\">\n" +
     "               {{ relatedTag.name }}\n" +
@@ -1844,7 +1865,7 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "      <div class=\"top-tags\">\n" +
     "         <h3>Related tags</h3>\n" +
     "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\" href=\"tag/{{ tag.name }}\" ng-repeat=\"tag in packages.related_tags | orderBy: '-count'\">\n" +
+    "            <a class=\"tag\" href=\"tag/{{ format.doubleUrlEncode( tag.name ) }}\" ng-repeat=\"tag in packages.related_tags | orderBy: '-count'\">\n" +
     "               {{ tag.name }}\n" +
     "            </a>\n" +
     "         </div>\n" +

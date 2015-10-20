@@ -41,6 +41,13 @@ angular.module("filterService", [])
     var unset = function(k){
       filters[k] = null
     }
+    var unsetAll = function(){
+        console.log("unset all!")
+        _.each(filters, function(v, k){
+            filters[k] = null
+            $location.search(k, null)
+        })
+    }
 
     var asQueryStr = function(){
       var ret = []
@@ -59,6 +66,7 @@ angular.module("filterService", [])
     toggle: toggle,
     unset: unset,
     setFromUrl: setFromUrl,
-    asQueryStr: asQueryStr
+    asQueryStr: asQueryStr,
+    unsetAll: unsetAll
   }
 });

@@ -15,7 +15,7 @@
                   popover="ORCiD is a unique identifier for researchers. We'll be rolling out support soon."
                   src="static/img/orcid.gif" alt=""/>
 
-               <a class="account" href="http://github.com/{{ person.github_login }}">
+               <a class="account" ng-if="person.github_login" href="http://github.com/{{ person.github_login }}">
                   <i class="fa fa-github"></i> github/{{ person.github_login }}
                </a>
             </span>
@@ -59,11 +59,11 @@
       </div>
       -->
 
-      <div class="top-tags" ng-if="package.tags.length">
+      <div class="top-tags" ng-if="person.top_person_tags.length">
          <h3>Top tags</h3>
          <div class="tags">
             <a class="tag"
-               href="tag/{{ tag.name }}"
+               href="tag/{{ format.doubleUrlEncode(tag.name) }}"
                ng-repeat="tag in person.top_person_tags | orderBy: '-count'">
                {{ tag.name }}
             </a>
