@@ -87,6 +87,7 @@ class Person(db.Model):
                 "display_name": "Downloads", 
                 "icon": "fa-download", 
                 "name": "num_downloads",
+                "percentile": self.num_downloads_percentile,
                 "score": self.num_downloads_percentile * 1000.0,
                 "val": self.num_downloads
             })
@@ -94,6 +95,7 @@ class Person(db.Model):
                 "display_name": "Software reuse", 
                 "icon": "fa-recycle", 
                 "name": "pagerank", 
+                "percentile": self.pagerank_percentile,
                 "score": self.pagerank_percentile * 1000.0,
                 "val": self.pagerank
             })
@@ -101,27 +103,10 @@ class Person(db.Model):
                 "display_name": "Citations", 
                 "icon": "fa-file-text-o", 
                 "name": "num_mentions", 
+                "percentile": self.num_citations_percentile,
                 "score": self.num_citations_percentile * 1000.0,
                 "val": self.num_citations
             })
-
-        # maxes = {
-        #     "python": {
-        #         "num_mentions": 119.641405559105493,
-        #         "pagerank": 83.0739047134858737,
-        #         "num_downloads": 274.281733726360983
-        #     },
-        #     "r": {
-        #         "num_mentions": 11.2754064239907574,
-        #         "pagerank": 21.3693547599769573,
-        #         "num_downloads": 22.9865765385218843
-        #     }
-        # }
-
-        # for my_dict in ret:
-        #     if my_dict["score"]:
-        #         temp = 1000.00 * my_dict["score"] / maxes[self.main_language][my_dict["name"]]
-        #         my_dict["score"] = 1000.0 * math.log10(temp) / math.log10(1000.0)
 
         return ret
 
