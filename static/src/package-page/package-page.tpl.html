@@ -55,13 +55,21 @@
 
 
         <div class="sidebar-section contribs">
-            <h3>Key contributors</h3>
+            <h3>{{ package.contribs.length }} contributors</h3>
             <div class="contrib"
                  ng-repeat="person_package in package.top_contribs | orderBy: '-credit'">
                 <wheel></wheel>
                 <img class="person-icon" src="{{ person_package.icon_small }}" alt=""/>
                 <a class="name" href="person/{{ person_package.id }}">{{ person_package.name }}</a>
             </div>
+
+            <span class="plus-more btn btn-default btn-xs"
+                  ng-show="package.contribs.length > package.top_contribs.length"
+                  ng-click="apiOnly()">
+                <i class="fa fa-plus"></i>
+                <span class="val">{{ package.contribs.length - package.top_contribs.length }}</span> more
+            </span>
+
         </div>
 
 
@@ -253,7 +261,9 @@
                     </div>
                 </div> <!-- end this dep -->
 
-                <span class="plus-more btn btn-default btn-xs" ng-click="apiOnly()">
+                <span class="plus-more btn btn-default btn-xs"
+                      ng-show="package.indegree > package.top_neighbors.length"
+                      ng-click="apiOnly()">
                     <i class="fa fa-plus"></i>
                     <span class="val">{{ package.indegree - package.top_neighbors.length }}</span> more
                 </span>

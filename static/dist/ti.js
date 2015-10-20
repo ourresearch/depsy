@@ -577,7 +577,7 @@ angular.module('packagePage', [
       console.log("package page!", $scope.package)
 
       $scope.apiOnly = function(){
-        alert("Sorry, this is currently only available via the API.")
+        alert("Sorry, we're still working on this! In the meantime, you can view the raw data via our API.")
       }
 
 
@@ -1240,13 +1240,21 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "\n" +
     "        <div class=\"sidebar-section contribs\">\n" +
-    "            <h3>Key contributors</h3>\n" +
+    "            <h3>{{ package.contribs.length }} contributors</h3>\n" +
     "            <div class=\"contrib\"\n" +
     "                 ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
     "                <wheel></wheel>\n" +
     "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
     "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
     "            </div>\n" +
+    "\n" +
+    "            <span class=\"plus-more btn btn-default btn-xs\"\n" +
+    "                  ng-show=\"package.contribs.length > package.top_contribs.length\"\n" +
+    "                  ng-click=\"apiOnly()\">\n" +
+    "                <i class=\"fa fa-plus\"></i>\n" +
+    "                <span class=\"val\">{{ package.contribs.length - package.top_contribs.length }}</span> more\n" +
+    "            </span>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "\n" +
@@ -1438,7 +1446,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    </div>\n" +
     "                </div> <!-- end this dep -->\n" +
     "\n" +
-    "                <span class=\"plus-more btn btn-default btn-xs\" ng-click=\"apiOnly()\">\n" +
+    "                <span class=\"plus-more btn btn-default btn-xs\"\n" +
+    "                      ng-show=\"package.indegree > package.top_neighbors.length\"\n" +
+    "                      ng-click=\"apiOnly()\">\n" +
     "                    <i class=\"fa fa-plus\"></i>\n" +
     "                    <span class=\"val\">{{ package.indegree - package.top_neighbors.length }}</span> more\n" +
     "                </span>\n" +

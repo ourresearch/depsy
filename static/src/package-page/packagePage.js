@@ -34,7 +34,7 @@ angular.module('packagePage', [
       console.log("package page!", $scope.package)
 
       $scope.apiOnly = function(){
-        alert("Sorry, this is currently only available via the API.")
+        alert("Sorry, we're still working on this! In the meantime, you can view the raw data via our API.")
       }
 
 
