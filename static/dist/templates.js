@@ -940,7 +940,7 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
 
 angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("tag-page/tag-page.tpl.html",
-    "<div class=\"page entity-page person-page\">\n" +
+    "<div class=\"page entity-page tag-page\">\n" +
     "   <div class=\"ti-page-sidebar\">\n" +
     "      <div class=\"sidebar-header\">\n" +
     "\n" +
