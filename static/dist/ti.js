@@ -1961,7 +1961,7 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
     "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
-    "         href=\"http://localhost:5008/api/leaderboard?type=packages&tag={{ packages.filters.tag }}\">\n" +
+    "         href=\"api/leaderboard?type=packages&tag={{ packages.filters.tag }}\">\n" +
     "         <i class=\"fa fa-download\"></i>\n" +
     "         JSON\n" +
     "      </a>\n" +
