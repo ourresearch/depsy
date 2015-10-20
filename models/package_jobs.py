@@ -310,10 +310,17 @@ update_registry.register(Update(
 ))
 
 
-# i do not understand why, but this does not work in RQ, you must run in
-# a single dyno with --no-rq flag set...takes a good 30min :/
+
 q = db.session.query(Person.id)
-q = q.filter(Person.impact == None)
+update_registry.register(Update(
+    job=Person.set_subscore_percentiles,
+    query=q,
+    queue_id=3,
+    shortcut_fn=Person.shortcut_percentile_refsets    
+))
+
+q = db.session.query(Person.id)
+# q = q.filter(Person.impact == None)
 update_registry.register(Update(
     job=Person.set_impact,
     query=q,
@@ -322,12 +329,11 @@ update_registry.register(Update(
 
 q = db.session.query(Person.id)
 update_registry.register(Update(
-    job=Person.set_all_percentiles,
+    job=Person.set_impact_percentiles,
     query=q,
     queue_id=3,
     shortcut_fn=Person.shortcut_percentile_refsets    
 ))
-
 
 q = db.session.query(Person.id)
 q = q.filter(Person.parsed_name == None)
@@ -398,7 +404,7 @@ update_registry.register(Update(
 q = db.session.query(PypiPackage.id)
 # q = q.filter(PypiPackage.pagerank_percentile == None)
 update_registry.register(Update(
-    job=PypiPackage.set_all_percentiles,
+    job=PypiPackage.set_subscore_percentiles,
     query=q,
     queue_id=9,
     shortcut_fn=PypiPackage.shortcut_percentile_refsets
@@ -407,11 +413,31 @@ update_registry.register(Update(
 q = db.session.query(CranPackage.id)
 # q = q.filter(CranPackage.pagerank_percentile == None)
 update_registry.register(Update(
-    job=CranPackage.set_all_percentiles,
+    job=CranPackage.set_subscore_percentiles,
     query=q,
     queue_id=9,
     shortcut_fn=CranPackage.shortcut_percentile_refsets
 ))
+
+q = db.session.query(PypiPackage.id)
+# q = q.filter(PypiPackage.pagerank_percentile == None)
+update_registry.register(Update(
+    job=PypiPackage.set_impact_percentiles,
+    query=q,
+    queue_id=9,
+    shortcut_fn=PypiPackage.shortcut_percentile_refsets
+))
+
+q = db.session.query(CranPackage.id)
+# q = q.filter(CranPackage.pagerank_percentile == None)
+update_registry.register(Update(
+    job=CranPackage.set_impact_percentiles,
+    query=q,
+    queue_id=9,
+    shortcut_fn=CranPackage.shortcut_percentile_refsets
+))
+
+
 
 
 q = db.session.query(PypiPackage.id)

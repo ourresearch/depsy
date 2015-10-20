@@ -973,12 +973,13 @@ class Package(db.Model):
     def set_impact_percentile(self, refset):
         self.impact_percentile = self._calc_percentile(refset, self.impact)
 
-    def set_all_percentiles(self, refsets_dict):
+    def set_subscore_percentiles(self, refsets_dict):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
         self.set_pagerank_percentile(refsets_dict["pagerank"])
         self.set_num_citations_percentile(refsets_dict["num_citations"])
-        self.set_impact_percentile(refsets_dict["impact"])
 
+    def set_impact_percentiles(self, refsets_dict):
+        self.set_impact_percentile(refsets_dict["impact"])
 
     @property
     def display_num_downloads_score(self):
@@ -1031,8 +1032,11 @@ class Package(db.Model):
         return ret
 
     def set_pagerank_score(self):
-        if not self.pagerank:
+        if self.pagerank==None:
             self.pagerank_score = None
+            return self.pagerank_score
+        elif self.pagerank==0
+            self.pagerank_score = 0
             return self.pagerank_score
 
         try:
