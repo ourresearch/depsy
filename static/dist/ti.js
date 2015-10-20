@@ -542,39 +542,43 @@ angular.module('header', [
 
 
 angular.module('packagePage', [
-    'ngRoute'
-  ])
+  'ngRoute'
+])
 
 
 
-  .config(function($routeProvider) {
-    $routeProvider.when('/package/:language/:package_name', {
-      templateUrl: 'package-page/package-page.tpl.html',
-      controller: 'PackagePageCtrl',
-      resolve: {
-        packageResp: function($http, $route, PackageResource){
-          return PackageResource.get({
-            namespace: $route.current.params.language,
-            name: $route.current.params.package_name
-          }).$promise
+    .config(function($routeProvider) {
+      $routeProvider.when('/package/:language/:package_name', {
+        templateUrl: 'package-page/package-page.tpl.html',
+        controller: 'PackagePageCtrl',
+        resolve: {
+          packageResp: function($http, $route, PackageResource){
+            return PackageResource.get({
+              namespace: $route.current.params.language,
+              name: $route.current.params.package_name
+            }).$promise
+          }
         }
-      }
+      })
     })
-  })
 
 
 
-  .controller("PackagePageCtrl", function($scope,
-                                          $routeParams,
-                                          ngProgress,
-                                          FormatterService,
-                                          packageResp){
-    ngProgress.complete()
-    $scope.package = packageResp
-    $scope.format = FormatterService
-    $scope.depNode = packageResp.rev_deps_tree
+    .controller("PackagePageCtrl", function($scope,
+                                            $routeParams,
+                                            ngProgress,
+                                            FormatterService,
+                                            packageResp){
+      ngProgress.complete()
+      $scope.package = packageResp
+      $scope.format = FormatterService
+      $scope.depNode = packageResp.rev_deps_tree
 
-    console.log("package page!", $scope.package)
+      console.log("package page!", $scope.package)
+
+      $scope.apiOnly = function(){
+        alert("Sorry, this is currently only available via the API.")
+      }
 
 
 
@@ -582,7 +586,7 @@ angular.module('packagePage', [
 
 
 
-  })
+    })
 
 
 
@@ -1280,9 +1284,12 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <span class=\"package-percentile\">\n" +
     "                        {{ format.round(package.impact_percentile * 100) }}\n" +
     "                    </span>\n" +
+    "                    <span class=\"ti-label\">\n" +
+    "                        percentile impact overall\n" +
+    "                    </span>\n" +
     "                </div>\n" +
     "                <div class=\"explanation\">\n" +
-    "                    Overall impact percentile compared to all research software on\n" +
+    "                    Compared to all research software on\n" +
     "                    <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
     "                    <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>,\n" +
     "                    based on relative\n" +
@@ -1299,7 +1306,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <div class=\"explanation\">\n" +
     "                    Based on name, tags, and description, we're guessing this isn't\n" +
     "                    research software—so we haven't calculated impact percentile information. <br>\n" +
-    "                    <a class=\"btn btn-default btn-xs\" href=\"http://twitter.com/depsy_org\">report error</a>\n" +
+    "                    <a class=\"btn btn-default btn-xs\" href=\"http://twitter.com/depsy_org\">did we guess wrong?</a>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
@@ -1369,13 +1376,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            <!-- Top Importers. This is just for the pagerank subscore -->\n" +
     "            <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
     "                <h4>\n" +
-    "                    <div class=\"main\"><i class=\"fa fa-recycle\"></i> Reused by</div>\n" +
-    "                    <div class=\"subheading\">\n" +
-    "                        <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
-    "                      <span class=\"more\" ng-show=\"package.top_neighbors.length < package.indegree\">\n" +
-    "                          (showing the top {{ package.top_neighbors.length }})\n" +
-    "                      </span>\n" +
-    "                    </div>\n" +
+    "                    <i class=\"fa fa-recycle\"></i>\n" +
+    "                    Reused by <span class=\"details\">{{ package.indegree }} projects</span>\n" +
     "                </h4>\n" +
     "\n" +
     "                <div class=\"dep-container\"\n" +
@@ -1434,8 +1436,14 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                            {{ dep.summary }}\n" +
     "                        </div>\n" +
     "                    </div>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
+    "                </div> <!-- end this dep -->\n" +
+    "\n" +
+    "                <span class=\"plus-more btn btn-default btn-xs\" ng-click=\"apiOnly()\">\n" +
+    "                    <i class=\"fa fa-plus\"></i>\n" +
+    "                    <span class=\"val\">{{ package.indegree - package.top_neighbors.length }}</span> more\n" +
+    "                </span>\n" +
+    "\n" +
+    "            </div> <!-- end of the dep list widget -->\n" +
     "        </div>\n" +
     "    </div>\n" +
     "</div>\n" +

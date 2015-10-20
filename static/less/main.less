@@ -666,11 +666,21 @@ div.package-page {
       &.overall {
         &.is-academic-true {
           .non-research-package {display: none;}
-          .package-percentile {
-            font-size: 106px;
-            line-height: 1;
-            font-weight: bold;
+          .metrics {
             color: tan;
+            .package-percentile {
+              font-size: 90px;
+              margin-top:20px;
+              display: inline-block;
+              line-height: 1;
+              font-weight: bold;
+            }
+            .ti-label {
+              display: inline-block;
+              width: 75px;
+              font-weight: 100;
+              margin-left: 10px;
+            }
           }
         }
         &.is-academic-false {
@@ -766,10 +776,16 @@ div.package-page {
         h4 {
           font-size: 24px;
           margin-bottom: 20px;
-          div.subheading {
-            font-size: 14px;
+          .details {
+            font-weight: 100;
+            font-size: 80%;
           }
         }
+
+        .plus-more {
+          margin-left: 5px;
+        }
+
         .dep-container {
           color: #333;
           margin-bottom: 20px;

@@ -99,9 +99,12 @@
                     <span class="package-percentile">
                         {{ format.round(package.impact_percentile * 100) }}
                     </span>
+                    <span class="ti-label">
+                        percentile impact overall
+                    </span>
                 </div>
                 <div class="explanation">
-                    Overall impact percentile compared to all research software on
+                    Compared to all research software on
                     <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
                     <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>,
                     based on relative
@@ -118,7 +121,7 @@
                 <div class="explanation">
                     Based on name, tags, and description, we're guessing this isn't
                     research software—so we haven't calculated impact percentile information. <br>
-                    <a class="btn btn-default btn-xs" href="http://twitter.com/depsy_org">report error</a>
+                    <a class="btn btn-default btn-xs" href="http://twitter.com/depsy_org">did we guess wrong?</a>
                 </div>
 
             </div>
@@ -188,13 +191,8 @@
             <!-- Top Importers. This is just for the pagerank subscore -->
             <div class="top-importers" ng-show="subscore.name=='pagerank' && package.indegree">
                 <h4>
-                    <div class="main"><i class="fa fa-recycle"></i> Reused by</div>
-                    <div class="subheading">
-                        <span class="val">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.
-                      <span class="more" ng-show="package.top_neighbors.length < package.indegree">
-                          (showing the top {{ package.top_neighbors.length }})
-                      </span>
-                    </div>
+                    <i class="fa fa-recycle"></i>
+                    Reused by <span class="details">{{ package.indegree }} projects</span>
                 </h4>
 
                 <div class="dep-container"
@@ -253,8 +251,14 @@
                             {{ dep.summary }}
                         </div>
                     </div>
-                </div>
-            </div>
+                </div> <!-- end this dep -->
+
+                <span class="plus-more btn btn-default btn-xs" ng-click="apiOnly()">
+                    <i class="fa fa-plus"></i>
+                    <span class="val">{{ package.indegree - package.top_neighbors.length }}</span> more
+                </span>
+
+            </div> <!-- end of the dep list widget -->
         </div>
     </div>
 </div>

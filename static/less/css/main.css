@@ -611,11 +611,21 @@ div.package-page .ti-page-body .package-page-subscore {
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .non-research-package {
   display: none;
 }
-div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .package-percentile {
-  font-size: 106px;
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics {
+  color: tan;
+}
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics .package-percentile {
+  font-size: 90px;
+  margin-top: 20px;
+  display: inline-block;
   line-height: 1;
   font-weight: bold;
-  color: tan;
+}
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics .ti-label {
+  display: inline-block;
+  width: 75px;
+  font-weight: 100;
+  margin-left: 10px;
 }
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-false .research-package {
   display: none;
@@ -710,8 +720,12 @@ div.package-page .ti-page-body .package-page-subscore .top-importers h4 {
   font-size: 24px;
   margin-bottom: 20px;
 }
-div.package-page .ti-page-body .package-page-subscore .top-importers h4 div.subheading {
-  font-size: 14px;
+div.package-page .ti-page-body .package-page-subscore .top-importers h4 .details {
+  font-weight: 100;
+  font-size: 80%;
+}
+div.package-page .ti-page-body .package-page-subscore .top-importers .plus-more {
+  margin-left: 5px;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container {
   color: #333;
