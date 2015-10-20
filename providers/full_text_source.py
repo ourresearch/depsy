@@ -9,6 +9,9 @@ class FullTextSource:
     def name(self):
         return self.__class__.__name__.lower()
 
+    def query_url_for_display(self, query):
+        return self.query_url(query)
+
     def run_query(self, query):
         try:
             url = self.query_url(query)
@@ -25,6 +28,11 @@ class FullTextSource:
 class Pmc(FullTextSource):
     def query_url(self, query):
         query_template = "http://www.ebi.ac.uk/europepmc/webservices/rest/search/query={query}&pageSize=10&format=json&resulttype=idlist"
+        url = query_template.format(query=query)
+        return url
+
+    def query_url_for_display(self, query):
+        query_template = "https://europepmc.org/search?query={query}"
         url = query_template.format(query=query)
         return url
 

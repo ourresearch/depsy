@@ -609,86 +609,126 @@ class Package(db.Model):
             except KeyError:
                 citation_count = 0
             query = self.build_full_text_query(source)
+
             response.append({
                 "name": source.name,
                 "display_name": source.display_name,
                 "count": citation_count, 
-                "url": source.query_url(query)
+                "url": source.query_url_for_display(query)
                 })
         return response
+
+    @property
+    def use_just_name_in_pmc_query(self):
+        try:
+            num_source_citations = self.pmc_distinctiveness["num_hits_raw"]
+        except KeyError:
+            # no citations here
+            print "didn't collect citations for pmc, skipping"
+            return False
+
+        if num_source_citations < 10:
+            return True
+        else:
+            ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
+            print "ratio", ratio, num_source_citations
+            if self.host == "cran":
+                if ratio > 0.20:
+                    return True
+            else:
+                if ratio > 0.27:
+                    return True
+        return False
 
 
     def build_full_text_query(self, source):
 
-        if self.host == "pypi":
 
-            query = """
-                (
-                    (="import {name}" 
-                    OR ="github com {name}" 
-                    OR ="pypi python org {name}" 
-                    OR ="available in the {name} project" 
-                    OR ="{name} a community-developed" 
-                    OR ="library {name}" 
-                    OR ="libraries {name}" 
-                    OR ="package {name}" 
-                    OR ="packages {name}" 
-                    OR ="{name} package" 
-                    OR ="{name} packages" 
-                    OR ="{name} library" 
-                    OR ="{name} libraries" 
-                    OR ="{name} python" 
-                    OR ="{name} software" 
-                    OR ="{name} api" 
-                    OR ="{name} coded" 
-                    OR ="{name} new open-source" 
-                    OR ="{name} open-source" 
-                    OR ="open source software {name}" 
-                    OR ="{name} modeling frameworks" 
-                    OR ="{name} modeling environment" 
-                    OR ="modeling framework {name}" 
-                    OR ="{name}: sustainable software" 
-                    OR ="{name} component-based modeling framework")  
-            """.format(name=self.project_name)  # missing last paren on purpose
-        else:
-            query = """
-                (
-                      (="github com {name}" 
-                    OR ="web packages {name}" 
-                    OR ="available in the {name} project" 
-                    OR ="{name} a community-developed" 
-                    OR ="{name} r library" 
-                    OR ="{name} r libraries" 
-                    OR ="r library {name}" 
-                    OR ="r libraries {name}" 
-                    OR ="{name} package" 
-                    OR ="{name} packages" 
-                    OR ="package {name}" 
-                    OR ="packages {name}" 
-                    OR ="{name} software"  
-                    OR ="{name} api" 
-                    OR ="{name} coded" 
-                    OR ="{name} new open-source" 
-                    OR ="{name} open-source" 
-                    OR ="open source software {name}" 
-                    OR ="{name} modeling frameworks" 
-                    OR ="{name} modeling environment" 
-                    OR ="modeling framework {name}" 
-                    OR ="{name}: sustainable software" 
-                    OR ="{name} component-based modeling framework")  
-                """.format(name=self.project_name) # missing last paren on purpose
+        if source.__class__.__name__ == "Pmc":
+
+            queries = []
+     
+            # add the cran or pypi url to start with
+            host_url = self.host_url.replace("https://", "").replace("http://", "")
+            queries.append('"{}"'.format(host_url))
+
+            # then github url if we know it
+            if self.github_owner:
+                github_url = '"github.com/{}/{}"'.format(self.github_owner, self.github_repo_name)
+                queries.append(github_url)
+
+            if self.use_just_name_in_pmc_query:
+                queries.append('"{}"'.format(self.project_name))
+            else:
+                print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
+
+            query = " OR ".join(queries)            
+            query += ' NOT AUTH:"{}"'.format(self.project_name)
+        elif source.__class__.__name__ == "Ads":
+            if self.host == "pypi":
+                query = """
+                    (
+                        (="import {name}" 
+                        OR ="github com {name}" 
+                        OR ="pypi python org {name}" 
+                        OR ="available in the {name} project" 
+                        OR ="{name} a community-developed" 
+                        OR ="library {name}" 
+                        OR ="libraries {name}" 
+                        OR ="package {name}" 
+                        OR ="packages {name}" 
+                        OR ="{name} package" 
+                        OR ="{name} packages" 
+                        OR ="{name} library" 
+                        OR ="{name} libraries" 
+                        OR ="{name} python" 
+                        OR ="{name} software" 
+                        OR ="{name} api" 
+                        OR ="{name} coded" 
+                        OR ="{name} new open-source" 
+                        OR ="{name} open-source" 
+                        OR ="open source software {name}" 
+                        OR ="{name} modeling frameworks" 
+                        OR ="{name} modeling environment" 
+                        OR ="modeling framework {name}" 
+                        OR ="{name}: sustainable software" 
+                        OR ="{name} component-based modeling framework")  
+                """.format(name=self.project_name)  # missing last paren on purpose
+            else:
+                query = """
+                    (
+                          (="github com {name}" 
+                        OR ="web packages {name}" 
+                        OR ="available in the {name} project" 
+                        OR ="{name} a community-developed" 
+                        OR ="{name} r library" 
+                        OR ="{name} r libraries" 
+                        OR ="r library {name}" 
+                        OR ="r libraries {name}" 
+                        OR ="{name} package" 
+                        OR ="{name} packages" 
+                        OR ="package {name}" 
+                        OR ="packages {name}" 
+                        OR ="{name} software"  
+                        OR ="{name} api" 
+                        OR ="{name} coded" 
+                        OR ="{name} new open-source" 
+                        OR ="{name} open-source" 
+                        OR ="open source software {name}" 
+                        OR ="{name} modeling frameworks" 
+                        OR ="{name} modeling environment" 
+                        OR ="modeling framework {name}" 
+                        OR ="{name}: sustainable software" 
+                        OR ="{name} component-based modeling framework")  
+                    """.format(name=self.project_name) # missing last paren on purpose
+            query += ' -author:"{}"'.format(self.project_name)
+            # only arxiv
+            # query += ' pub:arXiv'
+            query += ")"
 
         # replace extra white space so is a shorter url, otherwise errors
         query = ' '.join(query.split())
 
-        if source.__class__.__name__ == "Pmc":
-            query += ' NOT AUTH:"{}"'.format(self.project_name)
-        elif source.__class__.__name__ == "Ads":
-            query += ' -author:"{}"'.format(self.project_name)
-            # only arxiv
-            # query += ' pub:arXiv'
-
-        query += ")"
         return query
 
 
