@@ -142,13 +142,13 @@ class Package(db.Model):
             "num_stars",
             "impact",
             "citations_dict",
-            "tree",
+            "all_neighbor_ids",
             "top_neighbors",
             "is_academic",
             "summary",
             "tags",
             "subscores",
-            "contribs",
+            "all_contribs",
             "top_contribs"
         ]
 
@@ -173,11 +173,20 @@ class Package(db.Model):
 
     @property
     def as_snippet_without_people(self):
-        return self.to_dict(exclude=["contribs", "top_contribs", "tree", "top_neighbors", "citations_dict"])
+        return self.to_dict(exclude=[
+            "all_contribs", 
+            "top_contribs", 
+            "all_neighbor_ids", 
+            "top_neighbors", 
+            "citations_dict"])
 
     @property
     def as_snippet(self):
-        return self.to_dict(exclude=["contribs", "tree", "top_neighbors", "citations_dict"])
+        return self.to_dict(exclude=[
+            "all_contribs", 
+            "all_neighbor_ids", 
+            "top_neighbors", 
+            "citations_dict"])
 
     @property
     def engagement(self):
@@ -240,10 +249,10 @@ class Package(db.Model):
 
     @property
     def top_contribs(self):
-        return self.contribs[0:5]
+        return self.all_contribs[0:5]
 
     @property
-    def contribs(self):
+    def all_contribs(self):
         if not self.credit:
             return []
 
@@ -263,59 +272,60 @@ class Package(db.Model):
                     person_snippet["roles"].append(contrib.as_snippet)
 
             ret.append(person_snippet)
-
         return ret
 
+
+    def neighbor_ids(self, limit=100000):
+        command = """(select p.id as id
+                        from dep_nodes_ncol_{host}_reverse d, package p
+                        where d.used_by = p.project_name
+                        and d.package='{package_name}'
+                        and p.host = '{host}'
+                        order by coalesce(p.impact, p.impact, 0) desc, p.num_downloads
+                        limit {package_limit})
+                    union
+                    (select g.id as id
+                        from dep_nodes_ncol_{host}_reverse d, github_repo g
+                        where d.package='{package_name}'
+                        and d.used_by = 'github:' || g.id
+                        order by coalesce((g.api_raw->>'stargazers_count')::int, 0) desc
+                        limit {github_limit})
+                    """.format(
+                            package_name = self.project_name,
+                            host = self.host,
+                            package_limit = limit, 
+                            github_limit = limit
+                            )
+        print command
+        rows = db.session.connection().execute(sql.text(command)).fetchall()
+        ids = [row[0] for row in rows]
+        return ids
 
 
     @property
     def top_neighbors(self):
-        num_top_nodes = 5
+        ids = self.neighbor_ids(limit=5)
+        package_ids = []
+        github_ids = []
+        for my_id in ids:
+            if my_id.startswith(self.host):
+                package_ids.append(my_id)
+            else:
+                github_ids.append(my_id)
 
-        command = """select p.id
-                    from dep_nodes_ncol_{host}_reverse d, package p
-                    where d.used_by = p.project_name
-                    and d.package='{package_name}'
-                    and p.host = '{host}'
-                    order by coalesce(p.impact, p.impact, 0) desc, p.num_downloads
-                    limit {limit}""".format(
-                            package_name = self.project_name,
-                            host = self.host,
-                            limit = num_top_nodes
-                            )
-
-        # top_packages = db.session.query(Package).from_statement(command).all()
-        # res = [package.as_snippet for package in top_packages]
-
-        rows = db.session.connection().execute(sql.text(command)).fetchall()
-        ids = [row[0] for row in rows]
-        if ids:
-            top_packages = db.session.query(Package).filter(Package.id.in_(ids))
-        else:
-            top_packages = []
-        ret = [package.as_snippet_without_people for package in top_packages]
-
-        command = """select g.id
-                    from dep_nodes_ncol_{host}_reverse d, github_repo g
-                    where d.package='{package_name}'
-                    and d.used_by = 'github:' || g.id
-                    order by coalesce((g.api_raw->>'stargazers_count')::int, 0) desc
-                    limit {limit}""".format(
-                            package_name = self.project_name,
-                            host = self.host,
-                            limit = num_top_nodes
-                            )
-
-        rows = db.session.connection().execute(sql.text(command)).fetchall()
-        ids = [row[0] for row in rows]
-        if ids:
-            top_githubs = db.session.query(GithubRepo).filter(GithubRepo.id.in_(ids))
-        else:
-            top_githubs = []
-        ret += [github_repo.as_snippet for github_repo in top_githubs]
-
+        ret = []
+        if package_ids:  
+            top_packages = db.session.query(Package).filter(Package.id.in_(package_ids))
+            ret += [package.as_snippet_without_people for package in top_packages]
+        if github_ids:
+            top_githubs = db.session.query(GithubRepo).filter(GithubRepo.id.in_(github_ids))
+            ret += [github_repo.as_snippet for github_repo in top_githubs]
         return ret
 
+
+    @property
+    def all_neighbor_ids(self):
+        return self.neighbor_ids()
 
 
     @classmethod
@@ -645,7 +655,6 @@ class Package(db.Model):
             return True
         else:
             ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
-            print "ratio", ratio, num_source_citations
             if self.host == "cran":
                 if ratio > 0.20:
                     return True
@@ -790,7 +799,6 @@ class Package(db.Model):
                     add_citations = True
                 else:
                     ratio = float(self.pmc_distinctiveness["num_hits_with_language"])/self.pmc_distinctiveness["num_hits_raw"]
-                    print source, "ratio", ratio, num_source_citations
                     if self.host == "cran":
                         if ratio > 0.20:
                             add_citations = True
@@ -809,7 +817,6 @@ class Package(db.Model):
                     add_citations = True
                 else:
                     ratio = float(self.ads_distinctiveness["num_hits_with_language"])/self.ads_distinctiveness["num_hits_raw"]
-                    print source, "ratio", ratio, num_source_citations
                     if self.host == "cran":
                         if ratio > 0.20:
                             add_citations = True
@@ -1307,8 +1314,17 @@ def shortcut_igraph_data_dict():
     global our_igraph_data
     our_igraph_data = {}
     for (i, name) in enumerate(our_vertice_names):
+
+        # if nothing depends on it, set pagerank to be 0 rather than whatever min
+        # it is set by igraph, so it'll match all the things that didn't
+        # make it in to igraph network
+        # If nothing depends on it, it has indegree of 0
+        this_pagerank = our_pageranks[i]
+        if our_indegree[i] == 1:
+            this_pagerank = 0
+
         our_igraph_data[name] = {
-            "pagerank": our_pageranks[i],
+            "pagerank": this_pagerank,
             "neighborhood_size": our_neighborhood_size[i],
             "indegree": our_indegree[i],
             "eccentricity": our_eccentricities[i],
