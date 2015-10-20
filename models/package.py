@@ -49,9 +49,12 @@ class Package(db.Model):
     github_reverse_deps = db.deferred(db.Column(JSONB))
     dependencies = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    
     pmc_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     citeseer_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     ads_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
+    has_best_import_name = db.Column(db.Boolean)
+
     requires_files = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     setup_py = db.deferred(db.Column(db.Text))
     setup_py_hash = db.deferred(db.Column(db.Text))
@@ -194,7 +197,17 @@ class Package(db.Model):
             return None
 
     @property
+    def has_estimated_pagerank(self):
+        if self.has_best_import_name:
+            has_estimated_pagerank = False
+        else:
+            has_estimated_pagerank = True
+        return has_estimated_pagerank
+
+
+    @property
     def subscores(self):
+        
         ret = [
             {
                 "name": "num_downloads",
@@ -202,7 +215,8 @@ class Package(db.Model):
                 "percentile": self.num_downloads_percentile,
                 "val": self.num_downloads,
                 "display_name": "Downloads",
-                "icon": "fa-download"
+                "icon": "fa-download",
+                "is_estimated": False
             },
             {
                 "name": "num_mentions",
@@ -210,7 +224,8 @@ class Package(db.Model):
                 "percentile": self.num_citations_percentile,
                 "val": self.num_citations,
                 "display_name": "Citations",
-                "icon": "fa-file-text-o"
+                "icon": "fa-file-text-o",
+                "is_estimated": False
             },
             {
                 "name": "pagerank",
@@ -218,7 +233,8 @@ class Package(db.Model):
                 "percentile": self.pagerank_percentile,
                 "val": self.display_pagerank_score,
                 "display_name": "Software reuse",
-                "icon": "fa-recycle"
+                "icon": "fa-recycle",
+                "is_estimated": self.has_estimated_pagerank
             }
         ]
         return ret
@@ -1103,8 +1119,9 @@ class Package(db.Model):
             return 
 
         use_for_pagerank = self.pagerank_percentile
-        if not use_for_pagerank:
+        if self.has_estimated_pagerank:
             use_for_pagerank = self.num_downloads_percentile
+
         combo = (use_for_pagerank + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
         self.impact = combo
         # print u"self.impact for {} is {} ({}, {}, {}".format(

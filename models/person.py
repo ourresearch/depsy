@@ -314,12 +314,8 @@ class Person(db.Model):
 
     def set_impact(self):
 
-        use_for_pagerank = self.pagerank_percentile
-        if not use_for_pagerank:
-            use_for_pagerank = self.num_downloads_percentile
-
-        if use_for_pagerank and self.num_downloads_percentile and self.num_citations_percentile:
-            self.impact = (use_for_pagerank + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
+        if self.pagerank_percentile and self.num_downloads_percentile and self.num_citations_percentile:
+            self.impact = (self.pagerank_percentile + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
         else:
             self.impact = 0
 
