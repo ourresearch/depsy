@@ -281,8 +281,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "               target=\"_self\"\n" +
     "               popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "               href=\"api/package/{{ package.host }}/{{ package.name }}\">\n" +
-    "                <i class=\"fa fa-download\"></i>\n" +
-    "                JSON\n" +
+    "                <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "            </a>\n" +
     "\n" +
     "            <!--\n" +
@@ -374,14 +374,19 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
     "                    </div>\n" +
     "                    <div class=\"pagerank-explanation\" ng-show=\"subscore.name=='pagerank'\">\n" +
-    "                        Measure of how often this package is imported by both GitHub projects,\n" +
-    "                        and other\n" +
-    "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
-    "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
-    "                        packages.\n" +
+    "                        <p>\n" +
+    "                            Measures how often this package is imported by\n" +
     "\n" +
-    "                        The number is scaled, log-transformed PageRank representing\n" +
-    "                        position and importance in the dependency network.\n" +
+    "                            <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
+    "                            <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                            and GitHub projects, based on its PageRank in the dependency network.\n" +
+    "\n" +
+    "                        </p>\n" +
+    "                        <p>\n" +
+    "                            A higher number means this package is imported more frequently,\n" +
+    "                            more uniquely, and by more important projects.\n" +
+    "                        </p>\n" +
+    "\n" +
     "\n" +
     "                    </div>\n" +
     "                </div>\n" +

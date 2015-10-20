@@ -708,6 +708,9 @@ div.package-page .ti-page-body .package-page-subscore .body .explanation {
   clear: left;
   max-width: 225px;
 }
+div.package-page .ti-page-body .package-page-subscore .body .explanation p {
+  margin-top: 0;
+}
 div.package-page .ti-page-body .package-page-subscore .body .explanation .citations-explanation a {
   color: #984ea3;
 }
@@ -1132,6 +1135,9 @@ a.tag:hover {
 ul {
   margin-left: 0;
   padding-left: 0;
+}
+.fa-cogs {
+  margin-right: 4px;
 }
 /* Styling for the ngProgress itself */
 #ngProgress {
