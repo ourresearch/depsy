@@ -503,16 +503,21 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "\n" +
     "\n" +
-    "      <div class=\"sidebar-section impact\">\n" +
-    "         <h3>Impact</h3>\n" +
-    "          Coming soon...\n" +
-    "          <!--\n" +
+    "      <div class=\"sidebar-section impact\" ng-show=\"person.impact_percentile\">\n" +
+    "         <h3>\n" +
+    "             <span class=\"val\">\n" +
+    "                 {{ format.round(person.impact_percentile * 100) }}\n" +
+    "             </span>\n" +
+    "              <span class=\"unit\">percentile impact</span></h3>\n" +
+    "          <span class=\"descr\">\n" +
+    "              Aggregated fractional credit, summed across all research software contributions\n" +
+    "          </span>\n" +
     "         <div class=\"vis\">\n" +
     "            <div class=\"subscore {{ subscore.name }}\"\n" +
     "                 ng-if=\"subscore.val > 0\"\n" +
     "                 ng-repeat=\"subscore in person.subscores\">\n" +
     "               <div class=\"bar-outer\">\n" +
-    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.score / 10 }}%;\"></div>\n" +
+    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile  * 100 }}%;\"></div>\n" +
     "               </div>\n" +
     "               <div class=\"subscore-label\">\n" +
     "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
@@ -521,7 +526,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "            </div>\n" +
     "         </div>\n" +
-    "         -->\n" +
     "      </div>\n" +
     "\n" +
     "\n" +
@@ -723,7 +727,6 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
 angular.module("snippet/person-impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("snippet/person-impact-popover.tpl.html",
     "<div class=\"person impact-popover\">\n" +
-    "   coming soon...\n" +
     "   <div class=\"impact\">\n" +
     "\n" +
     "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +

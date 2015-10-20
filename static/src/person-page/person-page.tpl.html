@@ -24,16 +24,21 @@
       </div>
 
 
-      <div class="sidebar-section impact">
-         <h3>Impact</h3>
-          Coming soon...
-          <!--
+      <div class="sidebar-section impact" ng-show="person.impact_percentile">
+         <h3>
+             <span class="val">
+                 {{ format.round(person.impact_percentile * 100) }}
+             </span>
+              <span class="unit">percentile impact</span></h3>
+          <span class="descr">
+              Aggregated fractional credit, summed across all research software contributions
+          </span>
          <div class="vis">
             <div class="subscore {{ subscore.name }}"
                  ng-if="subscore.val > 0"
                  ng-repeat="subscore in person.subscores">
                <div class="bar-outer">
-                  <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.score / 10 }}%;"></div>
+                  <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.percentile  * 100 }}%;"></div>
                </div>
                <div class="subscore-label">
                   <span class="val">{{ format.short(subscore.val) }}</span>
@@ -42,7 +47,6 @@
 
             </div>
          </div>
-         -->
       </div>
 
 

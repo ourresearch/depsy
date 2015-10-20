@@ -367,8 +367,30 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-header .impact-score-in
   font-size: 14px;
   color: #333;
 }
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact {
+  margin-top: 50px;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact h3 {
+  font-size: 30px;
+  margin-bottom: 5px;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact h3 span.val {
+  font-weight: 900;
+  font-size: 163%;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact h3 span.unit {
+  font-size: 66%;
+  font-weight: 100;
+  display: inline-block;
+  width: 75px;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact span.descr {
+  margin-bottom: 15px;
+  color: #777;
+  display: inline-block;
+}
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore {
-  margin-bottom: 7px;
+  margin-bottom: 2px;
   clear: left;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore:before,
@@ -385,7 +407,8 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscor
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.pagerank {
   color: #377eb8;
 }
-div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_citations {
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_citations,
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore.num_mentions {
   color: #984ea3;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer {
@@ -406,7 +429,8 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscor
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.pagerank {
   background: #377eb8;
 }
-div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_citations {
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_citations,
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .bar-outer .bar-inner.num_mentions {
   background: #984ea3;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact .subscore .subscore-label {
