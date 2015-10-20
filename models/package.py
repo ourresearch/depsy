@@ -49,7 +49,7 @@ class Package(db.Model):
     github_reverse_deps = db.deferred(db.Column(JSONB))
     dependencies = db.deferred(db.Column(JSONB))
     bucket = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
-    
+
     pmc_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     citeseer_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     ads_distinctiveness = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
@@ -61,7 +61,6 @@ class Package(db.Model):
 
     impact = db.Column(db.Float)
     impact_percentile = db.Column(db.Float)
-    impact_rank = db.Column(db.Integer)
 
     num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
@@ -133,7 +132,6 @@ class Package(db.Model):
             "github_owner",
             "github_repo_name",
             "host",
-            "impact_rank",
             "impact_percentile",
             "language",
             "indegree",
@@ -884,9 +882,26 @@ class Package(db.Model):
             print "pagerank of {} is {}".format(self.project_name, self.pagerank)
         except KeyError:
             print "network params for {} were not calculated".format(self.project_name)
-            self.pagerank = None
-            self.neighborhood_size = None
-            self.indegree = None
+            if self.has_estimated_pagerank:
+                # it doesn't have a good import name
+                # so we don't know what it's pagerank is
+                # so don't pretend we know
+                self.pagerank = None
+                self.indegree = None
+                self.neighborhood_size = None
+                self.academic_neighborhood_size = None
+                self.higher_pagerank_neighborhood_size = None
+
+            else: 
+                # it isn't in igraph because it doesn't depend on anything or have anything that
+                # depends on it.  So everything is actually zero.
+                self.pagerank = 0
+                self.indegree = 0
+                self.neighborhood_size = 1
+                self.academic_neighborhood_size = 0
+                self.higher_pagerank_neighborhood_size = 0
+
+            # just set everythign else to none regardless
             self.eccentricity = None
             self.closeness = None            
             self.betweenness = None            
@@ -896,9 +911,7 @@ class Package(db.Model):
             self.avg_path_length = None            
             self.avg_outdegree_of_neighbors = None            
             self.avg_pagerank_of_neighbors = None            
-            self.higher_pagerank_neighborhood_size = None
             self.higher_pagerank_neighbors = None
-            self.academic_neighborhood_size = None
 
 
     def refresh_github_ids(self):
@@ -967,37 +980,6 @@ class Package(db.Model):
         self.set_impact_percentile(refsets_dict["impact"])
 
 
-    @classmethod
-    def _shortcut_rank(cls, name_to_rank_by):
-        print "getting the lookup for ranking impact...."
-        property_to_rank_by = getattr(cls, name_to_rank_by)
-
-        q = db.session.query(cls.id)
-        q = q.filter(cls.is_academic==True)
-        q = q.order_by(property_to_rank_by.desc())  # the important part :)
-        rows = q.all()
-
-        impact_rank_lookup = {}
-        ids_sorted = [row[0] for row in rows]
-        for my_id in ids_sorted:
-            zero_based_rank = ids_sorted.index(my_id)
-            impact_rank_lookup[my_id] = zero_based_rank + 1
-
-        return impact_rank_lookup
-
-    @classmethod
-    def shortcut_impact_rank(cls):
-        return cls._shortcut_rank("impact")
-
-    def set_impact_rank(self, impact_rank_lookup):
-        try:
-            self.impact_rank = impact_rank_lookup[self.id]
-        except KeyError:
-            # maybe isn't academic
-            self.impact_rank = None
-        print "self.impact_rank", self.impact_rank
-
-
     @property
     def display_num_downloads_score(self):
         return min(self.num_downloads_score, 1000)
@@ -1016,9 +998,6 @@ class Package(db.Model):
         if pagerank_score < 1:
             pagerank_score = 0
         return min(pagerank_score, 1000)
-
-
-
 
 
     @property
