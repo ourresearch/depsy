@@ -1262,11 +1262,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "        <div class=\"sidebar-section actions\">\n" +
     "            <a class=\"json-link btn btn-default\"\n" +
-    "               popover-title=\"View this page as JSON\"\n" +
-    "               popover-placement=\"right\"\n" +
-    "               popover-trigger=\"mouseenter\"\n" +
     "               target=\"_self\"\n" +
-    "               popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "               href=\"api/package/{{ package.host }}/{{ package.name }}\">\n" +
     "                <i class=\"fa fa-cogs\"></i>\n" +
     "                View in API\n" +
@@ -1562,14 +1558,10 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
-    "         popover-title=\"View this page as JSON\"\n" +
-    "         popover-placement=\"right\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
-    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/person/{{ person.id }}\">\n" +
-    "         <i class=\"fa fa-download\"></i>\n" +
-    "         JSON\n" +
+    "         <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "      </a>\n" +
     "\n" +
     "   </div>\n" +
@@ -1963,14 +1955,10 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "      </div>\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
-    "         popover-title=\"View this page as JSON\"\n" +
-    "         popover-placement=\"right\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
-    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/leaderboard?type=packages&tag={{ packages.filters.tag }}\">\n" +
-    "         <i class=\"fa fa-download\"></i>\n" +
-    "         JSON\n" +
+    "         <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "      </a>\n" +
     "\n" +
     "      <!-- we can use this from the people page to print out tag users...\n" +
@@ -2089,14 +2077,10 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
-    "         popover-title=\"View this page as JSON\"\n" +
-    "         popover-placement=\"right\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
-    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/leaderboard?{{ filters.asQueryStr() }}\">\n" +
-    "         <i class=\"fa fa-download\"></i>\n" +
-    "         JSON\n" +
+    "         <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "      </a>\n" +
     "\n" +
     "\n" +
