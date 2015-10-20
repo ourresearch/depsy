@@ -728,6 +728,8 @@ angular.module("snippet/person-impact-popover.tpl.html", []).run(["$templateCach
   $templateCache.put("snippet/person-impact-popover.tpl.html",
     "<div class=\"person impact-popover\">\n" +
     "   <div class=\"impact\">\n" +
+    "       Based on aggregated fractional credit across all research software.\n" +
+    "       More details coming soon...\n" +
     "\n" +
     "      <div class=\"sub-score citations metric\" ng-show=\"package.num_citations\">\n" +
     "         <span class=\"name\">\n" +
