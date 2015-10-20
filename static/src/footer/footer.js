@@ -11,14 +11,14 @@ angular.module('footer', [
                                        $http){
 
 
-        $scope.hideEmailSignup = !!$.cookie("hideEmailSignup")
-
-
-        $scope.dismissEmailSignup = function(){
-            console.log("dismiss the signup")
-            $scope.hideEmailSignup = true
-            !$.cookie("hideEmailSignup", true)
-        }
+        //$scope.hideEmailSignup = !!$.cookie("hideEmailSignup")
+        //
+        //
+        //$scope.dismissEmailSignup = function(){
+        //    console.log("dismiss the signup")
+        //    $scope.hideEmailSignup = true
+        //    !$.cookie("hideEmailSignup", true)
+        //}
 
 
 
