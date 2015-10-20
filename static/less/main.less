@@ -664,11 +664,29 @@ div.package-page {
       float:left;
       width: 275px;
       &.overall {
-        .package-percentile {
-          font-size: 106px;
-          line-height: 1;
-          font-weight: bold;
-          color: tan;
+        &.is-academic-true {
+          .non-research-package {display: none;}
+          .package-percentile {
+            font-size: 106px;
+            line-height: 1;
+            font-weight: bold;
+            color: tan;
+          }
+        }
+        &.is-academic-false {
+          .research-package {display: none;}
+          .heading {
+            font-size: 40px;
+            font-weight: bold;
+            color: #999;
+            margin-top: 34px;
+          }
+          .explanation {
+            a {
+              margin-top: 10px;
+              color: #999;
+            }
+          }
         }
       }
       &.num_downloads { color: @downloadsColor;}
@@ -708,6 +726,7 @@ div.package-page {
         .main-metric {
           font-size: 60px;
         }
+
         .percentile {
           display: inline-block;
           width: 50px;

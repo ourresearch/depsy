@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -194,35 +194,6 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "");
 }]);
 
-angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("package-page/dep-node.tpl.html",
-    "<div class=\"dep-node is-rollup-{{ depNode.is_rollup }} is-root-{{ depNode.is_root }} is-package-{{ depNode.is_package }}\">\n" +
-    "   <div class=\"about\">\n" +
-    "      <a class=\"name\"\n" +
-    "         ng-if=\"!depNode.is_rollup && depNode.is_package\"\n" +
-    "         style=\"font-size: {{ 100 }}%;\"\n" +
-    "         href=\"package/r/{{ depNode.name }}\">\n" +
-    "         {{ depNode.name }}\n" +
-    "      </a>\n" +
-    "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\"\n" +
-    "            style=\"font-size: {{ 100 }}%;\"\n" +
-    "            class=\"name\">\n" +
-    "         {{ depNode.name }}\n" +
-    "      </span>\n" +
-    "      <span class=\"metrics\">\n" +
-    "         <!--<span class=\"percent-root-goodness\">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>-->\n" +
-    "         <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
-    "         <span class=\"stars\">({{ depNode.stars }})</span>\n" +
-    "      </span>\n" +
-    "   </div>\n" +
-    "   <div class=\"children\">\n" +
-    "      <div class=\"dep-node-container\"\n" +
-    "           ng-repeat=\"depNode in depNode.children | orderBy: '-sort_score'\"\n" +
-    "           ng-include=\"'package-page/dep-node.tpl.html'\"></div>\n" +
-    "   </div>\n" +
-    "</div>");
-}]);
-
 angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/package-page.tpl.html",
     "<div class=\"page entity-page package-page\">\n" +
@@ -320,8 +291,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "    <div class=\"ti-page-body\">\n" +
     "\n" +
     "\n" +
-    "        <div class=\"subscore package-page-subscore overall\">\n" +
-    "            <div class=\"body\">\n" +
+    "        <div class=\"subscore package-page-subscore overall is-academic-{{ package.is_academic }}\">\n" +
+    "            <div class=\"body research-package\">\n" +
     "                <div class=\"metrics\">\n" +
     "                    <span class=\"package-percentile\">\n" +
     "                        {{ format.round(package.impact_percentile * 100) }}\n" +
@@ -337,6 +308,19 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <span class=\"num_mentions\">citation.</span>\n" +
     "                </div>\n" +
     "            </div>\n" +
+    "\n" +
+    "            <div class=\"body non-research-package\">\n" +
+    "                <div class=\"heading\">\n" +
+    "                    Not research software\n" +
+    "                </div>\n" +
+    "                <div class=\"explanation\">\n" +
+    "                    Based on name, tags, and description, we're guessing this isn't\n" +
+    "                    research software—so we haven't calculated impact percentile information. <br>\n" +
+    "                    <a class=\"btn btn-default btn-xs\" href=\"http://twitter.com/depsy_org\">report error</a>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"subscore package-page-subscore {{ subscore.name }}\"\n" +
@@ -347,7 +331,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            </h3>\n" +
     "            <div class=\"body\">\n" +
     "                <div class=\"metrics\">\n" +
-    "                    <div class=\"impact-stick vis\">\n" +
+    "                    <div class=\"impact-stick vis\" ng-show=\"package.is_academic\">\n" +
     "                        <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\">\n" +
     "                        </div>\n" +
     "\n" +
@@ -355,7 +339,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <span class=\"main-metric\">\n" +
     "                        {{ format.short(subscore.val) }}\n" +
     "                    </span>\n" +
-    "                    <span class=\"percentile\">\n" +
+    "                    <span class=\"percentile\" ng-show=\"package.is_academic\">\n" +
     "                        <span class=\"val\">\n" +
     "                            {{ format.round(subscore.percentile * 100) }}\n" +
     "                        </span>\n" +

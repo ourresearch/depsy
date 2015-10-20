@@ -93,8 +93,8 @@
     <div class="ti-page-body">
 
 
-        <div class="subscore package-page-subscore overall">
-            <div class="body">
+        <div class="subscore package-page-subscore overall is-academic-{{ package.is_academic }}">
+            <div class="body research-package">
                 <div class="metrics">
                     <span class="package-percentile">
                         {{ format.round(package.impact_percentile * 100) }}
@@ -110,6 +110,19 @@
                     <span class="num_mentions">citation.</span>
                 </div>
             </div>
+
+            <div class="body non-research-package">
+                <div class="heading">
+                    Not research software
+                </div>
+                <div class="explanation">
+                    Based on name, tags, and description, we're guessing this isn't
+                    research software—so we haven't calculated impact percentile information. <br>
+                    <a class="btn btn-default btn-xs" href="http://twitter.com/depsy_org">report error</a>
+                </div>
+
+            </div>
+
         </div>
 
         <div class="subscore package-page-subscore {{ subscore.name }}"
@@ -120,7 +133,7 @@
             </h3>
             <div class="body">
                 <div class="metrics">
-                    <div class="impact-stick vis">
+                    <div class="impact-stick vis" ng-show="package.is_academic">
                         <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.percentile * 100 }}%">
                         </div>
 
@@ -128,7 +141,7 @@
                     <span class="main-metric">
                         {{ format.short(subscore.val) }}
                     </span>
-                    <span class="percentile">
+                    <span class="percentile" ng-show="package.is_academic">
                         <span class="val">
                             {{ format.round(subscore.percentile * 100) }}
                         </span>

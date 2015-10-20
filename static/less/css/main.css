@@ -608,11 +608,27 @@ div.package-page .ti-page-body .package-page-subscore {
   float: left;
   width: 275px;
 }
-div.package-page .ti-page-body .package-page-subscore.overall .package-percentile {
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .non-research-package {
+  display: none;
+}
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .package-percentile {
   font-size: 106px;
   line-height: 1;
   font-weight: bold;
   color: tan;
+}
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-false .research-package {
+  display: none;
+}
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-false .heading {
+  font-size: 40px;
+  font-weight: bold;
+  color: #999;
+  margin-top: 34px;
+}
+div.package-page .ti-page-body .package-page-subscore.overall.is-academic-false .explanation a {
+  margin-top: 10px;
+  color: #999;
 }
 div.package-page .ti-page-body .package-page-subscore.num_downloads {
   color: #4daf4a;
