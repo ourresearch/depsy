@@ -174,10 +174,8 @@ class Person(db.Model):
             "main_language": self.main_language,             
             "impact": self.impact, 
             "impact_percentile": self.impact_percentile, 
-            "pagerank_percentile": self.pagerank_percentile, 
-            "num_downloads_percentile": self.num_downloads_percentile, 
-            "num_citations_percentile": self.num_citations_percentile, 
-            "id": self.id
+            "id": self.id,
+            "subscores": self.subscores
         }
         return ret
 
@@ -443,8 +441,6 @@ class PersonPackage():
 
     @property
     def as_person_snippet(self):
-        print "in as_person_snippet"
-
         ret = self.package.as_snippet_without_people
         ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
