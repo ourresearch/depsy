@@ -542,39 +542,43 @@ angular.module('header', [
 
 
 angular.module('packagePage', [
-    'ngRoute'
-  ])
+  'ngRoute'
+])
 
 
 
-  .config(function($routeProvider) {
-    $routeProvider.when('/package/:language/:package_name', {
-      templateUrl: 'package-page/package-page.tpl.html',
-      controller: 'PackagePageCtrl',
-      resolve: {
-        packageResp: function($http, $route, PackageResource){
-          return PackageResource.get({
-            namespace: $route.current.params.language,
-            name: $route.current.params.package_name
-          }).$promise
+    .config(function($routeProvider) {
+      $routeProvider.when('/package/:language/:package_name', {
+        templateUrl: 'package-page/package-page.tpl.html',
+        controller: 'PackagePageCtrl',
+        resolve: {
+          packageResp: function($http, $route, PackageResource){
+            return PackageResource.get({
+              namespace: $route.current.params.language,
+              name: $route.current.params.package_name
+            }).$promise
+          }
         }
-      }
+      })
     })
-  })
 
 
 
-  .controller("PackagePageCtrl", function($scope,
-                                          $routeParams,
-                                          ngProgress,
-                                          FormatterService,
-                                          packageResp){
-    ngProgress.complete()
-    $scope.package = packageResp
-    $scope.format = FormatterService
-    $scope.depNode = packageResp.rev_deps_tree
+    .controller("PackagePageCtrl", function($scope,
+                                            $routeParams,
+                                            ngProgress,
+                                            FormatterService,
+                                            packageResp){
+      ngProgress.complete()
+      $scope.package = packageResp
+      $scope.format = FormatterService
+      $scope.depNode = packageResp.rev_deps_tree
 
-    console.log("package page!", $scope.package)
+      console.log("package page!", $scope.package)
+
+      $scope.apiOnly = function(){
+        alert("Sorry, we're still working on this! In the meantime, you can view the raw data via our API.")
+      }
 
 
 
@@ -582,7 +586,7 @@ angular.module('packagePage', [
 
 
 
-  })
+    })
 
 
 
@@ -981,7 +985,7 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -1177,35 +1181,6 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "");
 }]);
 
-angular.module("package-page/dep-node.tpl.html", []).run(["$templateCache", function($templateCache) {
-  $templateCache.put("package-page/dep-node.tpl.html",
-    "<div class=\"dep-node is-rollup-{{ depNode.is_rollup }} is-root-{{ depNode.is_root }} is-package-{{ depNode.is_package }}\">\n" +
-    "   <div class=\"about\">\n" +
-    "      <a class=\"name\"\n" +
-    "         ng-if=\"!depNode.is_rollup && depNode.is_package\"\n" +
-    "         style=\"font-size: {{ 100 }}%;\"\n" +
-    "         href=\"package/r/{{ depNode.name }}\">\n" +
-    "         {{ depNode.name }}\n" +
-    "      </a>\n" +
-    "      <span ng-if=\"depNode.is_rollup || !depNode.is_package\"\n" +
-    "            style=\"font-size: {{ 100 }}%;\"\n" +
-    "            class=\"name\">\n" +
-    "         {{ depNode.name }}\n" +
-    "      </span>\n" +
-    "      <span class=\"metrics\">\n" +
-    "         <!--<span class=\"percent-root-goodness\">{{ nFormatter(depNode.percent_root_goodness * 100) }}%</span>-->\n" +
-    "         <span class=\"pagerank\">{{ depNode.display_pagerank }}</span>\n" +
-    "         <span class=\"stars\">({{ depNode.stars }})</span>\n" +
-    "      </span>\n" +
-    "   </div>\n" +
-    "   <div class=\"children\">\n" +
-    "      <div class=\"dep-node-container\"\n" +
-    "           ng-repeat=\"depNode in depNode.children | orderBy: '-sort_score'\"\n" +
-    "           ng-include=\"'package-page/dep-node.tpl.html'\"></div>\n" +
-    "   </div>\n" +
-    "</div>");
-}]);
-
 angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("package-page/package-page.tpl.html",
     "<div class=\"page entity-page package-page\">\n" +
@@ -1265,13 +1240,21 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "\n" +
     "        <div class=\"sidebar-section contribs\">\n" +
-    "            <h3>Key contributors</h3>\n" +
+    "            <h3>{{ package.contribs.length }} contributors</h3>\n" +
     "            <div class=\"contrib\"\n" +
     "                 ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
     "                <wheel></wheel>\n" +
     "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
     "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
     "            </div>\n" +
+    "\n" +
+    "            <span class=\"plus-more btn btn-default btn-xs\"\n" +
+    "                  ng-show=\"package.contribs.length > package.top_contribs.length\"\n" +
+    "                  ng-click=\"apiOnly()\">\n" +
+    "                <i class=\"fa fa-plus\"></i>\n" +
+    "                <span class=\"val\">{{ package.contribs.length - package.top_contribs.length }}</span> more\n" +
+    "            </span>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "\n" +
@@ -1279,14 +1262,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "        <div class=\"sidebar-section actions\">\n" +
     "            <a class=\"json-link btn btn-default\"\n" +
-    "               popover-title=\"View this page as JSON\"\n" +
-    "               popover-placement=\"right\"\n" +
-    "               popover-trigger=\"mouseenter\"\n" +
     "               target=\"_self\"\n" +
-    "               popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "               href=\"api/package/{{ package.host }}/{{ package.name }}\">\n" +
-    "                <i class=\"fa fa-download\"></i>\n" +
-    "                JSON\n" +
+    "                <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "            </a>\n" +
     "\n" +
     "            <!--\n" +
@@ -1303,15 +1282,18 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "    <div class=\"ti-page-body\">\n" +
     "\n" +
     "\n" +
-    "        <div class=\"subscore package-page-subscore overall\">\n" +
-    "            <div class=\"body\">\n" +
+    "        <div class=\"subscore package-page-subscore overall is-academic-{{ package.is_academic }}\">\n" +
+    "            <div class=\"body research-package\">\n" +
     "                <div class=\"metrics\">\n" +
     "                    <span class=\"package-percentile\">\n" +
     "                        {{ format.round(package.impact_percentile * 100) }}\n" +
     "                    </span>\n" +
+    "                    <span class=\"ti-label\">\n" +
+    "                        percentile impact overall\n" +
+    "                    </span>\n" +
     "                </div>\n" +
     "                <div class=\"explanation\">\n" +
-    "                    Overall impact percentile compared to all research software on\n" +
+    "                    Compared to all research software on\n" +
     "                    <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
     "                    <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>,\n" +
     "                    based on relative\n" +
@@ -1320,6 +1302,19 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <span class=\"num_mentions\">citation.</span>\n" +
     "                </div>\n" +
     "            </div>\n" +
+    "\n" +
+    "            <div class=\"body non-research-package\">\n" +
+    "                <div class=\"heading\">\n" +
+    "                    Not research software\n" +
+    "                </div>\n" +
+    "                <div class=\"explanation\">\n" +
+    "                    Based on name, tags, and description, we're guessing this isn't\n" +
+    "                    research software—so we haven't calculated impact percentile information. <br>\n" +
+    "                    <a class=\"btn btn-default btn-xs\" href=\"http://twitter.com/depsy_org\">did we guess wrong?</a>\n" +
+    "                </div>\n" +
+    "\n" +
+    "            </div>\n" +
+    "\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"subscore package-page-subscore {{ subscore.name }}\"\n" +
@@ -1330,7 +1325,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            </h3>\n" +
     "            <div class=\"body\">\n" +
     "                <div class=\"metrics\">\n" +
-    "                    <div class=\"impact-stick vis\">\n" +
+    "                    <div class=\"impact-stick vis\" ng-show=\"package.is_academic\">\n" +
     "                        <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\">\n" +
     "                        </div>\n" +
     "\n" +
@@ -1338,7 +1333,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <span class=\"main-metric\">\n" +
     "                        {{ format.short(subscore.val) }}\n" +
     "                    </span>\n" +
-    "                    <span class=\"percentile\">\n" +
+    "                    <span class=\"percentile\" ng-show=\"package.is_academic\">\n" +
     "                        <span class=\"val\">\n" +
     "                            {{ format.round(subscore.percentile * 100) }}\n" +
     "                        </span>\n" +
@@ -1362,14 +1357,19 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
     "                    </div>\n" +
     "                    <div class=\"pagerank-explanation\" ng-show=\"subscore.name=='pagerank'\">\n" +
-    "                        Measure of how often this package is imported by both GitHub projects,\n" +
-    "                        and other\n" +
-    "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
-    "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
-    "                        packages.\n" +
+    "                        <p>\n" +
+    "                            Measures how often this package is imported by\n" +
     "\n" +
-    "                        The number is scaled, log-transformed PageRank representing\n" +
-    "                        position and importance in the dependency network.\n" +
+    "                            <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
+    "                            <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                            and GitHub projects, based on its PageRank in the dependency network.\n" +
+    "\n" +
+    "                        </p>\n" +
+    "                        <p>\n" +
+    "                            A higher number means this package is imported more frequently,\n" +
+    "                            more uniquely, and by more important projects.\n" +
+    "                        </p>\n" +
+    "\n" +
     "\n" +
     "                    </div>\n" +
     "                </div>\n" +
@@ -1385,13 +1385,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            <!-- Top Importers. This is just for the pagerank subscore -->\n" +
     "            <div class=\"top-importers\" ng-show=\"subscore.name=='pagerank' && package.indegree\">\n" +
     "                <h4>\n" +
-    "                    <div class=\"main\"><i class=\"fa fa-recycle\"></i> Reused by</div>\n" +
-    "                    <div class=\"subheading\">\n" +
-    "                        <span class=\"val\">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.\n" +
-    "                      <span class=\"more\" ng-show=\"package.top_neighbors.length < package.indegree\">\n" +
-    "                          (showing the top {{ package.top_neighbors.length }})\n" +
-    "                      </span>\n" +
-    "                    </div>\n" +
+    "                    <i class=\"fa fa-recycle\"></i>\n" +
+    "                    Reused by <span class=\"details\">{{ package.indegree }} projects</span>\n" +
     "                </h4>\n" +
     "\n" +
     "                <div class=\"dep-container\"\n" +
@@ -1450,8 +1445,16 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                            {{ dep.summary }}\n" +
     "                        </div>\n" +
     "                    </div>\n" +
-    "                </div>\n" +
-    "            </div>\n" +
+    "                </div> <!-- end this dep -->\n" +
+    "\n" +
+    "                <span class=\"plus-more btn btn-default btn-xs\"\n" +
+    "                      ng-show=\"package.indegree > package.top_neighbors.length\"\n" +
+    "                      ng-click=\"apiOnly()\">\n" +
+    "                    <i class=\"fa fa-plus\"></i>\n" +
+    "                    <span class=\"val\">{{ package.indegree - package.top_neighbors.length }}</span> more\n" +
+    "                </span>\n" +
+    "\n" +
+    "            </div> <!-- end of the dep list widget -->\n" +
     "        </div>\n" +
     "    </div>\n" +
     "</div>\n" +
@@ -1555,14 +1558,10 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
-    "         popover-title=\"View this page as JSON\"\n" +
-    "         popover-placement=\"right\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
-    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/person/{{ person.id }}\">\n" +
-    "         <i class=\"fa fa-download\"></i>\n" +
-    "         JSON\n" +
+    "         <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "      </a>\n" +
     "\n" +
     "   </div>\n" +
@@ -1956,14 +1955,10 @@ angular.module("tag-page/tag-page.tpl.html", []).run(["$templateCache", function
     "      </div>\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
-    "         popover-title=\"View this page as JSON\"\n" +
-    "         popover-placement=\"right\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
-    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
-    "         href=\"http://localhost:5008/api/leaderboard?type=packages&tag={{ packages.filters.tag }}\">\n" +
-    "         <i class=\"fa fa-download\"></i>\n" +
-    "         JSON\n" +
+    "         href=\"api/leaderboard?type=packages&tag={{ packages.filters.tag }}\">\n" +
+    "         <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "      </a>\n" +
     "\n" +
     "      <!-- we can use this from the people page to print out tag users...\n" +
@@ -2082,14 +2077,10 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "\n" +
     "\n" +
     "      <a class=\"json-link btn btn-default\"\n" +
-    "         popover-title=\"View this page as JSON\"\n" +
-    "         popover-placement=\"right\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
     "         target=\"_self\"\n" +
-    "         popover=\"Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access.\"\n" +
     "         href=\"api/leaderboard?{{ filters.asQueryStr() }}\">\n" +
-    "         <i class=\"fa fa-download\"></i>\n" +
-    "         JSON\n" +
+    "         <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
     "      </a>\n" +
     "\n" +
     "\n" +

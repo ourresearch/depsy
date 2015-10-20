@@ -281,7 +281,7 @@ entity pages
   div.ti-page-sidebar {
     float: left;
     width: 400px;
-    padding: 70px 20px 20px 60px;
+    padding: 70px 20px 100px 60px;
     h3 {
       font-weight: bold;
       font-size: 18px;
@@ -634,6 +634,10 @@ div.package-page {
 
 
       &.contribs {
+        .plus-more {
+          //margin-left: 30px;
+
+        }
         .wheel {
           height: 25px;
           margin-right: 5px;
@@ -664,11 +668,39 @@ div.package-page {
       float:left;
       width: 275px;
       &.overall {
-        .package-percentile {
-          font-size: 106px;
-          line-height: 1;
-          font-weight: bold;
-          color: tan;
+        &.is-academic-true {
+          .non-research-package {display: none;}
+          .metrics {
+            color: tan;
+            .package-percentile {
+              font-size: 90px;
+              margin-top:20px;
+              display: inline-block;
+              line-height: 1;
+              font-weight: bold;
+            }
+            .ti-label {
+              display: inline-block;
+              width: 75px;
+              font-weight: 100;
+              margin-left: 10px;
+            }
+          }
+        }
+        &.is-academic-false {
+          .research-package {display: none;}
+          .heading {
+            font-size: 40px;
+            font-weight: bold;
+            color: #999;
+            margin-top: 34px;
+          }
+          .explanation {
+            a {
+              margin-top: 10px;
+              color: #999;
+            }
+          }
         }
       }
       &.num_downloads { color: @downloadsColor;}
@@ -708,6 +740,7 @@ div.package-page {
         .main-metric {
           font-size: 60px;
         }
+
         .percentile {
           display: inline-block;
           width: 50px;
@@ -729,6 +762,9 @@ div.package-page {
           float: left;
           clear:left;
           max-width: 225px;
+          p {
+            margin-top: 0;
+          }
           .citations-explanation {
             a {
               color: @citationsColor;
@@ -747,10 +783,16 @@ div.package-page {
         h4 {
           font-size: 24px;
           margin-bottom: 20px;
-          div.subheading {
-            font-size: 14px;
+          .details {
+            font-weight: 100;
+            font-size: 80%;
           }
         }
+
+        .plus-more {
+          margin-left: 5px;
+        }
+
         .dep-container {
           color: #333;
           margin-bottom: 20px;
@@ -1277,7 +1319,9 @@ ul {
   }
 }
 
-
+.fa-cogs { // hack
+  margin-right: 4px;
+}
 
 
 /* Styling for the ngProgress itself */

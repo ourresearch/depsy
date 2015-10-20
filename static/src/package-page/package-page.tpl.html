@@ -55,13 +55,21 @@
 
 
         <div class="sidebar-section contribs">
-            <h3>Key contributors</h3>
+            <h3>{{ package.contribs.length }} contributors</h3>
             <div class="contrib"
                  ng-repeat="person_package in package.top_contribs | orderBy: '-credit'">
                 <wheel></wheel>
                 <img class="person-icon" src="{{ person_package.icon_small }}" alt=""/>
                 <a class="name" href="person/{{ person_package.id }}">{{ person_package.name }}</a>
             </div>
+
+            <span class="plus-more btn btn-default btn-xs"
+                  ng-show="package.contribs.length > package.top_contribs.length"
+                  ng-click="apiOnly()">
+                <i class="fa fa-plus"></i>
+                <span class="val">{{ package.contribs.length - package.top_contribs.length }}</span> more
+            </span>
+
         </div>
 
 
@@ -69,14 +77,10 @@
 
         <div class="sidebar-section actions">
             <a class="json-link btn btn-default"
-               popover-title="View this page as JSON"
-               popover-placement="right"
-               popover-trigger="mouseenter"
                target="_self"
-               popover="Everything here is open data, free to use for your own projects. You can also check out our API for more systematic access."
                href="api/package/{{ package.host }}/{{ package.name }}">
-                <i class="fa fa-download"></i>
-                JSON
+                <i class="fa fa-cogs"></i>
+                View in API
             </a>
 
             <!--
@@ -93,15 +97,18 @@
     <div class="ti-page-body">
 
 
-        <div class="subscore package-page-subscore overall">
-            <div class="body">
+        <div class="subscore package-page-subscore overall is-academic-{{ package.is_academic }}">
+            <div class="body research-package">
                 <div class="metrics">
                     <span class="package-percentile">
                         {{ format.round(package.impact_percentile * 100) }}
                     </span>
+                    <span class="ti-label">
+                        percentile impact overall
+                    </span>
                 </div>
                 <div class="explanation">
-                    Overall impact percentile compared to all research software on
+                    Compared to all research software on
                     <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
                     <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>,
                     based on relative
@@ -110,6 +117,19 @@
                     <span class="num_mentions">citation.</span>
                 </div>
             </div>
+
+            <div class="body non-research-package">
+                <div class="heading">
+                    Not research software
+                </div>
+                <div class="explanation">
+                    Based on name, tags, and description, we're guessing this isn't
+                    research software—so we haven't calculated impact percentile information. <br>
+                    <a class="btn btn-default btn-xs" href="http://twitter.com/depsy_org">did we guess wrong?</a>
+                </div>
+
+            </div>
+
         </div>
 
         <div class="subscore package-page-subscore {{ subscore.name }}"
@@ -120,7 +140,7 @@
             </h3>
             <div class="body">
                 <div class="metrics">
-                    <div class="impact-stick vis">
+                    <div class="impact-stick vis" ng-show="package.is_academic">
                         <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.percentile * 100 }}%">
                         </div>
 
@@ -128,7 +148,7 @@
                     <span class="main-metric">
                         {{ format.short(subscore.val) }}
                     </span>
-                    <span class="percentile">
+                    <span class="percentile" ng-show="package.is_academic">
                         <span class="val">
                             {{ format.round(subscore.percentile * 100) }}
                         </span>
@@ -152,14 +172,19 @@
                         <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
                     </div>
                     <div class="pagerank-explanation" ng-show="subscore.name=='pagerank'">
-                        Measure of how often this package is imported by both GitHub projects,
-                        and other
-                        <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
-                        <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
-                        packages.
+                        <p>
+                            Measures how often this package is imported by
 
-                        The number is scaled, log-transformed PageRank representing
-                        position and importance in the dependency network.
+                            <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
+                            <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
+                            and GitHub projects, based on its PageRank in the dependency network.
+
+                        </p>
+                        <p>
+                            A higher number means this package is imported more frequently,
+                            more uniquely, and by more important projects.
+                        </p>
+
 
                     </div>
                 </div>
@@ -175,13 +200,8 @@
             <!-- Top Importers. This is just for the pagerank subscore -->
             <div class="top-importers" ng-show="subscore.name=='pagerank' && package.indegree">
                 <h4>
-                    <div class="main"><i class="fa fa-recycle"></i> Reused by</div>
-                    <div class="subheading">
-                        <span class="val">{{ package.indegree }}</span> other projects on {{ package.host }} and GitHub.
-                      <span class="more" ng-show="package.top_neighbors.length < package.indegree">
-                          (showing the top {{ package.top_neighbors.length }})
-                      </span>
-                    </div>
+                    <i class="fa fa-recycle"></i>
+                    Reused by <span class="details">{{ package.indegree }} projects</span>
                 </h4>
 
                 <div class="dep-container"
@@ -240,8 +260,16 @@
                             {{ dep.summary }}
                         </div>
                     </div>
-                </div>
-            </div>
+                </div> <!-- end this dep -->
+
+                <span class="plus-more btn btn-default btn-xs"
+                      ng-show="package.indegree > package.top_neighbors.length"
+                      ng-click="apiOnly()">
+                    <i class="fa fa-plus"></i>
+                    <span class="val">{{ package.indegree - package.top_neighbors.length }}</span> more
+                </span>
+
+            </div> <!-- end of the dep list widget -->
         </div>
     </div>
 </div>
