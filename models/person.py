@@ -38,9 +38,6 @@ class Person(db.Model):
     pagerank = db.Column(db.Float)
     num_downloads = db.Column(db.Integer)
     num_citations = db.Column(db.Integer)
-    pagerank_score = db.Column(db.Float)
-    num_downloads_score = db.Column(db.Float)
-    num_citations_score = db.Column(db.Float)            
     parsed_name = db.Column(JSONB)
     is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
@@ -198,8 +195,8 @@ class Person(db.Model):
             cls.num_citations,
             cls.impact
         )
-        q = q.filter(cls.impact != None)  # only academic contributions
-        q = q.filter(cls.impact > 0)  # only academic contributions
+        q = q.filter(cls.num_downloads != None)  # only academic contributions, so would have some fractional downloads
+        q = q.filter(cls.num_downloads > 0)  # only academic contributions
         rows = q.all()
 
         ref_list["num_downloads"] = sorted([row[0] for row in rows if row[0] != None])
@@ -219,6 +216,7 @@ class Person(db.Model):
             percentile = float(matching_index) / len(refset)
         except ValueError:
             # not in index.  maybe has no impact because no academic contributions
+            print u"not setting percentile for {}; looks like not academic".format(self.name)
             percentile = None
         return percentile
 
@@ -271,9 +269,9 @@ class Person(db.Model):
 
     def set_impact(self):
 
-        if self.pagerank_percentile and self.num_downloads_percentile and self.num_citations_percentile:
+        try:
             self.impact = (self.pagerank_percentile + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
-        else:
+        except ValueError:  #something was null
             self.impact = 0
 
     def set_scores(self):
