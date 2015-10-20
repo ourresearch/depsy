@@ -431,13 +431,33 @@ div.entity-page.person-page {
 
     // copy-pasted from package page sidebar....
     .sidebar-section.impact {
+      margin-top: 50px;
+      h3 {
+        font-size: 30px;
+        margin-bottom: 5px;
+        span.val {
+          font-weight: 900;
+          font-size: 163%;
+        }
+        span.unit {
+          font-size: 66%;
+          font-weight: 100;
+          display: inline-block;
+          width: 75px;
+        }
+      }
+      span.descr {
+        margin-bottom: 15px;
+        color: #777;
+        display: inline-block;
+      }
       .subscore {
-        margin-bottom: 7px;
+        margin-bottom: 2px;
         .clearfix();
         clear:left;
         &.num_downloads { color: @downloadsColor;}
         &.pagerank { color: @pagerankColor;}
-        &.num_citations { color: @citationsColor;}
+        &.num_citations, &.num_mentions { color: @citationsColor;}
         .bar-outer {
           margin-top: 9px;
           height: 10px;
@@ -450,7 +470,7 @@ div.entity-page.person-page {
             background: #555;
             &.num_downloads { background: @downloadsColor;}
             &.pagerank { background: @pagerankColor;}
-            &.num_citations { background: @citationsColor;}
+            &.num_citations, &.num_mentions { background: @citationsColor;}
           }
         }
         .subscore-label {
