@@ -473,6 +473,7 @@ div.package-page div.ti-page-sidebar .sidebar-header .about .meta .name {
   font-weight: bold;
 }
 div.package-page div.ti-page-sidebar .sidebar-header .about .meta .name i {
+  white-space: nowrap;
   font-size: 50%;
 }
 div.package-page div.ti-page-sidebar .sidebar-header .about .meta .summary {
@@ -976,6 +977,33 @@ span.snippet span.contribs a.contrib {
 .impact-popover.package div.metric span.descr span.paren {
   font-size: 12px;
 }
+#footer .email-signup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid #ddd;
+  padding: 20px;
+}
+#footer .email-signup div.close {
+  position: absolute;
+  top: 10px;
+  opacity: .6;
+  right: 10px;
+}
+#footer .email-signup div.close:hover {
+  opacity: .9;
+}
+#footer .email-signup div.close i.fa-close {
+  font-size: 30px;
+}
+#footer .email-signup #mc_embed_signup {
+  width: 500px;
+  margin: 0 auto;
+}
 .language-icon {
   font-weight: 100;
   text-align: center;
@@ -1033,14 +1061,14 @@ img.wheel {
 a.tag {
   border: 1px solid #ccc;
   font-size: 13px;
-  line-height: 2;
   -webkit-border-radius: 20px;
   -moz-border-radius: 20px;
   border-radius: 20px;
   padding: 0 9px 2px;
-  margin: 0 2px;
+  margin: 2px;
   color: #999;
   cursor: pointer;
+  display: inline-block;
 }
 a.tag:hover {
   text-decoration: none;

@@ -532,6 +532,8 @@ div.package-page {
             font-size: 38px;
             font-weight: bold;
             i {
+              white-space: nowrap;
+
               font-size: 50%;
             }
           }
@@ -1131,6 +1133,37 @@ span.snippet {
 }
 
 
+#footer {
+  .email-signup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left:0;
+    right:0;
+    height: 150px;
+    background: rgba(256, 256, 256, .9);
+    border-top: 1px solid #ddd;
+    padding: 20px;
+    div.close {
+      position: absolute;
+      top: 10px;
+      opacity: .6;
+      right: 10px;
+      &:hover {
+        opacity: .9;
+      }
+      i.fa-close {
+        font-size: 30px;
+      }
+    }
+    #mc_embed_signup {
+      width: 500px;
+      margin: 0 auto;
+    }
+  }
+}
+
+
 .language-icon {
   font-weight: 100;
   text-align: center;
@@ -1195,12 +1228,12 @@ img.wheel {
 a.tag {
   border: 1px solid #ccc;
   font-size: 13px;
-  line-height: 2;
   .rounded(20px);
   padding: 0 9px 2px;
-  margin: 0 2px;
+  margin: 2px;
   color: #999;
   cursor: pointer;
+  display: inline-block;
   &:hover {
     text-decoration: none;
     background: #eee;

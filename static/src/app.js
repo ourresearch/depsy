@@ -13,6 +13,7 @@ angular.module('app', [
   'tagPage',
   'packagePage',
   'header',
+  'footer',
   'snippet',
 
   'directives.wheel',

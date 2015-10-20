@@ -1,4 +1,4 @@
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/dep-node.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -36,6 +36,36 @@ angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function(
     "     popover-trigger=\"mouseenter\"\n" +
     "     ng-src='static/img/wheel/{{ wheelVal }}.png' />\n" +
     "");
+}]);
+
+angular.module("footer/footer.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("footer/footer.tpl.html",
+    "<div id=\"footer\" ng-controller=\"footerCtrl\">\n" +
+    "    <div class=\"email-signup\">\n" +
+    "        <div class=\"close\" ng-click=\"dismissEmailSignup()\">\n" +
+    "            dismiss\n" +
+    "            <i class=\"dismiss fa fa-close\"></i>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <!-- Begin MailChimp Signup Form -->\n" +
+    "        <div id=\"mc_embed_signup\">\n" +
+    "            <form action=\"//impactstory.us4.list-manage.com/subscribe/post?u=26fcc4e14b24319755845d9e0&amp;id=c9dd1339cd\" method=\"post\" id=\"mc-embedded-subscribe-form\" name=\"mc-embedded-subscribe-form\" class=\"validate\" target=\"_blank\" novalidate>\n" +
+    "\n" +
+    "                <div id=\"mc_embed_signup_scroll\" class=\"input-group\">\n" +
+    "                    <input class=\"form-control text-input\" type=\"email\" value=\"\" name=\"EMAIL\" class=\"email\" id=\"mce-EMAIL\" placeholder=\"email me when it's ready\" required>\n" +
+    "               <span class=\"input-group-btn\">\n" +
+    "                  <input class=\"btn btn-default\" type=\"submit\" value=\"Go\" name=\"subscribe\" id=\"mc-embedded-subscribe\" class=\"button\">\n" +
+    "               </span>\n" +
+    "\n" +
+    "                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->\n" +
+    "                    <div style=\"position: absolute; left: -5000px;\"><input type=\"text\" name=\"b_26fcc4e14b24319755845d9e0_c9dd1339cd\" tabindex=\"-1\" value=\"\"></div>\n" +
+    "                </div>\n" +
+    "            </form>\n" +
+    "        </div>\n" +
+    "        <!--End mc_embed_signup-->\n" +
+    "    </div>\n" +
+    "\n" +
+    "</div>");
 }]);
 
 angular.module("header/header.tpl.html", []).run(["$templateCache", function($templateCache) {
