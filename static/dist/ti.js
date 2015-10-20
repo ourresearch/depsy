@@ -1254,7 +1254,9 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "        <div class=\"sidebar-section tags\" ng-if=\"package.tags.length\">\n" +
     "            <h3>Tags</h3>\n" +
     "            <div class=\"tags\">\n" +
-    "                <a class=\"tag\" ng-repeat=\"tag in package.tags\">\n" +
+    "                <a class=\"tag\"\n" +
+    "                   href=\"tag/{{ format.doubleUrlEncode(tag) }}\"\n" +
+    "                   ng-repeat=\"tag in package.tags\">\n" +
     "                    {{ tag }}\n" +
     "                </a>\n" +
     "            </div>\n" +

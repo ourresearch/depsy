@@ -44,7 +44,9 @@
         <div class="sidebar-section tags" ng-if="package.tags.length">
             <h3>Tags</h3>
             <div class="tags">
-                <a class="tag" ng-repeat="tag in package.tags">
+                <a class="tag"
+                   href="tag/{{ format.doubleUrlEncode(tag) }}"
+                   ng-repeat="tag in package.tags">
                     {{ tag }}
                 </a>
             </div>
