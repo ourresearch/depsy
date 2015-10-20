@@ -193,10 +193,6 @@ class Package(db.Model):
         return self.num_stars
 
     @property
-    def engagement_score(self):
-        return 442
-
-    @property
     def engagement_percentile(self):
         try:
             return self.num_stars / 100
@@ -218,7 +214,6 @@ class Package(db.Model):
         ret = [
             {
                 "name": "num_downloads",
-                "score": self.display_num_downloads_score,
                 "percentile": self.num_downloads_percentile,
                 "val": self.num_downloads,
                 "display_name": "Downloads",
@@ -227,7 +222,6 @@ class Package(db.Model):
             },
             {
                 "name": "num_mentions",
-                "score": self.display_num_citations_score,
                 "percentile": self.num_citations_percentile,
                 "val": self.num_citations,
                 "display_name": "Citations",
@@ -236,8 +230,7 @@ class Package(db.Model):
             },
             {
                 "name": "pagerank",
-                "score": self.display_pagerank_score,
-                "percentile": self.pagerank_percentile,
+                "percentile": self.display_pagerank_percentile,
                 "val": self.display_pagerank_score,
                 "display_name": "Software reuse",
                 "icon": "fa-recycle",
@@ -998,13 +991,20 @@ class Package(db.Model):
     @property
     def display_pagerank_score(self):
         #if no pagerank, sub it for downloads
-        if not self.pagerank_score:
+        if self.has_estimated_pagerank:
             return self.num_downloads_score
 
         pagerank_score = self.pagerank_score
         if pagerank_score < 1:
             pagerank_score = 0
         return min(pagerank_score, 1000)
+
+    @property
+    def display_pagerank_percentile(self):
+        #if no pagerank, sub it for downloads
+        if self.has_estimated_pagerank:
+            return self.num_downloads_percentile
+        return self.pagerank_percentile
 
 
     @property

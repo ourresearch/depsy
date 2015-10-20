@@ -84,7 +84,6 @@ class Person(db.Model):
                 "icon": "fa-download", 
                 "name": "num_downloads",
                 "percentile": self.num_downloads_percentile,
-                "score": self.num_downloads_percentile * 1000.0,
                 "val": self.num_downloads
             })
         ret.append({
@@ -92,7 +91,6 @@ class Person(db.Model):
                 "icon": "fa-recycle", 
                 "name": "pagerank", 
                 "percentile": self.pagerank_percentile,
-                "score": self.pagerank_percentile * 1000.0,
                 "val": self.pagerank
             })
         ret.append({
@@ -100,7 +98,6 @@ class Person(db.Model):
                 "icon": "fa-file-text-o", 
                 "name": "num_mentions", 
                 "percentile": self.num_citations_percentile,
-                "score": self.num_citations_percentile * 1000.0,
                 "val": self.num_citations
             })
 
