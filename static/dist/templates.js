@@ -41,28 +41,44 @@ angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function(
 angular.module("footer/footer.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("footer/footer.tpl.html",
     "<div id=\"footer\" ng-controller=\"footerCtrl\">\n" +
-    "    <div class=\"email-signup\">\n" +
-    "        <div class=\"close\" ng-click=\"dismissEmailSignup()\">\n" +
-    "            dismiss\n" +
-    "            <i class=\"dismiss fa fa-close\"></i>\n" +
-    "        </div>\n" +
     "\n" +
-    "        <!-- Begin MailChimp Signup Form -->\n" +
-    "        <div id=\"mc_embed_signup\">\n" +
-    "            <form action=\"//impactstory.us4.list-manage.com/subscribe/post?u=26fcc4e14b24319755845d9e0&amp;id=c9dd1339cd\" method=\"post\" id=\"mc-embedded-subscribe-form\" name=\"mc-embedded-subscribe-form\" class=\"validate\" target=\"_blank\" novalidate>\n" +
     "\n" +
-    "                <div id=\"mc_embed_signup_scroll\" class=\"input-group\">\n" +
-    "                    <input class=\"form-control text-input\" type=\"email\" value=\"\" name=\"EMAIL\" class=\"email\" id=\"mce-EMAIL\" placeholder=\"email me when it's ready\" required>\n" +
-    "               <span class=\"input-group-btn\">\n" +
-    "                  <input class=\"btn btn-default\" type=\"submit\" value=\"Go\" name=\"subscribe\" id=\"mc-embedded-subscribe\" class=\"button\">\n" +
-    "               </span>\n" +
     "\n" +
-    "                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->\n" +
-    "                    <div style=\"position: absolute; left: -5000px;\"><input type=\"text\" name=\"b_26fcc4e14b24319755845d9e0_c9dd1339cd\" tabindex=\"-1\" value=\"\"></div>\n" +
-    "                </div>\n" +
-    "            </form>\n" +
-    "        </div>\n" +
-    "        <!--End mc_embed_signup-->\n" +
+    "    <div class=\"links\">\n" +
+    "        <a href=\"/about\">\n" +
+    "            <i class=\"fa fa-info-circle\"></i>\n" +
+    "            About\n" +
+    "        </a>\n" +
+    "        <a href=\"https://github.com/Impactstory/depsy\">\n" +
+    "            <i class=\"fa fa-github-alt\"></i>\n" +
+    "            Source code\n" +
+    "        </a>\n" +
+    "        <a href=\"https://twitter.com/depsy_org\">\n" +
+    "            <i class=\"fa fa-twitter\"></i>\n" +
+    "            Twitter\n" +
+    "        </a>\n" +
+    "    </div>\n" +
+    "\n" +
+    "\n" +
+    "    <div id=\"mc_embed_signup\">\n" +
+    "        <form action=\"//impactstory.us4.list-manage.com/subscribe/post?u=26fcc4e14b24319755845d9e0&amp;id=c9dd1339cd\" method=\"post\" id=\"mc-embedded-subscribe-form\" name=\"mc-embedded-subscribe-form\" class=\"validate\" target=\"_blank\" novalidate>\n" +
+    "\n" +
+    "            <div id=\"mc_embed_signup_scroll\" class=\"input-group\">\n" +
+    "                <input class=\"form-control text-input\" type=\"email\" value=\"\" name=\"EMAIL\" class=\"email\" id=\"mce-EMAIL\" placeholder=\"Join the mailing list\" required>\n" +
+    "           <span class=\"input-group-btn\">\n" +
+    "              <input class=\"btn btn-default\" type=\"submit\" value=\"Go\" name=\"subscribe\" id=\"mc-embedded-subscribe\" class=\"button\">\n" +
+    "           </span>\n" +
+    "\n" +
+    "                <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->\n" +
+    "                <div style=\"position: absolute; left: -5000px;\"><input type=\"text\" name=\"b_26fcc4e14b24319755845d9e0_c9dd1339cd\" tabindex=\"-1\" value=\"\"></div>\n" +
+    "            </div>\n" +
+    "        </form>\n" +
+    "    </div>\n" +
+    "\n" +
+    "    <div class=\"built-by\">\n" +
+    "        Built with <i class=\"fa fa-heart\"></i> at <a href=\"http://impactstory.org/about\">Impactstory</a>,\n" +
+    "        <br>\n" +
+    "        with support from the National Science Foundation\n" +
     "    </div>\n" +
     "\n" +
     "</div>");

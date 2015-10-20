@@ -19,6 +19,12 @@
 body {
   font-family: lato, helvetica, arial, sans-serif;
   padding-top: 64px;  // hack, header height
+  .view-wrapper {
+    min-height: 100%;
+    .clearfix();
+    clear: both;
+    margin-bottom: 50px;
+  }
   .wrapper {
     width: 1200px;
     margin: 0 auto;
@@ -1196,31 +1202,74 @@ span.snippet {
 
 
 #footer {
-  .email-signup {
-    display: none;
-    position: fixed;
-    bottom: 0;
-    left:0;
-    right:0;
-    height: 150px;
-    background: rgba(256, 256, 256, .9);
-    border-top: 1px solid #ddd;
-    padding: 20px;
-    div.close {
-      position: absolute;
-      top: 10px;
-      opacity: .6;
-      right: 10px;
-      &:hover {
-        opacity: .9;
-      }
-      i.fa-close {
-        font-size: 30px;
+  background: @mainColor;
+  padding: 30px 60px 20px;
+  margin-top: 50px;
+  .clearfix();
+  clear:both;
+  width: 100%;
+  float:left;
+  .built-by {
+    font-size: 14px;
+    font-weight: 100;
+    color: #fff;
+    margin: 50px 0 0 0 ;
+    float: left;
+    clear: left;
+    .fa-heart {font-size: 80%}
+    a {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
+  .links {
+    font-size: 20px;
+    font-weight: 100;
+    float: left;
+    margin-right: 10px;
+    margin-top: 5px;
+    a {
+      margin-right: 24px;
+      margin-bottom: 5px;
+      //display: block;
+      color: #fff;
+      i {
+        margin-right: 5px;
+        font-weight: normal;
       }
     }
-    #mc_embed_signup {
-      width: 500px;
-      margin: 0 auto;
+  }
+  #mc_embed_signup {
+    float: right;
+    clear: right;
+    form {
+      margin-bottom: 0;
+      #mc_embed_signup_scroll {
+        width: 350px;
+        margin: 0 auto;
+        label {
+          display: none;
+        }
+        input {
+          border: none;
+          .rounded(0);
+          font-size: 16px;
+          height: 36px;
+          font-weight: 100;
+          .border-radius(0, 0, 5px, 5px);
+          &.text-input {
+          }
+          &.btn {
+            background: #ccc;
+            color: #333;
+            border:none;
+            .border-radius(5px, 5px, 0, 0);
+            &:hover {
+              background: #bbb;
+            }
+          }
+        }
+      }
     }
   }
 }

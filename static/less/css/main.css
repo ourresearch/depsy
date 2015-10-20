@@ -9,6 +9,19 @@ body {
   font-family: lato, helvetica, arial, sans-serif;
   padding-top: 64px;
 }
+body .view-wrapper {
+  min-height: 100%;
+  clear: both;
+  margin-bottom: 50px;
+}
+body .view-wrapper:before,
+body .view-wrapper:after {
+  content: " ";
+  display: table;
+}
+body .view-wrapper:after {
+  clear: both;
+}
 body .wrapper {
   width: 1200px;
   margin: 0 auto;
@@ -1034,32 +1047,113 @@ span.snippet span.contribs a.contrib {
 .impact-popover.package div.metric span.descr span.paren {
   font-size: 12px;
 }
-#footer .email-signup {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 150px;
-  background: rgba(255, 255, 255, 0.9);
-  border-top: 1px solid #ddd;
-  padding: 20px;
+#footer {
+  background: #00aeef;
+  padding: 30px 60px 20px;
+  margin-top: 50px;
+  clear: both;
+  width: 100%;
+  float: left;
 }
-#footer .email-signup div.close {
-  position: absolute;
-  top: 10px;
-  opacity: .6;
-  right: 10px;
+#footer:before,
+#footer:after {
+  content: " ";
+  display: table;
 }
-#footer .email-signup div.close:hover {
-  opacity: .9;
+#footer:after {
+  clear: both;
 }
-#footer .email-signup div.close i.fa-close {
-  font-size: 30px;
+#footer .built-by {
+  font-size: 14px;
+  font-weight: 100;
+  color: #fff;
+  margin: 50px 0 0 0 ;
+  float: left;
+  clear: left;
 }
-#footer .email-signup #mc_embed_signup {
-  width: 500px;
+#footer .built-by .fa-heart {
+  font-size: 80%;
+}
+#footer .built-by a {
+  color: #fff;
+  text-decoration: underline;
+}
+#footer .links {
+  font-size: 20px;
+  font-weight: 100;
+  float: left;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+#footer .links a {
+  margin-right: 24px;
+  margin-bottom: 5px;
+  color: #fff;
+}
+#footer .links a i {
+  margin-right: 5px;
+  font-weight: normal;
+}
+#footer #mc_embed_signup {
+  float: right;
+  clear: right;
+}
+#footer #mc_embed_signup form {
+  margin-bottom: 0;
+}
+#footer #mc_embed_signup form #mc_embed_signup_scroll {
+  width: 350px;
   margin: 0 auto;
+}
+#footer #mc_embed_signup form #mc_embed_signup_scroll label {
+  display: none;
+}
+#footer #mc_embed_signup form #mc_embed_signup_scroll input {
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  font-size: 16px;
+  height: 36px;
+  font-weight: 100;
+  -webkit-border-top-right-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-topleft: 5px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+#footer #mc_embed_signup form #mc_embed_signup_scroll input.btn {
+  background: #ccc;
+  color: #333;
+  border: none;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 0;
+  -webkit-border-top-left-radius: 0;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-topleft: 0;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-background-clip: padding-box;
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+}
+#footer #mc_embed_signup form #mc_embed_signup_scroll input.btn:hover {
+  background: #bbb;
 }
 .language-icon {
   font-weight: 100;
