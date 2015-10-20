@@ -29,6 +29,7 @@ class Person(db.Model):
     github_login = db.Column(db.Text)
     github_about = db.deferred(db.Column(JSONB))
     bucket = db.Column(JSONB)
+    num_packages = db.Column(db.Integer)
     impact = db.Column(db.Float)
     impact_rank = db.Column(db.Integer)
     impact_percentile = db.Column(db.Float)
@@ -300,6 +301,13 @@ class Person(db.Model):
         self.set_num_citations_percentile(refsets_dict["num_citations"])
         self.set_impact_percentile(refsets_dict["impact"])
 
+    def set_num_packages(self):
+        # run this:
+        # update person set num_packages=c
+        # from (select person_id, count(distinct contribution.package_id) as c from contribution group by person_id) s
+        # where person.id=s.person_id
+        pass
+
     def set_github_about(self):
         if self.github_login is None:
             return None
@@ -324,9 +332,11 @@ class Person(db.Model):
         use_for_pagerank = self.pagerank_percentile
         if not use_for_pagerank:
             use_for_pagerank = self.num_downloads_percentile
-        combo = (use_for_pagerank + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
-        self.impact = combo
 
+        if use_for_pagerank and self.num_downloads_percentile and self.num_citations_percentile:
+            self.impact = (use_for_pagerank + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
+        else:
+            self.impact = 0
 
     def set_scores(self):
         self.pagerank = 0
