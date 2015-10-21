@@ -30,7 +30,7 @@ angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", f
 
 angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/wheel.tpl.html",
-    "<img class='wheel'\n" +
+    "<img class='wheel popover-right'\n" +
     "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
     "     popover-title=\"{{ percentCredit }}% credit\"\n" +
     "     popover-placement=\"right\"\n" +
@@ -440,15 +440,32 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                    <!-- CRAN or PyPi package -->\n" +
     "                    <div class=\"package dep\" ng-if=\"dep.host\">\n" +
     "                        <div class=\"top-line\">\n" +
-    "                            <div class=\"vis impact-stick is-academic-{{ dep.is_academic }}\"\n" +
-    "                                 popover-trigger=\"mouseenter\"\n" +
-    "                                 popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
-    "                                 popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
-    "                                <div ng-repeat=\"subscore in dep.subscores\"\n" +
-    "                                     class=\"bar-inner {{ subscore.name }}\"\n" +
-    "                                     style=\"width: {{ subscore.percentile * 33.333 }}%;\">\n" +
+    "\n" +
+    "                            <div class=\"left-metrics is-academic\" ng-show=\"dep.is_academic\">\n" +
+    "                                <div class=\"vis impact-stick is-academic-{{ dep.is_academic }}\"\n" +
+    "                                     popover-trigger=\"mouseenter\"\n" +
+    "                                     popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
+    "                                     popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
+    "                                    <div ng-repeat=\"subscore in dep.subscores\"\n" +
+    "                                         class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                                         style=\"width: {{ subscore.percentile * 33.333 }}%;\">\n" +
+    "                                    </div>\n" +
     "                                </div>\n" +
+    "\n" +
     "                            </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "                            <span class=\"left-metrics not-academic\"\n" +
+    "                                  ng-show=\"!dep.is_academic\"\n" +
+    "                                  popover=\"Based on name, tags, and description, we're guessing this isn't research software—so we haven't collected detailed impact info.\"\n" +
+    "                                  popover-trigger=\"mouseenter\">\n" +
+    "                                <span class=\"non-research\">\n" +
+    "                                    non- research\n" +
+    "                                </span>\n" +
+    "\n" +
+    "                            </span>\n" +
+    "\n" +
     "\n" +
     "                            <a class=\"name\" href=\"package/{{ dep.language }}/{{ dep.name }}\">\n" +
     "                                {{ dep.name }}\n" +

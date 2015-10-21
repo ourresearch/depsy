@@ -225,15 +225,32 @@
                     <!-- CRAN or PyPi package -->
                     <div class="package dep" ng-if="dep.host">
                         <div class="top-line">
-                            <div class="vis impact-stick is-academic-{{ dep.is_academic }}"
-                                 popover-trigger="mouseenter"
-                                 popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
-                                 popover-template="'snippet/package-impact-popover.tpl.html'">
-                                <div ng-repeat="subscore in dep.subscores"
-                                     class="bar-inner {{ subscore.name }}"
-                                     style="width: {{ subscore.percentile * 33.333 }}%;">
+
+                            <div class="left-metrics is-academic" ng-show="dep.is_academic">
+                                <div class="vis impact-stick is-academic-{{ dep.is_academic }}"
+                                     popover-trigger="mouseenter"
+                                     popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
+                                     popover-template="'snippet/package-impact-popover.tpl.html'">
+                                    <div ng-repeat="subscore in dep.subscores"
+                                         class="bar-inner {{ subscore.name }}"
+                                         style="width: {{ subscore.percentile * 33.333 }}%;">
+                                    </div>
                                 </div>
+
                             </div>
+
+
+
+                            <span class="left-metrics not-academic"
+                                  ng-show="!dep.is_academic"
+                                  popover="Based on name, tags, and description, we're guessing this isn't research software—so we haven't collected detailed impact info."
+                                  popover-trigger="mouseenter">
+                                <span class="non-research">
+                                    non- research
+                                </span>
+
+                            </span>
+
 
                             <a class="name" href="package/{{ dep.language }}/{{ dep.name }}">
                                 {{ dep.name }}
