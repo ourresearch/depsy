@@ -477,6 +477,10 @@ div.entity-page.person-page div.ti-page-sidebar .top-tags .tags span.tag {
 div.entity-page.person-page div.ti-page-sidebar .top-collabs {
   margin-top: 50px;
 }
+div.entity-page.person-page div.ti-page-sidebar .top-collabs .name {
+  vertical-align: 2px;
+  margin-left: 3px;
+}
 div.entity-page.person-page div.ti-page-sidebar .top-collabs:before,
 div.entity-page.person-page div.ti-page-sidebar .top-collabs:after {
   content: " ";
@@ -594,19 +598,24 @@ div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .subscore
   margin-left: 10px;
   line-height: 1.3;
 }
-div.package-page div.ti-page-sidebar .sidebar-section.contribs .wheel {
-  height: 25px;
-  margin-right: 5px;
+div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib {
+  margin-bottom: 15px;
 }
-div.package-page div.ti-page-sidebar .sidebar-section.contribs .contrib {
-  margin-bottom: 20px;
+div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib .wheel {
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: -4px;
 }
-div.package-page div.ti-page-sidebar .sidebar-section.contribs .contrib a {
+div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib .impact-stick {
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib a {
   color: #333;
   font-style: italic;
   font-size: 16px;
 }
-div.package-page div.ti-page-sidebar .sidebar-section.contribs .contrib img.person-icon {
+div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib img.person-icon {
   height: 25px;
   margin-right: 5px;
   -webkit-border-radius: 20px;
@@ -965,8 +974,22 @@ span.snippet span.contribs a.contrib {
   display: inline-block;
   height: 15px;
   background: #fafafa;
+  background: #eee;
   text-align: right;
   z-index: -1;
+  position: relative;
+}
+.impact-stick .none {
+  font-size: 10px;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  color: #555;
+  text-align: center;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .impact-stick .bar-inner {
   display: inline-block;

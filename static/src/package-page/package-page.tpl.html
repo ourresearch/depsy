@@ -54,12 +54,26 @@
 
 
 
-        <div class="sidebar-section contribs">
+        <div class="sidebar-section top-contribs">
             <h3>{{ package.contribs.length }} contributors</h3>
             <div class="contrib"
                  ng-repeat="person_package in package.top_contribs | orderBy: '-credit'">
                 <wheel></wheel>
+
+                  <div class="vis impact-stick">
+                      <div class="none" ng-show="person_package.subscores.length == 0">
+                          none
+                      </div>
+                     <div class="bar-inner {{ subscore.name }}"
+                          style="width: {{ subscore.percentile * 33.33333 }}%;"
+                          ng-repeat="subscore in person_package.subscores">
+                     </div>
+                  </div>
+
+                <!--
                 <img class="person-icon" src="{{ person_package.icon_small }}" alt=""/>
+                -->
+
                 <a class="name" href="person/{{ person_package.id }}">{{ person_package.name }}</a>
             </div>
 

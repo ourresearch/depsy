@@ -82,8 +82,22 @@
             <a class="collab person-mini"
                href="person/{{ collab.id }}"
                ng-repeat="collab in person.top_collabs | orderBy: '-collab_score'">
-               <img src="{{ collab.icon_small }}" alt=""/>
+
+              <div class="vis impact-stick">
+                  <div class="none" ng-show="collab.subscores.length == 0">
+                      none
+                  </div>
+                 <div class="bar-inner {{ subscore.name }}"
+                      style="width: {{ subscore.percentile * 33.33333 }}%;"
+                      ng-repeat="subscore in collab.subscores">
+                 </div>
+              </div>
+
+
+
+
                 <!--
+               <img src="{{ collab.icon_small }}" alt=""/>
                <span class="impact">{{ format.short(collab.impact) }}</span>
                -->
                <span class="name">{{ collab.name }}</span>

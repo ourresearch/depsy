@@ -1255,12 +1255,26 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "\n" +
     "\n" +
-    "        <div class=\"sidebar-section contribs\">\n" +
+    "        <div class=\"sidebar-section top-contribs\">\n" +
     "            <h3>{{ package.contribs.length }} contributors</h3>\n" +
     "            <div class=\"contrib\"\n" +
     "                 ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
     "                <wheel></wheel>\n" +
+    "\n" +
+    "                  <div class=\"vis impact-stick\">\n" +
+    "                      <div class=\"none\" ng-show=\"person_package.subscores.length == 0\">\n" +
+    "                          none\n" +
+    "                      </div>\n" +
+    "                     <div class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                          style=\"width: {{ subscore.percentile * 33.33333 }}%;\"\n" +
+    "                          ng-repeat=\"subscore in person_package.subscores\">\n" +
+    "                     </div>\n" +
+    "                  </div>\n" +
+    "\n" +
+    "                <!--\n" +
     "                <img class=\"person-icon\" src=\"{{ person_package.icon_small }}\" alt=\"\"/>\n" +
+    "                -->\n" +
+    "\n" +
     "                <a class=\"name\" href=\"person/{{ person_package.id }}\">{{ person_package.name }}</a>\n" +
     "            </div>\n" +
     "\n" +
@@ -1563,8 +1577,22 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "            <a class=\"collab person-mini\"\n" +
     "               href=\"person/{{ collab.id }}\"\n" +
     "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
-    "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
+    "\n" +
+    "              <div class=\"vis impact-stick\">\n" +
+    "                  <div class=\"none\" ng-show=\"collab.subscores.length == 0\">\n" +
+    "                      none\n" +
+    "                  </div>\n" +
+    "                 <div class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                      style=\"width: {{ subscore.percentile * 33.33333 }}%;\"\n" +
+    "                      ng-repeat=\"subscore in collab.subscores\">\n" +
+    "                 </div>\n" +
+    "              </div>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "\n" +
     "                <!--\n" +
+    "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
     "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
     "               -->\n" +
     "               <span class=\"name\">{{ collab.name }}</span>\n" +

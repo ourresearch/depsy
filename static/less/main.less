@@ -515,6 +515,10 @@ div.entity-page.person-page {
 
     .top-collabs {
       margin-top: 50px;
+      .name {
+        vertical-align: 2px;
+        margin-left: 3px;
+      }
       .clearfix();
       h3 {
 
@@ -639,17 +643,22 @@ div.package-page {
       }
 
 
-      &.contribs {
+      &.top-contribs {
         .plus-more {
           //margin-left: 30px;
 
         }
-        .wheel {
-          height: 25px;
-          margin-right: 5px;
-        }
         .contrib {
-          margin-bottom: 20px;
+          margin-bottom: 15px;
+          .wheel {
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: -4px;
+          }
+          .impact-stick {
+            vertical-align: -2px;
+            margin-right: 4px;
+          }
           a {
             color: #333;
             font-style: italic;
@@ -1112,8 +1121,22 @@ span.snippet {
   display: inline-block;
   height: 15px;
   background: #fafafa;
+  background: #eee;
   text-align: right;
   z-index: -1;
+  position: relative;
+  .none {
+    font-size: 10px;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    background: #fff;
+    color: #555;
+    text-align: center;
+    position: absolute;
+    top:0;
+    left: 0;
+  }
   .bar-inner {
     display: inline-block;
     height: 100%;
