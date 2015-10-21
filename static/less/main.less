@@ -171,6 +171,7 @@ div.ti-header {
     }
   }
 
+
   div.search-box {
     @search-box-width: 500px;
     width: @search-box-width;
@@ -180,11 +181,15 @@ div.ti-header {
     right: 20px;
     float: right;
     padding-top: @header-padding-top;
+    //input[aria-expanded=true] {
+    //  font-weight: normal;
+    //}
     input {
       border: none;
       width: 100%;
       font-size: 18px;
       height: 40px;
+      font-weight: 100;
     }
     ul.dropdown-menu {
       li > a {
@@ -372,12 +377,11 @@ div.entity-page.person-page {
         }
         .name {
           display: block;
-          font-size: 24px;
+          font-size: 30px;
           margin-left: 20px;
-          margin-top: 20px;
           float: left;
           font-weight: bold;
-          line-height: 1.3;
+          line-height: 1.2;
           width: 200px;
         }
         .accounts {
@@ -386,11 +390,11 @@ div.entity-page.person-page {
           color: #999;
           .account {
             margin-right: 10px;
-            vertical-align: top;
           }
           img {
             height: 14px;
             margin-right: 90px;
+            margin-top: 4px;
           }
           a {
             color: #999;
@@ -686,7 +690,7 @@ div.package-page {
         &.is-academic-true {
           .non-research-package {display: none;}
           .metrics {
-            color: tan;
+            color: #be9968;
             .package-percentile {
               font-size: 90px;
               margin-top:20px;

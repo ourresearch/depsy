@@ -177,6 +177,7 @@ div.ti-header div.search-box input {
   width: 100%;
   font-size: 18px;
   height: 40px;
+  font-weight: 100;
 }
 div.ti-header div.search-box ul.dropdown-menu li > a {
   cursor: pointer;
@@ -327,12 +328,11 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .s
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .name {
   display: block;
-  font-size: 24px;
+  font-size: 30px;
   margin-left: 20px;
-  margin-top: 20px;
   float: left;
   font-weight: bold;
-  line-height: 1.3;
+  line-height: 1.2;
   width: 200px;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts {
@@ -342,11 +342,11 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .a
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts .account {
   margin-right: 10px;
-  vertical-align: top;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts img {
   height: 14px;
   margin-right: 90px;
+  margin-top: 4px;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-header .person-about .accounts a {
   color: #999;
@@ -637,7 +637,7 @@ div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .
   display: none;
 }
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics {
-  color: tan;
+  color: peru;
 }
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics .package-percentile {
   font-size: 90px;
