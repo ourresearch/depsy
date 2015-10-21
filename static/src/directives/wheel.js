@@ -3,14 +3,12 @@ angular.module("directives.wheel", [])
 
     function getWheelVal(credit){
       console.log("testing credit", credit)
-      if (credit <= .081) {
+      if (credit <= (1 / 16)) {
         return "tiny"
       }
-      else if (credit === 1) {
-        return 8
-      }
+
       else {
-        return Math.floor(credit * 8)
+        return Math.round(credit * 8)
       }
 
 
@@ -33,7 +31,7 @@ angular.module("directives.wheel", [])
         }
 
         console.log("personPackage", personPackage)
-        scope.percentCredit = Math.floor(personPackage.person_package_credit * 100)
+        scope.percentCredit = Math.ceil(personPackage.person_package_credit * 100)
         scope.wheelVal = getWheelVal(personPackage.person_package_credit)
 
         scope.wheelData = personPackage
