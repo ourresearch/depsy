@@ -55,7 +55,7 @@
 
 
         <div class="sidebar-section top-contribs">
-            <h3>{{ package.contribs.length }} contributors</h3>
+            <h3>{{ package.all_contribs.length }} contributors</h3>
             <div class="contrib"
                  ng-repeat="person_package in package.top_contribs | orderBy: '-credit'">
                 <wheel></wheel>
@@ -78,10 +78,10 @@
             </div>
 
             <span class="plus-more btn btn-default btn-xs"
-                  ng-show="package.contribs.length > package.top_contribs.length"
+                  ng-show="package.all_contribs.length > package.top_contribs.length"
                   ng-click="apiOnly()">
                 <i class="fa fa-plus"></i>
-                <span class="val">{{ package.contribs.length - package.top_contribs.length }}</span> more
+                <span class="val">{{ package.all_contribs.length - package.top_contribs.length }}</span> more
             </span>
 
         </div>

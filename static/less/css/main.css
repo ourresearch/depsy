@@ -598,6 +598,9 @@ div.package-page div.ti-page-sidebar .sidebar-section.impact .subscore .subscore
   margin-left: 10px;
   line-height: 1.3;
 }
+div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .plus-more {
+  margin-top: 10px;
+}
 div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib {
   margin-bottom: 15px;
 }

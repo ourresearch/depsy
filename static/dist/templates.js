@@ -270,7 +270,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "\n" +
     "        <div class=\"sidebar-section top-contribs\">\n" +
-    "            <h3>{{ package.contribs.length }} contributors</h3>\n" +
+    "            <h3>{{ package.all_contribs.length }} contributors</h3>\n" +
     "            <div class=\"contrib\"\n" +
     "                 ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
     "                <wheel></wheel>\n" +
@@ -293,10 +293,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            </div>\n" +
     "\n" +
     "            <span class=\"plus-more btn btn-default btn-xs\"\n" +
-    "                  ng-show=\"package.contribs.length > package.top_contribs.length\"\n" +
+    "                  ng-show=\"package.all_contribs.length > package.top_contribs.length\"\n" +
     "                  ng-click=\"apiOnly()\">\n" +
     "                <i class=\"fa fa-plus\"></i>\n" +
-    "                <span class=\"val\">{{ package.contribs.length - package.top_contribs.length }}</span> more\n" +
+    "                <span class=\"val\">{{ package.all_contribs.length - package.top_contribs.length }}</span> more\n" +
     "            </span>\n" +
     "\n" +
     "        </div>\n" +
