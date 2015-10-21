@@ -229,9 +229,12 @@ angular.module("directives.wheel", [])
 .directive("wheel", function(){
 
     function getWheelVal(credit){
-      console.log("testing credit", credit)
-      if (credit <= (1 / 16)) {
+      if (credit <= (1/16)) {
         return "tiny"
+      }
+
+      else if (credit >= (15/16) && credit < 1) {
+        return "nearly-all"
       }
 
       else {
@@ -249,7 +252,6 @@ angular.module("directives.wheel", [])
       link: function(scope, elem, attrs) {
 
         if (scope.person_package){
-          console.log("personPackage = scope.person_package")
           var personPackage = scope.person_package
         }
         else if (scope.package){
@@ -257,10 +259,13 @@ angular.module("directives.wheel", [])
 
         }
 
-        console.log("personPackage", personPackage)
-        scope.percentCredit = Math.ceil(personPackage.person_package_credit * 100)
-        scope.wheelVal = getWheelVal(personPackage.person_package_credit)
+        scope.percentCredit = Math.min(
+            100,
+            Math.ceil(personPackage.person_package_credit * 100)
+        )
 
+
+        scope.wheelVal = getWheelVal(personPackage.person_package_credit)
         scope.wheelData = personPackage
 
       }
