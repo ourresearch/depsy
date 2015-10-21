@@ -1731,9 +1731,9 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "                       ng-hide=\"{{ $last }}\"\n" +
     "                       class=\"comma\">, </span></a><a class=\"contrib plus-more\"\n" +
     "               href=\"package/{{ package.language }}/{{ package.name }}\"\n" +
-    "                  popover=\"click to see all {{ package.num_contributors }} contributors\"\n" +
-    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contributors > 3\">,\n" +
-    "               and {{ package.num_contributors - 3 }} others\n" +
+    "                  popover=\"click to see all {{ package.num_contribs }} contributors\"\n" +
+    "                  popover-trigger=\"mouseenter\" ng-show=\"package.num_contribs > 3\">,\n" +
+    "               and {{ package.num_contribs - 3 }} others\n" +
     "            </a>\n" +
     "         </span>\n" +
     "\n" +
