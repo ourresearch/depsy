@@ -1,3 +1,15 @@
+---
+output:
+  html_document:
+    theme: "flatly"
+    keep_md: true
+    pandoc_args: [
+      "+RTS", "-K10000000",
+      "-RTS"
+    ]
+    toc: true
+    toc_depth: 2    
+---
 # about depsy
 
 Depsy was created by the [Impactstory](http://impactstory.org) team, Jason Priem and Heather Piwowar, funded by the National Science Foundation.
