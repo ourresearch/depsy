@@ -1102,7 +1102,7 @@ class Package(db.Model):
 
     def set_impact(self):
         if not self.is_academic:
-            self.impact = None
+            self.impact = 0
             print u"self.impact for {} is None because isn't academic"
             return 
 
