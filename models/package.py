@@ -199,12 +199,15 @@ class Package(db.Model):
             return None
 
     @property
+    def has_valid_pagerank(self):
+        return not self.has_estimated_pagerank
+
+    @property
     def has_estimated_pagerank(self):
-        if self.has_best_import_name:
-            has_estimated_pagerank = False
-        else:
-            has_estimated_pagerank = True
-        return has_estimated_pagerank
+        if self.host == "pypi":
+            if not self.has_best_import_name:
+                return True
+        return False
 
 
     @property
@@ -268,6 +271,9 @@ class Package(db.Model):
 
 
     def neighbor_ids(self, limit=100000):
+        if not self.has_valid_pagerank:
+            return []
+
         command = """(select p.id as id
                         from dep_nodes_ncol_{host}_reverse d, package p
                         where d.used_by = p.project_name
