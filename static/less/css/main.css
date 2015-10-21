@@ -172,9 +172,6 @@ div.ti-header div.search-box {
   float: right;
   padding-top: 10px;
 }
-div.ti-header div.search-box input[aria-expanded=true] {
-  font-weight: normal;
-}
 div.ti-header div.search-box input {
   border: none;
   width: 100%;
@@ -640,7 +637,7 @@ div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .
   display: none;
 }
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics {
-  color: tan;
+  color: peru;
 }
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .metrics .package-percentile {
   font-size: 90px;
