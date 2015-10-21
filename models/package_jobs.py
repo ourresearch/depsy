@@ -287,6 +287,7 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(Package.id)
+q = q.filter(Package.credit == None)
 update_registry.register(Update(
     job=Package.save_all_people,
     query=q,
