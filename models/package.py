@@ -38,7 +38,6 @@ class Package(db.Model):
     github_contributors = db.deferred(db.Column(JSONB))
 
     api_raw = db.deferred(db.Column(JSONB))
-    downloads = db.deferred(db.Column(MutableDict.as_mutable(JSONB)))
     all_r_reverse_deps = db.deferred(db.Column(JSONB))       
     tags = db.Column(JSONB)
     proxy_papers = db.deferred(db.Column(db.Text))
