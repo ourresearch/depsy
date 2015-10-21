@@ -1020,6 +1020,7 @@ angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function(
     "<img class='wheel'\n" +
     "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
     "     popover-title=\"{{ percentCredit }}% credit\"\n" +
+    "     popover-placement=\"right\"\n" +
     "     popover-trigger=\"mouseenter\"\n" +
     "     ng-src='static/img/wheel/{{ wheelVal }}.png' />\n" +
     "");
@@ -1037,7 +1038,7 @@ angular.module("footer/footer.tpl.html", []).run(["$templateCache", function($te
     "            About\n" +
     "        </a>\n" +
     "        <a href=\"https://github.com/Impactstory/depsy\">\n" +
-    "            <i class=\"fa fa-github-alt\"></i>\n" +
+    "            <i class=\"fa fa-github\"></i>\n" +
     "            Source code\n" +
     "        </a>\n" +
     "        <a href=\"https://twitter.com/depsy_org\">\n" +
