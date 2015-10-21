@@ -281,7 +281,6 @@ class Person(db.Model):
         for pp in self.get_person_packages():
             # only count up academic packages
             if pp.package.is_academic:
-                print "summing up an academic package"
                 # only count up impact for packages in our main language            
                 if pp.package.language == self.main_language:
                     if pp.person_package_pagerank:

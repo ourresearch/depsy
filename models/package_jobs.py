@@ -287,7 +287,7 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(Package.id)
-q = q.filter(Package.credit == None)
+# q = q.filter(Package.credit == None)
 update_registry.register(Update(
     job=Package.save_all_people,
     query=q,
@@ -312,29 +312,11 @@ update_registry.register(Update(
 
 
 
-q = db.session.query(Person.id)
-update_registry.register(Update(
-    job=Person.set_subscore_percentiles,
-    query=q,
-    queue_id=3,
-    shortcut_fn=Person.shortcut_percentile_refsets    
-))
 
-q = db.session.query(Person.id)
-# q = q.filter(Person.impact == None)
-update_registry.register(Update(
-    job=Person.set_impact,
-    query=q,
-    queue_id=3
-))
 
-q = db.session.query(Person.id)
-update_registry.register(Update(
-    job=Person.set_impact_percentiles,
-    query=q,
-    queue_id=3,
-    shortcut_fn=Person.shortcut_percentile_refsets    
-))
+
+
+
 
 q = db.session.query(Person.id)
 q = q.filter(Person.parsed_name == None)
@@ -470,7 +452,7 @@ update_registry.register(Update(
 
 
 q = db.session.query(Package.id)
-q = q.filter(Package.credit == None)
+# q = q.filter(Package.credit == None)
 update_registry.register(Update(
     job=Package.set_credit,
     query=q,
@@ -545,10 +527,38 @@ update_registry.register(Update(
     queue_id=7
 ))
 
+
+
+
+
+
 q = db.session.query(Person.id)
-# q = q.filter(Person.pagerank_score == None)
 update_registry.register(Update(
     job=Person.set_scores,
     query=q,
     queue_id=7
 ))
+
+q = db.session.query(Person.id)
+update_registry.register(Update(
+    job=Person.set_subscore_percentiles,
+    query=q,
+    queue_id=3,
+    shortcut_fn=Person.shortcut_percentile_refsets    
+))
+
+q = db.session.query(Person.id)
+update_registry.register(Update(
+    job=Person.set_impact,
+    query=q,
+    queue_id=3
+))
+
+q = db.session.query(Person.id)
+update_registry.register(Update(
+    job=Person.set_impact_percentiles,
+    query=q,
+    queue_id=3,
+    shortcut_fn=Person.shortcut_percentile_refsets    
+))
+
