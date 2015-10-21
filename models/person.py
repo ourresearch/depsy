@@ -279,14 +279,17 @@ class Person(db.Model):
         self.num_citations = 0
 
         for pp in self.get_person_packages():
-            # only count up impact for packages in our main language            
-            if pp.package.language == self.main_language:
-                if pp.person_package_pagerank:
-                    self.pagerank += pp.person_package_pagerank
-                if pp.person_package_num_downloads:
-                    self.num_downloads += pp.person_package_num_downloads
-                if pp.person_package_num_citations:
-                    self.num_citations += pp.person_package_num_citations
+            # only count up academic packages
+            if pp.package.is_academic:
+                print "summing up an academic package"
+                # only count up impact for packages in our main language            
+                if pp.package.language == self.main_language:
+                    if pp.person_package_pagerank:
+                        self.pagerank += pp.person_package_pagerank
+                    if pp.person_package_num_downloads:
+                        self.num_downloads += pp.person_package_num_downloads
+                    if pp.person_package_num_citations:
+                        self.num_citations += pp.person_package_num_citations
 
 
     def set_parsed_name(self):
