@@ -192,13 +192,16 @@ class Person(db.Model):
             cls.impact
         )
         q = q.filter(cls.num_downloads != None)  # only academic contributions, so would have some fractional downloads
-        q = q.filter(cls.num_downloads > 0)  # only academic contributions
+        q = q.filter(or_(cls.pagerank > 0, cls.num_citations > 0, cls.num_downloads > 0))  # only academic contributions
         rows = q.all()
 
         ref_list["num_downloads"] = sorted([row[0] for row in rows if row[0] != None])
         ref_list["pagerank"] = sorted([row[1] for row in rows if row[1] != None])
         ref_list["num_citations"] = sorted([row[2] for row in rows if row[2] != None])
         ref_list["impact"] = sorted([row[3] for row in rows if row[3] != None])
+
+        # only compare impacts against other things with impacts
+        ref_list["impact"] = [val for val in ref_list["impact"] if val>0]
 
         return ref_list
 
@@ -267,7 +270,7 @@ class Person(db.Model):
 
         try:
             self.impact = (self.pagerank_percentile + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
-        except ValueError:  #something was null
+        except TypeError:  #something was null
             self.impact = 0
 
     def set_scores(self):
