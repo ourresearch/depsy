@@ -87,49 +87,37 @@
    <div class="main">
 
       <div class="ti-page-header leaderboard-header">
+
          <h2>
             <span class="icons">
                <!-- put icons here based on filters -->
             </span>
             <span class="text">
+                <span class="same">
+                    <span class="top">Top <span class="language"><span class="name">{{ filters.d.language }}</span> language</span></span>
+                </span>
                  <span class="people" ng-show="filters.d.type=='people'">
-                     Top research software contributors
+                     Research software developers
                  </span>
                   <span class="packages" ng-show="filters.d.type=='packages'">
-                     Top research software packages
+                      Research software projects
                   </span>
                  <span class="people" ng-show="filters.d.type=='tags'">
-                     Top research software tags
+                     R
+                     esearch software topics
                  </span>
 
-                in
-               <span class="language">{{ filters.d.language }}</span>
             </span>
          </h2>
-         <div class="descr">
-            <span class="people" ng-show="filters.d.type=='people'">
-               Based on the impact of research software they've worked on.
-            </span>
-            <span class="tags" ng-show="filters.d.type=='tags'">
-               Based on the number of packages associated with the tag.
-            </span>
-            <span class="impact-criteria" ng-show="filters.d.type=='packages' || filters.d.type=='people'">
-               That's from how often (and by whom) packages are
-                  <a class="impact-dimension downloads" popover="More about downloads coming soon" popover-trigger="mouseenter">
-                     downloaded,
-                     <i class="fa fa-question-circle"></i>
-                  </a>
-                  <a class="impact-dimension pagerank" popover="More about reverse dependencies coming soon" popover-trigger="mouseenter">
-                     used in other software,
-                     <i class="fa fa-question-circle"></i>
-                  </a>
-                     and
-                  <a class="impact-dimension downloads" popover="More about citations coming soon" popover-trigger="mouseenter">
-                     cited in the scholarly literature.
-                     <i class="fa fa-question-circle"></i>
-                  </a>
-            </span>
 
+         <div class="descr">
+             Based on <a href="about#citation">citations</a>,
+             <a href="about#downloads">
+                 <span class="pypi" ng-show="filters.d.language=='python'">PyPi</span>
+                 <span class="cran" ng-show="filters.d.language=='r'">CRAN</span>
+                 downloads
+             </a>, and
+             <a href="about#reuse">reuse in other software.</a>
          </div>
       </div>
 

@@ -791,24 +791,24 @@ div.package-page .ti-page-body .package-page-subscore .top-importers .dep-contai
   top: 0;
   left: 0;
   bottom: 0;
-  padding: 154px 30px 30px 50px;
+  padding: 175px 30px 30px 50px;
 }
 .page.leaderboard div.sidebar .popover-inner {
   min-width: 200px;
 }
 .page.leaderboard div.sidebar div.facet {
-  margin-bottom: 35px;
+  margin-bottom: 40px;
+  margin-left: 10px;
 }
 .page.leaderboard div.sidebar div.facet h3 {
-  font-size: 22px;
+  font-size: 18px;
   margin: 5px 0;
+  display: none;
 }
 .page.leaderboard div.sidebar div.facet ul li {
   font-size: 18px;
   font-weight: 100;
   cursor: pointer;
-  margin-left: 35px;
-  text-indent: -11px;
   line-height: 1.3;
   margin-bottom: 6px;
 }
@@ -821,9 +821,19 @@ div.package-page .ti-page-body .package-page-subscore .top-importers .dep-contai
   margin-left: 230px;
 }
 .page.leaderboard div.main .leaderboard-header {
-  padding-top: 30px;
+  padding-top: 40px;
 }
-.page.leaderboard div.main .leaderboard-header span.language {
+.page.leaderboard div.main .leaderboard-header h2 {
+  font-size: 50px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.page.leaderboard div.main .leaderboard-header h2 span.same {
+  font-size: 25px;
+  font-weight: 100;
+  display: block;
+}
+.page.leaderboard div.main .leaderboard-header h2 span.same span.language span.name {
   text-transform: capitalize;
 }
 .page.leaderboard div.main .leaderboard-header div.descr {

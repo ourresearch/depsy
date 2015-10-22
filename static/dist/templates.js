@@ -751,6 +751,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "            ng-show=\"package.is_academic\"\n" +
     "            class=\"is-academic fa fa-graduation-cap\"></i>\n" +
     "\n" +
+    "\n" +
     "         <span class=\"contribs\">\n" +
     "            <span class=\"by\">by</span>\n" +
     "            <a href=\"person/{{ contrib.id }}\"\n" +
@@ -1165,49 +1166,37 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "   <div class=\"main\">\n" +
     "\n" +
     "      <div class=\"ti-page-header leaderboard-header\">\n" +
+    "\n" +
     "         <h2>\n" +
     "            <span class=\"icons\">\n" +
     "               <!-- put icons here based on filters -->\n" +
     "            </span>\n" +
     "            <span class=\"text\">\n" +
+    "                <span class=\"same\">\n" +
+    "                    <span class=\"top\">Top <span class=\"language\"><span class=\"name\">{{ filters.d.language }}</span> language</span></span>\n" +
+    "                </span>\n" +
     "                 <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
-    "                     Top research software contributors\n" +
+    "                     Research software developers\n" +
     "                 </span>\n" +
     "                  <span class=\"packages\" ng-show=\"filters.d.type=='packages'\">\n" +
-    "                     Top research software packages\n" +
+    "                      Research software projects\n" +
     "                  </span>\n" +
     "                 <span class=\"people\" ng-show=\"filters.d.type=='tags'\">\n" +
-    "                     Top research software tags\n" +
+    "                     R\n" +
+    "                     esearch software topics\n" +
     "                 </span>\n" +
     "\n" +
-    "                in\n" +
-    "               <span class=\"language\">{{ filters.d.language }}</span>\n" +
     "            </span>\n" +
     "         </h2>\n" +
-    "         <div class=\"descr\">\n" +
-    "            <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
-    "               Based on the impact of research software they've worked on.\n" +
-    "            </span>\n" +
-    "            <span class=\"tags\" ng-show=\"filters.d.type=='tags'\">\n" +
-    "               Based on the number of packages associated with the tag.\n" +
-    "            </span>\n" +
-    "            <span class=\"impact-criteria\" ng-show=\"filters.d.type=='packages' || filters.d.type=='people'\">\n" +
-    "               That's from how often (and by whom) packages are\n" +
-    "                  <a class=\"impact-dimension downloads\" popover=\"More about downloads coming soon\" popover-trigger=\"mouseenter\">\n" +
-    "                     downloaded,\n" +
-    "                     <i class=\"fa fa-question-circle\"></i>\n" +
-    "                  </a>\n" +
-    "                  <a class=\"impact-dimension pagerank\" popover=\"More about reverse dependencies coming soon\" popover-trigger=\"mouseenter\">\n" +
-    "                     used in other software,\n" +
-    "                     <i class=\"fa fa-question-circle\"></i>\n" +
-    "                  </a>\n" +
-    "                     and\n" +
-    "                  <a class=\"impact-dimension downloads\" popover=\"More about citations coming soon\" popover-trigger=\"mouseenter\">\n" +
-    "                     cited in the scholarly literature.\n" +
-    "                     <i class=\"fa fa-question-circle\"></i>\n" +
-    "                  </a>\n" +
-    "            </span>\n" +
     "\n" +
+    "         <div class=\"descr\">\n" +
+    "             Based on <a href=\"about#citation\">citations</a>,\n" +
+    "             <a href=\"about#downloads\">\n" +
+    "                 <span class=\"pypi\" ng-show=\"filters.d.language=='python'\">PyPi</span>\n" +
+    "                 <span class=\"cran\" ng-show=\"filters.d.language=='r'\">CRAN</span>\n" +
+    "                 downloads\n" +
+    "             </a>, and\n" +
+    "             <a href=\"about#reuse\">reuse in other software.</a>\n" +
     "         </div>\n" +
     "      </div>\n" +
     "\n" +
