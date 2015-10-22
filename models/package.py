@@ -752,6 +752,12 @@ class Package(db.Model):
         return query
 
 
+    def set_num_authors(self):
+        pass
+        # run this
+        # update package set num_authors = c from
+        # (select count(*) as c, package_id from contribution where role='author' group by package_id) s
+        # where package.id = s.package_id
 
     def set_num_citations_by_source(self):
         if not self.num_citations_by_source:
