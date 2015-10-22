@@ -954,12 +954,16 @@ span.snippet span.contribs a.contrib {
   color: #333;
 }
 .static-page.about-page .coming-soon {
+  display: none;
   width: 600px;
   margin: 100px auto;
 }
 .static-page.about-page #readme {
   width: 600px;
   margin: 100px auto;
+}
+.static-page.about-page #readme #TOC {
+  display: none;
 }
 .left-metrics {
   vertical-align: middle;

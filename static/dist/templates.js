@@ -13,7 +13,15 @@ angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", f
   $templateCache.put("directives/wheel-popover.tpl.html",
     "<div class=\"wheel-popover\">\n" +
     "    <div class=\"wheel-popover-header\">\n" +
-    "        <h4>{{ percentCredit }}% credit</h4>\n" +
+    "        <h4>\n" +
+    "            <span class=\"val\">\n" +
+    "                {{ percentCredit }}\n" +
+    "            </span>\n" +
+    "            <span class=\"percent-sign\">\n" +
+    "                %\n" +
+    "            </span>\n" +
+    "            credit\n" +
+    "        </h4>\n" +
     "    </div>\n" +
     "\n" +
     "    <span class=\"name\">{{ personName }}</span>\n" +
