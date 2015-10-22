@@ -1039,7 +1039,7 @@ span.snippet span.contribs a.contrib {
   display: inline-block;
 }
 .impact-popover.package .overall .val-plus-label .val {
-  font-size: 40px;
+  font-size: 35px;
   font-weight: bold;
 }
 .impact-popover.package .overall .val-plus-label .ti-label {

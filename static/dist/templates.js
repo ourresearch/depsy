@@ -710,7 +710,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "    <span class=\"left-metrics is-academic\"\n" +
     "          ng-show=\"package.is_academic\"\n" +
-    "          popover-placement=\"top\"\n" +
+    "          popover-placement=\"bottom\"\n" +
     "          popover-trigger=\"mouseenter\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
@@ -733,6 +733,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "    <span class=\"left-metrics not-academic\"\n" +
     "          ng-show=\"!package.is_academic\"\n" +
     "          popover=\"Based on name, tags, and description, we're guessing this isn't research software—so we haven't collected detailed impact info.\"\n" +
+    "          popover-placement=\"bottom\"\n" +
     "          popover-trigger=\"mouseenter\">\n" +
     "        <span class=\"non-research\">\n" +
     "            non- research\n" +
