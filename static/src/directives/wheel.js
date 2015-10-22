@@ -47,6 +47,9 @@ angular.module("directives.wheel", [])
         scope.wheelVal = getWheelVal(personPackage.person_package_credit)
         scope.wheelData = personPackage
 
+
+        scope.personName = scope.person.name
+
       }
     }
 

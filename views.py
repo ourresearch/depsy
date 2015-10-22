@@ -20,9 +20,11 @@ from flask import redirect
 from flask import url_for
 
 from time import time
+import requests
 
 import os
 import json
+import re
 
 
 import logging
@@ -179,6 +181,14 @@ def leaderboard():
 def search(search_str):
     ret = autocomplete(search_str)
     return jsonify({"list": ret, "count": len(ret)})
+
+
+@app.route("/api/readme")
+def get_readme():
+    r = requests.get("https://raw.githubusercontent.com/Impactstory/depsy/master/README.html")
+    p = re.compile(ur'<div class="container-fluid main-container">(.+?)<script>', re.MULTILINE | re.DOTALL)
+    res = re.findall(p, r.text)
+    return jsonify({"readme": res[0]})
 
 
 def make_filters_dict(args):

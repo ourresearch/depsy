@@ -3,7 +3,7 @@
 
     <span class="left-metrics is-academic"
           ng-show="package.is_academic"
-          popover-placement="top"
+          popover-placement="bottom"
           popover-trigger="mouseenter"
          popover-template="'snippet/package-impact-popover.tpl.html'">
 
@@ -26,6 +26,7 @@
     <span class="left-metrics not-academic"
           ng-show="!package.is_academic"
           popover="Based on name, tags, and description, we're guessing this isn't research software—so we haven't collected detailed impact info."
+          popover-placement="bottom"
           popover-trigger="mouseenter">
         <span class="non-research">
             non- research

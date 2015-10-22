@@ -261,10 +261,12 @@ class Package(db.Model):
             person = Person.query.get(person_id)
             person_snippet = person.as_package_snippet
             person_snippet["person_package_credit"] = self.credit[str(person_id)]
-            person_snippet["roles"] = []
-            for contrib in self.contributions:
-                if contrib.person_id == person_id:
-                    person_snippet["roles"].append(contrib.as_snippet)
+
+            # todo change this to use roles dict instead of roles list...
+            # person_snippet["roles"] = []
+            # for contrib in self.contributions:
+            #     if contrib.person_id == person_id:
+            #         person_snippet["roles"].append(contrib.as_snippet)
 
             ret.append(person_snippet)
         return ret

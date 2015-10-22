@@ -429,27 +429,54 @@ class PersonPackage():
     def to_dict(self):
 
         ret = self.package.as_snippet
-        ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
         ret["person_package_commits"] = self.person_package_commits
         ret["person_package_impact"] = self.person_package_impact
         ret["person_package_pagerank"] = self.person_package_pagerank
         ret["person_package_num_citations"] = self.person_package_num_citations
-        ret["person_package_num_downloads"] = self.person_package_num_downloads     
+        ret["person_package_num_downloads"] = self.person_package_num_downloads
+
+        # set roles
+        ret["roles"] = {}
+        for role in self.roles:
+            val = role.quantity
+            if role.quantity is None:
+                val = True
+            ret["roles"][role.role] = val
+
+
+        try:
+            ret["roles"]["owner_only"] = len(self.roles) == 1 and ret["roles"]["github_owner"]
+        except KeyError:
+            pass
+
         return ret
 
     @property
     def as_person_snippet(self):
         ret = self.package.as_snippet_without_people
-        ret["roles"] = [r.as_snippet for r in self.roles]
         ret["person_package_credit"] = self.person_package_credit
         ret["person_package_commits"] = self.person_package_commits
         ret["person_package_impact"] = self.person_package_impact
         ret["person_package_pagerank"] = self.person_package_pagerank
         ret["person_package_num_citations"] = self.person_package_num_citations
         ret["person_package_num_downloads"] = self.person_package_num_downloads 
-        return ret
 
+        # set roles
+        ret["roles"] = {}
+        for role in self.roles:
+            val = role.quantity
+            if role.quantity is None:
+                val = True
+            ret["roles"][role.role] = val
+
+
+        try:
+            ret["roles"]["owner_only"] = len(self.roles) == 1 and ret["roles"]["github_owner"]
+        except KeyError:
+            pass
+
+        return ret
 
 
 
