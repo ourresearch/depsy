@@ -1086,21 +1086,21 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
     "\n" +
     "   <div class=\"ti-menu\">\n" +
     "      <a href=\"leaderboard?type=people\"\n" +
-    "         popover=\"Top coders\"\n" +
+    "         popover=\"Top authors\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
     "         popover-placement=\"bottom\"\n" +
     "         class=\"menu-link\" id=\"leaders-menu-link\">\n" +
     "         <i class=\"fa fa-user\"></i>\n" +
     "      </a>\n" +
     "      <a href=\"leaderboard?type=packages\"\n" +
-    "         popover=\"Top packages\"\n" +
+    "         popover=\"Top projects\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
     "         popover-placement=\"bottom\"\n" +
     "         class=\"menu-link\" id=\"leaders-menu-link\">\n" +
     "         <i class=\"fa fa-archive\"></i>\n" +
     "      </a>\n" +
     "      <a href=\"leaderboard?type=tags\"\n" +
-    "         popover=\"Top tags\"\n" +
+    "         popover=\"Top topics\"\n" +
     "         popover-trigger=\"mouseenter\"\n" +
     "         popover-placement=\"bottom\"\n" +
     "         class=\"menu-link\" id=\"leaders-menu-link\">\n" +
@@ -1432,10 +1432,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        <div class=\"top-line\">\n" +
     "\n" +
     "                            <div class=\"left-metrics is-academic\" ng-show=\"dep.is_academic\">\n" +
-    "                                <div class=\"vis impact-stick is-academic-{{ dep.is_academic }}\"\n" +
-    "                                     popover-trigger=\"mouseenter\"\n" +
-    "                                     popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
-    "                                     popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
+    "                                <div class=\"vis impact-stick is-academic-{{ dep.is_academic }}\">\n" +
     "                                    <div ng-repeat=\"subscore in dep.subscores\"\n" +
     "                                         class=\"bar-inner {{ subscore.name }}\"\n" +
     "                                         style=\"width: {{ subscore.percentile * 33.333 }}%;\">\n" +

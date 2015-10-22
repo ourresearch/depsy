@@ -824,12 +824,12 @@ div.package-page .ti-page-body .package-page-subscore .top-importers .dep-contai
   padding-top: 40px;
 }
 .page.leaderboard div.main .leaderboard-header h2 {
-  font-size: 50px;
+  font-size: 40px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 .page.leaderboard div.main .leaderboard-header h2 span.same {
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 100;
   display: block;
 }
@@ -977,6 +977,7 @@ span.snippet span.contribs a.contrib {
   display: inline-block;
   text-align: right;
   margin-top: 14px;
+  color: #be9968;
 }
 .left-metrics .rank span.val {
   font-size: 14px;

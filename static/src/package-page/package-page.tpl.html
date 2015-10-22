@@ -227,10 +227,7 @@
                         <div class="top-line">
 
                             <div class="left-metrics is-academic" ng-show="dep.is_academic">
-                                <div class="vis impact-stick is-academic-{{ dep.is_academic }}"
-                                     popover-trigger="mouseenter"
-                                     popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
-                                     popover-template="'snippet/package-impact-popover.tpl.html'">
+                                <div class="vis impact-stick is-academic-{{ dep.is_academic }}">
                                     <div ng-repeat="subscore in dep.subscores"
                                          class="bar-inner {{ subscore.name }}"
                                          style="width: {{ subscore.percentile * 33.333 }}%;">
