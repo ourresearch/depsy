@@ -1,8 +1,8 @@
 
-*this documentation is embedded from Depsy's GitHub Readme, and is still in progress. Feel free to submit a pull request with updates and changes*
+*This documentation is embedded from Depsy's GitHub Readme, and is still in progress. Feel free to submit a pull request with updates and changes*
 
 
-####Depsy is a better way to learn the impact of research software.####
+##Depsy is a better way to learn the impact of research software.##
 It's being built at [Impactstory](https://impactstory.org/about) by Jason Priem and Heather Piwowar, and is funded by an [EAGER grant](http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/) from the National Science Foundation.
 
 ## What does Depsy include?
