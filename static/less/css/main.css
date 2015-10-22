@@ -953,6 +953,14 @@ span.snippet span.contribs {
 span.snippet span.contribs a.contrib {
   color: #333;
 }
+.static-page li {
+  list-style-type: circle;
+  margin-left: 30px;
+  margin-bottom: 10px;
+}
+.static-page.about-page {
+  font-size: 18px;
+}
 .static-page.about-page .coming-soon {
   display: none;
   width: 600px;
@@ -964,6 +972,28 @@ span.snippet span.contribs a.contrib {
 }
 .static-page.about-page #readme #TOC {
   display: none;
+}
+.static-page.about-page #readme h2 {
+  font-weight: bold;
+  margin-top: 150px;
+}
+.static-page.about-page #readme h3 {
+  font-weight: bold;
+  margin-top: 75px;
+}
+.static-page.about-page #readme h4 {
+  font-weight: bold;
+  margin-top: 30px;
+}
+.static-page.about-page #readme h5 {
+  font-size: 100%;
+  font-weight: bold;
+  margin-top: 40px;
+}
+.static-page.about-page #readme h6 {
+  font-size: 80%;
+  font-weight: bold;
+  margin-top: 20px;
 }
 .left-metrics {
   vertical-align: middle;
