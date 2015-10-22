@@ -158,7 +158,8 @@ class Person(db.Model):
         ret = {
             "id": self.id, 
             "name": self.display_name,
-            "single_name": self.single_name,              
+            "single_name": self.single_name,
+            "person_name": self.name,  # helps with namespacing in UI
             "github_login": self.github_login, 
             "icon": self.icon, 
             "icon_small": self.icon_small, 
@@ -409,6 +410,8 @@ class PersonPackage():
 
         ret = self.person_package_credit * self.package.display_pagerank_score
         return ret
+
+
 
     @property
     def person_package_num_citations(self):

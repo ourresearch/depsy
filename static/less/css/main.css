@@ -1058,7 +1058,27 @@ span.snippet span.contribs a.contrib {
   background: #984ea3;
 }
 .wheel-popover {
-  width: 180px;
+  width: 160px;
+}
+.wheel-popover .wheel-popover-header {
+  color: #777;
+}
+.wheel-popover .wheel-popover-header .val {
+  font-size: 35px;
+  font-weight: bold;
+}
+.wheel-popover .wheel-popover-header .val .percent-sign {
+  font-weight: normal;
+  margin-left: -2px;
+  margin-right: 5px;
+}
+.wheel-popover .wheel-popover-header .ti-label {
+  font-size: 12px;
+  display: inline-block;
+  width: 75px;
+}
+.wheel-popover .body {
+  font-size: 12px;
 }
 .impact-popover {
   width: 180px;

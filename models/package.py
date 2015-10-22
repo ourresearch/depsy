@@ -268,6 +268,22 @@ class Package(db.Model):
             #     if contrib.person_id == person_id:
             #         person_snippet["roles"].append(contrib.as_snippet)
 
+
+            # set roles. this is largely copy/pasted from the Person object.
+            person_snippet["roles"] = {}
+            person_snippet["person_name"] = person.name
+            for role in self.contributions:
+                if role.person_id == person_id:
+                    val = role.quantity
+                    if role.quantity is None:
+                        val = True
+                    person_snippet["roles"][role.role] = val
+                    try:
+                        person_snippet["roles"]["owner_only"] = len(self.contributions) == 1 and person_snippet["roles"]["github_owner"]
+                    except KeyError:
+                        pass
+
+
             ret.append(person_snippet)
         return ret
 

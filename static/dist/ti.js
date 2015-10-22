@@ -226,62 +226,78 @@ angular.module("directives.languageIcon", [])
 
 
 angular.module("directives.wheel", [])
-.directive("wheel", function(){
+    .directive("wheel", function(){
 
-    function getWheelVal(credit){
-      if (credit <= (1/16)) {
-        return "tiny"
-      }
+        function getWheelVal(credit){
+            if (credit <= (1/16)) {
+                return "tiny"
+            }
 
-      else if (credit >= (15/16) && credit < 1) {
-        return "nearly-all"
-      }
+            else if (credit >= (15/16) && credit < 1) {
+                return "nearly-all"
+            }
 
-      else {
-        return Math.round(credit * 8)
-      }
+            else {
+                return Math.round(credit * 8)
+            }
 
-
-    }
-
-
-
-    return {
-      templateUrl: "directives/wheel.tpl.html",
-      restrict: "EA",
-      link: function(scope, elem, attrs) {
-
-        if (scope.person_package){
-          var personPackage = scope.person_package
-        }
-        else if (scope.package){
-          var personPackage = scope.package
 
         }
 
-        if (attrs.popoverRight){
-          scope.popoverRight = true
+
+
+        return {
+            templateUrl: "directives/wheel.tpl.html",
+            restrict: "EA",
+            link: function(scope, elem, attrs) {
+
+                // we're in a list of authors on the package page
+                if (scope.person_package){
+                    var personPackage = scope.person_package
+                    personPackage.num_authors = scope.package.num_authors
+                    personPackage.num_committers = scope.package.num_committers
+                    personPackage.num_commits = scope.package.num_commits
+                    scope.personName = scope.person_package.name
+                }
+
+                // we're in a list of packages on the person page
+                else if (scope.package){
+                    var personPackage = scope.package
+                    scope.personName = scope.person.name
+
+                }
+
+
+                // handle the popover position
+                if (attrs.popoverRight){
+                    scope.popoverRight = true
+                }
+                else {
+                    scope.popoverRight = false
+                }
+
+                // computet the credit percentage number
+                scope.percentCredit = Math.min(
+                    100,
+                    Math.ceil(personPackage.person_package_credit * 100)
+                )
+
+                // figure what wheel image to use
+                scope.wheelVal = getWheelVal(personPackage.person_package_credit)
+                scope.wheelData = personPackage
+
+                // handy vars for the markup to use
+                if (personPackage.roles.github_contributor == personPackage.num_commits) {
+                    scope.wheelData.onlyCommitter = true
+                }
+
+
+
+            }
         }
-        else {
-          scope.popoverRight = false
-        }
-
-        scope.percentCredit = Math.min(
-            100,
-            Math.ceil(personPackage.person_package_credit * 100)
-        )
-
-        scope.wheelVal = getWheelVal(personPackage.person_package_credit)
-        scope.wheelData = personPackage
 
 
-        scope.personName = scope.person.name
-
-      }
-    }
-
-
-  })
+    })
 
 
 
@@ -407,6 +423,9 @@ angular.module("formatterService", [])
     .factory("FormatterService", function($location){
 
         var commas = function(x) { // from stackoverflow
+            if (!x) {
+                return x
+            }
             var parts = x.toString().split(".");
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return parts.join(".");
@@ -1027,70 +1046,76 @@ angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", f
     "<div class=\"wheel-popover\">\n" +
     "    <div class=\"wheel-popover-header\">\n" +
     "        <h4>\n" +
-    "            <span class=\"val\">\n" +
-    "                {{ percentCredit }}\n" +
-    "            </span>\n" +
-    "            <span class=\"percent-sign\">\n" +
-    "                %\n" +
-    "            </span>\n" +
-    "            credit\n" +
+    "            <span class=\"val\">{{ percentCredit }}<span class=\"percent-sign\">%</span></span>\n" +
+    "            <span class=\"ti-label\">authorship credit</span>\n" +
     "        </h4>\n" +
     "    </div>\n" +
     "\n" +
-    "    <span class=\"name\">{{ personName }}</span>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "    <span class=\"owner-only\" ng-show=\"wheelData.roles.owner_only\">\n" +
-    "        owns this project’s GitHub repository.\n" +
-    "    </span>\n" +
-    "\n" +
-    "    <span class=\"sole-author\" ng-show=\"wheelData.roles.author && wheelData.num_authors==1\">\n" +
-    "        is the sole listed author<span class=\"there-are-committers\" ng-show=\"wheelData.num_committers\">,\n" +
-    "            <span class=\"is-also-committer\" ng-show=\"wheelData.roles.github_contributor\">\n" +
-    "                and has contributed {{ format.commas(wheelData.roles.github_contributor) }} of this project's\n" +
-    "                {{ format.commas(wheelData.num_commits) }}\n" +
-    "                GitHub commits\n" +
-    "            </span>\n" +
-    "            <span class=\"is-not-also-committer\" ng-show=\"!wheelData.roles.github_contributor\">\n" +
-    "                but shares credit with this project's {{ format.commas(wheelData.num_committers) }}\n" +
-    "                GitHub committers\n" +
-    "            </span>\n" +
-    "        </span>\n" +
-    "    </span>\n" +
-    "\n" +
-    "    <span class=\"coauthor\" ng-show=\"wheelData.roles.author && wheelData.num_authors > 1\">\n" +
-    "         is one of {{ wheelData.num_authors }} listed coauthors<span class=\"there-are-committers\" ng-show=\"wheelData.num_committers\">,\n" +
-    "            <span class=\"is-also-committer\" ng-show=\"wheelData.roles.github_contributor\">\n" +
-    "                and has contributed {{ format.commas(wheelData.roles.github_contributor) }} of this project's\n" +
-    "                {{ format.commas(wheelData.num_commits) }}\n" +
-    "                GitHub commits\n" +
-    "            </span>\n" +
-    "            <span class=\"is-not-also-committer\" ng-show=\"!wheelData.roles.github_contributor\">\n" +
-    "                and also shares credit with this project's {{ format.commas(wheelData.num_committers) }}\n" +
-    "                GitHub committers\n" +
-    "            </span>\n" +
-    "        </span>\n" +
-    "    </span>\n" +
-    "\n" +
-    "\n" +
-    "    <span class=\"committer-not-author\" ng-show=\"wheelData.roles.github_contributor && !wheelData.roles.author\">\n" +
-    "        has contributed {{ format.commas(wheelData.roles.github_contributor) }} of this project's\n" +
-    "        {{ format.commas(wheelData.num_commits) }}\n" +
-    "        GitHub commits\n" +
-    "    </span>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
     "    <!--\n" +
-    "   <div class=\"committer\" ng-show=\"wheelData.person_package_commits\">\n" +
-    "      <i class=\"fa fa-save\"></i>\n" +
+    "    <span class=\"name\">{{ personName }}</span>\n" +
+    "    -->\n" +
     "\n" +
     "\n" +
-    "      commits: {{ myPersonPackage.person_package_commits }}\n" +
+    "    <div class=\"body\">\n" +
+    "        <span class=\"owner-only\" ng-show=\"wheelData.roles.owner_only\">\n" +
+    "            Owns this project’s GitHub repository.\n" +
+    "        </span>\n" +
     "\n" +
-    "   </div>\n" +
-    "   -->\n" +
+    "        <span class=\"sole-author\" ng-show=\"wheelData.roles.author && wheelData.num_authors==1\">\n" +
+    "            Sole listed author<span class=\"there-are-committers\" ng-show=\"wheelData.num_committers\">,\n" +
+    "                <span class=\"is-also-committer\" ng-show=\"wheelData.roles.github_contributor\">\n" +
+    "                    and\n" +
+    "                    <span class=\"contrib-and\">\n" +
+    "                        contributed\n" +
+    "                        <span class=\"num-commits\" ng-show=\"wheelData.soleCommitter\">all</span>\n" +
+    "                        <span class=\"num-commits\" ng-show=\"!wheelData.soleCommitter\">{{ format.commas(wheelData.roles.github_contributor) }} </span>\n" +
+    "                        of this project's\n" +
+    "                        {{ format.commas(wheelData.num_commits) }}\n" +
+    "                        GitHub commits\n" +
+    "                    </span>\n" +
+    "\n" +
+    "                </span>\n" +
+    "                <span class=\"is-not-also-committer\" ng-show=\"!wheelData.roles.github_contributor\">\n" +
+    "                    but\n" +
+    "                    <span class=\"contrib-and\">\n" +
+    "                        shares credit with this project's {{ format.commas(wheelData.num_committers) }}\n" +
+    "                        GitHub committers\n" +
+    "                    </span>\n" +
+    "                </span>\n" +
+    "            </span>\n" +
+    "        </span>\n" +
+    "\n" +
+    "        <span class=\"coauthor\" ng-show=\"wheelData.roles.author && wheelData.num_authors > 1\">\n" +
+    "             One of {{ wheelData.num_authors }} listed coauthors<span class=\"there-are-committers\" ng-show=\"wheelData.num_committers\">,\n" +
+    "                <span class=\"is-also-committer\" ng-show=\"wheelData.roles.github_contributor\">\n" +
+    "                    and\n" +
+    "                    <span class=\"contrib-and\">\n" +
+    "                        contributed\n" +
+    "                        <span class=\"num-commits\" ng-show=\"wheelData.soleCommitter\">all</span>\n" +
+    "                        <span class=\"num-commits\" ng-show=\"!wheelData.soleCommitter\">{{ format.commas(wheelData.roles.github_contributor) }} </span>\n" +
+    "                        of this project's\n" +
+    "                        {{ format.commas(wheelData.num_commits) }}\n" +
+    "                        GitHub commits\n" +
+    "                    </span>\n" +
+    "                </span>\n" +
+    "                <span class=\"is-not-also-committer\" ng-show=\"!wheelData.roles.github_contributor\">\n" +
+    "                    and also\n" +
+    "                    <span class=\"contrib-and\">\n" +
+    "                        shares credit with this project's {{ format.commas(wheelData.num_committers) }}\n" +
+    "                        GitHub committers\n" +
+    "                    </span>\n" +
+    "                </span>\n" +
+    "            </span>\n" +
+    "        </span>\n" +
+    "\n" +
+    "\n" +
+    "        <span class=\"committer-not-author\" ng-show=\"wheelData.roles.github_contributor && !wheelData.roles.author\">\n" +
+    "            Contributed {{ format.commas(wheelData.roles.github_contributor) }} of this project's\n" +
+    "            {{ format.commas(wheelData.num_commits) }}\n" +
+    "            GitHub commits\n" +
+    "        </span>\n" +
+    "    </div>\n" +
+    "\n" +
     "\n" +
     "</div>");
 }]);
