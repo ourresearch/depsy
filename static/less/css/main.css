@@ -973,10 +973,6 @@ span.snippet span.contribs a.contrib {
 .static-page.about-page #readme #TOC {
   display: none;
 }
-.static-page.about-page #readme p:nth-child(2) {
-  margin-bottom: 50px;
-  color: #777;
-}
 .static-page.about-page #readme h2 {
   font-weight: bold;
   margin-top: 150px;
