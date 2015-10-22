@@ -58,7 +58,7 @@
             <h3>{{ package.all_contribs.length }} contributors</h3>
             <div class="contrib"
                  ng-repeat="person_package in package.top_contribs | orderBy: '-credit'">
-                <wheel></wheel>
+                <wheel popover-right="true"></wheel>
 
                   <div class="vis impact-stick">
                       <div class="none" ng-show="person_package.subscores.length == 0">
@@ -233,9 +233,7 @@
                                          style="width: {{ subscore.percentile * 33.333 }}%;">
                                     </div>
                                 </div>
-
                             </div>
-
 
 
                             <span class="left-metrics not-academic"

@@ -32,11 +32,17 @@ angular.module("directives.wheel", [])
 
         }
 
+        if (attrs.popoverRight){
+          scope.popoverRight = true
+        }
+        else {
+          scope.popoverRight = false
+        }
+
         scope.percentCredit = Math.min(
             100,
             Math.ceil(personPackage.person_package_credit * 100)
         )
-
 
         scope.wheelVal = getWheelVal(personPackage.person_package_credit)
         scope.wheelData = personPackage

@@ -386,6 +386,7 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact {
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact h3 {
   font-size: 30px;
   margin-bottom: 5px;
+  color: #be9968;
 }
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.impact h3 span.val {
   font-weight: 900;
@@ -965,6 +966,7 @@ span.snippet span.contribs a.contrib {
   margin-top: 8px;
   line-height: 1.3;
   width: 36px;
+  cursor: default;
 }
 .left-metrics.not-academic span.non-research {
   font-size: 10px;
@@ -1018,6 +1020,9 @@ span.snippet span.contribs a.contrib {
 .impact-stick .bar-inner.num_mentions {
   background: #984ea3;
 }
+.wheel-popover {
+  width: 180px;
+}
 .impact-popover {
   width: 180px;
 }
@@ -1043,6 +1048,7 @@ span.snippet span.contribs a.contrib {
 .impact-popover.package .based-on {
   font-size: 11px;
   margin-bottom: 15px;
+  color: #999;
 }
 .impact-popover.package .based-on .language {
   text-transform: capitalize;

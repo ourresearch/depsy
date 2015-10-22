@@ -445,6 +445,7 @@ div.entity-page.person-page {
       h3 {
         font-size: 30px;
         margin-bottom: 5px;
+        color: @overallImpactColor;
         span.val {
           font-weight: 900;
           font-size: 163%;
@@ -1114,6 +1115,7 @@ span.snippet {
   margin-top: 8px;
   line-height: 1.3;
   width: 36px;
+  cursor: default;
 
   &.not-academic {
     span.non-research {
@@ -1178,7 +1180,9 @@ span.snippet {
 }
 
 
-
+.wheel-popover {
+  width: 180px;
+}
 
 
 .impact-popover {
@@ -1209,6 +1213,7 @@ span.snippet {
     .based-on {
       font-size: 11px;
       margin-bottom: 15px;
+      color: #999;
       .language {
         text-transform: capitalize;
       }

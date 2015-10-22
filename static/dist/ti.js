@@ -259,11 +259,17 @@ angular.module("directives.wheel", [])
 
         }
 
+        if (attrs.popoverRight){
+          scope.popoverRight = true
+        }
+        else {
+          scope.popoverRight = false
+        }
+
         scope.percentCredit = Math.min(
             100,
             Math.ceil(personPackage.person_package_credit * 100)
         )
-
 
         scope.wheelVal = getWheelVal(personPackage.person_package_credit)
         scope.wheelData = personPackage
@@ -1002,6 +1008,7 @@ angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", f
 angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/wheel-popover.tpl.html",
     "<div class=\"wheel-popover\">\n" +
+    "    <h4>{{ percentCredit }}% credit</h4>\n" +
     "    Credit is based on percent of GitHub commits and number of co-authors.\n" +
     "    More details coming soon...\n" +
     "\n" +
@@ -1021,9 +1028,16 @@ angular.module("directives/wheel-popover.tpl.html", []).run(["$templateCache", f
 angular.module("directives/wheel.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/wheel.tpl.html",
     "<img class='wheel popover-right'\n" +
+    "     ng-show=\"popoverRight\"\n" +
     "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
-    "     popover-title=\"{{ percentCredit }}% credit\"\n" +
     "     popover-placement=\"right\"\n" +
+    "     popover-trigger=\"mouseenter\"\n" +
+    "     ng-src='static/img/wheel/{{ wheelVal }}.png' />\n" +
+    "\n" +
+    "<img class='wheel popover-left'\n" +
+    "     ng-show=\"!popoverRight\"\n" +
+    "     popover-template=\"'directives/wheel-popover.tpl.html'\"\n" +
+    "     popover-placement=\"left\"\n" +
     "     popover-trigger=\"mouseenter\"\n" +
     "     ng-src='static/img/wheel/{{ wheelVal }}.png' />\n" +
     "");
@@ -1263,7 +1277,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "            <h3>{{ package.all_contribs.length }} contributors</h3>\n" +
     "            <div class=\"contrib\"\n" +
     "                 ng-repeat=\"person_package in package.top_contribs | orderBy: '-credit'\">\n" +
-    "                <wheel></wheel>\n" +
+    "                <wheel popover-right=\"true\"></wheel>\n" +
     "\n" +
     "                  <div class=\"vis impact-stick\">\n" +
     "                      <div class=\"none\" ng-show=\"person_package.subscores.length == 0\">\n" +
@@ -1438,9 +1452,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                                         style=\"width: {{ subscore.percentile * 33.333 }}%;\">\n" +
     "                                    </div>\n" +
     "                                </div>\n" +
-    "\n" +
     "                            </div>\n" +
-    "\n" +
     "\n" +
     "\n" +
     "                            <span class=\"left-metrics not-academic\"\n" +
@@ -1694,7 +1706,7 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "    <span class=\"left-metrics is-academic\"\n" +
     "          ng-show=\"package.is_academic\"\n" +
-    "          popover-placement=\"left\"\n" +
+    "          popover-placement=\"top\"\n" +
     "          popover-trigger=\"mouseenter\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
@@ -1866,7 +1878,7 @@ angular.module("snippet/person-snippet.tpl.html", []).run(["$templateCache", fun
     "\n" +
     "\n" +
     "\n" +
-    "         <a class=\"name\" tooltip=\"click for more info\" href=\"person/{{ person.id }}\">\n" +
+    "         <a class=\"name\" href=\"person/{{ person.id }}\">\n" +
     "            {{ person.name }}\n" +
     "         </a>\n" +
     "\n" +
