@@ -15,7 +15,7 @@
                   <i class="fa fa-square-o"></i>
                </span>
 
-               <span class="text">coders</span>
+               <span class="text">authors</span>
             </li>
 
             <li class="filter-option" ng-click="filters.set('type', 'packages')">
@@ -37,7 +37,7 @@
                   <i class="fa fa-square-o"></i>
                </span>
 
-               <span class="text">tags</span>
+               <span class="text">topics</span>
             </li>
          </ul>
 
@@ -97,14 +97,13 @@
                     <span class="top">Top <span class="language"><span class="name">{{ filters.d.language }}</span> language</span></span>
                 </span>
                  <span class="people" ng-show="filters.d.type=='people'">
-                     Research software developers
+                     Research software authors
                  </span>
                   <span class="packages" ng-show="filters.d.type=='packages'">
                       Research software projects
                   </span>
                  <span class="people" ng-show="filters.d.type=='tags'">
-                     R
-                     esearch software topics
+                     Research software topics
                  </span>
 
             </span>

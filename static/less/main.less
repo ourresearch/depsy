@@ -14,7 +14,7 @@
 @downloadsColor: #4daf4a;
 @pagerankColor: #377eb8;
 @engagementColor: orange;
-
+@overallImpactColor: #be9968;
 
 body {
   font-family: lato, helvetica, arial, sans-serif;
@@ -690,7 +690,7 @@ div.package-page {
         &.is-academic-true {
           .non-research-package {display: none;}
           .metrics {
-            color: #be9968;
+            color: @overallImpactColor;
             .package-percentile {
               font-size: 90px;
               margin-top:20px;
@@ -1180,36 +1180,70 @@ span.snippet {
 
 
 
-
 .impact-popover {
+  width: 180px;
   &.person {
   }
   &.package {
-    div.metric {
-      font-size: 14px;
-      .clearfix();
-      margin: 10px 0 0;
-      line-height: 1.2;
-      &.head {
-        border-bottom: 1px solid #ddd;
-        padding: 0 0 5px 0;
-        margin: 0 0 5px 0;
-        .clearfix();
-        span.name {
-          font-size: 18px;
-          text-align: right;
-          padding-right: 20px;
-          font-weight: 900;
-        }
-        span.val {
-          span.small {
-            font-size: 12px;
-          }
-          font-size: 12px;
+    .overall {
+      color: @overallImpactColor;
+      line-height: 1;
+      margin-bottom: 5px;
 
+      .val-plus-label {
+        text-align: left;
+        display: inline-block;
+        .val {
+          font-size: 40px;
+          font-weight: bold;
+        }
+        .ti-label {
+          display: inline-block;
+          width: 100px;
+          font-size: 12px;
+          line-height: 1.2;
         }
       }
+    }
+    .based-on {
+      font-size: 11px;
+      margin-bottom: 15px;
+      .language {
+        text-transform: capitalize;
+      }
+    }
+    .subscore {
+      .bar-outer {
+        display: inline-block;
+        height: 12px;
+        width: 25px;
+        background: #eee;
+        text-align: right;
 
+        .bar-inner {
+          height: 100%;
+          display: inline-block;
+          &.num_mentions {
+            background: @citationsColor;
+          }
+          &.pagerank {
+            background: @pagerankColor;
+          }
+          &.num_downloads {
+            background: @downloadsColor;
+          }
+        }
+      }
+      .val {
+        font-size: 20px;
+        font-weight: bold;
+        display: inline-block;
+        margin-right: 1px;
+        //width: 55px;
+      }
+      .name {
+        text-transform: lowercase;
+      }
       &.num_mentions {
         color: @citationsColor;
       }
@@ -1220,32 +1254,11 @@ span.snippet {
         color: @downloadsColor;
       }
 
-
-      span.name {
-        display: inline-block;
-        width: 100px;
-        float:left;
-        margin: 0 0px 0 17px;
-        text-indent: -10px;
-        font-weight: bold;
-
-      }
-      span.descr {
-        float: left;
-        width: 100px;
-        span.val {
-          font-size: 18px;
-          font-weight: bold;
-        }
-        span.paren {
-          font-size: 12px;
-        }
-
-      }
-
     }
+
   }
 }
+
 
 
 #footer {

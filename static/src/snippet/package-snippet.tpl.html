@@ -3,8 +3,8 @@
 
     <span class="left-metrics is-academic"
           ng-show="package.is_academic"
-         popover-trigger="mouseenter"
-         popover-title="Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile"
+          popover-placement="left"
+          popover-trigger="mouseenter"
          popover-template="'snippet/package-impact-popover.tpl.html'">
 
       <div class="vis impact-stick">

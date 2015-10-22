@@ -1657,25 +1657,36 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
 angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("snippet/package-impact-popover.tpl.html",
     "<div class=\"package impact-popover\">\n" +
-    "   <div class=\"impact\">\n" +
+    "    <div class=\"impact\">\n" +
     "\n" +
-    "      <!-- repeat for each subscore -->\n" +
-    "      <div class=\"subscore {{ subscore.name }} metric\"\n" +
-    "           ng-if=\"subscore.val > 0\"\n" +
-    "           ng-repeat=\"subscore in package.subscores\">\n" +
-    "         <span class=\"name\">\n" +
-    "            <i class=\"fa {{ subscore.icon }}\"></i>\n" +
-    "            {{ subscore.display_name }}\n" +
-    "         </span>\n" +
-    "         <span class=\"descr\">\n" +
+    "        <div class=\"overall\">\n" +
+    "            <span class=\"val-plus-label\">\n" +
+    "                <span class=\"val\">\n" +
+    "                    {{ format.round(package.impact_percentile * 100) }}\n" +
+    "                </span>\n" +
+    "                <span class=\"ti-label\">percentile <br> overall impact</span>\n" +
+    "\n" +
+    "            </span>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"based-on\">\n" +
+    "            Compared to other <span class=\"language\">{{ package.language }}</span> research software projects, based on:\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <!-- repeat for each subscore -->\n" +
+    "        <div class=\"subscore {{ subscore.name }} metric\"\n" +
+    "             ng-if=\"subscore.val > 0\"\n" +
+    "             ng-repeat=\"subscore in package.subscores\">\n" +
+    "\n" +
+    "            <span class=\"bar-outer\">\n" +
+    "                <span class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\"></span>\n" +
+    "            </span>\n" +
+    "\n" +
     "            <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
-    "         </span>\n" +
-    "      </div>\n" +
+    "            <span class=\"name\">{{ subscore.display_name }}</span>\n" +
+    "        </div>\n" +
     "\n" +
-    "\n" +
-    "\n" +
-    "\n" +
-    "   </div>\n" +
+    "    </div>\n" +
     "</div>");
 }]);
 
@@ -1686,8 +1697,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "    <span class=\"left-metrics is-academic\"\n" +
     "          ng-show=\"package.is_academic\"\n" +
-    "         popover-trigger=\"mouseenter\"\n" +
-    "         popover-title=\"Impact: {{ format.ordinal(package.impact_percentile * 100) }} percentile\"\n" +
+    "          popover-placement=\"left\"\n" +
+    "          popover-trigger=\"mouseenter\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
@@ -2084,7 +2095,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">coders</span>\n" +
+    "               <span class=\"text\">authors</span>\n" +
     "            </li>\n" +
     "\n" +
     "            <li class=\"filter-option\" ng-click=\"filters.set('type', 'packages')\">\n" +
@@ -2106,7 +2117,7 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                  <i class=\"fa fa-square-o\"></i>\n" +
     "               </span>\n" +
     "\n" +
-    "               <span class=\"text\">tags</span>\n" +
+    "               <span class=\"text\">topics</span>\n" +
     "            </li>\n" +
     "         </ul>\n" +
     "\n" +
@@ -2166,14 +2177,13 @@ angular.module("top/top.tpl.html", []).run(["$templateCache", function($template
     "                    <span class=\"top\">Top <span class=\"language\"><span class=\"name\">{{ filters.d.language }}</span> language</span></span>\n" +
     "                </span>\n" +
     "                 <span class=\"people\" ng-show=\"filters.d.type=='people'\">\n" +
-    "                     Research software developers\n" +
+    "                     Research software authors\n" +
     "                 </span>\n" +
     "                  <span class=\"packages\" ng-show=\"filters.d.type=='packages'\">\n" +
     "                      Research software projects\n" +
     "                  </span>\n" +
     "                 <span class=\"people\" ng-show=\"filters.d.type=='tags'\">\n" +
-    "                     R\n" +
-    "                     esearch software topics\n" +
+    "                     Research software topics\n" +
     "                 </span>\n" +
     "\n" +
     "            </span>\n" +

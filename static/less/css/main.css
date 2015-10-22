@@ -1017,71 +1017,72 @@ span.snippet span.contribs a.contrib {
 .impact-stick .bar-inner.num_mentions {
   background: #984ea3;
 }
-.impact-popover.package div.metric {
-  font-size: 14px;
-  margin: 10px 0 0;
-  line-height: 1.2;
+.impact-popover {
+  width: 180px;
 }
-.impact-popover.package div.metric:before,
-.impact-popover.package div.metric:after {
-  content: " ";
-  display: table;
+.impact-popover.package .overall {
+  color: #be9968;
+  line-height: 1;
+  margin-bottom: 5px;
 }
-.impact-popover.package div.metric:after {
-  clear: both;
+.impact-popover.package .overall .val-plus-label {
+  text-align: left;
+  display: inline-block;
 }
-.impact-popover.package div.metric.head {
-  border-bottom: 1px solid #ddd;
-  padding: 0 0 5px 0;
-  margin: 0 0 5px 0;
+.impact-popover.package .overall .val-plus-label .val {
+  font-size: 40px;
+  font-weight: bold;
 }
-.impact-popover.package div.metric.head:before,
-.impact-popover.package div.metric.head:after {
-  content: " ";
-  display: table;
-}
-.impact-popover.package div.metric.head:after {
-  clear: both;
-}
-.impact-popover.package div.metric.head span.name {
-  font-size: 18px;
-  text-align: right;
-  padding-right: 20px;
-  font-weight: 900;
-}
-.impact-popover.package div.metric.head span.val {
-  font-size: 12px;
-}
-.impact-popover.package div.metric.head span.val span.small {
-  font-size: 12px;
-}
-.impact-popover.package div.metric.num_mentions {
-  color: #984ea3;
-}
-.impact-popover.package div.metric.pagerank {
-  color: #377eb8;
-}
-.impact-popover.package div.metric.num_downloads {
-  color: #4daf4a;
-}
-.impact-popover.package div.metric span.name {
+.impact-popover.package .overall .val-plus-label .ti-label {
   display: inline-block;
   width: 100px;
-  float: left;
-  margin: 0 0px 0 17px;
-  text-indent: -10px;
-  font-weight: bold;
-}
-.impact-popover.package div.metric span.descr {
-  float: left;
-  width: 100px;
-}
-.impact-popover.package div.metric span.descr span.val {
-  font-size: 18px;
-  font-weight: bold;
-}
-.impact-popover.package div.metric span.descr span.paren {
   font-size: 12px;
+  line-height: 1.2;
+}
+.impact-popover.package .based-on {
+  font-size: 11px;
+  margin-bottom: 15px;
+}
+.impact-popover.package .based-on .language {
+  text-transform: capitalize;
+}
+.impact-popover.package .subscore .bar-outer {
+  display: inline-block;
+  height: 12px;
+  width: 25px;
+  background: #eee;
+  text-align: right;
+}
+.impact-popover.package .subscore .bar-outer .bar-inner {
+  height: 100%;
+  display: inline-block;
+}
+.impact-popover.package .subscore .bar-outer .bar-inner.num_mentions {
+  background: #984ea3;
+}
+.impact-popover.package .subscore .bar-outer .bar-inner.pagerank {
+  background: #377eb8;
+}
+.impact-popover.package .subscore .bar-outer .bar-inner.num_downloads {
+  background: #4daf4a;
+}
+.impact-popover.package .subscore .val {
+  font-size: 20px;
+  font-weight: bold;
+  display: inline-block;
+  margin-right: 1px;
+}
+.impact-popover.package .subscore .name {
+  text-transform: lowercase;
+}
+.impact-popover.package .subscore.num_mentions {
+  color: #984ea3;
+}
+.impact-popover.package .subscore.pagerank {
+  color: #377eb8;
+}
+.impact-popover.package .subscore.num_downloads {
+  color: #4daf4a;
 }
 #footer {
   background: #00aeef;
