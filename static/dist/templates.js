@@ -987,11 +987,14 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
 angular.module("static-pages/about.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("static-pages/about.tpl.html",
     "<div class=\"about-page static-page\">\n" +
+    "\n" +
     "   <div class=\"coming-soon\">\n" +
     "      <h1>Coming soon:</h1>\n" +
     "      <h2>So many things! We're adding so much over the next few days.</h2>\n" +
     "       <h3>follow us at <a href=\"http://twitter.com/depsy_org\">@depsy_org</a> for updates!</h3>\n" +
     "   </div>\n" +
+    "\n" +
+    "    <div id=\"readme\" ng-bind-html=\"readme\"></div>\n" +
     "\n" +
     "</div>\n" +
     "\n" +

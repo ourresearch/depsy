@@ -861,8 +861,22 @@ angular.module('staticPages', [
     })
   })
 
-  .controller("StaticPageCtrl", function($scope, ngProgress){
-      ngProgress.complete()
+  .controller("StaticPageCtrl", function($scope, $sce, $http, ngProgress){
+
+      console.log("getting readme...")
+      $http.get("/api/readme").then(
+          function(resp){
+            console.log("readme:", resp.data.readme)
+            $scope.readme = $sce.trustAsHtml(resp.data.readme)
+            ngProgress.complete()
+          },
+          function(resp){
+            alert("Sorry, there was an error getting this page!")
+            ngProgress.complete()
+          }
+
+      )
+
   })
 
 
@@ -1983,11 +1997,14 @@ angular.module("snippet/tag-snippet.tpl.html", []).run(["$templateCache", functi
 angular.module("static-pages/about.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("static-pages/about.tpl.html",
     "<div class=\"about-page static-page\">\n" +
+    "\n" +
     "   <div class=\"coming-soon\">\n" +
     "      <h1>Coming soon:</h1>\n" +
     "      <h2>So many things! We're adding so much over the next few days.</h2>\n" +
     "       <h3>follow us at <a href=\"http://twitter.com/depsy_org\">@depsy_org</a> for updates!</h3>\n" +
     "   </div>\n" +
+    "\n" +
+    "    <div id=\"readme\" ng-bind-html=\"readme\"></div>\n" +
     "\n" +
     "</div>\n" +
     "\n" +

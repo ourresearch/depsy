@@ -18,8 +18,22 @@ angular.module('staticPages', [
     })
   })
 
-  .controller("StaticPageCtrl", function($scope, ngProgress){
-      ngProgress.complete()
+  .controller("StaticPageCtrl", function($scope, $sce, $http, ngProgress){
+
+      console.log("getting readme...")
+      $http.get("/api/readme").then(
+          function(resp){
+            console.log("readme:", resp.data.readme)
+            $scope.readme = $sce.trustAsHtml(resp.data.readme)
+            ngProgress.complete()
+          },
+          function(resp){
+            alert("Sorry, there was an error getting this page!")
+            ngProgress.complete()
+          }
+
+      )
+
   })
 
 
