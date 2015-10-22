@@ -1,26 +1,28 @@
 
-Depsy is a whole new way of looking at the impact research software. 
+*this documentation is embedded from Depsy's GitHub Readme, and is still in progress. Feel free to submit a pull request with updates and changes*
 
-Depsy was created by the [Impactstory team](https://impactstory.org/about), Jason Priem and Heather Piwowar.  Depsy is (funded through an EAGER grant)[http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/] from the National Science Foundation.
+**Depsy is a better way to learn the impact of research software.** It's being built at [Impactstory](https://impactstory.org/about) by Jason Priem and Heather Piwowar, and is funded by an [EAGER grant](http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/) from the National Science Foundation.
 
 ## What does Depsy include?
 
-Depsy uncovers the impact of research software packages written in Python and R.  So far it includes research software packages hosted on two major library repositories: [PyPI](http://pypi.python.org) for Python, and [CRAN](https://cran.r-project.org/web/packages/) for R.
+Depsy finds the impact of research software **packages** written in Python and R, and also impact of the **people** who write it.
 
-R is a language for doing statistics.  As such, almost all of its packages are written by academics, for academics, to do reasearch (one of the exceptions is fun -- it's (used by the New York Times!)[http://blog.revolutionanalytics.com/2011/03/how-the-new-york-times-uses-r-for-data-visualization.html]).  Anyway, we consider all of the NNN software package on CRAN to be research software.
+[PyPI](http://pypi.python.org) for Python, and [CRAN](https://cran.r-project.org/web/packages/) for R.
 
-Python is a more general purpose programming language, so its used for all sorts of tasks by all sorts of coders.  We've tried to establish whether a package is research software by searching its metadata (package name, description, tags) for researchy-words (link to github).  We currently treat NNN(use R to count) of YYY packages on PyPI to be research software.
+R is a language for doing statistics.  As such, almost all of its packages are written by academics, for academics, to do reasearch--so we consider all R software on Depsy to be research software. We cover the *(todo: number)* R software packages available on [CRAN](https://cran.r-project.org/web/packages/), the main library repository for R.
+
+Python is a more general purpose programming language.  We try to establish whether a given Python package is research software by searching its metadata (package name, description, tags) for researchy-words (link to github). We cover all *NNN* Python packages on [PyPI](http://pypi.python.org), Python's main package repository; of those, we count *NNN* as research software.
 
 ## Package impact
 
-The overall impact score of a package is calculated as the average of the impact along three dimensions: downloads, software reuse, and literature mentions.
+We currently calculate impact along three dimensions (and a fourth, coming later, that will capture social signals like GitHub watchers and Stack Overflow discussions). The overall impact score of a package is calculated as the average of these three: **downloads**, **software reuse**, and **literature mentions**. 
 
-### Downloads
+### Package impact: downloads
 
 Gathering download statistics is easy.  We gathered monthly download numbers for python packages from Pypi (ie [numpy](https://pypi.python.org/pypi/numpy) ), and from the [CRAN logs](http://cranlogs.r-pkg.org/) api for R (ie [knitr](http://cranlogs.r-pkg.org/downloads/daily/1900-01-01:2020-01-01/knitr)).  We took a snaphost of these numbers in September 2015.
 
 
-### Software Reuse
+### Package impact: software Reuse
 
 Quantifying software reuse isn't quite as easy, but it's really cool and important :)
 
@@ -74,7 +76,7 @@ The last step is to give the PageRank measure some context -- PageRank numbers t
 Depsy makes the PageRank value grokkable by transforming it into a number between 0 and 1000, and then also providing its percentile compared to other libraries.  We do this by dividing the PageRank score by the maximum PageRank score in its network (so Python libraries are compared to Python libraries, and R to R), taking the log10 transform, adding an offset so all numbers are positive, and then multiplying it by the scaling factor that zooms all pagerank values into the range 0 to 1000.  A library with a PageRank Score of 0 isn't depended on by any code, whereas a PageRank Score of 1000 is depended on heavily by a lot of projects, including a lot of important projects.
 
 
-### Citations
+### Package impact: citations
 
 We get software literature mentions by searching the full text of the literature hosted in two places: Europe PMC and ADS (which includes arXiv and other things).  Because these sources have different abilities, we search differently in both places.
 
@@ -86,25 +88,29 @@ We search for the name of the library, and the name of the library ANDed with "p
 
 We found ADS has poor precision when looking up software names, because it ignores puncutation.  This results in many incorrect matches, where it finds software names inside equations, for example.  To handle this we've sacrificed recall for precision, making the queries much more specific -- so for the r package landlab, basically  ("landlab library" OR "landlab open-source") etc.  This still results in many incorrect hits for common-word package names, so we use the ratio approach described above for PMC to identify and exclude these.  The fallback for common word package names for ADS is simply to return 0 hits because the URL searches we use for PMC are not precise enough.
 
+#### The future
+We've got big plans to improve the way we find literature mentions. We're going to include papers that often serve as proxies for software name mentions, particularly those identified within CRAN as the author's prefered attribution. We're also going to incorporate more network information, using not just how many people have cited something, but *who*. Eventually we'll incorporate citation information into the software reuse network, building a comprehensive, heterogeneous impact map. Finally, we'll be working with publishers to text-mine larger subsets of the research literature.
+
+
 
 ## Person impact
 
 Depsy calculates transitive credit for the authors of research software.  We do this by accumulating the impact of the research software they've contributed to, in proportion to the size of the contribution they've made to each project. 
 
-### Authorship
+### Person impact: authorship
 + The author names are parsed from the author bylines in the PyPI and CRAN metadata
 + Links between packages and GitHub repositories were identified using metadata in the PyPI and CRAN as well as manual searching (todo: check if we ended up using any other methods)
 + For each Package with an associated GitHub repository, we augment the author list with the GitHub owner and GitHub commiters.  We get these using the GitHub api.  We consider an author identicial when they have the same email address, github credentials, or, barring that, identical name. 
 + Within a given project, authors are deduplicated using identical first and last names, even if they have different email addresses
 
-### Contribution-level quantification
+### Person impact: contribution-level quantification
 + GitHub committers assigned a contribution-level proportional to their proportion of the software commits
 + Authors who aren't GitHub committers assigned contribution-level equal to that of the most-contributing GitHub committer
 + GitHub owners are assigned a token 1% contribution-level
 + Credits are weighted such that the contribution-level assigned across all contributors on a Package sums to 1.
 
 
-### Component scores
+### Person impact: component scores
 
 We calculate research software impact subscore for downloads, software reuse, and literature citations for each author.  
 
@@ -114,7 +120,7 @@ Next, more percentiles: we calculate the percentile of each of these aggregated 
 
 The result of the calculations to this point is that each author has three percentiles that represent the impact they've made in research software: one for download, another for software reuse, and a third for citatons.
 
-### Overall transitive credit
+### Person impact: overall transitive credit
 
 Finally, we calculate an overall person-level score.  We get this by averaging the three componenet subscore percentiles, then, yes, you guessed it, then taking the percentile of *that* across all people.
 
@@ -131,7 +137,3 @@ It is a lot of percentiles, we agree.  :)  The data is very skewed, with differe
 - we do our best to guess whether a package is is_academic.  It's hard to know what this is for R; right now we consider all R packages to be academic.  
 - download numbers are inflated by use of projects on CI servers; a download isn't necessarily by a person.
 
-## Future plans
-
-- including an Engagement component of impact, including social metrics like GitHub stars and followers, as well as discussions on sites like StackOverflow
-- enhance literature mentions to include papers that often serve as proxies for software name mentions, particularly those identified within CRAN as the author's prefered attribution
