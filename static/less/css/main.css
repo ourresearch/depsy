@@ -1058,7 +1058,7 @@ span.snippet span.contribs a.contrib {
   background: #984ea3;
 }
 .wheel-popover {
-  width: 160px;
+  width: 170px;
 }
 .wheel-popover .wheel-popover-header {
   color: #777;
@@ -1075,10 +1075,10 @@ span.snippet span.contribs a.contrib {
 .wheel-popover .wheel-popover-header .ti-label {
   font-size: 12px;
   display: inline-block;
-  width: 75px;
+  width: 60px;
 }
 .wheel-popover .body {
-  font-size: 12px;
+  font-size: 13px;
 }
 .impact-popover {
   width: 180px;

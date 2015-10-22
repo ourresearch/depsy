@@ -61,7 +61,7 @@ angular.module("directives.wheel", [])
 
                 // handy vars for the markup to use
                 if (personPackage.roles.github_contributor == personPackage.num_commits) {
-                    scope.wheelData.onlyCommitter = true
+                    scope.wheelData.soleCommitter = true
                 }
 
 
