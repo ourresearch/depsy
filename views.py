@@ -127,6 +127,16 @@ def person_endpoint(person_id):
     return json_resp_from_thing(my_person.to_dict())
 
 
+@app.route("/api/person/<person_id>/badge")
+@app.route("/api/person/<person_id>/badge.json")
+def person_badge(person_id):
+    my_person = Person.query.get(int(person_id))
+    if not my_person:
+        abort_json(404, "This person's not in the database")
+
+    return my_person.as_badge
+
+
 @app.route("/api/package/<host_or_language>/<project_name>")
 @app.route("/api/package/<host_or_language>/<project_name>.json")
 def package_endpoint(host_or_language, project_name):

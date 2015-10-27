@@ -502,9 +502,6 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a {
 div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a i {
   margin-right: 5px;
 }
-div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a.embed-badge-link {
-  display: none;
-}
 div.entity-page.person-page .ti-page-body .packages {
   margin-left: 40px;
 }
