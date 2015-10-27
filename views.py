@@ -144,6 +144,14 @@ def package_endpoint(host_or_language, project_name):
     resp_dict = my_package.to_dict()
     return json_resp_from_thing(resp_dict)
 
+@app.route("/api/package/<host_or_language>/<project_name>/badge")
+def package_badge(host_or_language, project_name):
+    my_id = package.make_id(host_or_language, project_name)
+    my_package = Package.query.get(my_id)
+    if not my_package:
+        abort_json(404, "This package is not in the database")
+
+    return my_package.as_badge
 
 
 @app.route('/api/leaderboard')
@@ -181,6 +189,8 @@ def leaderboard():
 def search(search_str):
     ret = autocomplete(search_str)
     return jsonify({"list": ret, "count": len(ret)})
+
+
 
 
 @app.route("/api/readme")

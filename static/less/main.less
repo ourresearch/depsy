@@ -501,6 +501,7 @@ div.entity-page.person-page {
       }
     }
 
+
     .impact-descr {
       margin: 50px 30px 50px 0;
       font-size: 15px;
@@ -530,10 +531,25 @@ div.entity-page.person-page {
       }
 
     }
-
-    a.json-link {
+    .sidebar-section.actions {
       margin-top: 50px;
+      a {
+        i {
+          margin-right: 5px;
+        }
+        display: inline-block;
+        float: left;
+        clear: left;
+        margin-top: 6px;
+        &.embed-badge-link {
+          // temp while making this work...
+          display: none;
+        }
+
+      }
+
     }
+
   }
   .ti-page-body {
     .packages {

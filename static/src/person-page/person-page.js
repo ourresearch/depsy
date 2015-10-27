@@ -1,6 +1,7 @@
 angular.module('personPage', [
     'ngRoute',
     'profileService',
+    'directives.badge',
     "directives.languageIcon"
   ])
 

@@ -490,8 +490,20 @@ div.entity-page.person-page div.ti-page-sidebar .top-collabs:after {
 div.entity-page.person-page div.ti-page-sidebar .top-collabs:after {
   clear: both;
 }
-div.entity-page.person-page div.ti-page-sidebar a.json-link {
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions {
   margin-top: 50px;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a {
+  display: inline-block;
+  float: left;
+  clear: left;
+  margin-top: 6px;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a i {
+  margin-right: 5px;
+}
+div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a.embed-badge-link {
+  display: none;
 }
 div.entity-page.person-page .ti-page-body .packages {
   margin-left: 40px;

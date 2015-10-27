@@ -1,0 +1,14 @@
+<script type="text/ng-template" id="badge-modal.tpl.html">
+    <div class="modal-body">
+        modal body!
+        <pre>{{ badgeMarkup }}</pre>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close()">OK</button>
+    </div>
+</script>
+
+<a class="embed-badge-link btn btn-default" ng-click="openBadgeModal()">
+    <i class="fa fa-trophy"></i>
+    Get badge
+</a>

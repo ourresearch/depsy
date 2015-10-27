@@ -183,6 +183,48 @@ angular.module('app').controller('AppCtrl', function(
 });
 
 
+angular.module("directives.badge", [])
+    .directive("badge", function($modal, $http){
+
+        return {
+            templateUrl: "directives/badge.tpl.html",
+            restrict: "EA",
+            link: function(scope, elem, attrs) {
+
+                var badgeUrl = "api/" + attrs.entity + "/badge"
+
+                scope.openBadgeModal = function(){
+                    var modalInstance = $modal.open({
+                        templateUrl: 'badge-modal.tpl.html',
+                        resolve: {
+                            badgeMarkup: function () {
+                                console.log("making badgeMarkup call to ", badgeUrl)
+                                return $http.get(badgeUrl)
+                            }
+                        }
+                    })
+                }
+            }
+        }
+
+
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 angular.module("directives.languageIcon", [])
 .directive("languageIcon", function(){
 
@@ -573,24 +615,25 @@ angular.module('header', [
 
 
 angular.module('packagePage', [
-  'ngRoute'
+    'directives.badge',
+    'ngRoute'
 ])
 
 
 
     .config(function($routeProvider) {
-      $routeProvider.when('/package/:language/:package_name', {
-        templateUrl: 'package-page/package-page.tpl.html',
-        controller: 'PackagePageCtrl',
-        resolve: {
-          packageResp: function($http, $route, PackageResource){
-            return PackageResource.get({
-              namespace: $route.current.params.language,
-              name: $route.current.params.package_name
-            }).$promise
-          }
-        }
-      })
+        $routeProvider.when('/package/:language/:package_name', {
+            templateUrl: 'package-page/package-page.tpl.html',
+            controller: 'PackagePageCtrl',
+            resolve: {
+                packageResp: function($http, $route, PackageResource){
+                    return PackageResource.get({
+                        namespace: $route.current.params.language,
+                        name: $route.current.params.package_name
+                    }).$promise
+                }
+            }
+        })
     })
 
 
@@ -600,16 +643,19 @@ angular.module('packagePage', [
                                             ngProgress,
                                             FormatterService,
                                             packageResp){
-      ngProgress.complete()
-      $scope.package = packageResp
-      $scope.format = FormatterService
-      $scope.depNode = packageResp.rev_deps_tree
+        ngProgress.complete()
+        $scope.package = packageResp
+        $scope.format = FormatterService
+        $scope.depNode = packageResp.rev_deps_tree
 
-      console.log("package page!", $scope.package)
+        console.log("package page!", $scope.package)
 
-      $scope.apiOnly = function(){
-        alert("Sorry, we're still working on this! In the meantime, you can view the raw data via our API.")
-      }
+        $scope.apiOnly = function(){
+            alert("Sorry, we're still working on this! In the meantime, you can view the raw data via our API.")
+        }
+
+
+
 
 
 
@@ -625,6 +671,7 @@ angular.module('packagePage', [
 angular.module('personPage', [
     'ngRoute',
     'profileService',
+    'directives.badge',
     "directives.languageIcon"
   ])
 
@@ -1030,7 +1077,25 @@ angular.module('top', [
 
   })
 
-angular.module('templates.app', ['directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+angular.module('templates.app', ['directives/badge.tpl.html', 'directives/language-icon.tpl.html', 'directives/wheel-popover.tpl.html', 'directives/wheel.tpl.html', 'footer/footer.tpl.html', 'header/header.tpl.html', 'header/search-result.tpl.html', 'package-page/package-page.tpl.html', 'person-page/person-page.tpl.html', 'snippet/package-impact-popover.tpl.html', 'snippet/package-snippet.tpl.html', 'snippet/person-impact-popover.tpl.html', 'snippet/person-mini.tpl.html', 'snippet/person-snippet.tpl.html', 'snippet/tag-snippet.tpl.html', 'static-pages/about.tpl.html', 'static-pages/landing.tpl.html', 'tag-page/tag-page.tpl.html', 'top/top.tpl.html']);
+
+angular.module("directives/badge.tpl.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("directives/badge.tpl.html",
+    "<script type=\"text/ng-template\" id=\"badge-modal.tpl.html\">\n" +
+    "    <div class=\"modal-body\">\n" +
+    "        modal body!\n" +
+    "        <pre>{{ badgeMarkup }}</pre>\n" +
+    "    </div>\n" +
+    "    <div class=\"modal-footer\">\n" +
+    "        <button class=\"btn btn-primary\" type=\"button\" ng-click=\"$close()\">OK</button>\n" +
+    "    </div>\n" +
+    "</script>\n" +
+    "\n" +
+    "<a class=\"embed-badge-link btn btn-default\" ng-click=\"openBadgeModal()\">\n" +
+    "    <i class=\"fa fa-trophy\"></i>\n" +
+    "    Get badge\n" +
+    "</a>");
+}]);
 
 angular.module("directives/language-icon.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/language-icon.tpl.html",
@@ -1411,6 +1476,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                View in API\n" +
     "            </a>\n" +
     "\n" +
+    "\n" +
+    "\n" +
     "            <!--\n" +
     "         <a href=\"https://twitter.com/share?url={{ encodeURIComponent('http://google.com') }}\" >Tweet</a>\n" +
     "         -->\n" +
@@ -1619,59 +1686,59 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
 angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("person-page/person-page.tpl.html",
     "<div class=\"page entity-page person-page\">\n" +
-    "   <div class=\"ti-page-sidebar\">\n" +
-    "      <div class=\"sidebar-header\">\n" +
+    "    <div class=\"ti-page-sidebar\">\n" +
+    "        <div class=\"sidebar-header\">\n" +
     "\n" +
-    "         <div class=\"person-about\">\n" +
-    "            <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
+    "            <div class=\"person-about\">\n" +
+    "                <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
     "\n" +
     "            <span class=\"name\">\n" +
     "               {{ person.name }}\n" +
     "            </span>\n" +
     "            <span class=\"accounts\">\n" +
     "               <img class=\"orcid account\"\n" +
-    "                  popover-title=\"ORCiD coming soon\"\n" +
-    "                  popover-trigger=\"mouseenter\"\n" +
-    "                  popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
-    "                  src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
+    "                    popover-title=\"ORCiD coming soon\"\n" +
+    "                    popover-trigger=\"mouseenter\"\n" +
+    "                    popover=\"ORCiD is a unique identifier for researchers. We'll be rolling out support soon.\"\n" +
+    "                    src=\"static/img/orcid.gif\" alt=\"\"/>\n" +
     "\n" +
     "               <a class=\"account\" ng-if=\"person.github_login\" href=\"http://github.com/{{ person.github_login }}\">\n" +
-    "                  <i class=\"fa fa-github\"></i> github/{{ person.github_login }}\n" +
+    "                   <i class=\"fa fa-github\"></i> github/{{ person.github_login }}\n" +
     "               </a>\n" +
     "            </span>\n" +
     "\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
-    "      <div class=\"sidebar-section impact\" ng-show=\"person.impact_percentile\">\n" +
-    "         <h3>\n" +
+    "        <div class=\"sidebar-section impact\" ng-show=\"person.impact_percentile\">\n" +
+    "            <h3>\n" +
     "             <span class=\"val\">\n" +
     "                 {{ format.round(person.impact_percentile * 100) }}\n" +
     "             </span>\n" +
-    "              <span class=\"unit\">percentile impact</span></h3>\n" +
+    "                <span class=\"unit\">percentile impact</span></h3>\n" +
     "          <span class=\"descr\">\n" +
     "              Aggregated fractional credit, summed across all research software contributions\n" +
     "          </span>\n" +
-    "         <div class=\"vis\">\n" +
-    "            <div class=\"subscore {{ subscore.name }}\"\n" +
-    "                 ng-if=\"subscore.val > 0\"\n" +
-    "                 ng-repeat=\"subscore in person.subscores\">\n" +
-    "               <div class=\"bar-outer\">\n" +
-    "                  <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile  * 100 }}%;\"></div>\n" +
-    "               </div>\n" +
-    "               <div class=\"subscore-label\">\n" +
-    "                  <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
-    "                  <span class=\"text\">{{ subscore.display_name }}</span>\n" +
-    "               </div>\n" +
+    "            <div class=\"vis\">\n" +
+    "                <div class=\"subscore {{ subscore.name }}\"\n" +
+    "                     ng-if=\"subscore.val > 0\"\n" +
+    "                     ng-repeat=\"subscore in person.subscores\">\n" +
+    "                    <div class=\"bar-outer\">\n" +
+    "                        <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile  * 100 }}%;\"></div>\n" +
+    "                    </div>\n" +
+    "                    <div class=\"subscore-label\">\n" +
+    "                        <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "                        <span class=\"text\">{{ subscore.display_name }}</span>\n" +
+    "                    </div>\n" +
     "\n" +
+    "                </div>\n" +
     "            </div>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
     "\n" +
-    "      <!--\n" +
+    "        <!--\n" +
     "      <div class=\"impact-descr\" ng-if=\"!person.is_organization\">\n" +
     "         <h3>Impact</h3>\n" +
     "         <div class=\"impact-copy\" ng-show=\"person.main_language=='python'\">\n" +
@@ -1683,76 +1750,80 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "      </div>\n" +
     "      -->\n" +
     "\n" +
-    "      <div class=\"top-tags\" ng-if=\"person.top_person_tags.length\">\n" +
-    "         <h3>Top tags</h3>\n" +
-    "         <div class=\"tags\">\n" +
-    "            <a class=\"tag\"\n" +
-    "               href=\"tag/{{ format.doubleUrlEncode(tag.name) }}\"\n" +
-    "               ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
-    "               {{ tag.name }}\n" +
-    "            </a>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
+    "        <div class=\"top-tags\" ng-if=\"person.top_person_tags.length\">\n" +
+    "            <h3>Top tags</h3>\n" +
+    "            <div class=\"tags\">\n" +
+    "                <a class=\"tag\"\n" +
+    "                   href=\"tag/{{ format.doubleUrlEncode(tag.name) }}\"\n" +
+    "                   ng-repeat=\"tag in person.top_person_tags | orderBy: '-count'\">\n" +
+    "                    {{ tag.name }}\n" +
+    "                </a>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "\n" +
-    "      <div class=\"top-collabs\" ng-show=\"person.top_collabs.length\">\n" +
-    "         <h3>\n" +
-    "             Top collaborators\n" +
-    "         </h3>\n" +
-    "         <div class=\"top-collabs-list\">\n" +
-    "            <a class=\"collab person-mini\"\n" +
-    "               href=\"person/{{ collab.id }}\"\n" +
-    "               ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
+    "        <div class=\"top-collabs\" ng-show=\"person.top_collabs.length\">\n" +
+    "            <h3>\n" +
+    "                Top collaborators\n" +
+    "            </h3>\n" +
+    "            <div class=\"top-collabs-list\">\n" +
+    "                <a class=\"collab person-mini\"\n" +
+    "                   href=\"person/{{ collab.id }}\"\n" +
+    "                   ng-repeat=\"collab in person.top_collabs | orderBy: '-collab_score'\">\n" +
     "\n" +
-    "              <div class=\"vis impact-stick\">\n" +
-    "                  <div class=\"none\" ng-show=\"collab.subscores.length == 0\">\n" +
-    "                      none\n" +
-    "                  </div>\n" +
-    "                 <div class=\"bar-inner {{ subscore.name }}\"\n" +
-    "                      style=\"width: {{ subscore.percentile * 33.33333 }}%;\"\n" +
-    "                      ng-repeat=\"subscore in collab.subscores\">\n" +
-    "                 </div>\n" +
-    "              </div>\n" +
-    "\n" +
-    "\n" +
+    "                    <div class=\"vis impact-stick\">\n" +
+    "                        <div class=\"none\" ng-show=\"collab.subscores.length == 0\">\n" +
+    "                            none\n" +
+    "                        </div>\n" +
+    "                        <div class=\"bar-inner {{ subscore.name }}\"\n" +
+    "                             style=\"width: {{ subscore.percentile * 33.33333 }}%;\"\n" +
+    "                             ng-repeat=\"subscore in collab.subscores\">\n" +
+    "                        </div>\n" +
+    "                    </div>\n" +
     "\n" +
     "\n" +
-    "                <!--\n" +
+    "\n" +
+    "\n" +
+    "                    <!--\n" +
     "               <img src=\"{{ collab.icon_small }}\" alt=\"\"/>\n" +
     "               <span class=\"impact\">{{ format.short(collab.impact) }}</span>\n" +
     "               -->\n" +
-    "               <span class=\"name\">{{ collab.name }}</span>\n" +
+    "                    <span class=\"name\">{{ collab.name }}</span>\n" +
     "\n" +
-    "            </a>\n" +
-    "         </div>\n" +
-    "      </div>\n" +
-    "\n" +
-    "      <a class=\"json-link btn btn-default\"\n" +
-    "         target=\"_self\"\n" +
-    "         href=\"api/person/{{ person.id }}\">\n" +
-    "         <i class=\"fa fa-cogs\"></i>\n" +
-    "                View in API\n" +
-    "      </a>\n" +
-    "\n" +
-    "   </div>\n" +
-    "\n" +
-    "\n" +
-    "   <div class=\"ti-page-body\">\n" +
-    "\n" +
-    "      <div class=\"packages\">\n" +
-    "         <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
-    "            <div class=\"person-package-stats\">\n" +
-    "               <wheel></wheel>\n" +
-    "\n" +
+    "                </a>\n" +
     "            </div>\n" +
-    "            <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
-    "         </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <div class=\"sidebar-section actions\">\n" +
+    "            <a class=\"json-link btn btn-default\"\n" +
+    "               target=\"_self\"\n" +
+    "               href=\"api/person/{{ person.id }}\">\n" +
+    "                <i class=\"fa fa-cogs\"></i>\n" +
+    "                View in API\n" +
+    "            </a>\n" +
+    "            <badge entity=\"person/{{ person.id }}\"></badge>\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
-    "      </div>\n" +
+    "    </div>\n" +
+    "\n" +
+    "\n" +
+    "    <div class=\"ti-page-body\">\n" +
+    "\n" +
+    "        <div class=\"packages\">\n" +
+    "            <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
+    "                <div class=\"person-package-stats\">\n" +
+    "                    <wheel></wheel>\n" +
+    "\n" +
+    "                </div>\n" +
+    "                <span class=\"package-snippet-wrapper\" ng-include=\"'snippet/package-snippet.tpl.html'\"></span>\n" +
+    "            </div>\n" +
+    "\n" +
+    "\n" +
+    "        </div>\n" +
     "\n" +
     "\n" +
     "\n" +
-    "   </div>\n" +
+    "    </div>\n" +
     "\n" +
     "</div>\n" +
     "");
