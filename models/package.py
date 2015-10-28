@@ -18,7 +18,6 @@ from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.rev_dep_node import RevDepNode
 from models.github_repo import GithubRepo
-from jobs import update_registry
 from jobs import Update
 from util import truncate
 from providers import full_text_source

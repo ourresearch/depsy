@@ -1507,6 +1507,8 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                View in API\n" +
     "            </a>\n" +
     "\n" +
+    "            <badge entity=\"package/{{ package.host }}/{{ package.name }}\"></badge>\n" +
+    "\n" +
     "\n" +
     "\n" +
     "            <!--\n" +
