@@ -26,6 +26,6 @@ Python is a more general purpose programming language.  We try to establish whet
 
 We currently calculate impact along three dimensions (and a fourth, coming later, that will capture social signals like GitHub watchers and Stack Overflow discussions). The overall impact score of a package is calculated as the average of these three: **downloads**, **software reuse**, and **literature mentions**. 
 
-More details coming soon!  In the mean time, there is more documentation at our [full documentation site](https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md).
+More information coming soon!  In the mean time, see our [full documentation page](https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md) for details.
 
 
