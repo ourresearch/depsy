@@ -18,7 +18,6 @@ from models.person import get_or_make_person
 from models.contribution import Contribution
 from models.rev_dep_node import RevDepNode
 from models.github_repo import GithubRepo
-from models.entity import get_badge
 from jobs import update_registry
 from jobs import Update
 from util import truncate
@@ -170,9 +169,6 @@ class Package(db.Model):
     @property
     def tree(self):
         return self.rev_deps_tree
-
-    def get_badge(self, extension):
-        return get_badge(self.impact_percentile, extension)
 
 
     @property

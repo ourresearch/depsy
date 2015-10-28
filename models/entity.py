@@ -1,18 +1,19 @@
 import requests
+from util import ordinal
 """
 Code shared among Person, Package, and Tag
 """
 
 
-def get_badge(percentile_as_decimal, extension):
-    percentile = int(round(percentile_as_decimal * 100))
+def make_badge(entity):
+    percentile_int = int(round(entity.impact_percentile * 100))
+    percentile_str = ordinal(percentile_int)
     color = "brightgreen"
 
-    url_template = "http://img.shields.io/badge/Research%20software%20impact-{percentile}%20percentile-{color}.{extension}?style=flat"
+    url_template = "http://img.shields.io/badge/Research%20software%20impact-{percentile}%20percentile-{color}.svg?style=flat"
     url = url_template.format(
-        percentile=percentile,
-        color=color,
-        extension=extension
+        percentile=percentile_str,
+        color=color
     )
 
     print "sending request for badge to this URL: ", url

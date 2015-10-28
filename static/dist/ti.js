@@ -191,17 +191,17 @@ angular.module("directives.badge", [])
             restrict: "EA",
             link: function(scope, elem, attrs) {
 
-                var badgeUrl = "api/" + attrs.entity + "/badge"
+                var badgeUrl = "api/" + attrs.entity + "/badge.svg"
 
                 scope.openBadgeModal = function(){
                     var modalInstance = $modal.open({
                         controller: "badgeModalCtrl",
                         templateUrl: 'badge-modal.tpl.html',
                         resolve: {
-                            badgeMarkup: function () {
-                                console.log("making badgeMarkup call to ", badgeUrl)
-                                return $http.get(badgeUrl)
-                            },
+                            //badgeMarkup: function () {
+                            //    console.log("making badgeMarkup call to ", badgeUrl)
+                            //    return $http.get(badgeUrl)
+                            //},
                             badgeUrl: function(){
                                 return badgeUrl
                             }
@@ -214,9 +214,7 @@ angular.module("directives.badge", [])
 
     })
 
-    .controller("badgeModalCtrl", function($scope, $sce, $location, badgeMarkup, badgeUrl){
-        console.log("running the badgeModalCtrl", badgeMarkup)
-        $scope.badgeMarkup = $sce.trustAsHtml(badgeMarkup.data)
+    .controller("badgeModalCtrl", function($scope, $sce, $location, badgeUrl){
         $scope.badgeUrl = badgeUrl
         $scope.currentUrl = $location.absUrl()
 
@@ -1095,17 +1093,16 @@ angular.module('templates.app', ['directives/badge.tpl.html', 'directives/langua
 angular.module("directives/badge.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("directives/badge.tpl.html",
     "<script type=\"text/ng-template\" id=\"badge-modal.tpl.html\">\n" +
-    "    <div class=\"modal-body\">\n" +
+    "    <div class=\"modal-body badge-modal\">\n" +
     "        <div class=\"badge-section\">\n" +
-    "            <img src=\"{{ badgeUrl }}\" alt=\"\">\n" +
-    "            <a ng-href=\"absUrl\">\n" +
-    "                <span class=\"badge-markup-container\" ng-bind-html=\"badgeMarkup\"></span>\n" +
+    "            <a href=\"{{ currentUrl }}\">\n" +
+    "                <img class=\"badge-markup-container\" src=\"{{ badgeUrl }}\">\n" +
     "            </a>\n" +
     "        </div>\n" +
     "        <div class=\"paste-this markdown\">\n" +
     "            <h3>\n" +
     "                <span class=\"main\">Markdown</span>\n" +
-    "                <span class=\"sub\">for GitHub readme.md</span>\n" +
+    "                <span class=\"sub\">for GitHub README.md</span>\n" +
     "            </h3>\n" +
     "            <pre>[![Research software impact](http://depsy.org/{{ badgeUrl }})]({{ currentUrl }})</pre>\n" +
     "        </div>\n" +
@@ -1114,9 +1111,9 @@ angular.module("directives/badge.tpl.html", []).run(["$templateCache", function(
     "                <span class=\"main\">HTML</span>\n" +
     "                <span class=\"sub\">for blogs and whatnot</span>\n" +
     "            </h3>\n" +
-    "            <pre><a href=\"{{ currentUrl }}\">\n" +
-    "                <img src=\"{{  }}\" alt=\"\">\n" +
-    "            </a></pre>\n" +
+    "            <pre>&#x3C;a href=&#x22;{{ currentUrl }}&#x22;&#x3E;\n" +
+    "    &#x3C;img src=&#x22;http://depsy.org/{{ badgeUrl }}&#x22;&#x3E;\n" +
+    "&#x3C;/a&#x3E;</pre>\n" +
     "        </div>\n" +
     "\n" +
     "    </div>\n" +
@@ -1722,7 +1719,6 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "<div class=\"page entity-page person-page\">\n" +
     "    <div class=\"ti-page-sidebar\">\n" +
     "        <div class=\"sidebar-header\">\n" +
-    "\n" +
     "            <div class=\"person-about\">\n" +
     "                <img ng-src=\"{{ person.icon }}\" alt=\"\"/>\n" +
     "\n" +

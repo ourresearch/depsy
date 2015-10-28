@@ -9,7 +9,6 @@ from nameparser import HumanName
 
 from app import db
 from models.contribution import Contribution
-from models.entity import get_badge
 from models.github_api import GithubRateLimitException
 from github_api import get_profile
 from util import dict_from_dir
@@ -345,9 +344,6 @@ class Person(db.Model):
         elif self.parsed_name and self.parsed_name["last"]:
             return self.parsed_name["last"]
         return self.display_name
-
-    def get_badge(self, extension):
-        return get_badge(self.impact_percentile, extension)
 
 
     @property

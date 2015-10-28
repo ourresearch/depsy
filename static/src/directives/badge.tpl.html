@@ -1,15 +1,14 @@
 <script type="text/ng-template" id="badge-modal.tpl.html">
-    <div class="modal-body">
+    <div class="modal-body badge-modal">
         <div class="badge-section">
-            <img src="{{ badgeUrl }}" alt="">
-            <a ng-href="absUrl">
-                <span class="badge-markup-container" ng-bind-html="badgeMarkup"></span>
+            <a href="{{ currentUrl }}">
+                <img class="badge-markup-container" src="{{ badgeUrl }}">
             </a>
         </div>
         <div class="paste-this markdown">
             <h3>
                 <span class="main">Markdown</span>
-                <span class="sub">for GitHub readme.md</span>
+                <span class="sub">for GitHub README.md</span>
             </h3>
             <pre>[![Research software impact](http://depsy.org/{{ badgeUrl }})]({{ currentUrl }})</pre>
         </div>
@@ -18,9 +17,9 @@
                 <span class="main">HTML</span>
                 <span class="sub">for blogs and whatnot</span>
             </h3>
-            <pre><a href="{{ currentUrl }}">
-                <img src="{{  }}" alt="">
-            </a></pre>
+            <pre>&#x3C;a href=&#x22;{{ currentUrl }}&#x22;&#x3E;
+    &#x3C;img src=&#x22;http://depsy.org/{{ badgeUrl }}&#x22;&#x3E;
+&#x3C;/a&#x3E;</pre>
         </div>
 
     </div>

@@ -5,6 +5,7 @@ from util import elapsed
 from models.person import Person
 from models import package
 from models.package import Package
+from models.entity import make_badge
 from models.package_jobs import get_leaders
 from models.tags import Tags
 from dummy_data import get_dummy_data
@@ -15,6 +16,7 @@ from flask import make_response
 from flask import request
 from flask import abort
 from flask import jsonify
+from flask import send_file
 from flask import render_template
 from flask import redirect
 from flask import url_for
@@ -25,7 +27,8 @@ import requests
 import os
 import json
 import re
-
+from StringIO import StringIO
+import io
 
 import logging
 
@@ -127,14 +130,14 @@ def person_endpoint(person_id):
     return json_resp_from_thing(my_person.to_dict())
 
 
-@app.route("/api/person/<person_id>/badge.<extension>")
-def person_badge(person_id, extension):
+@app.route("/api/person/<person_id>/badge.svg")
+def person_badge(person_id):
     my_person = Person.query.get(int(person_id))
     if not my_person:
         abort_json(404, "This person's not in the database")
 
-    return my_person.get_badge(extension)
-
+    my_badge = make_badge(my_person)
+    return send_file(io.BytesIO(my_badge), mimetype='image/svg+xml')
 
 @app.route("/api/package/<host_or_language>/<project_name>")
 @app.route("/api/package/<host_or_language>/<project_name>.json")
@@ -153,15 +156,15 @@ def package_endpoint(host_or_language, project_name):
     resp_dict = my_package.to_dict()
     return json_resp_from_thing(resp_dict)
 
-@app.route("/api/package/<host_or_language>/<project_name>/badge.<extension>")
-def package_badge(host_or_language, project_name, extension):
+@app.route("/api/package/<host_or_language>/<project_name>/badge.svg")
+def package_badge(host_or_language, project_name):
     my_id = package.make_id(host_or_language, project_name)
     my_package = Package.query.get(my_id)
     if not my_package:
         abort_json(404, "This package is not in the database")
 
-    return my_package.get_badge(extension)
-
+    my_badge = make_badge(my_package)
+    return send_file(io.BytesIO(my_badge), mimetype='image/svg+xml')
 
 @app.route('/api/leaderboard')
 @app.route('/api/leaderboard.json')
@@ -199,6 +202,12 @@ def search(search_str):
     ret = autocomplete(search_str)
     return jsonify({"list": ret, "count": len(ret)})
 
+@app.route("/test")
+def test():
+    r = requests.get("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Lawrence_of_arabia_ver3_xxlg.jpg/800px-Lawrence_of_arabia_ver3_xxlg.jpg")
+
+
+    return r.content
 
 
 

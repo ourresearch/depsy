@@ -1266,6 +1266,17 @@ span.snippet span.contribs a.contrib {
 #footer #mc_embed_signup form #mc_embed_signup_scroll input.btn:hover {
   background: #bbb;
 }
+.modal-body.badge-modal .badge-section {
+  min-height: 70px;
+  padding: 40px 0 0px;
+  text-align: center;
+}
+.modal-body.badge-modal h3 {
+  margin-top: 40px;
+}
+.modal-body.badge-modal h3 .sub {
+  font-size: 14px;
+}
 .language-icon {
   font-weight: 100;
   text-align: center;

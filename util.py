@@ -108,7 +108,8 @@ def str_to_bool(x):
     else:
         raise ValueError("This string can't be cast to a boolean.")
 
-
+# from http://stackoverflow.com/a/20007730/226013
+ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
 
 
 
