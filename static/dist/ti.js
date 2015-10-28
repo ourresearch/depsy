@@ -195,17 +195,30 @@ angular.module("directives.badge", [])
 
                 scope.openBadgeModal = function(){
                     var modalInstance = $modal.open({
+                        controller: "badgeModalCtrl",
                         templateUrl: 'badge-modal.tpl.html',
                         resolve: {
                             badgeMarkup: function () {
                                 console.log("making badgeMarkup call to ", badgeUrl)
                                 return $http.get(badgeUrl)
+                            },
+                            badgeUrl: function(){
+                                return badgeUrl
                             }
                         }
                     })
                 }
             }
         }
+
+
+    })
+
+    .controller("badgeModalCtrl", function($scope, $sce, $location, badgeMarkup, badgeUrl){
+        console.log("running the badgeModalCtrl", badgeMarkup)
+        $scope.badgeMarkup = $sce.trustAsHtml(badgeMarkup.data)
+        $scope.badgeUrl = badgeUrl
+        $scope.currentUrl = $location.absUrl()
 
 
     })
@@ -1083,8 +1096,29 @@ angular.module("directives/badge.tpl.html", []).run(["$templateCache", function(
   $templateCache.put("directives/badge.tpl.html",
     "<script type=\"text/ng-template\" id=\"badge-modal.tpl.html\">\n" +
     "    <div class=\"modal-body\">\n" +
-    "        modal body!\n" +
-    "        <pre>{{ badgeMarkup }}</pre>\n" +
+    "        <div class=\"badge-section\">\n" +
+    "            <img src=\"{{ badgeUrl }}\" alt=\"\">\n" +
+    "            <a ng-href=\"absUrl\">\n" +
+    "                <span class=\"badge-markup-container\" ng-bind-html=\"badgeMarkup\"></span>\n" +
+    "            </a>\n" +
+    "        </div>\n" +
+    "        <div class=\"paste-this markdown\">\n" +
+    "            <h3>\n" +
+    "                <span class=\"main\">Markdown</span>\n" +
+    "                <span class=\"sub\">for GitHub readme.md</span>\n" +
+    "            </h3>\n" +
+    "            <pre>[![Research software impact](http://depsy.org/{{ badgeUrl }})]({{ currentUrl }})</pre>\n" +
+    "        </div>\n" +
+    "        <div class=\"paste-this html\">\n" +
+    "            <h3>\n" +
+    "                <span class=\"main\">HTML</span>\n" +
+    "                <span class=\"sub\">for blogs and whatnot</span>\n" +
+    "            </h3>\n" +
+    "            <pre><a href=\"{{ currentUrl }}\">\n" +
+    "                <img src=\"{{  }}\" alt=\"\">\n" +
+    "            </a></pre>\n" +
+    "        </div>\n" +
+    "\n" +
     "    </div>\n" +
     "    <div class=\"modal-footer\">\n" +
     "        <button class=\"btn btn-primary\" type=\"button\" ng-click=\"$close()\">OK</button>\n" +

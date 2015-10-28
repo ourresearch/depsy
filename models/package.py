@@ -171,9 +171,8 @@ class Package(db.Model):
     def tree(self):
         return self.rev_deps_tree
 
-    @property
-    def as_badge(self):
-        return get_badge(self.impact_percentile)
+    def get_badge(self, extension):
+        return get_badge(self.impact_percentile, extension)
 
 
     @property

@@ -346,9 +346,8 @@ class Person(db.Model):
             return self.parsed_name["last"]
         return self.display_name
 
-    @property
-    def as_badge(self):
-        return get_badge(self.impact_percentile)
+    def get_badge(self, extension):
+        return get_badge(self.impact_percentile, extension)
 
 
     @property

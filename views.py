@@ -127,14 +127,13 @@ def person_endpoint(person_id):
     return json_resp_from_thing(my_person.to_dict())
 
 
-@app.route("/api/person/<person_id>/badge")
-@app.route("/api/person/<person_id>/badge.json")
-def person_badge(person_id):
+@app.route("/api/person/<person_id>/badge.<extension>")
+def person_badge(person_id, extension):
     my_person = Person.query.get(int(person_id))
     if not my_person:
         abort_json(404, "This person's not in the database")
 
-    return my_person.as_badge
+    return my_person.get_badge(extension)
 
 
 @app.route("/api/package/<host_or_language>/<project_name>")
@@ -154,14 +153,14 @@ def package_endpoint(host_or_language, project_name):
     resp_dict = my_package.to_dict()
     return json_resp_from_thing(resp_dict)
 
-@app.route("/api/package/<host_or_language>/<project_name>/badge")
-def package_badge(host_or_language, project_name):
+@app.route("/api/package/<host_or_language>/<project_name>/badge.<extension>")
+def package_badge(host_or_language, project_name, extension):
     my_id = package.make_id(host_or_language, project_name)
     my_package = Package.query.get(my_id)
     if not my_package:
         abort_json(404, "This package is not in the database")
 
-    return my_package.as_badge
+    return my_package.get_badge(extension)
 
 
 @app.route('/api/leaderboard')

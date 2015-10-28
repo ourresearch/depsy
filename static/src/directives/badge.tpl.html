@@ -1,7 +1,28 @@
 <script type="text/ng-template" id="badge-modal.tpl.html">
     <div class="modal-body">
-        modal body!
-        <pre>{{ badgeMarkup }}</pre>
+        <div class="badge-section">
+            <img src="{{ badgeUrl }}" alt="">
+            <a ng-href="absUrl">
+                <span class="badge-markup-container" ng-bind-html="badgeMarkup"></span>
+            </a>
+        </div>
+        <div class="paste-this markdown">
+            <h3>
+                <span class="main">Markdown</span>
+                <span class="sub">for GitHub readme.md</span>
+            </h3>
+            <pre>[![Research software impact](http://depsy.org/{{ badgeUrl }})]({{ currentUrl }})</pre>
+        </div>
+        <div class="paste-this html">
+            <h3>
+                <span class="main">HTML</span>
+                <span class="sub">for blogs and whatnot</span>
+            </h3>
+            <pre><a href="{{ currentUrl }}">
+                <img src="{{  }}" alt="">
+            </a></pre>
+        </div>
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" type="button" ng-click="$close()">OK</button>

@@ -4,14 +4,15 @@ Code shared among Person, Package, and Tag
 """
 
 
-def get_badge(percentile_as_decimal):
+def get_badge(percentile_as_decimal, extension):
     percentile = int(round(percentile_as_decimal * 100))
     color = "brightgreen"
 
-    url_template = "http://img.shields.io/badge/Research%20software%20impact-{percentile}%20percentile-{color}.svg?style=flat"
+    url_template = "http://img.shields.io/badge/Research%20software%20impact-{percentile}%20percentile-{color}.{extension}?style=flat"
     url = url_template.format(
         percentile=percentile,
-        color=color
+        color=color,
+        extension=extension
     )
 
     print "sending request for badge to this URL: ", url

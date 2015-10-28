@@ -225,6 +225,7 @@ div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header i.fa.fa
   color: blueviolet;
 }
 div.ti-header div.ti-menu {
+  display: none;
   position: absolute;
   left: 160px;
   bottom: 21px;
