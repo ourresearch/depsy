@@ -636,6 +636,18 @@ div.package-page div.ti-page-sidebar .sidebar-section.top-contribs .contrib img.
   -moz-border-radius: 20px;
   border-radius: 20px;
 }
+div.package-page div.ti-page-sidebar .sidebar-section.actions {
+  margin-top: 50px;
+}
+div.package-page div.ti-page-sidebar .sidebar-section.actions a {
+  display: inline-block;
+  float: left;
+  clear: left;
+  margin-top: 6px;
+}
+div.package-page div.ti-page-sidebar .sidebar-section.actions a i {
+  margin-right: 5px;
+}
 div.package-page .ti-page-body {
   float: none;
 }
