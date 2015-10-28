@@ -197,3 +197,10 @@ It is a lot of percentiles, we agree.  :)  The data is very skewed, with differe
 - we do our best to guess whether a package is is_academic.  It's hard to know what this is for R; right now we consider all R packages to be academic.  
 - download numbers are inflated by use of projects on CI servers; a download isn't necessarily by a person.
 
+
+## Literature that helped us
+
+- [Implementing Transitive Credit with JSON-LD](http://arxiv.org/abs/1407.5117) by Dan Katz
+- plus several more, we're still working on this bit...
+
+
