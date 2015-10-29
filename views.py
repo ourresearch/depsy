@@ -161,7 +161,7 @@ def package_badge(host_or_language, project_name):
     if not my_package:
         abort_json(404, "This package is not in the database")
 
-    my_badge_file = make_badge_file(my_package)
+    my_badge_file = make_badge_io(my_package)
     return send_file(my_badge_file, mimetype='image/svg+xml')
 
 @app.route('/api/leaderboard')
