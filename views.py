@@ -5,7 +5,7 @@ from util import elapsed
 from models.person import Person
 from models import package
 from models.package import Package
-from models.entity import make_badge
+from models.entity import make_badge_io
 from models.package_jobs import get_leaders
 from models.tags import Tags
 from dummy_data import get_dummy_data
@@ -27,8 +27,6 @@ import requests
 import os
 import json
 import re
-from StringIO import StringIO
-import io
 
 import logging
 
@@ -136,8 +134,8 @@ def person_badge(person_id):
     if not my_person:
         abort_json(404, "This person's not in the database")
 
-    my_badge = make_badge(my_person)
-    return send_file(io.BytesIO(my_badge), mimetype='image/svg+xml')
+    my_badge_file = make_badge_io(my_person)
+    return send_file(my_badge_file, mimetype='image/svg+xml')
 
 @app.route("/api/package/<host_or_language>/<project_name>")
 @app.route("/api/package/<host_or_language>/<project_name>.json")
@@ -163,8 +161,8 @@ def package_badge(host_or_language, project_name):
     if not my_package:
         abort_json(404, "This package is not in the database")
 
-    my_badge = make_badge(my_package)
-    return send_file(io.BytesIO(my_badge), mimetype='image/svg+xml')
+    my_badge_file = make_badge_file(my_package)
+    return send_file(my_badge_file, mimetype='image/svg+xml')
 
 @app.route('/api/leaderboard')
 @app.route('/api/leaderboard.json')
