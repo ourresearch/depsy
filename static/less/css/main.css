@@ -1017,6 +1017,25 @@ span.snippet span.contribs a.contrib {
   font-weight: bold;
   margin-top: 20px;
 }
+.static-page.landing {
+  background: red;
+}
+.static-page.landing div.tagline {
+  background: #00aeef;
+  height: 100%;
+  padding-top: 200px;
+  text-align: center;
+}
+.static-page.landing div.tagline h1 {
+  color: #fff;
+  font-size: 70px;
+  font-weight: 100;
+  width: 900px;
+  margin: 0 auto;
+}
+.static-page.landing .features .feature {
+  height: 100%;
+}
 .left-metrics {
   vertical-align: middle;
   display: inline-block;
