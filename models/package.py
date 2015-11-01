@@ -210,6 +210,7 @@ class Package(db.Model):
         return False
 
 
+
     @property
     def subscores(self):
         
@@ -234,7 +235,7 @@ class Package(db.Model):
                 "name": "pagerank",
                 "percentile": self.display_pagerank_percentile,
                 "val": self.display_pagerank_score,
-                "display_name": "Software reuse",
+                "display_name": "Dependency PageRank",
                 "icon": "fa-recycle",
                 "is_estimated": self.has_estimated_pagerank
             }
@@ -1019,6 +1020,11 @@ class Package(db.Model):
 
     @property
     def display_pagerank_score(self):
+        out_of_10 = self.pagerank_score_out_of_1000 / 100.0
+        return out_of_10
+
+    @property
+    def pagerank_score_out_of_1000(self):
         #if no pagerank, sub it for downloads
         if self.has_estimated_pagerank:
             return self.num_downloads_score
@@ -1027,6 +1033,7 @@ class Package(db.Model):
         if pagerank_score < 1:
             pagerank_score = 0
         return min(pagerank_score, 1000)
+
 
     @property
     def display_pagerank_percentile(self):
@@ -1216,6 +1223,19 @@ def prep_summary(str):
         return placeholder
     else:
         return truncate(str)
+
+def pagerank_str_from_percentile(percentile):
+    cutoffs = [
+        ("very high", 0.99),
+        ("high", 0.9),
+        ("moderate", 0.4),
+        ("low", 0.01),
+        ("none found", 0)
+    ]
+
+    for str_val, float_val in cutoffs:
+        if percentile >= float_val:
+            return str_val
 
 
 def make_id(namespace, name):

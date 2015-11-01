@@ -406,10 +406,10 @@ class PersonPackage():
 
     @property
     def person_package_pagerank(self):
-        if self.package.display_pagerank_score == None:
+        if self.package.pagerank_score_out_of_1000 == None:
             return None
 
-        ret = self.person_package_credit * self.package.display_pagerank_score
+        ret = self.person_package_credit * self.package.pagerank_score_out_of_1000
         return ret
 
 

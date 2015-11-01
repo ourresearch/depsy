@@ -11,7 +11,17 @@ angular.module("formatterService", [])
             return parts.join(".");
         }
 
-        var short = function(num){
+        var short = function(num, fixedAt){
+            if (typeof num === "string"){
+                return num  // not really a number
+            }
+
+            // hack for dealing with pagerank
+            if (fixedAt){
+                return num.toFixed(fixedAt)
+            }
+
+
             // from http://stackoverflow.com/a/14994860/226013
             if (num === null){
                 return 0
@@ -31,9 +41,7 @@ angular.module("formatterService", [])
                 return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
             }
 
-            if (num < .01) {
-                return num.toExponential(1)
-            }
+
             if (num < 1) {
                 return Math.round(num * 100) / 100
             }

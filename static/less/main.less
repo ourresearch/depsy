@@ -1289,7 +1289,7 @@ span.snippet {
 
 
 .impact-popover {
-  width: 180px;
+  width: 185px;
   &.person {
   }
   &.package {
@@ -1322,12 +1322,18 @@ span.snippet {
       }
     }
     .subscore {
+      clear: both;
+      padding-bottom: 10px;
+      .clearfix();
       .bar-outer {
         display: inline-block;
         height: 12px;
         width: 25px;
         background: #eee;
         text-align: right;
+        float: left;
+        margin-right: 10px;
+        margin-top: 5px;
 
         .bar-inner {
           height: 100%;
@@ -1344,20 +1350,28 @@ span.snippet {
         }
       }
       .val {
+        float: left;
+        line-height: 1;
         font-size: 20px;
         font-weight: bold;
         display: inline-block;
-        margin-right: 1px;
-        //width: 55px;
+        margin-right: 9px;
       }
       .name {
-        text-transform: lowercase;
+        //text-transform: lowercase;
+        width: 96px;
+        float: left;
+
       }
       &.num_mentions {
         color: @citationsColor;
       }
       &.pagerank {
         color: @pagerankColor;
+        .name {
+          line-height: 1.2;
+          margin-top: 0px;
+        }
       }
       &.num_downloads {
         color: @downloadsColor;

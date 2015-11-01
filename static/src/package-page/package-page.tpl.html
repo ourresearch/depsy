@@ -163,7 +163,10 @@
                         </div>
 
                     </div>
-                    <span class="main-metric">
+                    <span class="main-metric" ng-show="subscore.name=='pagerank'">
+                        {{ format.short(subscore.val, 2) }}
+                    </span>
+                    <span class="main-metric" ng-show="subscore.name != 'pagerank'">
                         {{ format.short(subscore.val) }}
                     </span>
                     <span class="percentile" ng-show="package.is_academic">

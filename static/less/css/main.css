@@ -1103,7 +1103,7 @@ span.snippet span.contribs a.contrib {
   font-size: 13px;
 }
 .impact-popover {
-  width: 180px;
+  width: 185px;
 }
 .impact-popover.package .overall {
   color: #be9968;
@@ -1132,12 +1132,27 @@ span.snippet span.contribs a.contrib {
 .impact-popover.package .based-on .language {
   text-transform: capitalize;
 }
+.impact-popover.package .subscore {
+  clear: both;
+  padding-bottom: 10px;
+}
+.impact-popover.package .subscore:before,
+.impact-popover.package .subscore:after {
+  content: " ";
+  display: table;
+}
+.impact-popover.package .subscore:after {
+  clear: both;
+}
 .impact-popover.package .subscore .bar-outer {
   display: inline-block;
   height: 12px;
   width: 25px;
   background: #eee;
   text-align: right;
+  float: left;
+  margin-right: 10px;
+  margin-top: 5px;
 }
 .impact-popover.package .subscore .bar-outer .bar-inner {
   height: 100%;
@@ -1153,19 +1168,26 @@ span.snippet span.contribs a.contrib {
   background: #4daf4a;
 }
 .impact-popover.package .subscore .val {
+  float: left;
+  line-height: 1;
   font-size: 20px;
   font-weight: bold;
   display: inline-block;
-  margin-right: 1px;
+  margin-right: 9px;
 }
 .impact-popover.package .subscore .name {
-  text-transform: lowercase;
+  width: 96px;
+  float: left;
 }
 .impact-popover.package .subscore.num_mentions {
   color: #984ea3;
 }
 .impact-popover.package .subscore.pagerank {
   color: #377eb8;
+}
+.impact-popover.package .subscore.pagerank .name {
+  line-height: 1.2;
+  margin-top: 0px;
 }
 .impact-popover.package .subscore.num_downloads {
   color: #4daf4a;

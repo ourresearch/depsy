@@ -483,7 +483,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        </div>\n" +
     "\n" +
     "                    </div>\n" +
-    "                    <span class=\"main-metric\">\n" +
+    "                    <span class=\"main-metric\" ng-show=\"subscore.name=='pagerank'\">\n" +
+    "                        {{ format.short(subscore.val, 2) }}\n" +
+    "                    </span>\n" +
+    "                    <span class=\"main-metric\" ng-show=\"subscore.name != 'pagerank'\">\n" +
     "                        {{ format.short(subscore.val) }}\n" +
     "                    </span>\n" +
     "                    <span class=\"percentile\" ng-show=\"package.is_academic\">\n" +
@@ -799,7 +802,8 @@ angular.module("snippet/package-impact-popover.tpl.html", []).run(["$templateCac
     "                <span class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile * 100 }}%\"></span>\n" +
     "            </span>\n" +
     "\n" +
-    "            <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "            <span class=\"val pagerank\" ng-if=\"subscore.name=='pagerank'\">{{ format.short(subscore.val, 2) }}</span>\n" +
+    "            <span class=\"val\" ng-if=\"subscore.name != 'pagerank'\">{{ format.short(subscore.val) }}</span>\n" +
     "            <span class=\"name\">{{ subscore.display_name }}</span>\n" +
     "        </div>\n" +
     "\n" +
@@ -814,8 +818,8 @@ angular.module("snippet/package-snippet.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "    <span class=\"left-metrics is-academic\"\n" +
     "          ng-show=\"package.is_academic\"\n" +
-    "          popover-placement=\"bottom\"\n" +
     "          popover-trigger=\"mouseenter\"\n" +
+    "          popover-placement=\"bottom\"\n" +
     "         popover-template=\"'snippet/package-impact-popover.tpl.html'\">\n" +
     "\n" +
     "      <div class=\"vis impact-stick\">\n" +
