@@ -1771,7 +1771,8 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                        <div class=\"bar-inner {{ subscore.name }}\" style=\"width: {{ subscore.percentile  * 100 }}%;\"></div>\n" +
     "                    </div>\n" +
     "                    <div class=\"subscore-label\">\n" +
-    "                        <span class=\"val\">{{ format.short(subscore.val) }}</span>\n" +
+    "                        <span class=\"val pagerank\" ng-show=\"subscore.name=='pagerank'\">{{ format.short(subscore.val, 2) }}</span>\n" +
+    "                        <span class=\"val\" ng-show=\"subscore.name != 'pagerank'\">{{ format.short(subscore.val) }}</span>\n" +
     "                        <span class=\"text\">{{ subscore.display_name }}</span>\n" +
     "                    </div>\n" +
     "\n" +

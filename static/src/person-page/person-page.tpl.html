@@ -40,7 +40,8 @@
                         <div class="bar-inner {{ subscore.name }}" style="width: {{ subscore.percentile  * 100 }}%;"></div>
                     </div>
                     <div class="subscore-label">
-                        <span class="val">{{ format.short(subscore.val) }}</span>
+                        <span class="val pagerank" ng-show="subscore.name=='pagerank'">{{ format.short(subscore.val, 2) }}</span>
+                        <span class="val" ng-show="subscore.name != 'pagerank'">{{ format.short(subscore.val) }}</span>
                         <span class="text">{{ subscore.display_name }}</span>
                     </div>
 

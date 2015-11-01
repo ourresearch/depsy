@@ -69,6 +69,9 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
+    @property
+    def display_pagerank(self):
+        return self.pagerank / 100.0
 
     @property
     def subscores(self):
@@ -86,11 +89,11 @@ class Person(db.Model):
                 "val": self.num_downloads
             })
         ret.append({
-                "display_name": "Software reuse", 
+                "display_name": "Dependency PageRank",
                 "icon": "fa-recycle", 
                 "name": "pagerank", 
                 "percentile": self.pagerank_percentile,
-                "val": self.pagerank
+                "val": self.display_pagerank
             })
         ret.append({
                 "display_name": "Citations", 
