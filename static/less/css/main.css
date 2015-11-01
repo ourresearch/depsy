@@ -765,7 +765,7 @@ div.package-page .ti-page-body .package-page-subscore .body .explanation .citati
 div.package-page .ti-page-body .package-page-subscore .top-importers {
   float: left;
   margin: -40px 0 0 60px;
-  width: 400px;
+  width: 350px;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers h4 {
   font-size: 24px;
@@ -888,7 +888,7 @@ snippet
 /****************************************************
 /***************************************************/
 span.snippet {
-  margin: 15px 0 15px 0;
+  margin: 15px 0 15px 5px;
   padding: 4px 0;
   color: #333;
   text-decoration: none;
@@ -1024,7 +1024,7 @@ span.snippet span.contribs a.contrib {
   float: left;
   margin-top: 8px;
   line-height: 1.3;
-  width: 36px;
+  width: 30px;
   cursor: default;
 }
 .left-metrics.not-academic span.non-research {
