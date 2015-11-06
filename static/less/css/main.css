@@ -1055,6 +1055,9 @@ span.snippet span.contribs a.contrib {
   margin: 30px auto;
   font-size: 20px;
 }
+.static-page.landing .features .feature ul li {
+  margin-top: 20px;
+}
 .static-page.landing .features .feature i.fa.main-icon {
   font-size: 150px;
   margin-bottom: 50px;
@@ -1076,13 +1079,13 @@ span.snippet span.contribs a.contrib {
   background: #984ea3;
 }
 .static-page.landing .features .feature.pagerank {
-  background: #377eb8;
+  background: #ed1c24;
 }
 .static-page.landing .features .feature.people {
   background: orange;
 }
 .static-page.landing .features .feature.examples {
-  background: #4daf4a;
+  background: #00a651;
 }
 .left-metrics {
   vertical-align: middle;
