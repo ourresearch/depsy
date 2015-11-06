@@ -1147,6 +1147,15 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "                package in the dependency network.\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "        <div class=\"feature people\">\n" +
+    "            <i class=\"fa fa-users main-icon\"></i>\n" +
+    "            <h2>Credit for all software's authors</h2>\n" +
+    "            <div class=\"feature-descr\">\n" +
+    "                Depsy assigns fractional credit to contributors based on designated authorship,<br>\n" +
+    "                number of commits, and repo ownership&mdash;supporting a fairer, more software-native\n" +
+    "                reward system.\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "    </div>\n" +
     "\n" +
     "\n" +

@@ -1068,6 +1068,9 @@ span.snippet span.contribs a.contrib {
 .static-page.landing .features .feature.pagerank {
   background: #377eb8;
 }
+.static-page.landing .features .feature.people {
+  background: orange;
+}
 .left-metrics {
   vertical-align: middle;
   display: inline-block;
