@@ -1065,6 +1065,9 @@ span.snippet span.contribs a.contrib {
 .static-page.landing .features .feature.citations {
   background: #984ea3;
 }
+.static-page.landing .features .feature.pagerank {
+  background: #377eb8;
+}
 .left-metrics {
   vertical-align: middle;
   display: inline-block;

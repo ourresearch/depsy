@@ -1137,6 +1137,16 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "                revealing impacts invisible to citation indexes like Google Scholar.\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "        <div class=\"feature pagerank\">\n" +
+    "            <i class=\"fa fa-recycle main-icon\"></i>\n" +
+    "            <h2>Credit when software is reused</h2>\n" +
+    "            <div class=\"feature-descr\">\n" +
+    "                Software reuse goes beyond citation&mdash;so Depsy analyzes code from\n" +
+    "                over half a million GitHub repositories to find\n" +
+    "                package imports, then uses PageRank to assess the importance of every\n" +
+    "                package in the dependency network.\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "    </div>\n" +
     "\n" +
     "\n" +
