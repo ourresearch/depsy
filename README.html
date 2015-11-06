@@ -62,28 +62,29 @@ img {
 
 <div id="TOC">
 <ul>
-<li><a href="#depsy-is-a-better-way-to-learn-the-impact-of-research-software.">Depsy is a better way to learn the impact of research software.</a></li>
-<li><a href="#what-does-depsy-include">What does Depsy include?</a></li>
-<li><a href="#package-impact">Package impact</a></li>
+<li><a href="#its-time-to-value-the-software-that-powers-science.">It’s time to value the software that powers science.</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#data-availability">Data availability</a></li>
 </ul>
 </div>
 
 <p><em>This documentation is embedded from Depsy’s GitHub Readme, and is still in progress. Feel free to submit a pull request with updates and changes</em></p>
-<div id="depsy-is-a-better-way-to-learn-the-impact-of-research-software." class="section level2">
-<h2>Depsy is a better way to learn the impact of research software.</h2>
+<div id="its-time-to-value-the-software-that-powers-science." class="section level2">
+<h2>It’s time to value the software that powers science.</h2>
+<p>Depsy helps realize the software-intensive science of the future by promoting credit for software as a fundamental building block of science.</p>
 <p>It’s being built at <a href="https://impactstory.org/about">Impactstory</a> by Jason Priem and Heather Piwowar, and is funded by an <a href="http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/">EAGER grant</a> from the National Science Foundation.</p>
 </div>
-<div id="what-does-depsy-include" class="section level2">
-<h2>What does Depsy include?</h2>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
 <p>Depsy finds the impact of research software <strong>packages</strong> written in Python and R, and also impact of the <strong>people</strong> who write it.</p>
-<p><a href="http://pypi.python.org">PyPI</a> for Python, and <a href="https://cran.r-project.org/web/packages/">CRAN</a> for R.</p>
-<p>R is a language for doing statistics. As such, almost all of its packages are written by academics, for academics, to do reasearch–so we consider all R software on Depsy to be research software. We cover the <em>7057</em> R software packages available on <a href="https://cran.r-project.org/web/packages/">CRAN</a>, the main library repository for R.</p>
+<p>R is a language for doing statistics. As such, almost all of its packages are written by academics, for academics, to do reasearch–so we consider all R software on Depsy to be research software. Depsy covers the <em>7057</em> R software packages available on <a href="https://cran.r-project.org/web/packages/">CRAN</a>, the main library repository for R.</p>
 <p>Python is a more general purpose programming language. We try to establish whether a given Python package is research software by searching its metadata (package name, description, tags) for researchy-words (see <a href="https://github.com/Impactstory/depsy/blob/870c85ee4598643f496bca76e5a7dff994e53837/models/academic.py">code on GitHub</a>). We cover all <em>57,243</em> active Python packages on <a href="http://pypi.python.org">PyPI</a>, Python’s main package repository; of those, we count <em>4166</em> as research software.</p>
-</div>
-<div id="package-impact" class="section level2">
-<h2>Package impact</h2>
 <p>We currently calculate impact along three dimensions (and a fourth, coming later, that will capture social signals like GitHub watchers and Stack Overflow discussions). The overall impact score of a package is calculated as the average of these three: <strong>downloads</strong>, <strong>software reuse</strong>, and <strong>literature mentions</strong>.</p>
 <p>More information coming soon! In the mean time, see our <a href="https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md">full documentation page</a> for details.</p>
+</div>
+<div id="data-availability" class="section level2">
+<h2>Data availability</h2>
+<p>Depsy data is available through the API, and easy to access via the “View in API” buttons on the UI for the main concepts of people, packages, and tags.</p>
 </div>
 
 
