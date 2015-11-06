@@ -181,11 +181,17 @@
 
                 <div class="explanation">
                     <div class="citations-explanation" ng-show="subscore.name=='num_mentions'">
-                        Based on term searches in <br>
-                            <span class="citation-link" ng-repeat="link in package.citations_dict">
-                                <a href="{{ link.url }}">{{ link.display_name }} ({{ link.count }})</a>
-                                <span class="and" ng-show="!$last">and</span>
-                            </span>
+                        <p>
+                            Based on term searches in <br>
+                                <span class="citation-link" ng-repeat="link in package.citations_dict">
+                                    <a href="{{ link.url }}">{{ link.display_name }} ({{ link.count }})</a>
+                                    <span class="and" ng-show="!$last">and</span>
+                                </span>
+                        </p>
+                        <p class="thin">
+                            Results often disjoint from Google Scholar because of different corpora,
+                            and because we count term <em>use</em>, rather than formal citation.
+                        </p>
                     </div>
                     <div class="downloads-explanation" ng-show="subscore.name=='num_downloads'">
                         Based on latest monthly downloads stats from
@@ -201,7 +207,7 @@
                             and GitHub projects, based on its PageRank in the dependency network.
 
                         </p>
-                        <p>
+                        <p class="thin">
                             A higher number means this package is imported more frequently,
                             more uniquely, and by more important projects.
                         </p>

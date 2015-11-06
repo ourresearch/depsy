@@ -651,9 +651,13 @@ div.package-page .ti-page-body {
   float: none;
 }
 div.package-page .ti-page-body .package-page-subscore {
-  margin: 20px 40px 50px 0;
+  margin: 20px 40px 0 0;
   float: left;
   width: 275px;
+}
+div.package-page .ti-page-body .package-page-subscore .thin {
+  font-weight: 100;
+  font-size: 90%;
 }
 div.package-page .ti-page-body .package-page-subscore.overall.is-academic-true .non-research-package {
   display: none;
@@ -733,6 +737,7 @@ div.package-page .ti-page-body .package-page-subscore .body .impact-stick .bar-i
 }
 div.package-page .ti-page-body .package-page-subscore .body .main-metric {
   font-size: 60px;
+  font-weight: bold;
 }
 div.package-page .ti-page-body .package-page-subscore .body .percentile {
   display: inline-block;
@@ -791,6 +796,7 @@ div.package-page .ti-page-body .package-page-subscore .top-importers .dep-contai
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep .underline {
   font-size: 12px;
+  font-weight: normal;
   color: #999;
 }
 div.package-page .ti-page-body .package-page-subscore .top-importers .dep-container .dep.package a.name {

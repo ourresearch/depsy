@@ -719,9 +719,14 @@ div.package-page {
   .ti-page-body {
     float: none;
     .package-page-subscore {
-      margin: 20px 40px 50px 0;
+      margin: 20px 40px 0 0;
       float:left;
       width: 275px;
+      .thin {
+        font-weight: 100;
+        font-size: 90%;
+
+      }
       &.overall {
         &.is-academic-true {
           .non-research-package {display: none;}
@@ -794,6 +799,7 @@ div.package-page {
         }
         .main-metric {
           font-size: 60px;
+          font-weight: bold;
         }
 
         .percentile {
@@ -862,6 +868,7 @@ div.package-page {
             }
             .underline {
               font-size: 12px;
+              font-weight: normal;
               color: #999;
             }
 

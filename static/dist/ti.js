@@ -1609,11 +1609,17 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "\n" +
     "                <div class=\"explanation\">\n" +
     "                    <div class=\"citations-explanation\" ng-show=\"subscore.name=='num_mentions'\">\n" +
-    "                        Based on term searches in <br>\n" +
-    "                            <span class=\"citation-link\" ng-repeat=\"link in package.citations_dict\">\n" +
-    "                                <a href=\"{{ link.url }}\">{{ link.display_name }} ({{ link.count }})</a>\n" +
-    "                                <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
-    "                            </span>\n" +
+    "                        <p>\n" +
+    "                            Based on term searches in <br>\n" +
+    "                                <span class=\"citation-link\" ng-repeat=\"link in package.citations_dict\">\n" +
+    "                                    <a href=\"{{ link.url }}\">{{ link.display_name }} ({{ link.count }})</a>\n" +
+    "                                    <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
+    "                                </span>\n" +
+    "                        </p>\n" +
+    "                        <p class=\"thin\">\n" +
+    "                            Results often disjoint from Google Scholar because of different corpora,\n" +
+    "                            and because we count term <em>use</em>, rather than formal citation.\n" +
+    "                        </p>\n" +
     "                    </div>\n" +
     "                    <div class=\"downloads-explanation\" ng-show=\"subscore.name=='num_downloads'\">\n" +
     "                        Based on latest monthly downloads stats from\n" +
@@ -1629,7 +1635,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                            and GitHub projects, based on its PageRank in the dependency network.\n" +
     "\n" +
     "                        </p>\n" +
-    "                        <p>\n" +
+    "                        <p class=\"thin\">\n" +
     "                            A higher number means this package is imported more frequently,\n" +
     "                            more uniquely, and by more important projects.\n" +
     "                        </p>\n" +
