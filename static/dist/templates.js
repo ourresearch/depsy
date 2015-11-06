@@ -1156,6 +1156,46 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "                reward system.\n" +
     "            </div>\n" +
     "        </div>\n" +
+    "        <div class=\"feature examples\">\n" +
+    "            <i class=\"fa fa-save main-icon\"></i>\n" +
+    "            <h2>Check out some examples!</h2>\n" +
+    "            <div class=\"feature-descr\">\n" +
+    "                Depsy currently works for the 11,223 Python and R packages on CRAN and PyPI (support for\n" +
+    "                other languages is coming). Here are a few interesting ones:\n" +
+    "                <ul>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"/package/python/GDAL\">GDAL</a> is a geoscience library. Depsy finds\n" +
+    "                        this cool NASA-funded\n" +
+    "                        <a href=\"http://www.the-cryosphere.net/8/1509/2014/tc-8-1509-2014.html\">ice map paper</a>\n" +
+    "                        that mentions GDAL without\n" +
+    "                        formally citing it. Also check out key author <a href=\"person/378948\">Even Rouault:</a>\n" +
+    "                        the project commit history demonstrates he deserves 27% credit for GDAL, even\n" +
+    "                        though he's overlooked in more\n" +
+    "                        <a href=\"http://gdal.org/credits.html\">traditional credit systems.</a>\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"/package/r/lubridate\">lubridate</a> improves date handling for R. It's\n" +
+    "                        not highly-cited, but we can see it's making a different kind of impact:\n" +
+    "                        it's got a very high dependency PageRank, because it's reused by\n" +
+    "                        over 1000 different R projects on GitHub and CRAN.\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"/package/r/BradleyTerry2\">BradleyTerry2</a> implements a probability technique in R.\n" +
+    "                        It's only directly reused by 8 projects&mdash;but Depsy shows that one of those projects is itself\n" +
+    "                        highly reused, leading to huge <em>indirect</em> impacts. This indirect reuse\n" +
+    "                        gives BradleyTerry2 a very high dependency PageRank score, even though its direct\n" +
+    "                        reuse is small, and that makes for a better reflection of real-world impact.\n" +
+    "                    </li>\n" +
+    "                    <li>\n" +
+    "                        <a href=\"/person/342746\">Michael Droettboom</a> makes small (under 20%) contributions to\n" +
+    "                        other people's research software, contributions\n" +
+    "                        easy to overlook. But the contributions are meaningful, and they're to high-impact\n" +
+    "                        projects, so in Depsy's transitive credit system he ends up as a highly-ranked contributor.\n" +
+    "                        Depsy can help unsung heroes like Micheal get rewarded.\n" +
+    "                    </li>\n" +
+    "                </ul>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
     "    </div>\n" +
     "\n" +
     "\n" +

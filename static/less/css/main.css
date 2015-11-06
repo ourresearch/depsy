@@ -1045,6 +1045,16 @@ span.snippet span.contribs a.contrib {
   color: #fff;
   font-size: 24px;
 }
+.static-page.landing .features .feature a {
+  color: #fff;
+  text-decoration: underline;
+}
+.static-page.landing .features .feature ul {
+  width: 700px;
+  text-align: left;
+  margin: 30px auto;
+  font-size: 20px;
+}
 .static-page.landing .features .feature i.fa.main-icon {
   font-size: 150px;
   margin-bottom: 50px;
@@ -1070,6 +1080,9 @@ span.snippet span.contribs a.contrib {
 }
 .static-page.landing .features .feature.people {
   background: orange;
+}
+.static-page.landing .features .feature.examples {
+  background: #4daf4a;
 }
 .left-metrics {
   vertical-align: middle;
