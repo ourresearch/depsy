@@ -23,7 +23,6 @@ body {
     min-height: 100%;
     .clearfix();
     clear: both;
-    margin-bottom: 50px;
   }
   .wrapper {
     width: 1200px;
@@ -1183,17 +1182,24 @@ span.snippet {
 
   &.landing {
     background: red;
+    margin-bottom: -100px;
     div.tagline {
       background: @mainColor;
       height: 100%;
-      padding-top: 200px;
+      padding-top: 150px;
       text-align: center;
+      color: #fff;
       h1 {
-        color: #fff;
-        font-size: 70px;
-        font-weight: 100;
         width: 900px;
         margin: 0 auto;
+        font-weight: 100;
+        font-size: 70px;
+      }
+      .sub {
+        width: 750px;
+        margin: 50px auto 0;
+        font-weight: 100;
+        font-size: 24px;
       }
     }
 
@@ -1410,7 +1416,7 @@ span.snippet {
 #footer {
   background: @mainColor;
   padding: 30px 60px 20px;
-  margin-top: 50px;
+  margin-top: 100px;
   .clearfix();
   clear:both;
   width: 100%;

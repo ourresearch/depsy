@@ -12,7 +12,6 @@ body {
 body .view-wrapper {
   min-height: 100%;
   clear: both;
-  margin-bottom: 50px;
 }
 body .view-wrapper:before,
 body .view-wrapper:after {
@@ -1019,19 +1018,26 @@ span.snippet span.contribs a.contrib {
 }
 .static-page.landing {
   background: red;
+  margin-bottom: -100px;
 }
 .static-page.landing div.tagline {
   background: #00aeef;
   height: 100%;
-  padding-top: 200px;
+  padding-top: 150px;
   text-align: center;
+  color: #fff;
 }
 .static-page.landing div.tagline h1 {
-  color: #fff;
-  font-size: 70px;
-  font-weight: 100;
   width: 900px;
   margin: 0 auto;
+  font-weight: 100;
+  font-size: 70px;
+}
+.static-page.landing div.tagline .sub {
+  width: 750px;
+  margin: 50px auto 0;
+  font-weight: 100;
+  font-size: 24px;
 }
 .static-page.landing .features .feature {
   height: 100%;
@@ -1214,7 +1220,7 @@ span.snippet span.contribs a.contrib {
 #footer {
   background: #00aeef;
   padding: 30px 60px 20px;
-  margin-top: 50px;
+  margin-top: 100px;
   clear: both;
   width: 100%;
   float: left;

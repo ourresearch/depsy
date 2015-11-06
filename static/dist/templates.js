@@ -1122,7 +1122,10 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "            It’s time to value the software that powers science.\n" +
     "       </h1>\n" +
     "       <div class=\"sub\">\n" +
-    "\n" +
+    "           <p>\n" +
+    "               Depsy helps support the software-intensive science of the future\n" +
+    "               by promoting credit for software as a fundamental building block of science.\n" +
+    "           </p>\n" +
     "       </div>\n" +
     "   </div>\n" +
     "    <div class=\"features\">\n" +
