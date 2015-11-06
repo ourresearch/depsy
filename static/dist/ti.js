@@ -931,41 +931,51 @@ angular.module('snippet', [
 
 angular.module('staticPages', [
     'ngRoute'
-  ])
+])
 
 
 
-  .config(function($routeProvider) {
-    $routeProvider.when('/', {
-      redirectTo: "/leaderboard"
+    .config(function($routeProvider) {
+        $routeProvider.when('/', {
+            templateUrl: "static-pages/landing.tpl.html",
+            controller: "LandingPageCtrl"
+        })
     })
-  })
 
 
-  .config(function($routeProvider) {
-    $routeProvider.when('/about', {
-      templateUrl: "static-pages/about.tpl.html",
-      controller: "StaticPageCtrl"
+    .config(function($routeProvider) {
+        $routeProvider.when('/about', {
+            templateUrl: "static-pages/about.tpl.html",
+            controller: "StaticPageCtrl"
+        })
     })
-  })
 
-  .controller("StaticPageCtrl", function($scope, $sce, $http, ngProgress){
 
-      console.log("getting readme...")
-      $http.get("/api/readme").then(
-          function(resp){
-            console.log("readme:", resp.data.readme)
-            $scope.readme = $sce.trustAsHtml(resp.data.readme)
-            ngProgress.complete()
-          },
-          function(resp){
-            alert("Sorry, there was an error getting this page!")
-            ngProgress.complete()
-          }
 
-      )
+    .controller("StaticPageCtrl", function($scope, $sce, $http, ngProgress){
 
-  })
+        console.log("getting readme...")
+        $http.get("/api/readme").then(
+            function(resp){
+                console.log("readme:", resp.data.readme)
+                $scope.readme = $sce.trustAsHtml(resp.data.readme)
+                ngProgress.complete()
+            },
+            function(resp){
+                alert("Sorry, there was an error getting this page!")
+                ngProgress.complete()
+            }
+
+        )
+
+    })
+
+    .controller("LandingPageCtrl", function($scope, ngProgress){
+        console.log("landing page!")
+        ngProgress.complete()
+
+
+    })
 
 
 
@@ -2216,8 +2226,18 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
   $templateCache.put("static-pages/landing.tpl.html",
     "<div class=\"landing static-page\">\n" +
     "   <div class=\"tagline\">\n" +
-    "      foo Find the impact of software packages for Python and R.\n" +
+    "       <h1>\n" +
+    "            It’s time to value the software that powers science.\n" +
+    "       </h1>\n" +
+    "       <div class=\"sub\">\n" +
+    "\n" +
+    "       </div>\n" +
     "   </div>\n" +
+    "    <div class=\"features\">\n" +
+    "        <div class=\"feature\">\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
     "\n" +
     "\n" +
     "</div>\n" +

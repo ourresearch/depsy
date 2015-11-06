@@ -1118,8 +1118,18 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
   $templateCache.put("static-pages/landing.tpl.html",
     "<div class=\"landing static-page\">\n" +
     "   <div class=\"tagline\">\n" +
-    "      foo Find the impact of software packages for Python and R.\n" +
+    "       <h1>\n" +
+    "            It’s time to value the software that powers science.\n" +
+    "       </h1>\n" +
+    "       <div class=\"sub\">\n" +
+    "\n" +
+    "       </div>\n" +
     "   </div>\n" +
+    "    <div class=\"features\">\n" +
+    "        <div class=\"feature\">\n" +
+    "\n" +
+    "        </div>\n" +
+    "    </div>\n" +
     "\n" +
     "\n" +
     "</div>\n" +
