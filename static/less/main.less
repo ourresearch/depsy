@@ -1181,7 +1181,6 @@ span.snippet {
   }
 
   &.landing {
-    background: red;
     margin-bottom: -100px;
     div.tagline {
       background: @mainColor;
@@ -1205,7 +1204,31 @@ span.snippet {
 
     .features {
       .feature {
-        height: 100%;
+        min-height: 100%;
+        padding-top: 200px;
+        text-align: center;
+        i.fa.main-icon {
+          font-size: 150px;
+          margin-bottom: 50px;
+        }
+        h2 {
+          width: 900px;
+          margin: 0 auto;
+          font-weight: 100;
+          font-size: 50px;
+        }
+        .feature-descr {
+          width: 900px;
+          margin: 30px auto 0;
+          padding-bottom: 50px;
+          font-weight: 100;
+          font-size: 24px;
+        }
+        color: #fff;
+        font-size: 24px;
+        &.citations {
+          background: @citationsColor;
+        }
       }
     }
   }

@@ -1129,8 +1129,13 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "       </div>\n" +
     "   </div>\n" +
     "    <div class=\"features\">\n" +
-    "        <div class=\"feature\">\n" +
-    "\n" +
+    "        <div class=\"feature citations\">\n" +
+    "            <i class=\"fa fa-file-text-o main-icon\"></i>\n" +
+    "            <h2>Credit when software is informally cited</h2>\n" +
+    "            <div class=\"feature-descr\">\n" +
+    "                Depsy text-mines OA papers to find fulltext <em>mentions</em> of software they use,\n" +
+    "                revealing impacts invisible to citation indexes like Google Scholar.\n" +
+    "            </div>\n" +
     "        </div>\n" +
     "    </div>\n" +
     "\n" +

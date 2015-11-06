@@ -1017,7 +1017,6 @@ span.snippet span.contribs a.contrib {
   margin-top: 20px;
 }
 .static-page.landing {
-  background: red;
   margin-bottom: -100px;
 }
 .static-page.landing div.tagline {
@@ -1040,7 +1039,31 @@ span.snippet span.contribs a.contrib {
   font-size: 24px;
 }
 .static-page.landing .features .feature {
-  height: 100%;
+  min-height: 100%;
+  padding-top: 200px;
+  text-align: center;
+  color: #fff;
+  font-size: 24px;
+}
+.static-page.landing .features .feature i.fa.main-icon {
+  font-size: 150px;
+  margin-bottom: 50px;
+}
+.static-page.landing .features .feature h2 {
+  width: 900px;
+  margin: 0 auto;
+  font-weight: 100;
+  font-size: 50px;
+}
+.static-page.landing .features .feature .feature-descr {
+  width: 900px;
+  margin: 30px auto 0;
+  padding-bottom: 50px;
+  font-weight: 100;
+  font-size: 24px;
+}
+.static-page.landing .features .feature.citations {
+  background: #984ea3;
 }
 .left-metrics {
   vertical-align: middle;
