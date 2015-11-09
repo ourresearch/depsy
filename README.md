@@ -5,7 +5,7 @@ Today's cutting-edge science is built on an array of specialist research softwar
 
 We need to fix that. We need to provide meaningful incentives for the scientist-developers who make important research software, so that we can keep doing important, software-driven science.
 
-## Depsy helps credit research software in software-native ways
+## Depsy helps value research software
 
 Lots of things have to happen to support this change. Depsy is a shot at making one of those things happen: a system that tracks the impact of software *software-native ways*.
 
@@ -18,10 +18,6 @@ Depsy doesn't do any of these things perfectly, and it's not supposed to. Instea
 Given that, it's not a question of *if* research software becomes a first-class scientific product, but *when* and *how*. So let's start talking about when and how. Let's improve Depsy, let's build tools better than Depsy, and let's (most importantly) build the cultural and political structures that can use these systems.
 
 ## Let's talk details
-
-### Funding
-
-Depsy is being built at [Impactstory](https://impactstory.org/about) by Jason Priem and Heather Piwowar, and is funded by an [EAGER grant](http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/) from the National Science Foundation.
 
 ### Coverage
 
@@ -39,3 +35,6 @@ Everything in Depsy is open, and we encourage reuse of the data and code. You ca
 
 Also in [the paper](https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.Rmd) you can find some cool case studies showing how Depsy can be useful.
 
+### Funding
+
+Depsy is being built at [Impactstory](https://impactstory.org/about) by Jason Priem and Heather Piwowar, and is funded by an [EAGER grant](http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/) from the National Science Foundation.
