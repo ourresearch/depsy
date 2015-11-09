@@ -1,13 +1,13 @@
 
 ## We need to value the software that powers science
 
-Today's cutting-edge science is built on an array of specialist research software. This research software is often as important as traditional scholarly papers--but it's not treated that way when it comes to funding and tenure. There, the traditional publish-or-perish, show-me-the-Impact-Factor system still rules.
+Today's cutting-edge science is built on an array of specialist research software. This research software is often as important as traditional scholarly papers--[but it's not treated that way when it comes to funding and tenure](http://sciencecodemanifesto.org/). There, the traditional publish-or-perish, show-me-the-Impact-Factor system still rules.
 
-We need to fix that. We need to provide meaningful incentives for the scientist-developers who make important research software, so that we can keep doing important, software-driven science.
+We need to fix that. We need to provide meaningful incentives for the [scientist-developers](http://dirkgorissen.com/2012/03/26/the-researcher-programmer-a-new-species/) who make important research software, so that we can keep doing important, software-driven science.
 
 ## Depsy helps value research software
 
-Lots of things have to happen to support this change. Depsy is a shot at making one of those things happen: a system that tracks the impact of software *software-native ways*.
+[Lots of things have to happen](http://rev.oxfordjournals.org/content/early/2015/07/26/reseval.rvv014.full) to support this change. Depsy is a shot at making one of those things happen: a system that tracks the impact of software in *software-native ways*.
 
 That means not just counting up citations to a hastily-written paper *about* the software, but actual mentions of *the software itself* in the literature. It means looking how software gets reused by other software, even when it's not cited at all. And it means understanding the full complexity of software authorship, where one project can involve hundreds of contributors in multiple roles that don't map to traditional paper authorship.
 
