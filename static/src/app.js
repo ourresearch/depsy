@@ -59,7 +59,7 @@ angular.module('app').run(function($route,
   $rootScope.$on('$routeChangeSuccess', function(next, current){
     console.log("route change success")
     window.scrollTo(0, 0)
-    $window.ga('send', 'pageview', { page: $location.url() });
+    ga('send', 'pageview', { page: $location.url() });
 
 
 //    ngProgress.complete()
@@ -68,6 +68,7 @@ angular.module('app').run(function($route,
     console.log("$routeChangeError")
     window.scrollTo(0, 0)
     ngProgress.complete()
+
   });
 
 
