@@ -188,9 +188,10 @@
                                     <span class="and" ng-show="!$last">and</span>
                                 </span>
                         </p>
-                        <p class="thin">
-                            Results often disjoint from Google Scholar because of different corpora,
-                            and because we count term <em>use</em>, rather than formal citation.
+                        <p>
+                            <a href="https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#literature-reuse">
+                                Read more about how we got this number
+                            </a>.
                         </p>
                     </div>
                     <div class="downloads-explanation" ng-show="subscore.name=='num_downloads'">
@@ -207,9 +208,10 @@
                             and GitHub projects, based on its PageRank in the dependency network.
 
                         </p>
-                        <p class="thin">
-                            A higher number means this package is imported more frequently,
-                            more uniquely, and by more important projects.
+                        <p>
+                            <a href="https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#software-reuse">
+                                Read more about what this number means
+                            </a>
                         </p>
 
 
@@ -289,7 +291,7 @@
                                 <a href="http://github.com/{{ dep.login }}/{{ dep.repo_name }}"
                                    popover-trigger="mouseenter"
                                    popover="Depsy only indexes packages distributed via CRAN or PyPI, but you can view this project on GitHub."
-                                   class="github-link">
+                                   class="github-link">f
                                     <i class="fa fa-github"></i>
                                     {{ dep.repo_name }}
                                 </a>

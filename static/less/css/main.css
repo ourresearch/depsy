@@ -795,6 +795,9 @@ div.package-page .ti-page-body .package-page-subscore .body .explanation p {
 div.package-page .ti-page-body .package-page-subscore .body .explanation .citations-explanation a {
   color: #984ea3;
 }
+div.package-page .ti-page-body .package-page-subscore .body .explanation .pagerank-explanation a {
+  color: #377eb8;
+}
 div.package-page .ti-page-body .package-page-subscore .top-importers {
   float: left;
   margin: -40px 0 0 60px;

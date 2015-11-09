@@ -44,6 +44,13 @@ angular.module('app').run(function($route,
                                    ngProgress,
                                    $location) {
 
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-23384030-3', 'auto');
+
 
 
   $rootScope.$on('$routeChangeStart', function(next, current){
@@ -53,6 +60,9 @@ angular.module('app').run(function($route,
   $rootScope.$on('$routeChangeSuccess', function(next, current){
     console.log("route change success")
     window.scrollTo(0, 0)
+    ga('send', 'pageview');
+
+
 //    ngProgress.complete()
   })
   $rootScope.$on('$routeChangeError', function(event, current, previous, rejection){
@@ -1616,9 +1626,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                                    <span class=\"and\" ng-show=\"!$last\">and</span>\n" +
     "                                </span>\n" +
     "                        </p>\n" +
-    "                        <p class=\"thin\">\n" +
-    "                            Results often disjoint from Google Scholar because of different corpora,\n" +
-    "                            and because we count term <em>use</em>, rather than formal citation.\n" +
+    "                        <p>\n" +
+    "                            <a href=\"https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#literature-reuse\">\n" +
+    "                                Read more about how we got this number\n" +
+    "                            </a>.\n" +
     "                        </p>\n" +
     "                    </div>\n" +
     "                    <div class=\"downloads-explanation\" ng-show=\"subscore.name=='num_downloads'\">\n" +
@@ -1635,9 +1646,10 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                            and GitHub projects, based on its PageRank in the dependency network.\n" +
     "\n" +
     "                        </p>\n" +
-    "                        <p class=\"thin\">\n" +
-    "                            A higher number means this package is imported more frequently,\n" +
-    "                            more uniquely, and by more important projects.\n" +
+    "                        <p>\n" +
+    "                            <a href=\"https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#software-reuse\">\n" +
+    "                                Read more about what this number means\n" +
+    "                            </a>\n" +
     "                        </p>\n" +
     "\n" +
     "\n" +
@@ -1717,7 +1729,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                                <a href=\"http://github.com/{{ dep.login }}/{{ dep.repo_name }}\"\n" +
     "                                   popover-trigger=\"mouseenter\"\n" +
     "                                   popover=\"Depsy only indexes packages distributed via CRAN or PyPI, but you can view this project on GitHub.\"\n" +
-    "                                   class=\"github-link\">\n" +
+    "                                   class=\"github-link\">f\n" +
     "                                    <i class=\"fa fa-github\"></i>\n" +
     "                                    {{ dep.repo_name }}\n" +
     "                                </a>\n" +
@@ -2263,7 +2275,7 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "       </h1>\n" +
     "       <div class=\"sub\">\n" +
     "           <p>\n" +
-    "               Depsy helps support the software-intensive science of the future\n" +
+    "               Depsy helps build the software-intensive science of the future\n" +
     "               by promoting credit for software as a fundamental building block of science.\n" +
     "           </p>\n" +
     "       </div>\n" +
@@ -2273,7 +2285,7 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "            <i class=\"fa fa-file-text-o main-icon\"></i>\n" +
     "            <h2>Credit when software is informally cited</h2>\n" +
     "            <div class=\"feature-descr\">\n" +
-    "                Depsy text-mines OA papers to find fulltext <em>mentions</em> of software they use,\n" +
+    "                Depsy text-mines papers to find fulltext <em>mentions</em> of software they use,\n" +
     "                revealing impacts invisible to citation indexes like Google Scholar.\n" +
     "            </div>\n" +
     "        </div>\n" +
@@ -2281,10 +2293,9 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "            <i class=\"fa fa-recycle main-icon\"></i>\n" +
     "            <h2>Credit when software is reused</h2>\n" +
     "            <div class=\"feature-descr\">\n" +
-    "                Software reuse goes beyond citation&mdash;so Depsy analyzes code from\n" +
-    "                over half a million GitHub repositories to find\n" +
-    "                package imports, then uses PageRank to assess the importance of every\n" +
-    "                package in the dependency network.\n" +
+    "                Citation is just part of the story&mdash;Depsy analyzes code from\n" +
+    "                over half a million GitHub repositories to find how packages are reused by\n" +
+    "                other software projects.\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"feature people\">\n" +
