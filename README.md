@@ -31,10 +31,6 @@ We've found all this software being credited in the scholarly literature 83,445 
 Everything in Depsy is open, and we encourage reuse of the data and code. You can use the API (see "View in Api" buttons on the package, person, and tag pages), or get larger-scale access via our read-only postgres database. The database connection details (plus an example of how to connect in R) are in [the Knitr source for the paper](https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.Rmd).
 
 
-### Case studies
-
-Also in [the paper](https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.Rmd) you can find some cool case studies showing how Depsy can be useful.
-
 ### Funding
 
 Depsy is being built at [Impactstory](https://impactstory.org/about) by Jason Priem and Heather Piwowar, and is funded by an [EAGER grant](http://blog.impactstory.org/impactstory-awarded-300k-nsf-grant/) from the National Science Foundation.
