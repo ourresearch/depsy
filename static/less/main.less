@@ -562,6 +562,27 @@ div.entity-page.person-page {
   .ti-page-body {
     .packages {
       margin-left: 40px;
+      div.packages-header {
+        margin: 10px 0 30px;
+        h2 {
+          margin: 0 0 10px;
+          .count {
+            font-weight: bold;
+          }
+          .where {
+            font-size: 80%;
+            font-weight: 100;
+          }
+          a {
+            color: #333;
+            border-bottom: 1px dotted #333;
+            text-decoration: none;
+            &:hover {
+              border-bottom: 2px solid #333;
+            }
+          }
+        }
+      }
       div.person-package {
         .person-package-stats {
           padding: 25px 0 0 0;

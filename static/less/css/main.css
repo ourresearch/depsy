@@ -513,6 +513,27 @@ div.entity-page.person-page div.ti-page-sidebar .sidebar-section.actions a i {
 div.entity-page.person-page .ti-page-body .packages {
   margin-left: 40px;
 }
+div.entity-page.person-page .ti-page-body .packages div.packages-header {
+  margin: 10px 0 30px;
+}
+div.entity-page.person-page .ti-page-body .packages div.packages-header h2 {
+  margin: 0 0 10px;
+}
+div.entity-page.person-page .ti-page-body .packages div.packages-header h2 .count {
+  font-weight: bold;
+}
+div.entity-page.person-page .ti-page-body .packages div.packages-header h2 .where {
+  font-size: 80%;
+  font-weight: 100;
+}
+div.entity-page.person-page .ti-page-body .packages div.packages-header h2 a {
+  color: #333;
+  border-bottom: 1px dotted #333;
+  text-decoration: none;
+}
+div.entity-page.person-page .ti-page-body .packages div.packages-header h2 a:hover {
+  border-bottom: 2px solid #333;
+}
 div.entity-page.person-page .ti-page-body .packages div.person-package .person-package-stats {
   padding: 25px 0 0 0;
   margin: 0 10px 0 0;

@@ -121,8 +121,34 @@
 
 
     <div class="ti-page-body">
-
         <div class="packages">
+            <div class="packages-header">
+                <h2 class="r-packages" ng-show="person.num_packages_r">
+                    <span class="count">
+                        {{ person.num_packages_r }}
+                    </span>
+                    research software package<span class="plural" ng-show="person.num_packages_r > 1">s</span>
+                    <span class="where">
+                        shared on <a href="https://cran.r-project.org/"
+                                     popover="CRAN is the main software repository for the R language."
+                                     popover-trigger="mouseenter">CRAN</a>
+                    </span>
+                </h2>
+                <h2 class="python-packages" ng-show="person.num_packages_python">
+                    <span class="count">
+                        {{ person.num_packages_python }}
+                    </span>
+                    research software package<span class="plural" ng-show="person.num_packages_python > 1">s</span>
+                    <span class="where">
+                        shared on <a href="https://pypi.python.org/pypi"
+                                     popover="PyPI is the main software repository for the Python language."
+                                     popover-trigger="mouseenter">PyPI</a>
+                    </span>
+                </h2>
+
+
+
+            </div>
             <div class="person-package" ng-repeat="package in person.person_packages | orderBy:'-person_package_impact'">
                 <div class="person-package-stats">
                     <wheel></wheel>

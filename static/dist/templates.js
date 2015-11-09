@@ -760,8 +760,34 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "\n" +
     "\n" +
     "    <div class=\"ti-page-body\">\n" +
-    "\n" +
     "        <div class=\"packages\">\n" +
+    "            <div class=\"packages-header\">\n" +
+    "                <h2 class=\"r-packages\" ng-show=\"person.num_packages_r\">\n" +
+    "                    <span class=\"count\">\n" +
+    "                        {{ person.num_packages_r }}\n" +
+    "                    </span>\n" +
+    "                    research software package<span class=\"plural\" ng-show=\"person.num_packages_r > 1\">s</span>\n" +
+    "                    <span class=\"where\">\n" +
+    "                        shared on <a href=\"https://cran.r-project.org/\"\n" +
+    "                                     popover=\"CRAN is the main software repository for the R language.\"\n" +
+    "                                     popover-trigger=\"mouseenter\">CRAN</a>\n" +
+    "                    </span>\n" +
+    "                </h2>\n" +
+    "                <h2 class=\"python-packages\" ng-show=\"person.num_packages_python\">\n" +
+    "                    <span class=\"count\">\n" +
+    "                        {{ person.num_packages_python }}\n" +
+    "                    </span>\n" +
+    "                    research software package<span class=\"plural\" ng-show=\"person.num_packages_python > 1\">s</span>\n" +
+    "                    <span class=\"where\">\n" +
+    "                        shared on <a href=\"https://pypi.python.org/pypi\"\n" +
+    "                                     popover=\"PyPI is the main software repository for the Python language.\"\n" +
+    "                                     popover-trigger=\"mouseenter\">PyPI</a>\n" +
+    "                    </span>\n" +
+    "                </h2>\n" +
+    "\n" +
+    "\n" +
+    "\n" +
+    "            </div>\n" +
     "            <div class=\"person-package\" ng-repeat=\"package in person.person_packages | orderBy:'-person_package_impact'\">\n" +
     "                <div class=\"person-package-stats\">\n" +
     "                    <wheel></wheel>\n" +
