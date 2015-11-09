@@ -209,6 +209,14 @@ div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header {
   font-weight: 900;
   text-transform: uppercase;
 }
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header .where {
+  font-size: 90%;
+  text-transform: none;
+}
+div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header .where a {
+  color: #333;
+  text-decoration: underline;
+}
 div.ti-header div.search-box ul.dropdown-menu div.typeahead-group-header img {
   width: 22px;
   vertical-align: -5px;

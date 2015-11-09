@@ -266,11 +266,11 @@ angular.module("header/search-result.tpl.html", []).run(["$templateCache", funct
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +
-    "      Python packages\n" +
+    "      Python packages <span class=\"where\">on <a href=\"https://pypi.python.org/pypi\">PyPI</a></span>\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type cran-package\" ng-if=\"match.model.type=='cran_project'\">\n" +
     "      <img src=\"static/img/r-logo.png\" alt=\"\"/>\n" +
-    "      R packages\n" +
+    "      R packages <span class=\"where\">on <a href=\"https://cran.r-project.org/\">CRAN</a></span>\n" +
     "   </span>\n" +
     "   <span class=\"group-header-type people\" ng-if=\"match.model.type=='person'\">\n" +
     "      <i class=\"fa fa-user\"></i>\n" +
@@ -608,11 +608,11 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                            <span class=\"name\">\n" +
     "                                <a href=\"http://github.com/{{ dep.login }}/{{ dep.repo_name }}\"\n" +
     "                                   popover-trigger=\"mouseenter\"\n" +
-    "                                   popover=\"This {{ dep.language }} project is not in CRAN or PyPi, but it is viewable on GitHub\"\n" +
+    "                                   popover=\"Depsy only indexes packages distributed via CRAN or PyPI, but you can view this project on GitHub.\"\n" +
     "                                   class=\"github-link\">\n" +
     "                                    <i class=\"fa fa-github\"></i>\n" +
+    "                                    {{ dep.repo_name }}\n" +
     "                                </a>\n" +
-    "                                {{ dep.repo_name }}\n" +
     "                            </span>\n" +
     "                        </div>\n" +
     "                        <div class=\"underline\">\n" +
@@ -1166,8 +1166,9 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "            <i class=\"fa fa-save main-icon\"></i>\n" +
     "            <h2>Check out some examples!</h2>\n" +
     "            <div class=\"feature-descr\">\n" +
-    "                Depsy currently works for the 11,223 Python and R packages on CRAN and PyPI (support for\n" +
-    "                other languages is coming). Here are a few interesting ones:\n" +
+    "                Depsy currently works for the 11,223 Python and R research software packages available on <a\n" +
+    "                    href=\"https://pypi.python.org/pypi\">PyPI</a> and <a href=\"https://cran.r-project.org/\">CRAN.</a>\n" +
+    "                Here are a few interesting ones:\n" +
     "                <ul>\n" +
     "                    <li>\n" +
     "                        <a href=\"/package/python/GDAL\">GDAL</a> is a geoscience library. Depsy finds\n" +

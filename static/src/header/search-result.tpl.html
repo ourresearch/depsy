@@ -2,11 +2,11 @@
 <div class="typeahead-group-header" ng-if="match.model.is_first">
    <span class="group-header-type pypy-package" ng-if="match.model.type=='pypi_project'">
       <img src="static/img/python.png" alt=""/>
-      Python packages
+      Python packages <span class="where">on <a href="https://pypi.python.org/pypi">PyPI</a></span>
    </span>
    <span class="group-header-type cran-package" ng-if="match.model.type=='cran_project'">
       <img src="static/img/r-logo.png" alt=""/>
-      R packages
+      R packages <span class="where">on <a href="https://cran.r-project.org/">CRAN</a></span>
    </span>
    <span class="group-header-type people" ng-if="match.model.type=='person'">
       <i class="fa fa-user"></i>

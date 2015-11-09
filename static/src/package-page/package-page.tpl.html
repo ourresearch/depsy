@@ -288,11 +288,11 @@
                             <span class="name">
                                 <a href="http://github.com/{{ dep.login }}/{{ dep.repo_name }}"
                                    popover-trigger="mouseenter"
-                                   popover="This {{ dep.language }} project is not in CRAN or PyPi, but it is viewable on GitHub"
+                                   popover="Depsy only indexes packages distributed via CRAN or PyPI, but you can view this project on GitHub."
                                    class="github-link">
                                     <i class="fa fa-github"></i>
+                                    {{ dep.repo_name }}
                                 </a>
-                                {{ dep.repo_name }}
                             </span>
                         </div>
                         <div class="underline">
