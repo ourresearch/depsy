@@ -1,0 +1,15 @@
+base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
+knitr
+magrittr
+ggplot2
+dplyr
+broom
+DBI
+rJava
+RJDBC
