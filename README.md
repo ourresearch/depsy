@@ -1,19 +1,23 @@
 
-## Depsy helps value the research software that powers science
+## We need to value the software that powers science
 
 Today's cutting-edge science is built on an array of specialist research software. This research software is often as important as traditional scholarly papers--but it's not treated that way when it comes to funding and tenure. There, the traditional publish-or-perish, show-me-the-Impact-Factor system still rules.
 
 We need to fix that. We need to provide meaningful incentives for the scientist-developers who make important research software, so that we can keep doing important, software-driven science.
 
+## Depsy helps credit research software in software-native ways
+
 Lots of things have to happen to support this change. Depsy is a shot at making one of those things happen: a system that tracks the impact of software *software-native ways*.
 
 That means not just counting up citations to a hastily-written paper *about* the software, but actual mentions of *the software itself* in the literature. It means looking how software gets reused by other software, even when it's not cited at all. And it means understanding the full complexity of software authorship, where one project can involve hundreds of contributors in multiple roles that don't map to traditional paper authorship.
 
-Depsy doesn't do any of these things perfectly, and it's not supposed to. Instead, Depsy is a proof-of-concept to show that we *can* do them at all. The data and tools are there. We can measure and reward software impact, like we measure and reward the impact of papers.
+## This is just the beginning
+
+Depsy doesn't do any of these things perfectly, and it's not supposed to. Instead, Depsy is a proof-of-concept to show that we can do them at all. The data and tools are there. We *can* measure and reward software impact, like we measure and reward the impact of papers.
 
 Given that, it's not a question of *if* research software becomes a first-class scientific product, but *when* and *how*. So let's start talking about when and how. Let's improve Depsy, let's build tools better than Depsy, and let's (most importantly) build the cultural and political structures that can use these systems.
 
-## Some details:
+## Let's talk details
 
 ### Funding
 
