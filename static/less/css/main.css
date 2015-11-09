@@ -994,7 +994,7 @@ span.snippet span.contribs a.contrib {
   margin: 100px auto;
 }
 .static-page.about-page #readme {
-  width: 600px;
+  width: 700px;
   margin: 100px auto;
 }
 .static-page.about-page #readme #TOC {
@@ -1002,11 +1002,11 @@ span.snippet span.contribs a.contrib {
 }
 .static-page.about-page #readme h2 {
   font-weight: bold;
-  margin-top: 150px;
+  margin-top: 50px;
 }
 .static-page.about-page #readme h3 {
   font-weight: bold;
-  margin-top: 75px;
+  margin-top: 25px;
 }
 .static-page.about-page #readme h4 {
   font-weight: bold;

@@ -5,6 +5,7 @@ from util import elapsed
 from models.person import Person
 from models import package
 from models.package import Package
+from models.github_repo import get_readme
 from models.entity import make_badge_io
 from models.package_jobs import get_leaders
 from models.tags import Tags
@@ -210,11 +211,9 @@ def test():
 
 
 @app.route("/api/readme")
-def get_readme():
-    r = requests.get("https://raw.githubusercontent.com/Impactstory/depsy/master/README.html")
-    p = re.compile(ur'<div class="container-fluid main-container">(.+?)<script>', re.MULTILINE | re.DOTALL)
-    res = re.findall(p, r.text)
-    return jsonify({"readme": res[0]})
+def get_readme_endpoint():
+    readme = get_readme("Impactstory", "depsy")
+    return jsonify({"readme": readme})
 
 
 def make_filters_dict(args):

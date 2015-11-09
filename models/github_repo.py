@@ -24,6 +24,7 @@ import ast
 import subprocess
 import re
 import hashlib
+from lxml import html
 
 
 class GithubRepo(db.Model):
@@ -1020,6 +1021,37 @@ update_registry.register(Update(
     query=q,
     queue_id=6
 ))
+
+
+
+
+def get_readme(owner, repo_name):
+    url = "https://github.com/{}/{}".format(
+        owner,
+        repo_name
+    )
+    r = requests.get(url)
+    p = re.compile(
+        ur'<article class="markdown-body entry-content" itemprop="mainContentOfPage">(.+?)</article>',
+        re.MULTILINE | re.DOTALL
+    )
+    res = re.findall(p, r.text)[0]
+    return res
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
