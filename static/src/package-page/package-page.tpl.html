@@ -128,7 +128,7 @@
                 <div class="explanation">
                     Compared to all research software on
                     <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
-                    <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>,
+                    <span class="repo PyPi" ng-show="package.host=='pypi'">PyPI</span>,
                     based on relative
                     <span class="num_downloads">downloads,</span>
                     <span class="pagerank">software reuse,</span> and
@@ -190,27 +190,27 @@
                         </p>
                         <p>
                             <a href="https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#literature-reuse">
-                                Read more about how we got this number
-                            </a>.
+                                Read more about how we got this number.
+                            </a>
                         </p>
                     </div>
                     <div class="downloads-explanation" ng-show="subscore.name=='num_downloads'">
                         Based on latest monthly downloads stats from
-                        <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
-                        <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
+                        <span class="repo cran" ng-show="package.host=='cran'">CRAN.</span>
+                        <span class="repo PyPi" ng-show="package.host=='pypi'">PyPI.</span>
                     </div>
                     <div class="pagerank-explanation" ng-show="subscore.name=='pagerank'">
                         <p>
                             Measures how often this package is imported by
 
                             <span class="repo cran" ng-show="package.host=='cran'">CRAN</span>
-                            <span class="repo PyPi" ng-show="package.host=='pypi'">PyPi</span>
+                            <span class="repo PyPi" ng-show="package.host=='pypi'">PyPI</span>
                             and GitHub projects, based on its PageRank in the dependency network.
 
                         </p>
                         <p>
                             <a href="https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#software-reuse">
-                                Read more about what this number means
+                                Read more about what this number means.
                             </a>
                         </p>
 
@@ -237,7 +237,7 @@
                      ng-repeat="dep in package.top_neighbors | orderBy: ['-is_github', '-impact']">
 
 
-                    <!-- CRAN or PyPi package -->
+                    <!-- CRAN or PyPI package -->
                     <div class="package dep" ng-if="dep.host">
                         <div class="top-line">
 
@@ -291,7 +291,7 @@
                                 <a href="http://github.com/{{ dep.login }}/{{ dep.repo_name }}"
                                    popover-trigger="mouseenter"
                                    popover="Depsy only indexes packages distributed via CRAN or PyPI, but you can view this project on GitHub."
-                                   class="github-link">f
+                                   class="github-link">
                                     <i class="fa fa-github"></i>
                                     {{ dep.repo_name }}
                                 </a>

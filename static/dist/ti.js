@@ -69,7 +69,7 @@ angular.module('app').run(function($route,
     console.log("$routeChangeError")
     window.scrollTo(0, 0)
     ngProgress.complete()
-    
+
   });
 
 
@@ -1567,7 +1567,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <div class=\"explanation\">\n" +
     "                    Compared to all research software on\n" +
     "                    <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
-    "                    <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>,\n" +
+    "                    <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPI</span>,\n" +
     "                    based on relative\n" +
     "                    <span class=\"num_downloads\">downloads,</span>\n" +
     "                    <span class=\"pagerank\">software reuse,</span> and\n" +
@@ -1629,27 +1629,27 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        </p>\n" +
     "                        <p>\n" +
     "                            <a href=\"https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#literature-reuse\">\n" +
-    "                                Read more about how we got this number\n" +
-    "                            </a>.\n" +
+    "                                Read more about how we got this number.\n" +
+    "                            </a>\n" +
     "                        </p>\n" +
     "                    </div>\n" +
     "                    <div class=\"downloads-explanation\" ng-show=\"subscore.name=='num_downloads'\">\n" +
     "                        Based on latest monthly downloads stats from\n" +
-    "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
-    "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN.</span>\n" +
+    "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPI.</span>\n" +
     "                    </div>\n" +
     "                    <div class=\"pagerank-explanation\" ng-show=\"subscore.name=='pagerank'\">\n" +
     "                        <p>\n" +
     "                            Measures how often this package is imported by\n" +
     "\n" +
     "                            <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN</span>\n" +
-    "                            <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPi</span>\n" +
+    "                            <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPI</span>\n" +
     "                            and GitHub projects, based on its PageRank in the dependency network.\n" +
     "\n" +
     "                        </p>\n" +
     "                        <p>\n" +
     "                            <a href=\"https://github.com/Impactstory/depsy-research/blob/master/introducing_depsy.md#software-reuse\">\n" +
-    "                                Read more about what this number means\n" +
+    "                                Read more about what this number means.\n" +
     "                            </a>\n" +
     "                        </p>\n" +
     "\n" +
@@ -1676,7 +1676,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                     ng-repeat=\"dep in package.top_neighbors | orderBy: ['-is_github', '-impact']\">\n" +
     "\n" +
     "\n" +
-    "                    <!-- CRAN or PyPi package -->\n" +
+    "                    <!-- CRAN or PyPI package -->\n" +
     "                    <div class=\"package dep\" ng-if=\"dep.host\">\n" +
     "                        <div class=\"top-line\">\n" +
     "\n" +
@@ -1730,7 +1730,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                                <a href=\"http://github.com/{{ dep.login }}/{{ dep.repo_name }}\"\n" +
     "                                   popover-trigger=\"mouseenter\"\n" +
     "                                   popover=\"Depsy only indexes packages distributed via CRAN or PyPI, but you can view this project on GitHub.\"\n" +
-    "                                   class=\"github-link\">f\n" +
+    "                                   class=\"github-link\">\n" +
     "                                    <i class=\"fa fa-github\"></i>\n" +
     "                                    {{ dep.repo_name }}\n" +
     "                                </a>\n" +
