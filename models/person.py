@@ -39,7 +39,6 @@ class Person(db.Model):
     pagerank = db.Column(db.Float)
     pagerank_percentile = db.Column(db.Float)
 
-    is_academic = db.Column(db.Boolean)
     is_organization = db.Column(db.Boolean)
     main_language = db.Column(db.Text)
     num_packages = db.Column(db.Integer)
@@ -58,11 +57,6 @@ class Person(db.Model):
         backref="person"
     )
 
-
-    def set_is_academic(self):
-        # set this using the sql in the sql folder!  set_person_is_academic.sql
-        # this is just a placeholder to remind us to run it :)
-        pass
 
     def set_is_organization(self):
         # set this using the sql in the sql folder!  set_person_is_organization.sql
@@ -166,7 +160,6 @@ class Person(db.Model):
             "github_login": self.github_login, 
             "icon": self.icon, 
             "icon_small": self.icon_small, 
-            "is_academic": self.is_academic, 
             "is_organization": self.is_organization,             
             "main_language": self.main_language,             
             "impact": self.impact, 
