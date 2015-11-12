@@ -260,6 +260,10 @@ class Package(db.Model):
 
             # query is v. fast, cos Persons are in the Session (in memory).
             person = Person.query.get(person_id)
+            if not person:
+                print u"ERROR: person {} not found; maybe deduped? skipping.".format(person_id)
+                continue
+
             person_snippet = person.as_package_snippet
             person_snippet["person_package_credit"] = self.credit[str(person_id)]
 
@@ -390,7 +394,7 @@ class Package(db.Model):
         people_by_name = defaultdict(list)
         for person in all_people:
             if person.name:
-                name_to_dedup = person.name.lower()
+                name_to_dedup = person.name_normalized_for_maximal_deduping
                 people_by_name[name_to_dedup].append(person)
 
         for name, people_with_name in people_by_name.iteritems():
@@ -413,7 +417,7 @@ class Package(db.Model):
                         dedup_target = people_with_no_github[0]
                         people_to_merge = people_with_no_github[1:]
 
-                    print u"person we will marge into: {}".format(dedup_target.id)
+                    print u"person we will merge into: {}".format(dedup_target.id)
                     print u"people to merge: {}".format([p.id for p in people_to_merge])
                     
                     for person_to_delete in people_to_merge:

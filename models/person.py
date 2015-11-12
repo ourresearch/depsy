@@ -129,9 +129,12 @@ class Person(db.Model):
             num_collabs_to_return = min(5, len(sorted_collabs_to_return))    
             for person_id, collab_score in sorted_collabs_to_return[0:num_collabs_to_return]:
                 person = Person.query.get(int(person_id))
-                person_dict = person.as_package_snippet
-                person_dict["collab_score"] = collab_score * 4  # to make a 0.25*0.25 connection strength of 1
-                ret["top_collabs"].append(person_dict)
+                if person:
+                    person_dict = person.as_package_snippet
+                    person_dict["collab_score"] = collab_score * 4  # to make a 0.25*0.25 connection strength of 1
+                    ret["top_collabs"].append(person_dict)
+                else:
+                    print u"ERROR: person {} not found; maybe deduped? skipping.".format(person_id)
 
         # person packages
         if max_person_packages:
@@ -286,6 +289,27 @@ class Person(db.Model):
                         self.num_downloads += pp.person_package_num_downloads
                     if pp.person_package_num_citations:
                         self.num_citations += pp.person_package_num_citations
+
+    @property
+    def name_normalized_for_maximal_deduping(self):
+        if not self.name:
+            return None
+
+        if self.is_organization:
+            return self.name.lower()
+
+        try:
+            first_initial = self.parsed_name["first"][0].lower()
+        except (KeyError, AttributeError):
+            first_initial = "?"
+
+        try:
+            last = self.parsed_name["last"].lower()
+        except (KeyError, AttributeError):
+            last = "?"
+
+        normalized_name = u"{} {}".format(first_initial, last)
+        return normalized_name
 
 
     def set_parsed_name(self):
