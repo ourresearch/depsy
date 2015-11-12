@@ -42,7 +42,6 @@ class Person(db.Model):
 
     is_organization = db.Column(db.Boolean)
     main_language = db.Column(db.Text)
-    num_packages = db.Column(db.Integer)
 
 
     def __repr__(self):
@@ -241,12 +240,6 @@ class Person(db.Model):
     def set_impact_percentiles(self, refsets_dict):
         self.set_impact_percentile(refsets_dict["impact"])
 
-    def set_num_packages(self):
-        # run this:
-        # update person set num_packages=c
-        # from (select person_id, count(distinct contribution.package_id) as c from contribution group by person_id) s
-        # where person.id=s.person_id
-        pass
 
     def set_github_about(self):
         if self.github_login is None:
@@ -398,6 +391,43 @@ class Person(db.Model):
         return False
 
 
+    @classmethod
+    def decide_who_to_dedup(cls, people):
+        if len(people) <= 1:
+            # this name has no dups
+            return None
+
+        people_with_github = [p for p in people if p.github_login]
+        people_with_no_github = [p for p in people if not p.github_login]
+
+        # don't merge people with github together
+        # so we only care about merging if there are people with no github
+        if not people_with_no_github:
+            return None
+
+        if people_with_github:
+            # merge people with no github into first person with github
+            dedup_target = people_with_github[0]
+            people_to_merge = people_with_no_github
+        else:
+            # pick first person with no github as target, rest as mergees
+            dedup_target = people_with_no_github[0]
+            people_to_merge = people_with_no_github[1:]   
+        return {"dedup_target": dedup_target, "people_to_merge": people_to_merge}     
+
+    @classmethod
+    def dedup(cls, dedup_target, people_to_merge):
+        print u"person we will merge into: {}".format(dedup_target.id)
+        print u"people to merge: {}".format([p.id for p in people_to_merge])
+
+        for person_to_delete in people_to_merge:
+            contributions_to_change = person_to_delete.contributions
+            for contrib in contributions_to_change:
+                contrib.person = dedup_target
+                db.session.add(contrib)
+            print u"now going to delete {}".format(person_to_delete)
+            db.session.delete(person_to_delete)
+        # have to run set_credit on everything after this
 
 
 class PersonPackage():
@@ -533,6 +563,28 @@ def find_best_match(persons, **kwargs):
     return None
 
 
+def force_make_person(**kwargs):
+    # call get_or_make_person unless you are really sure you don't mind a dup here
+    new_person = Person(**kwargs)
+    # do person attrib setting now so that can use them to detect dedups later this run
+    # set_github_about sets name so has to go before parsed name
+
+    keep_trying_github_call = True
+    while keep_trying_github_call:
+        try:
+           new_person.set_github_about() 
+           keep_trying_github_call = False
+        except GithubRateLimitException:
+           print "all github keys maxed out. sleeping...."
+           sleep(5 * 60)
+           print "trying github call again, mabye api keys refreshed?".format(url)
+
+    new_person.set_parsed_name()
+    new_person.set_main_language()
+
+    return new_person
+
+
 def get_or_make_person(**kwargs):
     res = None
 
@@ -577,25 +629,10 @@ def get_or_make_person(**kwargs):
         return res
     else:
         print u"minting a new person using {}".format(kwargs)
-        new_person = Person(**kwargs)
-        # do person attrib setting now so that can use them to detect dedups later this run
-        # set_github_about sets name so has to go before parsed name
 
-        keep_trying_github_call = True
-        while keep_trying_github_call:
-            try:
-               new_person.set_github_about() 
-               keep_trying_github_call = False
-            except GithubRateLimitException:
-               print "all github keys maxed out. sleeping...."
-               sleep(5 * 60)
-               print "trying github call again, mabye api keys refreshed?".format(url)
-
-        new_person.set_parsed_name()
-
-        db.session.add(new_person)
-
+        new_person = force_make_person(**kwargs)
         #need this commit to handle matching people added previously in this chunk
+        db.session.add(new_person)
         db.session.commit()  
         return new_person
 

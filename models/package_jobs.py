@@ -501,6 +501,12 @@ update_registry.register(Update(
     queue_id=7
 ))
 
+q = db.session.query(Package.id)
+update_registry.register(Update(
+    job=Package.dedup_special_cases,
+    query=q,
+    queue_id=7
+))
 
 
 q = db.session.query(PypiPackage.id)

@@ -15,12 +15,14 @@ from app import db
 from models import github_api
 from models.person import Person
 from models.person import get_or_make_person
+from models.person import force_make_person
 from models.contribution import Contribution
 from models.rev_dep_node import RevDepNode
 from models.github_repo import GithubRepo
 from jobs import Update
 from util import truncate
 from providers import full_text_source
+from models import dedup_special_cases
 
 
 class Package(db.Model):
@@ -387,48 +389,46 @@ class Package(db.Model):
         people = list(set([c.person for c in self.contributions]))
         return people
 
-
     def dedup_people(self):
-        all_people = self.all_people
-
         people_by_name = defaultdict(list)
-        for person in all_people:
+        for person in self.all_people:
             if person.name:
                 name_to_dedup = person.name_normalized_for_maximal_deduping
                 people_by_name[name_to_dedup].append(person)
 
         for name, people_with_name in people_by_name.iteritems():
-            if len(people_with_name) <= 1:
-                # this name has no dups
-                pass
-            else:
-                people_with_github = [p for p in people_with_name if p.github_login]
-                people_with_no_github = [p for p in people_with_name if not p.github_login]
+            resp = Person.decide_who_to_dedup(people_with_name)
+            if resp:
+                dedup_target = resp["dedup_target"]
+                people_to_merge = resp["people_to_merge"]
+                Person.dedup(dedup_target, people_to_merge)
 
-                # don't merge people with github together
-                # so we only care about merging if there are people with no github
-                if people_with_no_github:
-                    if people_with_github:
-                        # merge people with no github into first person with github
-                        dedup_target = people_with_github[0]
-                        people_to_merge = people_with_no_github
-                    else:
-                        # pick first person with no github as target, rest as mergees
-                        dedup_target = people_with_no_github[0]
-                        people_to_merge = people_with_no_github[1:]
+    def dedup_special_cases(self):
+        for special_case_dict in dedup_special_cases.data:
+            (person_name, package_id) = special_case_dict["main_profile"]
+            if self.id == package_id:
+                all_matches_to_main_profile = [p for p in self.all_people if p.name==person_name]
+                main_profile_person = all_matches_to_main_profile[0]
 
-                    print u"person we will merge into: {}".format(dedup_target.id)
-                    print u"people to merge: {}".format([p.id for p in people_to_merge])
-                    
-                    for person_to_delete in people_to_merge:
-                        contributions_to_change = person_to_delete.contributions
-                        for contrib in contributions_to_change:
-                            contrib.person = dedup_target
-                            db.session.add(contrib)
-                        print u"now going to delete {}".format(person_to_delete)
-                        db.session.delete(person_to_delete)
+                # might have more than one match in this profile
+                # in particular if two github ids
+                # pick the first one to merge into
+                if len(all_matches_to_main_profile) > 1:
+                    people_to_merge = all_matches_to_main_profile[1:]
+                else:
+                    people_to_merge = []
 
-                    # have to run set_credit on everything after this
+                for (person_name, package_id) in special_case_dict["people_to_merge"]:
+                    print package_id, person_name
+                    q = db.session.query(Person)
+                    q = q.join(Person.contributions)
+                    q = q.filter(Person.name==person_name)
+                    q = q.filter(Contribution.package_id==package_id)
+                    people_to_merge += q.all()
+
+                people_to_merge = [p for p in people_to_merge if p != main_profile_person]
+                if people_to_merge:
+                    Person.dedup(main_profile_person, people_to_merge)
 
 
     @property
@@ -449,7 +449,12 @@ class Package(db.Model):
         self.credit = credit_dict
 
     def get_credit_for_person(self, person_id):
-        return self.credit[str(person_id)]
+        try:
+            return self.credit[str(person_id)]
+        except KeyError:
+            print u"ERROR: credit for person {person_id}, package {package_id} not found; maybe deduped? skipping.".format(
+                person_id=person_id, package_id=self.id)           
+            return 0
 
 
     @property
