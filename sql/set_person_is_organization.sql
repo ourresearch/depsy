@@ -26,6 +26,7 @@ update person set is_organization=true
 	or name ilike 'inc. %'
 	or name ilike '% the %'
 	or name ilike 'the %'
+	or name ilike '%library%'
 	or name ilike '%university%'
 	or name ilike '%university%'
 	or name ilike '% team%'
