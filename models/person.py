@@ -2,6 +2,7 @@ import hashlib
 import math
 from collections import defaultdict
 from time import sleep
+import unicodedata
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import or_
@@ -304,11 +305,14 @@ class Person(db.Model):
             first_initial = "?"
 
         try:
-            last = self.parsed_name["last"].lower()
+            last_orig = self.parsed_name["last"]
+            last = unicodedata.normalize('NFKD', last_orig).encode('ascii', 'ignore')
+            last = last.lower()
         except (KeyError, AttributeError):
             last = "?"
 
         normalized_name = u"{} {}".format(first_initial, last)
+        print normalized_name
         return normalized_name
 
 
