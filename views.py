@@ -155,6 +155,23 @@ def package_endpoint(host_or_language, project_name):
     resp_dict = my_package.to_dict()
     return json_resp_from_thing(resp_dict)
 
+
+@app.route("/api/package/github/<owner>/<repo_name>")
+@app.route("/api/package/github/<owner>/<repo_name>.json")
+def github_package_endpoint(owner, repo_name):
+    try:
+        host, name = package.package_id_from_github_info(owner, repo_name)
+    except TypeError:
+        return abort_json(404, "We don't know of any CRAN or PyPI package associated with this GitHub repo. Please report errors at team@impactstory.org. Thanks!")
+
+    url = url_for(
+        "package_endpoint",
+        host_or_language=host,
+        project_name=name
+    )
+    return redirect(url)
+
+
 @app.route("/api/package/<host_or_language>/<project_name>/badge.svg")
 def package_badge(host_or_language, project_name):
     my_id = package.make_id(host_or_language, project_name)

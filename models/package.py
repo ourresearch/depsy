@@ -1284,7 +1284,12 @@ def make_language(host_or_language):
 
 
 
-
+def package_id_from_github_info(owner, repo_name):
+    print "\n\n\ngetting package id from github info", owner, repo_name
+    q = db.session.query(Package.host, Package.project_name)
+    q = q.filter(Package.github_owner == owner)
+    q = q.filter(Package.github_repo_name == repo_name)
+    return q.first()
 
 
 
