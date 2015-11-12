@@ -301,7 +301,7 @@ class Person(db.Model):
 
         try:
             first_initial = self.parsed_name["first"][0].lower()
-        except (KeyError, AttributeError):
+        except (KeyError, AttributeError, IndexError):
             first_initial = "?"
 
         try:
