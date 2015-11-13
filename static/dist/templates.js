@@ -463,7 +463,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <div class=\"explanation\">\n" +
     "                    Based on name, tags, and description, we're guessing this isn't\n" +
     "                    research software—so we haven't calculated impact percentile information. <br>\n" +
-    "                    <a class=\"btn btn-default btn-xs\" href=\"http://twitter.com/depsy_org\">did we guess wrong?</a>\n" +
+    "                    <a class=\"btn btn-default btn-xs\" href=\"https://github.com/Impactstory/depsy/issues\">did we guess wrong?</a>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
