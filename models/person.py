@@ -274,6 +274,7 @@ class Person(db.Model):
 
         for pp in self.get_person_packages():
             # only count up academic packages
+
             if pp.package.is_academic:
                 # only count up impact for packages in our main language            
                 if pp.package.language == self.main_language:
@@ -283,6 +284,7 @@ class Person(db.Model):
                         self.num_downloads += pp.person_package_num_downloads
                     if pp.person_package_num_citations:
                         self.num_citations += pp.person_package_num_citations
+        db.session.commit()
 
     @property
     def name_normalized_for_maximal_deduping(self):
@@ -581,6 +583,7 @@ def force_make_person(**kwargs):
 
     new_person.set_parsed_name()
     new_person.set_main_language()
+    session.db.commit()
 
     return new_person
 
