@@ -13,7 +13,7 @@ from models.person import get_or_make_person
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
 from models.byline import Byline
-from models.academic import is_academic_phrase
+from models.academic import is_academic_project
 from util import elapsed
 from python import parse_requirements_txt
 
@@ -250,35 +250,8 @@ class PypiPackage(Package):
         self.tags = list(set(self.tags))  # dedup
         return self.tags
 
-    def set_intended_audience(self):
-        self.bucket["intended_audience"] = self._get_intended_audience()
-
-
-    def set_is_academic(self):
-        self.is_academic = False
-
-        # if your intended audience is scientists, you're academic
-        if self._get_intended_audience() == "Science/Research":
-            self.is_academic = True
-
-        # if you have an academic-sounding tag, you're academic
-        for tag in self.tags:
-            if is_academic_phrase(tag):
-                self.is_academic = True
-
-        # if you have an academic-sounding name, you're academic
-        if is_academic_phrase(self.project_name):
-            self.is_academic = True
-
-        # if you have an academic-sounding summary, you're academic
-        if is_academic_phrase(self.summary):
-            self.is_academic = True
-
-        return self.is_academic
-
-
-
-    def _get_intended_audience(self):
+    @property
+    def intended_audience(self):
         try:
             pypi_classifiers = self.api_raw["info"]["classifiers"]
         except KeyError:
@@ -287,6 +260,16 @@ class PypiPackage(Package):
         for classifier in pypi_classifiers:
             if classifier.startswith("Intended Audience"):
                 return classifier.split(" :: ")[1]
+
+
+    def set_intended_audience(self):
+        self.bucket["intended_audience"] = self.intended_audience
+
+
+    def set_is_academic(self):
+        self.is_academic = is_academic_project(self)
+        return self.is_academic
+
 
 
 
