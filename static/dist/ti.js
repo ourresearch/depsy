@@ -1889,7 +1889,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                    </span>\n" +
     "                    research software package<span class=\"plural\" ng-show=\"person.num_packages_r > 1\">s</span>\n" +
     "                    <span class=\"where\">\n" +
-    "                        shared on <a href=\"https://cran.r-project.org/\"\n" +
+    "                        shared on <a href=\"http://www.r-pkg.org/\"\n" +
     "                                     popover=\"CRAN is the main software repository for the R language.\"\n" +
     "                                     popover-trigger=\"mouseenter\">CRAN</a>\n" +
     "                    </span>\n" +
@@ -2313,7 +2313,7 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "            <h2>Check out some examples!</h2>\n" +
     "            <div class=\"feature-descr\">\n" +
     "                Depsy currently works for the 11,223 Python and R research software packages available on <a\n" +
-    "                    href=\"https://pypi.python.org/pypi\">PyPI</a> and <a href=\"https://cran.r-project.org/\">CRAN.</a>\n" +
+    "                    href=\"https://pypi.python.org/pypi\">PyPI</a> and <a href=\"http://www.r-pkg.org/\">CRAN.</a>\n" +
     "                Here are a few interesting ones:\n" +
     "                <ul>\n" +
     "                    <li>\n" +
