@@ -463,7 +463,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                <div class=\"explanation\">\n" +
     "                    Based on name, tags, and description, we're guessing this isn't\n" +
     "                    research software—so we haven't calculated impact percentile information. <br>\n" +
-    "                    <a class=\"btn btn-default btn-xs\" href=\"http://twitter.com/depsy_org\">did we guess wrong?</a>\n" +
+    "                    <a class=\"btn btn-default btn-xs\" href=\"https://github.com/Impactstory/depsy/issues\">did we guess wrong?</a>\n" +
     "                </div>\n" +
     "\n" +
     "            </div>\n" +
@@ -770,7 +770,7 @@ angular.module("person-page/person-page.tpl.html", []).run(["$templateCache", fu
     "                    </span>\n" +
     "                    research software package<span class=\"plural\" ng-show=\"person.num_packages_r > 1\">s</span>\n" +
     "                    <span class=\"where\">\n" +
-    "                        shared on <a href=\"https://cran.r-project.org/\"\n" +
+    "                        shared on <a href=\"http://www.r-pkg.org/\"\n" +
     "                                     popover=\"CRAN is the main software repository for the R language.\"\n" +
     "                                     popover-trigger=\"mouseenter\">CRAN</a>\n" +
     "                    </span>\n" +
@@ -1194,7 +1194,7 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "            <h2>Check out some examples!</h2>\n" +
     "            <div class=\"feature-descr\">\n" +
     "                Depsy currently works for the 11,223 Python and R research software packages available on <a\n" +
-    "                    href=\"https://pypi.python.org/pypi\">PyPI</a> and <a href=\"https://cran.r-project.org/\">CRAN.</a>\n" +
+    "                    href=\"https://pypi.python.org/pypi\">PyPI</a> and <a href=\"http://www.r-pkg.org/\">CRAN.</a>\n" +
     "                Here are a few interesting ones:\n" +
     "                <ul>\n" +
     "                    <li>\n" +
