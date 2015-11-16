@@ -11,7 +11,7 @@ def make_badge_io(entity):
     percentile_str = ordinal(percentile_int)
     color = "brightgreen"
 
-    url_template = "http://img.shields.io/badge/Research%20software%20impact-{percentile}%20percentile-{color}.svg?style=flat"
+    url_template = "http://img.shields.io/badge/Depsy-{percentile}%20percentile-{color}.svg?style=flat"
     url = url_template.format(
         percentile=percentile_str,
         color=color
