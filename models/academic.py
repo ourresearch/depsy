@@ -73,12 +73,15 @@ def is_academic_phrase(phrase):
         "gaussian process",
 
         # names of specific libraries; 
-        # these libraries are research software, but their tags and summary don't have any words
+        # these libraries have been reported as research software, but their tags and summary don't have any words
         # which make that clear, and they don't have Science as an intended audience alas.
         # specifying them here explicitly for now till we come up with a better way.
         "astroquery",
-        "pyradex"
-
+        "pyradex",
+        "revscoring",
+        "ores",
+        "ipython",
+        "jupyter"
 
         # tried but too many bad hits
         # "statistics",
