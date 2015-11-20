@@ -33,5 +33,29 @@ data = [
 		"people_to_merge": [
 			("Daniel Muench", "cran:webchem")
 		]	
-	}					
+	},	
+	{
+		"main_profile": (u"Daniel Münch", "cran:webchem"),
+		"people_to_merge": [
+			("Daniel Muench", "cran:webchem")
+		]	
+	},	
+	{
+		"main_profile": (u"Zhian N. Kamvar", "cran:poppr"),
+		"people_to_merge": [
+			("Zhian Kamvar", "cran:mmod")
+		]	
+	},	
+	{
+		"main_profile": (u"Min RK", "pypi:ggplot"),
+		"people_to_merge": [
+			(u"Min Ragan-Kelley", "pypi:pyzmq")
+		]	
+	},	
+	{
+		"main_profile": (u"Benjamin M. Taylor", "cran:cruts"),
+		"people_to_merge": [
+			(u"B. M. Taylor", "cran:lgcp")
+		]	
+	}	
 ]
