@@ -1074,6 +1074,16 @@ span.snippet span.contribs a.contrib {
   width: 750px;
   margin: 50px auto 0;
   font-weight: 100;
+  font-size: 24px
+}
+.static-page.landing div.tagline .sub a {
+  font-weight: bold;
+  color: yellow;
+}
+.static-page.landing div.tagline .sub {
+  width: 750px;
+  margin: 50px auto 0;
+  font-weight: 100;
   font-size: 24px;
 }
 .static-page.landing .features .feature {
