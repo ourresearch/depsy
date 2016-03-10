@@ -583,7 +583,7 @@ def force_make_person(**kwargs):
 
     new_person.set_parsed_name()
     new_person.set_main_language()
-    session.db.commit()
+    db.session.commit()
 
     return new_person
 
