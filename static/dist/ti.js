@@ -2297,6 +2297,11 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "                Citation is just part of the story&mdash;Depsy analyzes code from\n" +
     "                over half a million GitHub repositories to find how packages are reused by\n" +
     "                other software projects.\n" +
+    "                <br>\n" +
+    "                Learn more in\n" +
+    "                <a href=\"http://www.nature.com/news/the-unsung-heroes-of-scientific-software-1.19100\">\n" +
+    "                    this recent Nature article about us.\n" +
+    "                </a>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"feature people\">\n" +
