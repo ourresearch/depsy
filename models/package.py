@@ -365,6 +365,7 @@ class Package(db.Model):
         print "{}: I'm a test!".format(self)
 
     def save_all_people(self):
+        self.set_github_contributors()
         self.save_github_owners_and_contributors()
         self.save_host_contributors()
 
@@ -569,7 +570,7 @@ class Package(db.Model):
 
 
     def set_num_committers_and_commits(self):
-        if not self.set_github_contributors:
+        if not self.github_contributors:
             return None
         try:
             self.num_committers = len(self.github_contributors)

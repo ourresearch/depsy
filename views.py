@@ -107,6 +107,7 @@ def index_view(path="index", page=""):
 def api_test():
     return jsonify({"resp": "Hi, I'm Despy!"})
 
+
 @app.route("/api/person/<person_id>")
 @app.route("/api/person/<person_id>.json")
 def person_endpoint(person_id):
@@ -211,6 +212,15 @@ def leaderboard():
     elapsed_time = elapsed(start)
     ret.headers["x-elapsed"] = elapsed_time
     return ret
+
+
+
+@app.route("/api/search/person")
+def email_search():
+    email = request.args.get("email", None)
+    persons = Person.query.filter_by(email=email).all()
+    person_ids = [p.id for p in persons]
+    return jsonify({"list": person_ids, "count": len(person_ids)})
 
 
 @app.route("/api/search/<search_str>")
