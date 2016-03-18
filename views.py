@@ -218,9 +218,14 @@ def leaderboard():
 @app.route("/api/search/person")
 def email_search():
     email = request.args.get("email", None)
-    persons = Person.query.filter_by(email=email).all()
-    person_ids = [p.id for p in persons]
-    return jsonify({"list": person_ids, "count": len(person_ids)})
+    ids_and_scores = []
+    for my_person in Person.query.filter_by(email=email).all():
+        ids_and_scores += [{
+            "id": my_person.id,
+            "impact": my_person.impact,
+            "impact_percentile": my_person.impact_percentile
+        }]
+    return jsonify({"list": ids_and_scores, "count": len(ids_and_scores)})
 
 
 @app.route("/api/search/<search_str>")
