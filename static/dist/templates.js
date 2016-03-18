@@ -1159,6 +1159,11 @@ angular.module("static-pages/landing.tpl.html", []).run(["$templateCache", funct
     "           <p>\n" +
     "               Depsy helps build the software-intensive science of the future\n" +
     "               by promoting credit for software as a fundamental building block of science.\n" +
+    "                <br>\n" +
+    "                Learn more in\n" +
+    "                <a href=\"http://www.nature.com/news/the-unsung-heroes-of-scientific-software-1.19100\">\n" +
+    "                    this recent Nature article about us.\n" +
+    "                </a>\n" +
     "           </p>\n" +
     "       </div>\n" +
     "   </div>\n" +
