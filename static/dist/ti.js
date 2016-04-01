@@ -956,12 +956,12 @@ angular.module('staticPages', [
 
     .config(function($routeProvider) {
         $routeProvider.when('/about', {
-            templateUrl: "static-pages/about.tpl.html",
-            controller: "StaticPageCtrl"
+            redirectTo: "http://blog.impactstory.org/introducing-depsy/"
+            // templateUrl: "static-pages/about.tpl.html",
+            // controller: "StaticPageCtrl"
         })
     })
-
-
+    
 
     .controller("StaticPageCtrl", function($scope, $sce, $http, ngProgress){
 
@@ -1381,7 +1381,6 @@ angular.module("header/header.tpl.html", []).run(["$templateCache", function($te
 
 angular.module("header/search-result.tpl.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("header/search-result.tpl.html",
-    "\n" +
     "<div class=\"typeahead-group-header\" ng-if=\"match.model.is_first\">\n" +
     "   <span class=\"group-header-type pypy-package\" ng-if=\"match.model.type=='pypi_project'\">\n" +
     "      <img src=\"static/img/python.png\" alt=\"\"/>\n" +

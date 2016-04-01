@@ -14,11 +14,11 @@ angular.module('staticPages', [
 
     .config(function($routeProvider) {
         $routeProvider.when('/about', {
-            templateUrl: "static-pages/about.tpl.html",
-            controller: "StaticPageCtrl"
+            redirectTo: "http://blog.impactstory.org/introducing-depsy/"
+            // templateUrl: "static-pages/about.tpl.html",
+            // controller: "StaticPageCtrl"
         })
     })
-
 
 
     .controller("StaticPageCtrl", function($scope, $sce, $http, ngProgress){
