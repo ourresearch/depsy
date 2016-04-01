@@ -1,4 +1,4 @@
-web: gunicorn views:app --reload
+web: gunicorn views:app
 RQ_worker_queue_0: python rq_worker.py 0
 RQ_worker_queue_1: python rq_worker.py 1
 RQ_worker_queue_2: python rq_worker.py 2
