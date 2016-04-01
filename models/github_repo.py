@@ -1031,8 +1031,9 @@ def get_readme(owner, repo_name):
         repo_name
     )
     r = requests.get(url)
+    print r.text
     p = re.compile(
-        ur'<article class="markdown-body entry-content" itemprop="mainContentOfPage">(.+?)</article>',
+        ur'<article class="markdown-body entry-content" itemprop="text">(.+?)</article>',
         re.MULTILINE | re.DOTALL
     )
     res = re.findall(p, r.text)[0]
