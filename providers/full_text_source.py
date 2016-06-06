@@ -89,6 +89,14 @@ class Ads(FullTextSource):
         url = query_template.format(query=query)
         return url
 
+    def query_url_for_display(self, query):
+        response = self.query_url
+        response = response.replace("http://labs.adsabs.harvard.edu/adsabs/search/?q=",
+                                    "https://ui.adsabs.harvard.edu/#search/q=")
+        response = response.replace("&year_from=1997&month_to=&year_to=2016",
+                                    "%20year%3A1997-2016")
+        return response
+
     def extract_results(self, request_response):
         page = request_response.text
         tree = html.fromstring(page)
