@@ -90,7 +90,7 @@ class Ads(FullTextSource):
         return url
 
     def query_url_for_display(self, query):
-        response = self.query_url
+        response = self.query_url(query)
         response = response.replace("http://labs.adsabs.harvard.edu/adsabs/search/?q=",
                                     "https://ui.adsabs.harvard.edu/#search/q=")
         response = response.replace("&year_from=1997&month_to=&year_to=2016",
