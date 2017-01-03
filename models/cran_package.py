@@ -14,6 +14,7 @@ from jobs import Update
 from models.person import get_or_make_person
 from models.package import Package
 from models.github_repo import GithubRepo
+from models import github_api
 from models.byline import Byline
 from models.academic import is_academic_phrase
 from util import elapsed
@@ -72,6 +73,20 @@ class CranPackage(Package):
     def num_citations_max(self):
         return 2799  # brings lowest up to about 0
 
+
+    def refresh(self):
+        self.set_cran_about()
+        self.set_github_contributors()
+        self.set_downloads()
+        self.set_github_repo()
+        self.set_reverse_depends()
+        self.set_proxy_papers()
+
+        self.save_host_contributors()
+        # self.set_github_repo_ids() # not sure if we use this anymore?
+        # self.set_num_downloads_since  # i don't think we use this anymore.  needs date fix if used.
+        self.set_tags()
+        self.set_host_reverse_deps()
 
     def save_host_contributors(self):
         raw_byline_string = self.api_raw["Author"]
@@ -159,6 +174,120 @@ class CranPackage(Package):
     @property
     def distinctiveness_query_prefix(self):
         return '(="r package" OR ="r statistical") AND '
+
+
+
+
+
+    def set_cran_about(self):
+        url_template = "http://crandb.r-pkg.org/%s"
+        data_url = url_template % self.project_name
+        print data_url
+        response = requests.get(data_url)
+        self.api_raw = response.json()
+
+    def set_github_contributors(self):
+        self.github_contributors = github_api.get_repo_contributors(
+            self.github_owner,
+            self.github_repo_name
+        )
+        print "added github contributors!"
+        print self.github_contributors
+
+
+    def set_downloads(self):
+        url_template = "http://cranlogs.r-pkg.org/downloads/daily/1900-01-01:2020-01-01/%s"
+        data_url = url_template % self.project_name
+        print data_url
+        response = requests.get(data_url)
+        if "day" in response.text:
+            data = {}
+            all_days = response.json()[0]["downloads"]
+            data["total_downloads"] = sum([int(day["downloads"]) for day in all_days])
+            data["first_download"] = min([day["day"] for day in all_days])
+            data["daily_downloads"] = all_days
+        else:
+            data = {"total_downloads": 0}
+        self.downloads = data
+
+    def set_github_repo(self):
+        try:
+            urls_str = self.api_raw['URL']
+        except KeyError:
+            return False
+
+        # People put all kinds of lists in this field. So we're splitting on
+        # newlines, commas, and spaces. Won't get everything, but will
+        # get most.
+        urls = re.compile(r",*\s*\n*").split(urls_str)
+
+        for url in urls:
+            login, repo_name = github_api.login_and_repo_name_from_url(url)
+            if login and repo_name:
+                self.github_repo_name = repo_name
+                self.github_owner = login
+
+                # there may be more than one github url. if so, too bad,
+                # we're just picking the first one.
+                break
+
+        print u"successfully set a github ID for {name}: {login}/{repo_name}.".format(
+            name=self.project_name,
+            login=self.github_owner,
+            repo_name=self.github_repo_name
+        )
+
+
+    def set_reverse_depends(self):
+        url_template = "https://cran.r-project.org/web/packages/%s/"
+        data_url = url_template % self.project_name
+        print data_url
+
+        # this call keeps timing out for some reason.  quick workaround:
+        response = None
+        while not response:
+            try:
+                response = requests.get(data_url)
+            except requests.exceptions.ConnectionError:
+                # try again
+                print "connection timed out, trying again"
+                pass
+
+        if "Reverse" in response.text:
+            page = response.text
+            page = page.replace("&nbsp;", " ")  # otherwise starts-with for lxml doesn't work
+            tree = html.fromstring(page)
+            data = {}
+            data["reverse_imports"] = tree.xpath('//tr[(starts-with(td[1], "Reverse imports"))]/td[2]/a/text()')
+            data["reverse_depends"] = tree.xpath('//tr[(starts-with(td[1], "Reverse depends"))]/td[2]/a/text()')
+            data["reverse_suggests"] = tree.xpath('//tr[(starts-with(td[1], "Reverse suggests"))]/td[2]/a/text()')
+            data["reverse_enhances"] = tree.xpath('//tr[(starts-with(td[1], "Reverse enhances"))]/td[2]/a/text()')
+            all_reverse_deps = set(data["reverse_imports"] + data["reverse_depends"] + data["reverse_suggests"] + data["reverse_enhances"])
+            data["all_reverse_deps"] = list(all_reverse_deps)
+
+        else:
+            data = {"all_reverse_deps": []}
+        self.reverse_deps = data
+
+
+    def set_proxy_papers(self):
+        url_template = "https://cran.r-project.org/web/packages/%s/citation.html"
+        data_url = url_template % self.project_name
+        print data_url
+
+        response = requests.get(data_url, timeout=30)
+
+        if response and response.status_code==200 and "<pre>" in response.text:
+            page = response.text
+            tree = html.fromstring(page)
+            proxy_papers = str(tree.xpath('//pre/text()'))
+            print "found proxy paper!"
+            # print proxy_papers
+        else:
+            print "no proxy paper found"
+            proxy_papers = "No proxy paper"
+
+        self.proxy_papers = proxy_papers
 
 
 

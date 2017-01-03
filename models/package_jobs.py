@@ -568,3 +568,10 @@ update_registry.register(Update(
     shortcut_fn=Person.shortcut_percentile_refsets    
 ))
 
+
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.refresh,
+    query=q
+))

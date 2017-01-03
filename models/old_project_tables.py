@@ -1,15 +1,14 @@
 
-
 # CRAN
 
-# from app import db
-# from sqlalchemy.dialects.postgresql import JSONB
-# import requests
-# from models import github_api
-# from lxml import html
-# from util import elapsed
-# from time import time
-# import re
+from app import db
+from sqlalchemy.dialects.postgresql import JSONB
+import requests
+from models import github_api
+from lxml import html
+from util import elapsed
+from time import time
+import re
 
 
 
@@ -142,23 +141,6 @@
 #         self.proxy_papers = proxy_papers
 
 
-
-# #useful info: http://www.r-pkg.org/services
-# def seed_all_cran_packages():
-#     # maybe there is a machine readable version of this?  I couldn't find it.
-#     url = "https://cran.r-project.org/web/packages/available_packages_by_name.html"
-#     r = requests.get(url)
-#     print "got page"
-
-#     page = r.text
-#     tree = html.fromstring(page)
-#     print "finished parsing"
-#     all_names = tree.xpath('//tr/td[1]/a/text()')
-#     for project_name in all_names:
-#         print project_name
-#         project = CranProject(project_name=project_name)
-#         db.session.add(project)
-#         db.session.commit()
 
 
 # """
@@ -661,26 +643,3 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#     
