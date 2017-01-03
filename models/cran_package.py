@@ -76,7 +76,7 @@ class CranPackage(Package):
 
     def refresh(self):
         self.set_cran_about()
-        self.set_github_contributors()
+        # self.set_github_contributors()  # i think this not working right now
         self.set_downloads()
         self.set_github_repo()
         self.set_reverse_depends()
@@ -86,7 +86,7 @@ class CranPackage(Package):
         # self.set_github_repo_ids() # not sure if we use this anymore?
         # self.set_num_downloads_since  # i don't think we use this anymore.  needs date fix if used.
         self.set_tags()
-        self.set_host_reverse_deps()
+        # self.set_host_reverse_deps() # i think this one isn't ready yet
 
     def save_host_contributors(self):
         raw_byline_string = self.api_raw["Author"]
