@@ -114,6 +114,11 @@ class Package(db.Model):
     }
 
 
+    def __init__(self, project_name):
+        self.project_name = project_name
+        self.id = u'{}:{}'.format(self.host, project_name)
+        super(Package, self).__init__()
+
     def __repr__(self):
         return u'<Package {name}>'.format(
             name=self.id)

@@ -15,6 +15,12 @@ from rq import Queue
 import os
 import logging
 import sys
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+requests.packages.urllib3.disable_warnings(SNIMissingWarning)
+requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 
 # set up logging
@@ -33,6 +39,9 @@ libraries_to_mum = [
     "boto",
     "newrelic",
     "RateLimiter"
+    "requests.packages.urllib3",
+    "requests_oauthlib",
+    "urllib3"
 ]
 
 for a_library in libraries_to_mum:
