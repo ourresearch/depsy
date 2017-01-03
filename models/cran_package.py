@@ -1,5 +1,6 @@
 import re
 from time import time
+import datetime
 
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import sql
@@ -87,6 +88,9 @@ class CranPackage(Package):
         # self.set_num_downloads_since  # i don't think we use this anymore.  needs date fix if used.
         self.set_tags()
         # self.set_host_reverse_deps() # i think this one isn't ready yet
+
+        self.updated = datetime.datetime.utcnow()
+
 
     def save_host_contributors(self):
         raw_byline_string = self.api_raw["Author"]

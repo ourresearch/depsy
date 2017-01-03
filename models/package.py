@@ -1,5 +1,6 @@
 import os
 import math
+import datetime
 from collections import defaultdict
 
 from sqlalchemy.dialects.postgresql import JSONB
@@ -98,6 +99,8 @@ class Package(db.Model):
     rev_deps_tree = db.Column(JSONB)
     credit = db.Column(JSONB)
 
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
 
     contributions = db.relationship(
         'Contribution',
@@ -117,6 +120,8 @@ class Package(db.Model):
     def __init__(self, project_name):
         self.project_name = project_name
         self.id = u'{}:{}'.format(self.host, project_name)
+        self.created = datetime.datetime.utcnow()
+        self.updated = datetime.datetime.utcnow()
         super(Package, self).__init__()
 
     def __repr__(self):
@@ -661,7 +666,7 @@ class Package(db.Model):
             source = source_class()
             try:
                 citation_count = citations_dict[source.name]
-            except KeyError:
+            except (TypeError, KeyError):
                 citation_count = 0
             query = self.build_full_text_query(source)
 
@@ -677,7 +682,7 @@ class Package(db.Model):
     def use_just_name_in_pmc_query(self):
         try:
             num_source_citations = self.pmc_distinctiveness["num_hits_raw"]
-        except KeyError:
+        except (TypeError, KeyError):
             # no citations here
             print "didn't collect citations for pmc, skipping"
             return False
