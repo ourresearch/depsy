@@ -16,10 +16,9 @@ import os
 import logging
 import sys
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning, SNIMissingWarning, InsecurePlatformWarning
+from requests.packages.urllib3.exceptions import InsecureRequestWarning, InsecurePlatformWarning
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-requests.packages.urllib3.disable_warnings(SNIMissingWarning)
 requests.packages.urllib3.disable_warnings(InsecurePlatformWarning)
 
 
