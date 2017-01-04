@@ -578,7 +578,7 @@ update_registry.register(Update(
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
-    job=CranPackage.save_all_people,
+    job=CranPackage.set_credit,
     query=q
 ))
 
