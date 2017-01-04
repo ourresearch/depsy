@@ -725,7 +725,7 @@ class Package(db.Model):
             else:
                 print "{} isn't a rare package name, so not looking up by name".format(self.project_name)
 
-            query = " OR ".join(queries)            
+            query = "(" + " OR ".join(queries) + ")"
             query += ' NOT AUTH:"{}"'.format(self.project_name)
         elif source.__class__.__name__ == "Ads":
             if self.host == "pypi":
@@ -827,9 +827,11 @@ class Package(db.Model):
 
 
     def set_num_citations(self):
-        self.num_citations = 0        
 
+        self.num_citations = 0
         self.num_citations_by_source = {}
+
+        self.set_all_distinctiveness()
 
         for source in ["pmc", "ads"]:
             add_citations = False
@@ -877,6 +879,12 @@ class Package(db.Model):
         return self.num_citations
 
 
+    def set_all_distinctiveness(self):
+        self.set_pmc_distinctiveness()
+        self.set_ads_distinctiveness()
+        # self.set_citeseer_distinctiveness()
+
+
     def set_pmc_distinctiveness(self):
         source = full_text_source.Pmc()
         self.pmc_distinctiveness = self.calc_distinctiveness(source)
@@ -898,7 +906,7 @@ class Package(db.Model):
         num_hits_raw = source.run_query(raw_query)
         distinctiveness["num_hits_raw"] = num_hits_raw
 
-        num_hits_with_language = source.run_query(self.distinctiveness_query_prefix + raw_query)
+        num_hits_with_language = source.run_query(self.distinctiveness_query_prefix(source) + raw_query)
         distinctiveness["num_hits_with_language"] = num_hits_with_language
         
         if distinctiveness["num_hits_raw"] > 0:

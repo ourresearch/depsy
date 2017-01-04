@@ -175,12 +175,12 @@ class CranPackage(Package):
         print "returning tags", tags
         self.tags = tags
 
-    @property
-    def distinctiveness_query_prefix(self):
-        return '(="r package" OR ="r statistical") AND '
 
-
-
+    def distinctiveness_query_prefix(self, source):
+        if source.__class__.__name__ == "Pmc":
+            return '("r package" OR "r statistical") AND '
+        elif source.__class__.__name__ == "Ads":
+            return '(="r package" OR ="r statistical") AND '
 
 
     def set_cran_about(self):

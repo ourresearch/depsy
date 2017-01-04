@@ -15,7 +15,7 @@ class FullTextSource:
     def run_query(self, query):
         try:
             url = self.query_url(query)
-            # print u"calling {} with {}".format(self.__class__.__name__, url)
+            print u"calling {} with {}".format(self.__class__.__name__, url)
             r = requests.get(url)
             print "status code:", r.status_code
         except requests.exceptions.RequestException:
@@ -85,7 +85,7 @@ class Citeseer(FullTextSource):
 
 class Ads(FullTextSource):
     def query_url(self, query):
-        query_template = "http://labs.adsabs.harvard.edu/adsabs/search/?q={query}&year_from=1997&month_to=&year_to=2016"
+        query_template = "http://labs.adsabs.harvard.edu/adsabs/search/?q={query}&year_from=1997&month_to=&year_to=2017"
         url = query_template.format(query=query)
         return url
 
@@ -93,8 +93,8 @@ class Ads(FullTextSource):
         response = self.query_url(query)
         response = response.replace("http://labs.adsabs.harvard.edu/adsabs/search/?q=",
                                     "https://ui.adsabs.harvard.edu/#search/q=")
-        response = response.replace("&year_from=1997&month_to=&year_to=2016",
-                                    "%20year%3A1997-2016")
+        response = response.replace("&year_from=1997&month_to=&year_to=2017",
+                                    "%20year%3A1997-2017")
         return response
 
     def extract_results(self, request_response):

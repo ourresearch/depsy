@@ -396,10 +396,8 @@ class PypiPackage(Package):
         return self.setup_py_import_name
 
 
-    @property
-    def distinctiveness_query_prefix(self):
+    def distinctiveness_query_prefix(self, source):
         return 'python AND '
-
 
 
 def shortcut_get_pypi_package_names():
