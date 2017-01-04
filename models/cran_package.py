@@ -40,6 +40,14 @@ class CranPackage(Package):
     def host_url(self):
         return "https://cran.r-project.org/web/packages/{}".format(self.project_name)
 
+    @property
+    def summary(self):
+        summary = "A nifty project."
+        try:
+            summary = self.api_raw["Description"]
+        except KeyError:
+            pass
+        return summary
 
     @property
     def pagerank_max(self):
@@ -76,6 +84,7 @@ class CranPackage(Package):
 
 
     def refresh(self):
+        self.set_is_academic()
         self.set_cran_about()
         self.set_downloads()
         self.set_github_repo()
@@ -90,8 +99,13 @@ class CranPackage(Package):
 
         self.updated = datetime.datetime.utcnow()
 
+    def set_is_academic(self):
+        self.is_academic = True
 
     def save_host_contributors(self):
+        if not self.api_raw:
+            return
+
         raw_byline_string = self.api_raw["Author"]
         maintainer = self.api_raw["Maintainer"]
 
