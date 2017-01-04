@@ -81,17 +81,18 @@ class CranPackage(Package):
         self.set_summary()
         self.set_num_downloads()
         self.set_github_repo()
-        self.set_reverse_depends()
         self.set_proxy_papers()
 
         self.save_all_people()  #includes save_host_contributors
         # self.set_github_repo_ids() # not sure if we use this anymore?
         self.set_tags()
-        # self.set_host_reverse_deps() # i think this one isn't ready yet
 
         self.set_credit()
 
         self.set_num_downloads()
+        self.set_num_citations()
+        self.set_host_reverse_depends()
+
         self.set_subscore_percentiles()
 
         self.updated = datetime.datetime.utcnow()
@@ -148,11 +149,6 @@ class CranPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
-    def set_host_reverse_deps(self):
-        self.host_reverse_deps = []
-        for dep_kind in ["reverse_depends", "reverse_imports"]:
-            if dep_kind in self.all_r_reverse_deps:
-                self.host_reverse_deps += self.all_r_reverse_deps[dep_kind]
 
 
     def set_tags(self):
@@ -246,7 +242,7 @@ class CranPackage(Package):
         )
 
 
-    def set_reverse_depends(self):
+    def set_host_reverse_depends(self):
         url_template = "https://cran.r-project.org/web/packages/%s/"
         data_url = url_template % self.project_name
         print data_url
@@ -275,7 +271,11 @@ class CranPackage(Package):
 
         else:
             data = {"all_reverse_deps": []}
-        self.reverse_deps = data
+
+        self.host_reverse_deps = []
+        for dep_kind in ["reverse_depends", "reverse_imports"]:
+            if dep_kind in data:
+                self.host_reverse_deps += data[dep_kind]
 
 
     def set_proxy_papers(self):

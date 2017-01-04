@@ -257,13 +257,6 @@ update_registry.register(Update(
     queue_id=7
 ))
 
-q = db.session.query(CranPackage.id)
-update_registry.register(Update(
-    job=CranPackage.set_host_reverse_deps,
-    query=q,
-    queue_id=8
-))
-
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
@@ -578,13 +571,7 @@ update_registry.register(Update(
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
-    job=CranPackage.set_credit,
-    query=q
-))
-
-q = db.session.query(CranPackage.id)
-update_registry.register(Update(
-    job=CranPackage.set_summary,
+    job=CranPackage.set_host_reverse_depends,
     query=q
 ))
 
