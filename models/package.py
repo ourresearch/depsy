@@ -441,18 +441,18 @@ class Package(db.Model):
 
     @property
     def all_people(self):
-        people = list(set([c.person for c in self.contributions]))
+        people = list(set([c.person for c in self.contributions if c.person]))
         return people
 
 
     @property
     def all_authors(self):
-        people = list(set([c.person for c in self.contributions if c.role=="author"]))
+        people = list(set([c.person for c in self.all_people if c.role=="author"]))
         return people
 
     @property
     def all_github_owners(self):
-        people = list(set([c.person for c in self.contributions if c.role=="github_owner"]))
+        people = list(set([c.person for c in self.all_people if c.role=="github_owner"]))
         return people
 
     def set_credit(self):
@@ -618,8 +618,9 @@ class Package(db.Model):
 
     def get_contribution(self, person_id, role):
         for contrib in self.contributions:
-            if contrib.person.id == person_id and contrib.role == role:
-                return contrib
+            if contrib.person:  # sometimes might have been deleted, it seems
+                if contrib.person.id==person_id and contrib.role==role:
+                    return contrib
 
         return None
 
