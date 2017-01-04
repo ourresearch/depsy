@@ -587,3 +587,9 @@ update_registry.register(Update(
     job=CranPackage.set_summary,
     query=q
 ))
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.set_num_downloads,
+    query=q
+))

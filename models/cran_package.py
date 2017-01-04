@@ -79,18 +79,20 @@ class CranPackage(Package):
         self.set_is_academic()
         self.set_cran_about()
         self.set_summary()
-        self.set_downloads()
+        self.set_num_downloads()
         self.set_github_repo()
         self.set_reverse_depends()
         self.set_proxy_papers()
 
         self.save_all_people()  #includes save_host_contributors
         # self.set_github_repo_ids() # not sure if we use this anymore?
-        # self.set_num_downloads_since  # i don't think we use this anymore.  needs date fix if used.
         self.set_tags()
         # self.set_host_reverse_deps() # i think this one isn't ready yet
 
         self.set_credit()
+
+        self.set_num_downloads()
+        self.set_subscore_percentiles()
 
         self.updated = datetime.datetime.utcnow()
 
@@ -146,24 +148,6 @@ class CranPackage(Package):
             self.bucket["matched_from_github_metadata"] = True
 
 
-    def set_num_downloads_since(self):
-
-        ### hacky!  hard code this
-        get_downloads_since_date = "2015-07-25"
-
-        if not self.num_downloads:
-            return None
-
-        download_sum = 0
-
-        for download_dict in self.downloads.get("daily_downloads", []):
-            if download_dict["day"] > get_downloads_since_date:
-                download_sum += download_dict["downloads"]
-
-        self.downloads["last_month"] = download_sum
-
-
-
     def set_host_reverse_deps(self):
         self.host_reverse_deps = []
         for dep_kind in ["reverse_depends", "reverse_imports"]:
@@ -207,7 +191,10 @@ class CranPackage(Package):
         self.api_raw = response.json()
 
 
-    def set_downloads(self):
+    def set_num_downloads(self):
+
+        date_one_month_ago = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+
         url_template = "http://cranlogs.r-pkg.org/downloads/daily/1900-01-01:2020-01-01/%s"
         data_url = url_template % self.project_name
         print data_url
@@ -215,12 +202,21 @@ class CranPackage(Package):
         if "day" in response.text:
             data = {}
             all_days = response.json()[0]["downloads"]
-            data["total_downloads"] = sum([int(day["downloads"]) for day in all_days])
-            data["first_download"] = min([day["day"] for day in all_days])
+            # data["total_downloads"] = sum([int(day["downloads"]) for day in all_days])
+            # data["first_download"] = min([day["day"] for day in all_days])
             data["daily_downloads"] = all_days
         else:
             data = {"total_downloads": 0}
-        self.downloads = data
+
+        # now get the ones in the last month
+        download_sum = 0
+        for download_dict in data.get("daily_downloads", []):
+            if download_dict["day"] > date_one_month_ago.isoformat():
+                download_sum += download_dict["downloads"]
+
+        self.num_downloads = download_sum
+
+
 
     def set_github_repo(self):
         try:
