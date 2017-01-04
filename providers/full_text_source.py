@@ -15,9 +15,9 @@ class FullTextSource:
     def run_query(self, query):
         try:
             url = self.query_url(query)
-            print u"calling {} with {}".format(self.__class__.__name__, url)
+            # print u"calling {} with {}".format(self.__class__.__name__, url)
             r = requests.get(url)
-            print "status code:", r.status_code
+            # print "status code:", r.status_code
         except requests.exceptions.RequestException:
             print "RequestException, failed on", url
             return None
