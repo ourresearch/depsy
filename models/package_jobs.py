@@ -584,6 +584,6 @@ update_registry.register(Update(
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
-    job=CranPackage.set_summary(),
+    job=CranPackage.set_summary,
     query=q
 ))
