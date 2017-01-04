@@ -29,6 +29,7 @@ if __name__ == "__main__":
     # just for updating lots
     parser.add_argument('--limit', "-l", nargs="?", type=int, help="how many jobs to do")
     parser.add_argument('--chunk', "-ch", nargs="?", type=int, help="how many to take off db at once")
+    parser.add_argument('--after', nargs="?", type=str, help="minimum id or id start, ie cran:gamlss")
 
     # just for updating one
     parser.add_argument('--id', nargs="?", type=str, help="id of the one thing you want to update")
@@ -41,6 +42,7 @@ if __name__ == "__main__":
     update.run(
         no_rq=parsed.no_rq,
         obj_id=parsed.id,
+        min_id=parsed.after,  # is empty unless minimum id
         num_jobs=parsed.limit,
         chunk_size=parsed.chunk
     )
