@@ -90,6 +90,8 @@ class CranPackage(Package):
         self.set_tags()
         # self.set_host_reverse_deps() # i think this one isn't ready yet
 
+        self.set_credit()
+
         self.updated = datetime.datetime.utcnow()
 
 
@@ -97,7 +99,7 @@ class CranPackage(Package):
         self.summary = "A nifty project."
         try:
             self.summary = self.api_raw["Description"]
-        except KeyError:
+        except (KeyError, TypeError):
             pass
 
     def set_is_academic(self):
