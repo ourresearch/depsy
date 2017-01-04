@@ -447,12 +447,12 @@ class Package(db.Model):
 
     @property
     def all_authors(self):
-        people = list(set([c.person for c in self.all_people if c.role=="author"]))
+        people = list(set([c.person for c in self.contributions if c.person and c.role=="author"]))
         return people
 
     @property
     def all_github_owners(self):
-        people = list(set([c.person for c in self.all_people if c.role=="github_owner"]))
+        people = list(set([c.person for c in self.contributions if c.person and c.role=="github_owner"]))
         return people
 
     def set_credit(self):
