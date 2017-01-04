@@ -378,6 +378,8 @@ class Package(db.Model):
         self.set_github_contributors()
         self.save_github_owners_and_contributors()
         self.save_host_contributors()
+        self.dedup_people()
+        self.dedup_special_cases()
 
     def save_github_owners_and_contributors(self):
         self.save_github_contribs_to_db()
@@ -387,18 +389,6 @@ class Package(db.Model):
         # this needs to be overridden, because it depends on whether we've
         # got a pypi or cran package...they have diff metadata formats.
         raise NotImplementedError
-
-
-    @property
-    def host_url(self):
-        # this needs to be overridden, because it depends on whether we've
-        # got a pypi or cran package
-        raise NotImplementedError
-
-    @property
-    def all_people(self):
-        people = list(set([c.person for c in self.contributions]))
-        return people
 
     def dedup_people(self):
         people_by_name = defaultdict(list)
@@ -440,6 +430,19 @@ class Package(db.Model):
                 people_to_merge = [p for p in people_to_merge if p != main_profile_person]
                 if people_to_merge:
                     Person.dedup(main_profile_person, people_to_merge)
+
+
+
+    @property
+    def host_url(self):
+        # this needs to be overridden, because it depends on whether we've
+        # got a pypi or cran package
+        raise NotImplementedError
+
+    @property
+    def all_people(self):
+        people = list(set([c.person for c in self.contributions]))
+        return people
 
 
     @property
