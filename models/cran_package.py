@@ -77,13 +77,12 @@ class CranPackage(Package):
 
     def refresh(self):
         self.set_cran_about()
-        # self.set_github_contributors()  # i think this not working right now
         self.set_downloads()
         self.set_github_repo()
         self.set_reverse_depends()
         self.set_proxy_papers()
 
-        self.save_host_contributors()
+        self.save_all_people()  #includes save_host_contributors
         # self.set_github_repo_ids() # not sure if we use this anymore?
         # self.set_num_downloads_since  # i don't think we use this anymore.  needs date fix if used.
         self.set_tags()
@@ -189,14 +188,6 @@ class CranPackage(Package):
         print data_url
         response = requests.get(data_url)
         self.api_raw = response.json()
-
-    def set_github_contributors(self):
-        self.github_contributors = github_api.get_repo_contributors(
-            self.github_owner,
-            self.github_repo_name
-        )
-        print "added github contributors!"
-        print self.github_contributors
 
 
     def set_downloads(self):
