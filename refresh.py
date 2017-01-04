@@ -4,7 +4,7 @@ from app import db
 from models.cran_package import CranPackage
 
 #useful info: http://www.r-pkg.org/services
-def seed_all_cran_packages():
+def add_all_new_cran_packages():
     # maybe there is a machine readable version of this?  I couldn't find it.
     url = "https://cran.r-project.org/web/packages/available_packages_by_name.html"
     r = requests.get(url)
@@ -21,6 +21,7 @@ def seed_all_cran_packages():
         package = CranPackage(project_name=package_name)
         if package.id not in all_current_package_ids:
             print "added new package:", package_name
+            package.refresh()
             db.session.add(package)
             db.session.commit()
     print len(all_names)
@@ -29,4 +30,7 @@ def seed_all_cran_packages():
 
 if __name__ == '__main__':
 
-    seed_all_cran_packages()
+    add_all_new_cran_packages()
+
+    # call run_igraph.sh
+    # go through all
