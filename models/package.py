@@ -1313,6 +1313,14 @@ def package_id_from_github_info(owner, repo_name):
     return q.first()
 
 
+def prep_summary(str):
+    placeholder = "A nifty project."
+    if not str:
+        return placeholder
+    elif str == "UNKNOWN":
+        return placeholder
+    else:
+        return truncate(str)
 
 def shortcut_igraph_data_dict():
 
