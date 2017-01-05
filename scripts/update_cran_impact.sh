@@ -1,4 +1,6 @@
-heroku run --size=performance-l python update.py CranPackage.set_num_downloads_score --no-rq --limit=100000 
+heroku run --size=performance-l sh scripts/run_igraph.sh
+
+heroku run --size=performance-l python update.py CranPackage.set_num_downloads_score --no-rq --limit=100000
 heroku run --size=performance-l python update.py CranPackage.set_pagerank_score --no-rq --limit=100000
 heroku run --size=performance-l python update.py CranPackage.set_subscore_percentiles --no-rq --limit=100000
 heroku run --size=performance-l python update.py CranPackage.set_impact --no-rq --limit=100000

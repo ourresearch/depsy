@@ -19,6 +19,7 @@ from models import github_api
 from models.byline import Byline
 from models.academic import is_academic_phrase
 from util import elapsed
+from util import truncate
 from collections import defaultdict
 
 class CranPackage(Package):
@@ -93,15 +94,13 @@ class CranPackage(Package):
         self.set_num_citations()
         self.set_host_reverse_depends()
 
-        self.set_subscore_percentiles()
-
         self.updated = datetime.datetime.utcnow()
 
 
     def set_summary(self):
         self.summary = "A nifty project."
         try:
-            self.summary = self.api_raw["Description"]
+            self.summary = truncate(self.api_raw["Description"])
         except (KeyError, TypeError):
             pass
 

@@ -1247,14 +1247,7 @@ class Package(db.Model):
 
 
 
-def prep_summary(str):
-    placeholder = "A nifty project."
-    if not str:
-        return placeholder
-    elif str == "UNKNOWN":
-        return placeholder
-    else:
-        return truncate(str)
+
 
 def pagerank_str_from_percentile(percentile):
     cutoffs = [

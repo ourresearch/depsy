@@ -274,7 +274,7 @@ update_registry.register(Update(
 
 q = db.session.query(Package.id)
 update_registry.register(Update(
-    job=Package.save_host_contributors,
+    job=CranPackage.set_summary,
     query=q,
     queue_id=8
 ))
