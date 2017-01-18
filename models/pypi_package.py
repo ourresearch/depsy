@@ -128,6 +128,14 @@ class PypiPackage(Package):
         self.set_num_citations()
         # self.set_host_deps()  # need to get this working
 
+        self.set_num_downloads_score()
+        # self.set_pagerank_score()  # have to run igraph first
+        # also citations score??
+        
+        self.set_subscore_percentiles()
+        self.set_impact()
+        self.set_impact_percentiles()
+
         self.updated = datetime.datetime.utcnow()
 
 

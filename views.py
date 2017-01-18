@@ -175,6 +175,8 @@ def github_package_endpoint(owner, repo_name):
 
 @app.route("/api/package/<host_or_language>/<project_name>/badge.svg")
 def package_badge(host_or_language, project_name):
+    abort_json(503, "temporarily unavailable")
+
     my_id = package.make_id(host_or_language, project_name)
     my_package = Package.query.get(my_id)
     if not my_package:
