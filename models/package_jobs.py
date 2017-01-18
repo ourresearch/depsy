@@ -569,9 +569,15 @@ update_registry.register(Update(
     query=q
 ))
 
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.refresh,
+    query=q
+))
+
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
-    job=CranPackage.set_host_reverse_depends,
+    job=CranPackage.set_host_deps,
     query=q
 ))
 
@@ -579,4 +585,11 @@ q = db.session.query(CranPackage.id)
 update_registry.register(Update(
     job=CranPackage.set_num_downloads,
     query=q
+))
+
+q = db.session.query(Person.id)
+update_registry.register(Update(
+    job=Person.refresh,
+    query=q,
+    shortcut_fn=PypiPackage.shortcut_percentile_refsets
 ))

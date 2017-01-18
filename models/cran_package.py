@@ -77,10 +77,9 @@ class CranPackage(Package):
 
 
     def refresh(self):
+        self.set_api_raw()
         self.set_is_academic()
-        self.set_cran_about()
         self.set_summary()
-        self.set_num_downloads()
         self.set_github_repo()
         self.set_proxy_papers()
 
@@ -92,7 +91,7 @@ class CranPackage(Package):
 
         self.set_num_downloads()
         self.set_num_citations()
-        self.set_host_reverse_depends()
+        self.set_host_deps()
 
         self.updated = datetime.datetime.utcnow()
 
@@ -178,7 +177,7 @@ class CranPackage(Package):
             return '(="r package" OR ="r statistical") AND '
 
 
-    def set_cran_about(self):
+    def set_api_raw(self):
         url_template = "http://crandb.r-pkg.org/%s"
         data_url = url_template % self.project_name
         print data_url
@@ -241,7 +240,7 @@ class CranPackage(Package):
         )
 
 
-    def set_host_reverse_depends(self):
+    def set_host_deps(self):
         url_template = "https://cran.r-project.org/web/packages/%s/"
         data_url = url_template % self.project_name
         print data_url
@@ -297,5 +296,15 @@ class CranPackage(Package):
         self.proxy_papers = proxy_papers
 
 
+    #useful info: http://www.r-pkg.org/services
+    @classmethod
+    def get_all_live_package_names(self):
+        # maybe there is a machine readable version of this?  I couldn't find it.
+        url = "https://cran.r-project.org/web/packages/available_packages_by_name.html"
+        r = requests.get(url)
 
+        page = r.text
+        tree = html.fromstring(page)
+        all_names = tree.xpath('//tr/td[1]/a/text()')
+        return all_names
 

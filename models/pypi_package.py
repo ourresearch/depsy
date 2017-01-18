@@ -8,14 +8,17 @@ import requests
 import hashlib
 from lxml import html
 import re
+import datetime
 
 from models.person import get_or_make_person
 from models.github_repo import GithubRepo
 from models.zip_getter import ZipGetter
 from models.byline import Byline
 from models.academic import is_academic_project
+from models import github_api
 from util import elapsed
 from python import parse_requirements_txt
+from util import truncate
 
 
 
@@ -55,6 +58,20 @@ class PypiPackage(Package):
     def host_url(self):
         return "https://pypi.python.org/pypi/{}".format(self.project_name)
 
+    def set_num_downloads(self):
+        if not self.api_raw:
+            return None
+
+        self.num_downloads = 0
+
+        if "releases" in self.api_raw and self.api_raw["releases"]:
+            for releases_by_version in self.api_raw["releases"].values():
+                for release in releases_by_version:
+                    self.num_downloads += int(release["downloads"])
+
+        return self.num_downloads
+
+
     @property
     def source_url(self):
         if not self.api_raw:
@@ -85,16 +102,48 @@ class PypiPackage(Package):
 
         return None
 
+    def set_proxy_papers(self):
+        pass
+
+    def set_summary(self):
+        self.summary = "A nifty project."
+        try:
+            self.summary = truncate(self.api_raw["info"]["description"])
+        except (KeyError, TypeError):
+            pass
+
+    def refresh(self):
+        self.set_api_raw()
+        self.set_is_academic()
+        self.set_summary()
+        self.set_github_repo()
+        self.set_proxy_papers()
+
+        self.save_all_people()  #includes save_host_contributors
+        self.set_tags()
+
+        self.set_credit()
+
+        self.set_num_downloads()
+        self.set_num_citations()
+        # self.set_host_deps()  # need to get this working
+
+        self.updated = datetime.datetime.utcnow()
+
 
     def save_host_contributors(self):
-        raw_byline_string = self.api_raw["info"]["author"]
-        author_email = self.api_raw["info"]["author_email"]
+        try:
+            raw_byline_string = self.api_raw["info"]["author"]
+        except KeyError:
+            print "no author field"
+            return
 
         byline = Byline(raw_byline_string)
 
         extracted_name_dicts = byline.author_email_pairs()
         
         # use the author email field only if only one name
+        author_email = self.api_raw["info"]["author_email"]
         if len(extracted_name_dicts)==1:
             extracted_name_dicts[0]["email"] = author_email
 
@@ -103,7 +152,35 @@ class PypiPackage(Package):
             self._save_contribution(person, "author")
 
 
-    def set_github_repo_ids(self):
+    def set_github_repo(self):
+        try:
+            urls_str = self.api_raw["info"]["home_page"]
+        except KeyError:
+            return False
+
+        # People put all kinds of lists in this field. So we're splitting on
+        # newlines, commas, and spaces. Won't get everything, but will
+        # get most.
+        urls = re.compile(r",*\s*\n*").split(urls_str)
+
+        for url in urls:
+            login, repo_name = github_api.login_and_repo_name_from_url(url)
+            if login and repo_name:
+                self.github_repo_name = repo_name
+                self.github_owner = login
+
+                # there may be more than one github url. if so, too bad,
+                # we're just picking the first one.
+                break
+
+        print u"successfully set a github ID for {name}: {login}/{repo_name}.".format(
+            name=self.project_name,
+            login=self.github_owner,
+            repo_name=self.github_repo_name
+        )
+
+
+    def set_github_repo_ids_from_setuppy_name(self):
         q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
         q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
         q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
@@ -245,8 +322,16 @@ class PypiPackage(Package):
 
     def set_tags(self):
         self.tags = []
-        self.tags += self._get_tags_from_classifiers()
-        self.tags += self._get_tags_from_keywords()
+        try:
+            self.tags += self._get_tags_from_classifiers()
+        except TypeError:
+            pass
+
+        try:
+            self.tags += self._get_tags_from_keywords()
+        except TypeError:
+            pass
+
         self.tags = list(set(self.tags))  # dedup
         return self.tags
 
@@ -398,6 +483,17 @@ class PypiPackage(Package):
 
     def distinctiveness_query_prefix(self, source):
         return 'python AND '
+
+    @classmethod
+    def get_all_live_package_names(self):
+        url = "https://pypi.python.org/simple/"
+        r = requests.get(url)
+
+        page = r.text
+        tree = html.fromstring(page)
+        print len(tree)
+        all_names = [ele.text for ele in tree.xpath('//a')]
+        return all_names
 
 
 def shortcut_get_pypi_package_names():

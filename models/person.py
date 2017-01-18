@@ -63,6 +63,12 @@ class Person(db.Model):
         # this is just a placeholder to remind us to run it :)
         pass
 
+    def refresh(self, refsets_dict):
+        self.set_scores()
+        self.set_subscore_percentiles(refsets_dict)
+        self.set_impact()
+        self.set_impact_percentiles(refsets_dict)
+
     @property
     def display_pagerank(self):
         return self.pagerank / 100.0
@@ -307,7 +313,7 @@ class Person(db.Model):
             last = "?"
 
         normalized_name = u"{} {}".format(first_initial, last)
-        print normalized_name
+        # print "normalized_name", normalized_name
         return normalized_name
 
 
@@ -545,13 +551,13 @@ def find_best_match(persons, **kwargs):
     for person in persons:
         if "github_login" in kwargs and kwargs["github_login"]:
             if person.github_login == kwargs["github_login"]:
-                print "\n matched on github_login"
+                print "matched on github_login"
                 return person
 
     for person in persons:
         if "email" in kwargs and kwargs["email"]:
             if person.email == kwargs["email"]:
-                print "\n matched on email"
+                print "matched on email"
                 return person
 
     for person in persons:
@@ -559,7 +565,7 @@ def find_best_match(persons, **kwargs):
             normalized_person_name = person.name.replace(".", "")
             normalized_match_name = kwargs["name"].replace(".", "")
             if normalized_person_name == normalized_match_name:
-                print "\n matched on exact name"
+                print "matched on exact name"
                 return person
     
     return None

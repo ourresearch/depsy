@@ -57,5 +57,13 @@ data = [
 		"people_to_merge": [
 			(u"B. M. Taylor", "cran:lgcp")
 		]	
-	}	
+	},
+	{
+		"main_profile": (u"Erik Tollerud", "pypi:astropy"),
+		"people_to_merge": [
+			(u"Erik Tollerud", "pypi:Astropysics")
+		]
+	}
+
+
 ]

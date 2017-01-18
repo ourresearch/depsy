@@ -31,7 +31,7 @@ import re
 #         return u'<CranProject {project_name}>'.format(
 #             project_name=self.project_name)
 
-#     def set_cran_about(self):
+#     def set_api_raw(self):
 #         url_template = "http://crandb.r-pkg.org/%s"
 #         data_url = url_template % self.project_name
 #         print data_url
@@ -189,7 +189,7 @@ import re
 # """
 # def add_cran_about(project_name):
 #     project = db.session.query(CranProject).get(project_name)
-#     project.set_cran_about()
+#     project.set_api_raw()
 #     if project.api_raw:
 #         print "got api_raw!"
 #     db.session.commit()

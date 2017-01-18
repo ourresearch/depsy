@@ -9,9 +9,10 @@ def is_academic_project(package_obj):
         is_academic = True
 
     # if you have an academic-sounding tag, you're academic
-    for tag in package_obj.tags:
-        if is_academic_phrase(tag):
-            is_academic = True
+    if package_obj.tags:
+        for tag in package_obj.tags:
+            if is_academic_phrase(tag):
+                is_academic = True
 
     # if you have an academic-sounding name, you're academic
     if is_academic_phrase(package_obj.project_name):

@@ -124,8 +124,9 @@ def make_ratelimited_call(url):
     login, token = keyring.get()
 
     # assuming rate limited calls will never time out
-    requests.packages.urllib3.disable_warnings()            
-    r = requests.get(url, auth=(login, token))
+    requests.packages.urllib3.disable_warnings()
+    h = {"User-Agent": "Depsy"}
+    r = requests.get(url, auth=(login, token), headers=h)
 
     calls_remaining = r.headers["X-RateLimit-Remaining"]
 

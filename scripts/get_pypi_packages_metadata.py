@@ -165,10 +165,10 @@ def analyze_main():
 if __name__ == '__main__':
 
     # get from PyPi
-    #fetch_main()
+    fetch_main()
 
     # analyze data
-    analyze_main()
+    # analyze_main()
 
 
 
