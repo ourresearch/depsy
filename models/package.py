@@ -1052,6 +1052,9 @@ class Package(db.Model):
 
     @property
     def display_pagerank_score(self):
+        if not self.pagerank_score_out_of_1000:
+            return 0
+
         out_of_10 = self.pagerank_score_out_of_1000 / 100.0
         return out_of_10
 
