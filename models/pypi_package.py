@@ -126,6 +126,7 @@ class PypiPackage(Package):
 
         self.set_num_downloads()
         self.set_num_citations()
+
         # self.set_host_deps()  # need to get this working
 
         self.set_num_downloads_score()
@@ -276,6 +277,9 @@ class PypiPackage(Package):
 
     def set_host_deps(self):
         core_requirement_lines = ""
+
+        if not self.requires_files:
+            self.set_requires_files()
 
         if "METADATA" in self.requires_files:
             requirement_text = self.requires_files["METADATA"]
