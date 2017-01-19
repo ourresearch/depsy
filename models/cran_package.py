@@ -91,7 +91,7 @@ class CranPackage(Package):
 
         self.set_num_downloads()
         self.set_num_citations()
-        self.set_host_deps()
+        self.set_host_reverse_deps()
 
         self.updated = datetime.datetime.utcnow()
 
@@ -240,7 +240,7 @@ class CranPackage(Package):
         )
 
 
-    def set_host_deps(self):
+    def set_host_reverse_deps(self):
         url_template = "https://cran.r-project.org/web/packages/%s/"
         data_url = url_template % self.project_name
         print data_url

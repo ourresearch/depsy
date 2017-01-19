@@ -572,12 +572,13 @@ update_registry.register(Update(
 q = db.session.query(PypiPackage.id)
 update_registry.register(Update(
     job=PypiPackage.refresh,
-    query=q
+    query=q,
+    shortcut_fn=shortcut_get_pypi_package_names
 ))
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
-    job=CranPackage.set_host_deps,
+    job=CranPackage.set_host_reverse_deps,
     query=q
 ))
 

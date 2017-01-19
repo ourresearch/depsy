@@ -46,6 +46,7 @@ class Package(db.Model):
     is_academic = db.Column(db.Boolean)
 
     host_reverse_deps = db.deferred(db.Column(JSONB))
+    host_deps = db.deferred(db.Column(JSONB))
 
     github_reverse_deps = db.deferred(db.Column(JSONB))
     dependencies = db.deferred(db.Column(JSONB))

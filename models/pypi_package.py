@@ -112,7 +112,7 @@ class PypiPackage(Package):
         except (KeyError, TypeError):
             pass
 
-    def refresh(self):
+    def refresh(self, pypi_package_names=None):
         self.set_api_raw()
         self.set_is_academic()
         self.set_summary()
@@ -127,7 +127,7 @@ class PypiPackage(Package):
         self.set_num_downloads()
         self.set_num_citations()
 
-        # self.set_host_deps()  # need to get this working
+        self.set_host_deps(pypi_package_names)
 
         self.set_num_downloads_score()
         # self.set_pagerank_score()  # have to run igraph first
@@ -275,7 +275,7 @@ class PypiPackage(Package):
             self.api_raw = {"error": "no_json"}
 
 
-    def set_host_deps(self):
+    def set_host_deps(self, pypi_package_names=None):
         core_requirement_lines = ""
 
         if not self.requires_files:
@@ -320,15 +320,26 @@ class PypiPackage(Package):
         # see if is in pypi, case insensitively, getting normalized case
         deps_in_pypi = []
         for dep in deps:
+            print "on dep", dep
+            if not pypi_package_names:
+                print "start getting pypi_package_names"
+                pypi_package_names = shortcut_get_pypi_package_names()
+                print "done getting pypi_package_names"
+
+            print "hi", dep.lower()
+            print pypi_package_names["six"]
+            print pypi_package_names[dep.lower()]
             if dep.lower() in pypi_package_names:
+                print "is in"
                 pypi_package_normalized_case = pypi_package_names[dep.lower()]
                 deps_in_pypi.append(pypi_package_normalized_case)
 
         if len(deps_in_pypi) != len(deps):
             print "some deps not in pypi for {}:{}".format(
                 self.id, set(deps) - set(deps_in_pypi))
-            print deps
-            print deps_in_pypi
+            # print deps
+            # print deps_in_pypi
+        print "setting!", deps_in_pypi
         self.host_deps = deps_in_pypi
 
 
