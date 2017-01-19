@@ -1633,7 +1633,7 @@ angular.module("package-page/package-page.tpl.html", []).run(["$templateCache", 
     "                        </p>\n" +
     "                    </div>\n" +
     "                    <div class=\"downloads-explanation\" ng-show=\"subscore.name=='num_downloads'\">\n" +
-    "                        Based on latest monthly downloads stats from\n" +
+    "                        Based on latest downloads stats from\n" +
     "                        <span class=\"repo cran\" ng-show=\"package.host=='cran'\">CRAN.</span>\n" +
     "                        <span class=\"repo PyPi\" ng-show=\"package.host=='pypi'\">PyPI.</span>\n" +
     "                    </div>\n" +
@@ -2088,12 +2088,13 @@ angular.module("snippet/person-impact-popover.tpl.html", []).run(["$templateCach
     "      <div class=\"sub-score downloads metric\" ng-show=\"package.num_downloads\">\n" +
     "         <span class=\"name\">\n" +
     "            <i class=\"fa fa-download\"></i>\n" +
-    "            Monthly Downloads\n" +
+    "            Total Downloads\n" +
     "         </span>\n" +
     "         <span class=\"descr\">\n" +
     "            <span class=\"val\">{{ format.short(package.num_downloads)}}</span>\n" +
     "         </span>\n" +
     "      </div>\n" +
+    "\n" +
     "\n" +
     "\n" +
     "   </div>\n" +

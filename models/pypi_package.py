@@ -170,6 +170,8 @@ class PypiPackage(Package):
         # People put all kinds of lists in this field. So we're splitting on
         # newlines, commas, and spaces. Won't get everything, but will
         # get most.
+        if not urls_str:
+            return
         urls = re.compile(r",*\s*\n*").split(urls_str)
 
         for url in urls:
@@ -320,17 +322,12 @@ class PypiPackage(Package):
         # see if is in pypi, case insensitively, getting normalized case
         deps_in_pypi = []
         for dep in deps:
-            print "on dep", dep
             if not pypi_package_names:
                 print "start getting pypi_package_names"
                 pypi_package_names = shortcut_get_pypi_package_names()
                 print "done getting pypi_package_names"
 
-            print "hi", dep.lower()
-            print pypi_package_names["six"]
-            print pypi_package_names[dep.lower()]
             if dep.lower() in pypi_package_names:
-                print "is in"
                 pypi_package_normalized_case = pypi_package_names[dep.lower()]
                 deps_in_pypi.append(pypi_package_normalized_case)
 

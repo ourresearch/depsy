@@ -187,7 +187,7 @@ class CranPackage(Package):
 
     def set_num_downloads(self):
 
-        date_one_month_ago = datetime.datetime.utcnow() - datetime.timedelta(days=30)
+        self.num_downloads = 0
 
         url_template = "http://cranlogs.r-pkg.org/downloads/daily/1900-01-01:2020-01-01/%s"
         data_url = url_template % self.project_name
@@ -196,19 +196,9 @@ class CranPackage(Package):
         if "day" in response.text:
             data = {}
             all_days = response.json()[0]["downloads"]
-            # data["total_downloads"] = sum([int(day["downloads"]) for day in all_days])
-            # data["first_download"] = min([day["day"] for day in all_days])
-            data["daily_downloads"] = all_days
-        else:
-            data = {"total_downloads": 0}
-
-        # now get the ones in the last month
-        download_sum = 0
-        for download_dict in data.get("daily_downloads", []):
-            if download_dict["day"] > date_one_month_ago.isoformat():
-                download_sum += download_dict["downloads"]
-
-        self.num_downloads = download_sum
+            for download_dict in all_days:
+                self.num_downloads += download_dict["downloads"]
+        print u"setting num_downloads to {}".format(self.num_downloads)
 
 
 
