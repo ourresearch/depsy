@@ -1035,7 +1035,7 @@ class Package(db.Model):
 
     def set_impact_percentile(self, refset):
         self.impact_percentile = self._calc_percentile(refset, self.impact)
-        print "self.impact_percentile", self.impact, self.impact_percentile
+        print "self.impact_percentile is {} (for impact {})".format(self.impact_percentile, self.impact)
 
     def set_subscore_percentiles(self, refsets_dict):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
@@ -1115,7 +1115,7 @@ class Package(db.Model):
 
         self.pagerank_score = adjusted
 
-        print u"{}:  {} pagerank*10000, score {}\n".format(
+        print u"{}:  {} pagerank*10000, score {}".format(
             self.id, self.pagerank*10000, self.pagerank_score)        
         return self.pagerank_score
 
@@ -1123,7 +1123,7 @@ class Package(db.Model):
     def set_num_citations_score(self):
         if not self.num_citations:
             self.num_citations_score = 0
-            print u"{}:  {} num_citations, score {}\n".format(
+            print u"{}:  {} num_citations, score {}".format(
                 self.id, self.num_citations, self.num_citations_score)                    
             return self.num_citations_score
 
@@ -1135,7 +1135,7 @@ class Package(db.Model):
             adjusted = None
 
         self.num_citations_score = adjusted
-        print u"{}:  {} num_citations, score {}\n".format(
+        print u"{}:  {} num_citations, score {}".format(
             self.id, self.num_citations, self.num_citations_score)        
         return self.num_citations_score
 
