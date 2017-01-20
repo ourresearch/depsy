@@ -24,6 +24,7 @@ from jobs import Update
 from util import truncate
 from providers import full_text_source
 from models import dedup_special_cases
+from util import calculate_percentile
 
 
 class Package(db.Model):
@@ -66,7 +67,6 @@ class Package(db.Model):
 
     num_downloads = db.Column(db.Integer)
     num_downloads_percentile = db.Column(db.Float)
-    num_downloads_score = db.Column(db.Float)
     pagerank = db.Column(db.Float)
     pagerank_percentile = db.Column(db.Float)
     pagerank_score = db.Column(db.Float)
@@ -989,6 +989,12 @@ class Package(db.Model):
 
 
 
+    def recalculate(self, refsets_dict):
+        self.set_pagerank_score()
+        self.set_subscore_percentiles(refsets_dict)
+        self.set_impact()
+        self.set_impact_percentiles(refsets_dict)
+
 
     @classmethod
     def shortcut_percentile_refsets(cls):
@@ -1011,17 +1017,12 @@ class Package(db.Model):
         return ref_list
 
 
+
+
     def _calc_percentile(self, refset, value):
-        if value is None:  # distinguish between that and zero
-            return None
-         
-        try:
-            matching_index = refset.index(value)
-            percentile = float(matching_index) / len(refset)
-        except ValueError:
-            # not in index.  maybe isn't academic.
-            percentile = None
-        return percentile
+        return calculate_percentile(refset, value)
+
+
 
     def set_num_downloads_percentile(self, refset):
         self.num_downloads_percentile = self._calc_percentile(refset, self.num_downloads)
@@ -1034,6 +1035,7 @@ class Package(db.Model):
 
     def set_impact_percentile(self, refset):
         self.impact_percentile = self._calc_percentile(refset, self.impact)
+        print "self.impact_percentile", self.impact, self.impact_percentile
 
     def set_subscore_percentiles(self, refsets_dict):
         self.set_num_downloads_percentile(refsets_dict["num_downloads"])
@@ -1042,10 +1044,6 @@ class Package(db.Model):
 
     def set_impact_percentiles(self, refsets_dict):
         self.set_impact_percentile(refsets_dict["impact"])
-
-    @property
-    def display_num_downloads_score(self):
-        return min(self.num_downloads_score, 1000)
 
     @property
     def display_num_citations_score(self):
@@ -1061,9 +1059,9 @@ class Package(db.Model):
 
     @property
     def pagerank_score_out_of_1000(self):
-        #if no pagerank, sub it for downloads
+        #no pagerank
         if self.has_estimated_pagerank:
-            return self.num_downloads_score
+            return -1
 
         pagerank_score = self.pagerank_score
         if pagerank_score < 1:
@@ -1088,15 +1086,6 @@ class Package(db.Model):
     @property
     def pagerank_score_multiplier(self):
         return 1000.0/self.pagerank_offset_to_recenter_scores # makes it out of 1000
-
-    @property
-    def num_downloads_offset_to_recenter_scores(self):
-        return -math.ceil(math.log10(1.0/self.num_downloads_99th))
-
-
-    @property
-    def num_downloads_score_multiplier(self):
-        return 1000.0/self.num_downloads_offset_to_recenter_scores # makes it out of 1000
 
     @property
     def num_citations_offset_to_recenter_scores(self):
@@ -1126,7 +1115,7 @@ class Package(db.Model):
 
         self.pagerank_score = adjusted
 
-        print u"\n**{}:  {} pagerank*10000, score {}\n".format(
+        print u"{}:  {} pagerank*10000, score {}\n".format(
             self.id, self.pagerank*10000, self.pagerank_score)        
         return self.pagerank_score
 
@@ -1134,7 +1123,7 @@ class Package(db.Model):
     def set_num_citations_score(self):
         if not self.num_citations:
             self.num_citations_score = 0
-            print u"\n**{}:  {} num_citations, score {}\n".format(
+            print u"{}:  {} num_citations, score {}\n".format(
                 self.id, self.num_citations, self.num_citations_score)                    
             return self.num_citations_score
 
@@ -1146,26 +1135,10 @@ class Package(db.Model):
             adjusted = None
 
         self.num_citations_score = adjusted
-        print u"\n**{}:  {} num_citations, score {}\n".format(
+        print u"{}:  {} num_citations, score {}\n".format(
             self.id, self.num_citations, self.num_citations_score)        
         return self.num_citations_score
 
-
-    def set_num_downloads_score(self):
-        if not self.num_downloads:
-            self.num_downloads_score = None
-            return self.num_downloads_score
-
-        try:
-            raw = math.log10(float(self.num_downloads)/self.num_downloads_99th)
-            adjusted = (raw + self.num_downloads_offset_to_recenter_scores) * self.num_downloads_score_multiplier
-        except ValueError:
-            adjusted = None
-
-        self.num_downloads_score = adjusted   
-        print u"\n**{}:  {} downloads, score {}\n".format(
-            self.id, self.num_downloads, self.num_downloads_score)        
-        return self.num_downloads_score
 
 
 
@@ -1180,15 +1153,16 @@ class Package(db.Model):
             return 
 
         use_for_pagerank = self.pagerank_percentile
-        if self.has_estimated_pagerank:
+        if self.has_estimated_pagerank or use_for_pagerank==None:
             use_for_pagerank = self.num_downloads_percentile
 
         combo = (use_for_pagerank + self.num_downloads_percentile + self.num_citations_percentile) / 3.0
         self.impact = combo
-        # print u"self.impact for {} is {} ({}, {}, {}".format(
-        #     self.id, 
-        #     self.impact, 
-        #     self.pagerank_score, self.num_downloads_score, self.num_citations_score)
+
+        print u"** self.impact for {} is {} ({}, {}, {})".format(
+            self.id,
+            self.impact,
+            use_for_pagerank, self.num_downloads_percentile, self.num_citations_percentile)
 
 
 

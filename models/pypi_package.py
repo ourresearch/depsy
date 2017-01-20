@@ -129,7 +129,6 @@ class PypiPackage(Package):
 
         self.set_host_deps(pypi_package_names)
 
-        self.set_num_downloads_score()
         # self.set_pagerank_score()  # have to run igraph first
         # also citations score??
 

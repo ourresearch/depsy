@@ -1,8 +1,11 @@
 import requests
 from lxml import html
+import argparse
+
 from app import db
 from models.cran_package import CranPackage
 from models.pypi_package import PypiPackage
+import update
 
 
 def add_all_new_packages(package_class):
@@ -36,10 +39,26 @@ def add_all_new_github_repos(language):
         date = next_date
 
 
+def recalculate_everything(parsed_args):
+    if parsed_args.language=="r":
+        package_class = CranPackage
+    else:
+        package_class = PypiPackage
+
+    parsed_args.fn = u"{}.recalculate".format(package_class.__name__)
+    print "parsed_args.fn", parsed_args.fn
+    update.run_update(parsed_args)
+
+
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description="Run stuff.")
+    parser.add_argument('language', help="r or python")
+    parsed_args = update.parse_update_optional_args(parser)
+
+
     # add_all_new_packages(CranPackage)
-    add_all_new_packages(PypiPackage)
+    # add_all_new_packages(PypiPackage)
 
     # start_date = ""
     # end_date = ""
@@ -47,3 +66,6 @@ if __name__ == '__main__':
 
     # call run_igraph.sh
     # go through all
+
+    # recalculate everything
+    recalculate_everything(parsed_args)

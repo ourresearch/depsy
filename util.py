@@ -1,4 +1,6 @@
 import time
+import bisect
+
 from app import db
 
 
@@ -108,9 +110,16 @@ def str_to_bool(x):
     else:
         raise ValueError("This string can't be cast to a boolean.")
 
+
+def calculate_percentile(refset, value):
+    if value is None:  # distinguish between that and zero
+        return None
+
+    matching_index = bisect.bisect_left(refset, value)
+    percentile = float(matching_index) / len(refset)
+    # print u"percentile for {} is {}".format(value, percentile)
+
+    return percentile
+
 # from http://stackoverflow.com/a/20007730/226013
 ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
-
-
-
-

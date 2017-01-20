@@ -1,7 +1,4 @@
-heroku run --size=performance-l python update.py CranPackage.set_num_downloads_score --no-rq --limit=100000 
-heroku run --size=performance-l python update.py PypiPackage.set_num_downloads_score --no-rq --limit=100000 
-
-heroku run --size=performance-l python update.py CranPackage.set_pagerank_score --no-rq --limit=100000 
+heroku run --size=performance-l python update.py CranPackage.set_pagerank_score --no-rq --limit=100000
 heroku run --size=performance-l python update.py PypiPackage.set_pagerank_score --no-rq --limit=100000 
 
 heroku run --size=performance-l python update.py CranPackage.set_subscore_percentiles --no-rq --limit=100000 

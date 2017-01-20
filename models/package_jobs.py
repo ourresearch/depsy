@@ -216,20 +216,6 @@ update_registry.register(Update(
 
 q = db.session.query(CranPackage.id)
 update_registry.register(Update(
-    job=CranPackage.set_num_downloads_score,
-    query=q,
-    queue_id=7
-))
-
-q = db.session.query(PypiPackage.id)
-update_registry.register(Update(
-    job=PypiPackage.set_num_downloads_score,
-    query=q,
-    queue_id=7
-))
-
-q = db.session.query(CranPackage.id)
-update_registry.register(Update(
     job=CranPackage.set_pagerank_score,
     query=q,
     queue_id=7
@@ -591,6 +577,22 @@ update_registry.register(Update(
 q = db.session.query(Person.id)
 update_registry.register(Update(
     job=Person.refresh,
+    query=q,
+    shortcut_fn=PypiPackage.shortcut_percentile_refsets
+))
+
+
+q = db.session.query(CranPackage.id)
+update_registry.register(Update(
+    job=CranPackage.recalculate,
+    query=q,
+    shortcut_fn=CranPackage.shortcut_percentile_refsets
+))
+
+
+q = db.session.query(PypiPackage.id)
+update_registry.register(Update(
+    job=PypiPackage.recalculate,
     query=q,
     shortcut_fn=PypiPackage.shortcut_percentile_refsets
 ))
