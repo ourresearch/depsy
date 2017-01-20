@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
 
     # add_all_new_packages(CranPackage)
-    # add_all_new_packages(PypiPackage)
+    add_all_new_packages(PypiPackage)
 
     # start_date = ""
     # end_date = ""
@@ -68,4 +68,4 @@ if __name__ == '__main__':
     # go through all
 
     # recalculate everything
-    recalculate_everything(parsed_args)
+    # recalculate_everything(parsed_args)
