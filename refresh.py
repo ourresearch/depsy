@@ -6,6 +6,7 @@ from app import db
 from models.cran_package import CranPackage
 from models.pypi_package import PypiPackage
 import update
+from util import safe_commit
 
 
 def add_all_new_packages(package_class):
@@ -21,7 +22,7 @@ def add_all_new_packages(package_class):
             print "\n\nadded new package:", new_package.id
             # new_package.refresh()
             db.session.add(new_package)
-            db.session.commit()
+            safe_commit(db)
 
     print len(all_names)
 

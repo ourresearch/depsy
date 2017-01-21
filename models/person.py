@@ -12,7 +12,7 @@ from app import db
 from models.contribution import Contribution
 from models.github_api import GithubRateLimitException
 from github_api import get_profile
-from util import dict_from_dir
+from util import safe_commit
 
 # reused elsewhere
 def add_person_leaderboard_filters(q):
@@ -290,7 +290,7 @@ class Person(db.Model):
                         self.num_downloads += pp.person_package_num_downloads
                     if pp.person_package_num_citations:
                         self.num_citations += pp.person_package_num_citations
-        db.session.commit()
+        safe_commit(db)
 
     @property
     def name_normalized_for_maximal_deduping(self):
@@ -589,7 +589,7 @@ def force_make_person(**kwargs):
 
     new_person.set_parsed_name()
     new_person.set_main_language()
-    db.session.commit()
+    safe_commit(db)
 
     return new_person
 
@@ -642,7 +642,7 @@ def get_or_make_person(**kwargs):
         new_person = force_make_person(**kwargs)
         #need this commit to handle matching people added previously in this chunk
         db.session.add(new_person)
-        db.session.commit()  
+        safe_commit()
         return new_person
 
 

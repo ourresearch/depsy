@@ -123,3 +123,20 @@ def calculate_percentile(refset, value):
 
 # from http://stackoverflow.com/a/20007730/226013
 ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
+
+
+def safe_commit(db):
+    try:
+        db.session.commit()
+        return True
+    except (KeyboardInterrupt, SystemExit):
+        # let these ones through, don't save anything to db
+        raise
+    except sqlalchemy.exc.DataError:
+        db.session.rollback()
+        print u"sqlalchemy.exc.DataError on commit.  rolling back."
+    except Exception:
+        db.session.rollback()
+        print u"generic exception in commit.  rolling back."
+        logging.exception("commit error")
+    return False

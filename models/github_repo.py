@@ -18,8 +18,8 @@ from jobs import Update
 from models import github_api
 import requests
 from util import elapsed
+from util import safe_commit
 from time import time
-from time import sleep
 import ast
 import subprocess
 import re
@@ -592,7 +592,7 @@ add the github repo-about api info
 def add_github_about(login, repo_name):
     repo = db.session.query(GithubRepo).get((login, repo_name))
     repo.set_github_about()
-    db.session.commit()
+    safe_commit(db)
 
     print repo
 
@@ -801,7 +801,7 @@ def commit_repo(repo):
         print "error committing repo, rolling back and setting save error for ", repo
         db.session.rollback()
         repo.set_save_error()
-        db.session.commit()
+        safe_commit(db)
 
 
 
@@ -850,7 +850,7 @@ def add_repos_from_remote_csv(csv_url, language):
                     index=index,
                     elapsed=elapsed(start))
 
-    db.session.commit()
+    safe_commit(db)
 
 
 

@@ -8,6 +8,7 @@ from app import db
 from app import ti_queues
 from util import elapsed
 from util import chunks
+from util import safe_commit
 
 
 def person_load_options():
@@ -69,7 +70,7 @@ def update_fn(cls, method_name, obj_id_list, shortcut_data=None):
             elapsed=elapsed(start_time, 4)
         )
 
-    db.session.commit()
+    safe_commit(db)
     db.session.remove()  # close connection nicely
     return None  # important for if we use this on RQ
 

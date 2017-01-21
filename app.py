@@ -108,7 +108,7 @@ for i in range(0, 10):
 # from models import package
 
 # db.create_all()
-# db.session.commit()
+# safe_commit(db)
 
 
 

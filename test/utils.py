@@ -77,7 +77,7 @@ def drop_everything(db, app):
     for table in tbs:
         conn.execute(DropTable(table))
 
-    db.session.commit()    
+    safe_commit(db)
 
 
 def setup_postgres_for_unittests(db, app):
