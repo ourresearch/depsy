@@ -19,7 +19,7 @@ def add_all_new_packages(package_class):
         new_package = package_class(project_name=package_name)
         if new_package.id not in all_current_package_ids:
             print "\n\nadded new package:", new_package.id
-            new_package.refresh()
+            # new_package.refresh()
             db.session.add(new_package)
             db.session.commit()
 
