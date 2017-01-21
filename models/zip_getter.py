@@ -70,26 +70,21 @@ class ZipGetter():
         with open(self.temp_file_name, 'wb') as out_file:
             r.raw.decode_content = False
 
-            try:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk: # filter out keep-alive new chunks
-                        out_file.write(chunk)
-                        out_file.flush()
-                        self.download_kb += 1
-                        self.download_elapsed = elapsed(start, 4)
-                        if self.download_kb > 256*1024:
-                            print "DOWNLOAD ERROR for {}: file too big".format(self.url)
-                            self.error = "file_too_big"
-                            return None
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk: # filter out keep-alive new chunks
+                    out_file.write(chunk)
+                    out_file.flush()
+                    self.download_kb += 1
+                    self.download_elapsed = elapsed(start, 4)
+                    if self.download_kb > 256*1024:
+                        print "DOWNLOAD ERROR for {}: file too big".format(self.url)
+                        self.error = "file_too_big"
+                        return None
 
-                        if self.download_elapsed > 60:
-                            print "DOWNLOAD ERROR for {}: taking too long".format(self.url)
-                            self.error = "file_too_slow"
-                            return None
-            except SocketError:
-                print "DOWNLOAD ERROR for {}: SocketError".format(r.url)
-                self.error = "socket_error"
-                return None
+                    if self.download_elapsed > 60:
+                        print "DOWNLOAD ERROR for {}: taking too long".format(self.url)
+                        self.error = "file_too_slow"
+                        return None
 
 
         self.download_elapsed = elapsed(start, 4)
