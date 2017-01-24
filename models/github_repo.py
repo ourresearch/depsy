@@ -20,6 +20,7 @@ import requests
 from util import elapsed
 from util import safe_commit
 from time import time
+import datetime
 import ast
 import subprocess
 import re
@@ -48,6 +49,9 @@ class GithubRepo(db.Model):
     lib_matches_raw = deferred(db.Column(JSONB))
     lib_matches_final = deferred(db.Column(JSONB))
 
+    created = db.Column(db.DateTime)
+    updated = db.Column(db.DateTime)
+
     # old, and removed from current database.  only in backups of database.
     # requirements = db.Column(JSONB)
     # reqs_file = deferred(db.Column(db.Text))
@@ -60,6 +64,16 @@ class GithubRepo(db.Model):
     # zip_download_error = db.Column(db.Text)
     # zip_grep_elapsed = db.Column(db.Float)
     # setup_py_no_forks = deferred(db.Column(db.Text))
+
+
+    def __init__(self, login=None, repo_name=None, language=None):
+        self.login = login
+        self.repo_name = repo_name
+        self.language = language
+        self.id = u'{}:{}'.format(self.login, repo_name)
+        self.created = datetime.datetime.utcnow()
+        self.updated = datetime.datetime.utcnow()
+        super(GithubRepo, self).__init__()
 
 
     def __repr__(self):

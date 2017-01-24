@@ -1,5 +1,6 @@
 import time
 import bisect
+import sqlalchemy
 
 from app import db
 
@@ -135,8 +136,8 @@ def safe_commit(db):
     except sqlalchemy.exc.DataError:
         db.session.rollback()
         print u"sqlalchemy.exc.DataError on commit.  rolling back."
-    except Exception:
-        db.session.rollback()
+    except Exception as e:
+        print "error", e
         print u"generic exception in commit.  rolling back."
-        logging.exception("commit error")
+        db.session.rollback()
     return False

@@ -1,5 +1,5 @@
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.sql import text    
+from sqlalchemy.sql import text
 
 import redis
 import os
