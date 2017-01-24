@@ -42,22 +42,34 @@ def add_all_new_github_repos(language):
         # The sort field. One of stars, forks, or updated.
         # max of 100 returned
         # authenticated rate limit: 30/min
-        url_template = "https://api.github.com/search/repositories?q=created:%22{prev_date}%20..%20{date}%22%20language:{language}&per_page=1000&sort=stars&order=desc"
-        url = url_template.format(
-            language=language, date=date.isoformat()[0:10], prev_date=prev_date.isoformat()[0:10])
-        print url
-        data = make_ratelimited_call(url)
-        print date.isoformat()[0:10], data["total_count"], data["incomplete_results"]
-        date = prev_date
-        for repo_dict in data["items"]:
-            new_repo = GithubRepo(login=repo_dict["owner"]["login"], repo_name=repo_dict["name"], language=language)
-            new_repo.api_raw = repo_dict
-            print "new_repo:", new_repo
-            if new_repo.id not in all_current_github_repo_ids:
-                print "added new repo from {}: {}\n".format(date.isoformat()[0:10], new_repo.id)
-                db.session.add(new_repo)
-                all_current_github_repo_ids.append(new_repo.id)
-        safe_commit(db)
+        sort_fragements = [
+            "sort=stars&order=desc",
+            "sort=updated&order=desc",
+            "sort=forks&order=desc",
+            "sort=stars&order=asc",
+            "sort=updated&order=asc",
+            "sort=forks&order=asc"
+            ]
+        for sort_fragment in sort_fragements:
+            url_template = "https://api.github.com/search/repositories?q=created:%22{prev_date}%20..%20{date}%22%20language:{language}&per_page=1000&{sort_fragment}"
+            url = url_template.format(
+                language=language,
+                date=date.isoformat()[0:10],
+                prev_date=prev_date.isoformat()[0:10],
+                sort_fragment=sort_fragment)
+            print url
+            data = make_ratelimited_call(url)
+            print date.isoformat()[0:10], data["total_count"], data["incomplete_results"]
+            date = prev_date
+            for repo_dict in data["items"]:
+                new_repo = GithubRepo(login=repo_dict["owner"]["login"], repo_name=repo_dict["name"], language=language)
+                new_repo.api_raw = repo_dict
+                print "new_repo:", new_repo
+                if new_repo.id not in all_current_github_repo_ids:
+                    print "added new repo from {}: {}\n".format(date.isoformat()[0:10], new_repo.id)
+                    db.session.add(new_repo)
+                    all_current_github_repo_ids.append(new_repo.id)
+            safe_commit(db)
 
 
 
