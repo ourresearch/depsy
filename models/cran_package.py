@@ -84,7 +84,6 @@ class CranPackage(Package):
         self.set_proxy_papers()
 
         self.save_all_people()  #includes save_host_contributors
-        # self.set_github_repo_ids() # not sure if we use this anymore?
         self.set_tags()
 
         self.set_credit()
@@ -121,8 +120,8 @@ class CranPackage(Package):
             person = get_or_make_person(**kwargs_dict)
             self._save_contribution(person, "author")
 
-
-    def set_github_repo_ids(self):
+    # not currently used
+    def set_github_repo_ids_from_cran_name(self):
         q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
         q = q.filter(GithubRepo.language == 'r')
         q = q.filter(GithubRepo.login != 'cran')  # these are just mirrors.

@@ -11,7 +11,6 @@ from models.cran_package import CranPackage
 from models.person import Person
 from models.person import add_person_leaderboard_filters
 from models.contribution import Contribution
-from models.github_repo_deplines import GithubRepoDeplines
 from models.github_repo import GithubRepo
 from models.tags import Tags
 from jobs import update_registry
@@ -332,16 +331,16 @@ update_registry.register(Update(
 ))
 
 
-q = db.session.query(GithubRepoDeplines.id)
-q = q.filter(GithubRepoDeplines.dependency_lines != None)
-q = q.filter(GithubRepoDeplines.language == 'python')
-q = q.filter(GithubRepoDeplines.pypi_dependencies == None)
-update_registry.register(Update(
-    job=GithubRepoDeplines.set_pypi_dependencies,
-    query=q,
-    queue_id=8,
-    shortcut_fn=shortcut_get_pypi_package_names
-))
+# q = db.session.query(GithubRepoDeplines.id)
+# q = q.filter(GithubRepoDeplines.dependency_lines != None)
+# q = q.filter(GithubRepoDeplines.language == 'python')
+# q = q.filter(GithubRepoDeplines.pypi_dependencies == None)
+# update_registry.register(Update(
+#     job=GithubRepoDeplines.set_pypi_dependencies,
+#     query=q,
+#     queue_id=8,
+#     shortcut_fn=shortcut_get_pypi_package_names
+# ))
 
 
 q = db.session.query(Package.id)
@@ -597,4 +596,10 @@ update_registry.register(Update(
     job=PypiPackage.recalculate,
     query=q,
     shortcut_fn=PypiPackage.shortcut_percentile_refsets
+))
+
+q = db.session.query(GithubRepo.id)
+update_registry.register(Update(
+    job=GithubRepo.set_github_dependency_lines,
+    query=q
 ))

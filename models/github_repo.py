@@ -433,6 +433,27 @@ class GithubRepo(db.Model):
     #     return names_not_in_filepath
 
 
+    def calculate(self):
+        # if self.language == "r":
+        # self.set_cran_descr_file()
+        pass
+
+    def set_cran_descr_file(self):
+        # isn't going to get called if the repo has a fork
+        if self.api_raw["fork"]:
+            print "is a fork, so skipping"
+            return
+
+        try:
+            self.cran_descr_file = github_api.get_cran_descr_contents(
+                self.login,
+                self.repo_name
+            )
+            print "found a DESCRIPTION file for {}".format(self.full_name)
+        except github_api.NotFoundException:
+            self.cran_descr_file = "not_found"
+
+
     def set_cran_dependencies(self):
         """
         using self.dependency_lines, finds all cran libs imported by repo.
@@ -519,22 +540,6 @@ class GithubRepo(db.Model):
         except github_api.NotFoundException:
             print "No setup.py found for {}".format(self.full_name)
             self.setup_py = "not_found"
-
-
-    def set_cran_descr_file(self):
-        # isn't going to get called if the repo has a fork
-        if self.api_raw["fork"]:
-            print "is a fork, so skipping"
-            return
-
-        try:
-            self.cran_descr_file = github_api.get_cran_descr_contents(
-                self.login,
-                self.repo_name
-            )
-            print "found a REQUIREMENTS file for {}".format(self.full_name)
-        except github_api.NotFoundException:
-            self.cran_descr_file = "not_found"
 
 
     def set_setup_py_name(self):
