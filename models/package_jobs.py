@@ -353,10 +353,9 @@ update_registry.register(Update(
 ))
 
 q = db.session.query(GithubRepo.id)
-q = q.filter(GithubRepo.named_deps == None)
-q = q.filter(GithubRepo.language == 'python')
+q = q.filter(GithubRepo.language == 'r')
 update_registry.register(Update(
-    job=GithubRepo.set_named_deps,
+    job=GithubRepo.refresh,
     query=q,
     queue_id=9
 ))

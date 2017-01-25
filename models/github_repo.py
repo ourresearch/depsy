@@ -35,22 +35,21 @@ class GithubRepo(db.Model):
 
     language = db.Column(db.Text)
     api_raw = deferred(db.Column(JSONB))
-    named_deps = db.Column(JSONB)
-    pypi_dependencies = db.Column(JSONB)
-    requirements_pypi = db.Column(JSONB)
-    cran_dependencies = db.Column(JSONB)
-    cran_descr_file = db.Column(db.Text)
-    bucket = db.Column(JSONB)
-    cran_descr_file = db.Column(db.Text)
-    setup_py = db.Column(db.Text)
-    setup_py_hash = db.Column(db.Text)
 
     dep_lines = deferred(db.Column(db.Text))
-    lib_matches_raw = deferred(db.Column(JSONB))
-    lib_matches_final = deferred(db.Column(JSONB))
+    named_deps = db.Column(JSONB)
+
+    cran_descr_file = db.Column(db.Text)
+
+    pypi_dependencies = db.Column(JSONB)
+    requirements_pypi = db.Column(JSONB)
+    setup_py = db.Column(db.Text)
+    setup_py_hash = db.Column(db.Text)
+    bucket = db.Column(JSONB)
 
     created = db.Column(db.DateTime)
     updated = db.Column(db.DateTime)
+
 
     # old, and removed from current database.  only in backups of database.
     # requirements = db.Column(JSONB)
@@ -433,10 +432,13 @@ class GithubRepo(db.Model):
     #     return names_not_in_filepath
 
 
-    def calculate(self):
-        # if self.language == "r":
-        # self.set_cran_descr_file()
-        pass
+    def refresh(self):
+        if self.language == "r":
+            self.set_github_dependency_lines()
+            self.set_cran_descr_file()
+            self.set_cran_dependencies()
+            self.updated = datetime.datetime.utcnow()
+
 
     def set_cran_descr_file(self):
         # isn't going to get called if the repo has a fork
@@ -459,7 +461,6 @@ class GithubRepo(db.Model):
         using self.dependency_lines, finds all cran libs imported by repo.
         """
         start_time = time()
-        self.cran_dependencies = []
         if not self.dep_lines:
             return []
 
@@ -493,21 +494,19 @@ class GithubRepo(db.Model):
                         print "NO MODULES found in ", clean_line 
         print "all modules found:", modules_imported
 
-        self.lib_matches_raw = list(modules_imported)
-
-        from models.package import CranPackage
+        from models.cran_package import CranPackage
         matching_cran_packages = set(CranPackage.valid_package_names(modules_imported))
 
         # print "and here are the ones that match cran!", matching_cran_packages
         # print "*********here are the ones that didn't match", modules_imported - matching_cran_packages
-        self.lib_matches_final = list(matching_cran_packages)
+        self.named_deps = list(matching_cran_packages)
 
         print "done finding cran deps for {}: {} (took {}sec)".format(
             self.full_name,
-            self.lib_matches_final,
+            self.named_deps,
             elapsed(start_time, 4)
         )
-        return self.lib_matches_final
+        return self.named_deps
 
 
     def set_setup_py_no_forks(self):
@@ -600,8 +599,8 @@ class GithubRepo(db.Model):
         if self.language == "r":
             self.named_deps = []
             for dep_kind in ["reverse_depends", "reverse_imports"]:
-                if dep_kind in self.lib_matches_final:
-                    self.named_deps += self.lib_matches_final[dep_kind]
+                if dep_kind in self.named_deps:
+                    self.named_deps += self.named_deps[dep_kind]
 
 
 
@@ -1034,7 +1033,7 @@ update_registry.register(Update(
 
 q = db.session.query(GithubRepo.id)
 q = q.filter(GithubRepo.language == 'r')
-q = q.filter(GithubRepo.lib_matches_final != None)
+q = q.filter(GithubRepo.named_deps != None)
 update_registry.register(Update(
     job=GithubRepo.set_r_named_deps,
     query=q,
