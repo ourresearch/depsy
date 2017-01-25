@@ -134,20 +134,21 @@ class GithubRepo(db.Model):
         getter = github_zip_getter_factory(self.login, self.repo_name)
         getter.set_dep_lines(self.language)
 
-        self.dependency_lines = getter.dep_lines
-        if self.dependency_lines:
+        self.dep_lines = getter.dep_lines
+        if self.dep_lines:
             try:
-                print u"FOUND depencency lines: {}".format(self.dependency_lines)
+                print u"FOUND dependency lines lines: {}".format(self.dep_lines)
             except UnicodeDecodeError:
-                pass
+                print u"FOUND dependency lines lines (unicode error displaying them)"
         else:
-            print "NO dependency lines found"
+            print u"NO dependency lines found"
         self.zip_download_elapsed = getter.download_elapsed
         self.zip_download_size = getter.download_kb
         self.zip_download_error = getter.error
         self.zip_grep_elapsed = getter.grep_elapsed
 
-        return self.dependency_lines
+        return self.dep_lines
+
 
     def set_zip_filenames(self):
         print "getting zip filenames for {}".format(self.full_name)
@@ -256,7 +257,7 @@ class GithubRepo(db.Model):
         """
         start_time = time()
         self.pypi_dependencies = []
-        lines = self.dependency_lines.split("\n")
+        lines = self.dep_lines.split("\n")
         import_lines = [l.split(":")[1] for l in lines if ":" in l]
         modules_imported = set()
 
@@ -443,7 +444,7 @@ class GithubRepo(db.Model):
     def set_cran_descr_file(self):
         # isn't going to get called if the repo has a fork
         if self.api_raw["fork"]:
-            print "is a fork, so skipping"
+            print "is a fork, so skipping getting the DESCRIPTION file"
             return
 
         try:
