@@ -130,7 +130,7 @@ class GithubRepo(db.Model):
         return self.to_dict(exclude=["api_raw"])
 
     def get_github_zip_getter(self):
-        if not hasattr(self, "gitub_zip_getter"):
+        if not hasattr(self, "gitub_zip_getter_cache"):
             self.gitub_zip_getter_cache = github_zip_getter_factory(self.login, self.repo_name)
         return self.gitub_zip_getter_cache
 
@@ -337,7 +337,6 @@ class GithubRepo(db.Model):
         python_filenames = []
 
         if not hasattr(self, "zip_filenames"):
-            print "getting zip filenames"
             self.zip_filenames = self.get_zip_filenames()
 
         if not self.zip_filenames:
@@ -466,9 +465,9 @@ class GithubRepo(db.Model):
 
             self.updated = datetime.datetime.utcnow()
         else:
+            # this is for dependency info
+            # look to see what contributes to named_deps
             pass
-            # # this is for dependency info
-            # # look to see what contributes to named_deps
             # self.set_reqs_file()
             # self.set_requirements_pypi()
             # self.set_github_dependency_lines()

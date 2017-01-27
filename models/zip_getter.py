@@ -40,8 +40,9 @@ class ZipGetter():
         # @todo erase the temp file when something goes wrong...
 
         start = time()
-        if self.download_kb:
-            # already downloaded!  leave
+
+        if self.download_kb and self.download_kb > 0:
+            print "yay, already downloaded!"
             return
 
         try:
