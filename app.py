@@ -133,6 +133,3 @@ def ping_connection(dbapi_connection, connection_record, connection_proxy):
 
 
 
-
-
-

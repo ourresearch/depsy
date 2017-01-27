@@ -189,28 +189,28 @@ class PypiPackage(Package):
             repo_name=self.github_repo_name
         )
 
-
-    def set_github_repo_ids_from_setuppy_name(self):
-        q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-        q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
-        q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
-
-        start = time()
-        row = q.first()
-        print "Github repo query took {}".format(elapsed(start, 4))
-
-        if row is None:
-            return None
-
-        else:
-            print "Setting a new github repo for {}: {}/{}".format(
-                self,
-                row[0],
-                row[1]
-            )
-            self.github_owner = row[0]
-            self.github_repo_name = row[1]
-            self.bucket["matched_from_github_metadata"] = True
+    # not currently used?
+    # def set_github_repo_ids_from_setuppy_name(self):
+    #     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+    #     q = q.filter(GithubRepo.bucket.contains({"setup_py_name": self.project_name}))
+    #     q = q.order_by(GithubRepo.api_raw['stargazers_count'].cast(db.Integer).desc())
+    #
+    #     start = time()
+    #     row = q.first()
+    #     print "Github repo query took {}".format(elapsed(start, 4))
+    #
+    #     if row is None:
+    #         return None
+    #
+    #     else:
+    #         print "Setting a new github repo for {}: {}/{}".format(
+    #             self,
+    #             row[0],
+    #             row[1]
+    #         )
+    #         self.github_owner = row[0]
+    #         self.github_repo_name = row[1]
+    #         self.bucket["matched_from_github_metadata"] = True
 
 
     def _get_files(self, filenames_to_get):

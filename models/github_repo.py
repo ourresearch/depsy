@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.exc import DataError
 from sqlalchemy import or_
 from sqlalchemy.orm import deferred
+import time
 
 from models import github_api
 from models.github_api import login_and_repo_name_from_url
@@ -26,6 +27,10 @@ import subprocess
 import re
 import hashlib
 from lxml import html
+
+
+# do this with a shortcut function instead?
+pypi_package_names = None
 
 
 class GithubRepo(db.Model):
@@ -53,9 +58,9 @@ class GithubRepo(db.Model):
 
     # old, and removed from current database.  only in backups of database.
     # requirements = db.Column(JSONB)
+    # zip_filenames = deferred(db.Column(JSONB))
     # reqs_file = deferred(db.Column(db.Text))
     # reqs_file_tried = db.Column(db.Boolean)
-    # zip_filenames = deferred(db.Column(JSONB))
     # zip_filenames_tried = db.Column(db.Boolean)
     # pypi_in_formal_only = db.Column(JSONB)
     # zip_download_elapsed = db.Column(db.Float)
@@ -124,6 +129,10 @@ class GithubRepo(db.Model):
     def as_snippet(self):
         return self.to_dict(exclude=["api_raw"])
 
+    def get_github_zip_getter(self):
+        if not hasattr(self, "gitub_zip_getter"):
+            self.gitub_zip_getter_cache = github_zip_getter_factory(self.login, self.repo_name)
+        return self.gitub_zip_getter_cache
 
     def set_github_about(self):
         self.api_raw = github_api.get_repo_data(self.login, self.repo_name)
@@ -131,7 +140,7 @@ class GithubRepo(db.Model):
 
     def set_github_dependency_lines(self):
 
-        getter = github_zip_getter_factory(self.login, self.repo_name)
+        getter = self.get_github_zip_getter()
         getter.set_dep_lines(self.language)
 
         self.dep_lines = getter.dep_lines
@@ -150,18 +159,21 @@ class GithubRepo(db.Model):
         return self.dep_lines
 
 
-    def set_zip_filenames(self):
+    def get_zip_filenames(self):
         print "getting zip filenames for {}".format(self.full_name)
-
-        getter = github_zip_getter_factory(self.login, self.repo_name)
-        self.zip_filenames = getter.get_filenames()
-        self.zip_filenames_tried = True
+        getter = self.get_github_zip_getter()
+        return getter.get_filenames()
 
 
     def set_requirements_pypi(self):
         matching_pypi_packages = set()
 
         for module_name in self.requirements:
+            global pypi_package_names
+            if not pypi_package_names:
+                from models.pypi_package import shortcut_get_pypi_package_names
+                pypi_package_names = shortcut_get_pypi_package_names()
+
             pypi_package = self._get_pypi_package(module_name, pypi_package_names)
             if pypi_package:
                 matching_pypi_packages.add(pypi_package)
@@ -226,21 +238,22 @@ class GithubRepo(db.Model):
         # likely a 'invalid byte sequence for encoding "UTF8"'
         self.zip_download_error = "save_error"
 
-    def set_pypi_in_formal_only(self):
-
-        self.pypi_in_formal_only = []
-        for name in self.requirements_pypi:
-            if name not in self.pypi_dependencies:
-                # print "only in requirements:", name
-                self.pypi_in_formal_only += [name]
-            # else:
-            #     print "also in imports", name
-        print "ending with:", self.pypi_in_formal_only
-        return self.pypi_in_formal_only
+    #not used
+    # def set_pypi_in_formal_only(self):
+    #
+    #     self.pypi_in_formal_only = []
+    #     for name in self.requirements_pypi:
+    #         if name not in self.pypi_dependencies:
+    #             # print "only in requirements:", name
+    #             self.pypi_in_formal_only += [name]
+    #         # else:
+    #         #     print "also in imports", name
+    #     print "ending with:", self.pypi_in_formal_only
+    #     return self.pypi_in_formal_only
 
     def set_pypi_dependencies(self):
         """
-        using self.dependency_lines, finds all pypi libs imported by repo.
+        using self.dep_lines, finds all pypi libs imported by repo.
 
         ignores libs that are part of the python 2.7 standard library, even
         if they are on pypi
@@ -300,6 +313,11 @@ class GithubRepo(db.Model):
 
         for module_name in modules_imported:
             print "*** trying module_name", module_name
+            global pypi_package_names
+            if not pypi_package_names:
+                from models.pypi_package import shortcut_get_pypi_package_names
+                pypi_package_names = shortcut_get_pypi_package_names()
+
             pypi_package = self._get_pypi_package(module_name, pypi_package_names)
             if pypi_package is not None:
                 self.pypi_dependencies.append(pypi_package)
@@ -317,6 +335,11 @@ class GithubRepo(db.Model):
 
     def _in_filepath(self, module_name):
         python_filenames = []
+
+        if not hasattr(self, "zip_filenames"):
+            print "getting zip filenames"
+            self.zip_filenames = self.get_zip_filenames()
+
         if not self.zip_filenames:
             return False
 
@@ -339,7 +362,7 @@ class GithubRepo(db.Model):
 
 
 
-    def _get_pypi_package(self, module_name, pypi_package_names):
+    def _get_pypi_package(self, module_name, local_pypi_package_names):
         if len(module_name.split(".")) > 5:
             print "too many parts to be a pypi lib, skipping", module_name            
             return None
@@ -353,9 +376,8 @@ class GithubRepo(db.Model):
         def return_match_if_found(match, replace_with):
             if match in module_name.lower():
                 lookup_key = module_name.lower().replace(match, replace_with)
-                # pypi_package_names is loaded as module import, it's a cache.
-                # search the keys of pypi_package_names, which are all lowercase
-                if lookup_key in pypi_package_names:
+                # search the keys of local_pypi_package_names, which are all lowercase
+                if lookup_key in local_pypi_package_names:
                     return lookup_key
             return None   
 
@@ -391,7 +413,7 @@ class GithubRepo(db.Model):
             found_key = return_match_if_found("ext.", "-")
 
         if found_key:
-            official_pypi_name = pypi_package_names[found_key]
+            official_pypi_name = local_pypi_package_names[found_key]
             # a last check:
             # don't include modules that are in their filepaths
             # because those are more likely their personal code 
@@ -406,7 +428,7 @@ class GithubRepo(db.Model):
         elif '.' in module_name:
             shortened_name = module_name.rsplit('.', 1)[0]
             # print "now trying shortened_name", shortened_name
-            return self._get_pypi_package(shortened_name, pypi_package_names)
+            return self._get_pypi_package(shortened_name, local_pypi_package_names)
 
         # if there's no dot in your name, there are no more options, you're done
         else:
@@ -435,10 +457,25 @@ class GithubRepo(db.Model):
 
     def refresh(self):
         if self.language == "r":
-            self.set_github_dependency_lines()
+            # this is to help us connect github repos to CRAN, based on github files
             self.set_cran_descr_file()
+
+            # this is for dependency info
+            self.set_github_dependency_lines()
             self.set_cran_dependencies()
+
             self.updated = datetime.datetime.utcnow()
+        else:
+            pass
+            # # this is for dependency info
+            # # look to see what contributes to named_deps
+            # self.set_reqs_file()
+            # self.set_requirements_pypi()
+            # self.set_github_dependency_lines()
+            # self.set_pypi_dependencies()
+            # self.set_python_named_deps
+            #
+            # self.updated = datetime.datetime.utcnow()
 
 
     def set_cran_descr_file(self):
@@ -510,56 +547,6 @@ class GithubRepo(db.Model):
         return self.named_deps
 
 
-    def set_setup_py_no_forks(self):
-
-        # isn't going to get called if the repo has a fork
-        if self.api_raw["fork"]:
-            print "is a fork, so skipping"
-            return
-
-        try:
-            self.setup_py_no_forks = github_api.get_setup_py_contents(
-                self.login,
-                self.repo_name
-            )
-            print "found a setup.py for {}".format(self.full_name)
-        except github_api.NotFoundException:
-            self.setup_py_no_forks = "not_found"
-
-
-    def set_setup_py(self):
-        try:
-            self.setup_py = github_api.get_setup_py_contents(
-                self.login,
-                self.repo_name
-            )
-
-            # set the hash while we're at it.
-            self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
-
-        except github_api.NotFoundException:
-            print "No setup.py found for {}".format(self.full_name)
-            self.setup_py = "not_found"
-
-
-    def set_setup_py_name(self):
-        if self.setup_py_no_forks is None:
-            return None
-
-        m = re.compile(r'name\s*=\s*[\'"](.+?)[\'"]').findall(self.setup_py_no_forks)
-
-        try:
-            if self.bucket is None:
-                self.bucket = {}
-
-            self.bucket["setup_py_name"] = m[0]
-            print "set {} setup_py_name to '{}'".format(
-                self,
-                m[0]
-            )
-        except IndexError:
-            return None
-
 
     def set_cran_descr_file_name(self):
         if self.cran_descr_file is None:
@@ -581,7 +568,71 @@ class GithubRepo(db.Model):
 
 
 
-    def set_named_deps(self):
+    # not used anymore i think
+    def set_r_named_deps(self):
+        if self.language == "r":
+            self.named_deps = []
+            for dep_kind in ["reverse_depends", "reverse_imports"]:
+                if dep_kind in self.named_deps:
+                    self.named_deps += self.named_deps[dep_kind]
+
+
+
+
+    def set_setup_py(self):
+        try:
+            self.setup_py = github_api.get_setup_py_contents(
+                self.login,
+                self.repo_name
+            )
+
+            # set the hash while we're at it.
+            self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
+
+        except github_api.NotFoundException:
+            print "No setup.py found for {}".format(self.full_name)
+            self.setup_py = "not_found"
+
+
+
+
+    def set_setup_py_no_forks(self):
+
+        # isn't going to get called if the repo has a fork
+        if self.api_raw["fork"]:
+            print "is a fork, so skipping"
+            return
+
+        try:
+            self.setup_py_no_forks = github_api.get_setup_py_contents(
+                self.login,
+                self.repo_name
+            )
+            print "found a setup.py for {}".format(self.full_name)
+        except github_api.NotFoundException:
+            self.setup_py_no_forks = "not_found"
+
+
+    def set_setup_py_name(self):
+        if self.setup_py_no_forks is None:
+            return None
+
+        m = re.compile(r'name\s*=\s*[\'"](.+?)[\'"]').findall(self.setup_py_no_forks)
+
+        try:
+            if self.bucket is None:
+                self.bucket = {}
+
+            self.bucket["setup_py_name"] = m[0]
+            print "set {} setup_py_name to '{}'".format(
+                self,
+                m[0]
+            )
+        except IndexError:
+            return None
+
+
+    def set_python_named_deps(self):
 
         self.named_deps = []
 
@@ -596,12 +647,20 @@ class GithubRepo(db.Model):
         print "self.named_deps", self.named_deps
 
 
-    def set_r_named_deps(self):
-        if self.language == "r":
-            self.named_deps = []
-            for dep_kind in ["reverse_depends", "reverse_imports"]:
-                if dep_kind in self.named_deps:
-                    self.named_deps += self.named_deps[dep_kind]
+
+
+def get_readme(owner, repo_name):
+    url = "https://github.com/{}/{}".format(
+        owner,
+        repo_name
+    )
+    r = requests.get(url)
+    p = re.compile(
+        ur'<article class="markdown-body entry-content" itemprop="text">(.+?)</article>',
+        re.MULTILINE | re.DOTALL
+    )
+    res = re.findall(p, r.text)[0]
+    return res
 
 
 
@@ -671,27 +730,27 @@ def add_all_r_github_dependency_lines(q_limit=100):
 
 
 
-"""
-add github repo zip filenames
-"""
-def set_zip_filenames(login, repo_name):
-    repo = get_repo(login, repo_name)
-    if repo:
-        repo.set_zip_filenames()
-        commit_repo(repo)
-    return None  # important that it returns None for RQ
-
-
-def set_all_zip_filenames(q_limit=100):
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
-    q = q.filter(GithubRepo.zip_download_error == None)
-    q = q.filter(GithubRepo.zip_filenames_tried == None)
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(q_limit)
-
-    return enqueue_jobs(q, set_zip_filenames, 0)
-
+# """
+# add github repo zip filenames
+# """
+# def set_zip_filenames(login, repo_name):
+#     repo = get_repo(login, repo_name)
+#     if repo:
+#         repo.set_zip_filenames()
+#         commit_repo(repo)
+#     return None  # important that it returns None for RQ
+#
+#
+# def set_all_zip_filenames(q_limit=100):
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(~GithubRepo.api_raw.has_key('error_code'))
+#     q = q.filter(GithubRepo.zip_download_error == None)
+#     q = q.filter(GithubRepo.zip_filenames_tried == None)
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(q_limit)
+#
+#     return enqueue_jobs(q, set_zip_filenames, 0)
+#
 
 
 
@@ -874,131 +933,131 @@ def add_repos_from_remote_csv(csv_url, language):
 
 
 
-
-
-"""
-find and save list of pypi dependencies for each repo
-"""
-def set_one_pypi_dependencies(login, repo_name):
-    print "running with", login, repo_name
-    start_time = time()
-    repo = get_repo(login, repo_name)
-    if repo is None:
-        return None
-
-    repo.set_pypi_dependencies()
-    commit_repo(repo)
-    print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
-    return None  # important that it returns None for RQ
-
-
-def set_all_pypi_dependencies(q_limit=100, use_rq='rq'):
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.dependency_lines != None)
-    q = q.filter(GithubRepo.pypi_dependencies == None)
-    q = q.filter(GithubRepo.language == "python")
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(q_limit)
-
-    enqueue_jobs(GithubRepo, "set_pypi_dependencies", q, 6, use_rq)
-
-
-
-
-
-"""
-save python requirements from requirements.txt and setup.py
-"""
-def set_one_requirements_pypi(login, repo_name):
-    start_time = time()
-    repo = get_repo(login, repo_name)
-    if repo is None:
-        return None
-
-    repo.set_requirements_pypi()
-    commit_repo(repo)
-    print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
-    return None  # important that it returns None for RQ
-
-
-def set_all_requirements_pypi(q_limit=9500, use_rq="rq"):
-    # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.requirements_pypi == None)
-    q = q.filter(GithubRepo.requirements != [])
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(q_limit)
-
-    enqueue_jobs(GithubRepo, "set_requirements_pypi", q, 7, use_rq)
-
-
-
-def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
-
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.reqs_file != None)
-    q = q.filter(GithubRepo.setup_py_no_forks == None)
-    q = q.filter(GithubRepo.api_raw.contains({"fork":False}))
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(limit)
-
-    enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 8, use_rq)
-
-
-def get_all_set_named_deps(limit=10, use_rq="rq"):
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.named_deps == None)
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(limit)
-
-    enqueue_jobs(GithubRepo, "set_named_deps", q, 5, use_rq)
-
-
-
-
-
-
-def set_all_setup_py_names(limit=10, use_rq="rq"):
-
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.setup_py_no_forks != None)
-
-    q = q.filter(GithubRepo.bucket == None)  # just a speed optimization
-    q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(limit)
-
-    enqueue_jobs(GithubRepo, "set_setup_py_name", q, 1, use_rq)
-
-
-
-def set_all_cran_descr_file_names(limit=10, use_rq="rq"):
-
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.cran_descr_file != None)
-    q = q.filter(GithubRepo.cran_descr_file != "not_found")
-    # q = q.filter(GithubRepo.api_raw.contains({"fork": False}))  #already did this when we made it
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(limit)
-
-    enqueue_jobs(GithubRepo, "set_cran_descr_file_name", q, 9, use_rq)
-
-
-
-
-
-
-def set_all_cran_descr_file(limit=10, use_rq="rq"):
-
-    q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
-    q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
-    q = q.filter(GithubRepo.language == 'r')
-    q = q.filter(GithubRepo.cran_descr_file == None)
-    q = q.order_by(GithubRepo.login)
-    q = q.limit(limit)
-
-    enqueue_jobs(GithubRepo, "set_cran_descr_file", q, 3, use_rq)
-
+#
+#
+# """
+# find and save list of pypi dependencies for each repo
+# """
+# def set_one_pypi_dependencies(login, repo_name):
+#     print "running with", login, repo_name
+#     start_time = time()
+#     repo = get_repo(login, repo_name)
+#     if repo is None:
+#         return None
+#
+#     repo.set_pypi_dependencies()
+#     commit_repo(repo)
+#     print "found deps and committed. took {}sec".format(elapsed(start_time), 4)
+#     return None  # important that it returns None for RQ
+#
+#
+# def set_all_pypi_dependencies(q_limit=100, use_rq='rq'):
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.dependency_lines != None)
+#     q = q.filter(GithubRepo.pypi_dependencies == None)
+#     q = q.filter(GithubRepo.language == "python")
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(q_limit)
+#
+#     enqueue_jobs(GithubRepo, "set_pypi_dependencies", q, 6, use_rq)
+#
+#
+#
+#
+#
+# """
+# save python requirements from requirements.txt and setup.py
+# """
+# def set_one_requirements_pypi(login, repo_name):
+#     start_time = time()
+#     repo = get_repo(login, repo_name)
+#     if repo is None:
+#         return None
+#
+#     repo.set_requirements_pypi()
+#     commit_repo(repo)
+#     print "cleaned requirements, committed. took {}sec".format(elapsed(start_time), 4)
+#     return None  # important that it returns None for RQ
+#
+#
+# def set_all_requirements_pypi(q_limit=9500, use_rq="rq"):
+#     # note the low q_limit: it's cos we've got about 10 api keys @ 5000 each
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.requirements_pypi == None)
+#     q = q.filter(GithubRepo.requirements != [])
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(q_limit)
+#
+#     enqueue_jobs(GithubRepo, "set_requirements_pypi", q, 7, use_rq)
+#
+#
+#
+# def get_all_setup_py_no_forks(limit=10, use_rq="rq"):
+#
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.reqs_file != None)
+#     q = q.filter(GithubRepo.setup_py_no_forks == None)
+#     q = q.filter(GithubRepo.api_raw.contains({"fork":False}))
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(limit)
+#
+#     enqueue_jobs(GithubRepo, "set_setup_py_no_forks", q, 8, use_rq)
+#
+#
+# def get_all_set_named_deps(limit=10, use_rq="rq"):
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.named_deps == None)
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(limit)
+#
+#     enqueue_jobs(GithubRepo, "set_python_named_deps", q, 5, use_rq)
+#
+#
+#
+#
+#
+#
+# def set_all_setup_py_names(limit=10, use_rq="rq"):
+#
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.setup_py_no_forks != None)
+#
+#     q = q.filter(GithubRepo.bucket == None)  # just a speed optimization
+#     q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(limit)
+#
+#     enqueue_jobs(GithubRepo, "set_setup_py_name", q, 1, use_rq)
+#
+#
+#
+# def set_all_cran_descr_file_names(limit=10, use_rq="rq"):
+#
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.cran_descr_file != None)
+#     q = q.filter(GithubRepo.cran_descr_file != "not_found")
+#     # q = q.filter(GithubRepo.api_raw.contains({"fork": False}))  #already did this when we made it
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(limit)
+#
+#     enqueue_jobs(GithubRepo, "set_cran_descr_file_name", q, 9, use_rq)
+#
+#
+#
+#
+#
+#
+# def set_all_cran_descr_file(limit=10, use_rq="rq"):
+#
+#     q = db.session.query(GithubRepo.login, GithubRepo.repo_name)
+#     q = q.filter(GithubRepo.api_raw.contains({"fork": False}))
+#     q = q.filter(GithubRepo.language == 'r')
+#     q = q.filter(GithubRepo.cran_descr_file == None)
+#     q = q.order_by(GithubRepo.login)
+#     q = q.limit(limit)
+#
+#     enqueue_jobs(GithubRepo, "set_cran_descr_file", q, 3, use_rq)
+#
 
 
 q = db.session.query(GithubRepo.id)
@@ -1042,20 +1101,6 @@ update_registry.register(Update(
 ))
 
 
-
-
-def get_readme(owner, repo_name):
-    url = "https://github.com/{}/{}".format(
-        owner,
-        repo_name
-    )
-    r = requests.get(url)
-    p = re.compile(
-        ur'<article class="markdown-body entry-content" itemprop="text">(.+?)</article>',
-        re.MULTILINE | re.DOTALL
-    )
-    res = re.findall(p, r.text)[0]
-    return res
 
 
 
