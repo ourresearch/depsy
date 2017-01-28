@@ -360,6 +360,13 @@ update_registry.register(Update(
     queue_id=9
 ))
 
+q = db.session.query(GithubRepo.id)
+update_registry.register(Update(
+    job=GithubRepo.refresh_python,
+    query=q,
+    queue_id=0
+))
+
 
 q = db.session.query(PypiPackage.id)
 # q = q.filter(PypiPackage.pagerank_percentile == None)

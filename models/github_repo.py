@@ -453,6 +453,12 @@ class GithubRepo(db.Model):
 
     #     return names_not_in_filepath
 
+    # just convenenience for now
+    def refresh_python(self):
+        if self.language == "python":
+            return self.refresh()
+        else:
+            pass
 
     def refresh(self):
         if self.language == "r":
@@ -576,61 +582,6 @@ class GithubRepo(db.Model):
                     self.named_deps += self.named_deps[dep_kind]
 
 
-
-
-    def set_setup_py(self):
-        try:
-            self.setup_py = github_api.get_setup_py_contents(
-                self.login,
-                self.repo_name
-            )
-
-            # set the hash while we're at it.
-            self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
-
-        except github_api.NotFoundException:
-            print "No setup.py found for {}".format(self.full_name)
-            self.setup_py = "not_found"
-
-
-
-
-    def set_setup_py_no_forks(self):
-
-        # isn't going to get called if the repo has a fork
-        if self.api_raw["fork"]:
-            print "is a fork, so skipping"
-            return
-
-        try:
-            self.setup_py_no_forks = github_api.get_setup_py_contents(
-                self.login,
-                self.repo_name
-            )
-            print "found a setup.py for {}".format(self.full_name)
-        except github_api.NotFoundException:
-            self.setup_py_no_forks = "not_found"
-
-
-    def set_setup_py_name(self):
-        if self.setup_py_no_forks is None:
-            return None
-
-        m = re.compile(r'name\s*=\s*[\'"](.+?)[\'"]').findall(self.setup_py_no_forks)
-
-        try:
-            if self.bucket is None:
-                self.bucket = {}
-
-            self.bucket["setup_py_name"] = m[0]
-            print "set {} setup_py_name to '{}'".format(
-                self,
-                m[0]
-            )
-        except IndexError:
-            return None
-
-
     def set_python_named_deps(self):
 
         self.named_deps = []
@@ -645,6 +596,61 @@ class GithubRepo(db.Model):
         self.named_deps = list(set(self.named_deps))
         print "self.named_deps", self.named_deps
 
+
+
+
+
+    # not used
+    # def set_setup_py(self):
+    #     try:
+    #         self.setup_py = github_api.get_setup_py_contents(
+    #             self.login,
+    #             self.repo_name
+    #         )
+    #
+    #         # set the hash while we're at it.
+    #         self.setup_py_hash = hashlib.md5(self.setup_py).hexdigest()
+    #
+    #     except github_api.NotFoundException:
+    #         print "No setup.py found for {}".format(self.full_name)
+    #         self.setup_py = "not_found"
+    #
+    #
+    #
+    # def set_setup_py_no_forks(self):
+    #
+    #     # isn't going to get called if the repo has a fork
+    #     if self.api_raw["fork"]:
+    #         print "is a fork, so skipping"
+    #         return
+    #
+    #     try:
+    #         self.setup_py_no_forks = github_api.get_setup_py_contents(
+    #             self.login,
+    #             self.repo_name
+    #         )
+    #         print "found a setup.py for {}".format(self.full_name)
+    #     except github_api.NotFoundException:
+    #         self.setup_py_no_forks = "not_found"
+    #
+    #
+    # def set_setup_py_name(self):
+    #     if self.setup_py_no_forks is None:
+    #         return None
+    #
+    #     m = re.compile(r'name\s*=\s*[\'"](.+?)[\'"]').findall(self.setup_py_no_forks)
+    #
+    #     try:
+    #         if self.bucket is None:
+    #             self.bucket = {}
+    #
+    #         self.bucket["setup_py_name"] = m[0]
+    #         print "set {} setup_py_name to '{}'".format(
+    #             self,
+    #             m[0]
+    #         )
+    #     except IndexError:
+    #         return None
 
 
 
@@ -1059,15 +1065,15 @@ def add_repos_from_remote_csv(csv_url, language):
 #
 
 
-q = db.session.query(GithubRepo.id)
-q = q.filter(GithubRepo.bucket != None)
-q = q.filter(GithubRepo.setup_py == None)
-
-update_registry.register(Update(
-    job=GithubRepo.set_setup_py,
-    query=q,
-    queue_id=4
-))
+# q = db.session.query(GithubRepo.id)
+# q = q.filter(GithubRepo.bucket != None)
+# q = q.filter(GithubRepo.setup_py == None)
+#
+# update_registry.register(Update(
+#     job=GithubRepo.set_setup_py,
+#     query=q,
+#     queue_id=4
+# ))
 
 
 q = db.session.query(GithubRepo.id)
