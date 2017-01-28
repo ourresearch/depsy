@@ -2,6 +2,7 @@ from time import time
 import requests
 import zipfile
 import tarfile
+import socket
 import subprocess32
 
 
@@ -57,46 +58,50 @@ class ZipGetter():
             else:
                 print "Downloading zip from {}...".format(self.url)
                 r = requests.get(self.url, stream=True)
+
+            if r.status_code == 400:
+                print "DOWNLOAD ERROR for {}: file not found".format(r.url)
+                self.error = "request_error_400"
+                return None
+            elif r.status_code > 400:
+                print "DOWNLOAD ERROR for {}: {} ({})".format(r.url, r.status_code, r.reason)
+                self.error = "request_error"
+                return None
+
+            with open(self.temp_file_name, 'wb') as out_file:
+                r.raw.decode_content = False
+
+                for chunk in r.iter_content(chunk_size=1024):
+                    if chunk: # filter out keep-alive new chunks
+                        out_file.write(chunk)
+                        out_file.flush()
+                        self.download_kb += 1
+                        self.download_elapsed = elapsed(start, 4)
+                        if self.download_kb > 256*1024:
+                            print "DOWNLOAD ERROR for {}: file too big".format(self.url)
+                            self.error = "file_too_big"
+                            return None
+
+                        if self.download_elapsed > 60:
+                            print "DOWNLOAD ERROR for {}: taking too long".format(self.url)
+                            self.error = "file_too_slow"
+                            return None
+
+            self.download_elapsed = elapsed(start, 4)
+            print "downloaded {} ({}kb) in {} sec".format(
+                self.url,
+                self.download_kb,
+                self.download_elapsed
+            )
+
         except requests.exceptions.RequestException:
             print "RequestException for {}".format(self.url)
             self.error = "request_error_RequestException"
             return None
-
-        if r.status_code == 400:
-            print "DOWNLOAD ERROR for {}: file not found".format(r.url)
-            self.error = "request_error_400"
+        except socket.error:
+            print "socket.error for {}".format(self.url)
+            self.error = "request_error_RequestException"
             return None
-        elif r.status_code > 400:
-            print "DOWNLOAD ERROR for {}: {} ({})".format(r.url, r.status_code, r.reason)
-            self.error = "request_error"
-            return None
-
-        with open(self.temp_file_name, 'wb') as out_file:
-            r.raw.decode_content = False
-
-            for chunk in r.iter_content(chunk_size=1024):
-                if chunk: # filter out keep-alive new chunks
-                    out_file.write(chunk)
-                    out_file.flush()
-                    self.download_kb += 1
-                    self.download_elapsed = elapsed(start, 4)
-                    if self.download_kb > 256*1024:
-                        print "DOWNLOAD ERROR for {}: file too big".format(self.url)
-                        self.error = "file_too_big"
-                        return None
-
-                    if self.download_elapsed > 60:
-                        print "DOWNLOAD ERROR for {}: taking too long".format(self.url)
-                        self.error = "file_too_slow"
-                        return None
-
-
-        self.download_elapsed = elapsed(start, 4)
-        print "downloaded {} ({}kb) in {} sec".format(
-            self.url,
-            self.download_kb,
-            self.download_elapsed
-        )
 
 
     def _grep_for_dep_lines(self, query_str, include_globs, exclude_globs):
