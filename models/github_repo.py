@@ -473,14 +473,13 @@ class GithubRepo(db.Model):
         else:
             # this is for dependency info
             # look to see what contributes to named_deps
-            pass
-            # self.set_reqs_file()
-            # self.set_requirements_pypi()
-            # self.set_github_dependency_lines()
-            # self.set_pypi_dependencies()
-            # self.set_python_named_deps
-            #
-            # self.updated = datetime.datetime.utcnow()
+            self.set_reqs_file()
+            self.set_requirements_pypi()
+            self.set_github_dependency_lines()
+            self.set_pypi_dependencies()
+            self.set_python_named_deps
+
+            self.updated = datetime.datetime.utcnow()
 
 
     def set_cran_descr_file(self):
