@@ -1,5 +1,6 @@
 from time import time
 from time import sleep
+import argparse
 
 from sqlalchemy.dialects import postgresql
 from sqlalchemy import orm
@@ -80,7 +81,7 @@ def enqueue_jobs(cls,
          method,
          ids_q_or_list,
          queue_number,
-         use_rq="rq",
+         use_rq=False,
          chunk_size=10,
          shortcut_fn=None
     ):
@@ -89,7 +90,7 @@ def enqueue_jobs(cls,
     """
 
     shortcut_data = None
-    if use_rq == "rq":
+    if use_rq:
         empty_queue(queue_number)
         if shortcut_fn:
             raise ValueError("you can't use RQ with a shortcut_fn")
@@ -132,7 +133,7 @@ def enqueue_jobs(cls,
 
         update_fn_args = [cls, method, object_ids_chunk]
 
-        if use_rq == "rq":
+        if use_rq:
             job = ti_queues[queue_number].enqueue_call(
                 func=update_fn,
                 args=update_fn_args,
@@ -200,8 +201,11 @@ class Update():
             num_jobs = 1000
 
         if use_rq:
+            print "using rq!"
             if self.queue_id is None:
                 raise ValueError("you need a queue number to use RQ")
+        else:
+            print "not using rq"
 
         if chunk_size is None:
             chunk_size = self.chunk_size_default
@@ -305,6 +309,39 @@ def empty_queue(queue_number_str):
         queue_number
     )
 
+
+
+def main(fn, optional_args=None):
+    start = time()
+
+    # call function by its name in this module, with all args :)
+    # http://stackoverflow.com/a/4605/596939
+    if optional_args:
+        globals()[fn](*optional_args)
+    else:
+        globals()[fn]()
+
+    print "total time to run:", elapsed(start)
+
+
+if __name__ == "__main__":
+
+    # get args from the command line:
+    parser = argparse.ArgumentParser(description="Run stuff.")
+    parser.add_argument('function', type=str, help="what function you want to run")
+    parser.add_argument('optional_args', nargs='*', help="positional args for the function")
+
+    args = vars(parser.parse_args())
+
+    function = args["function"]
+    optional_args = args["optional_args"]
+
+    print u"running main.py {function} with these args:{optional_args}\n".format(
+        function=function, optional_args=optional_args)
+
+    main(function, optional_args)
+
+    db.session.remove()
 
 
 
