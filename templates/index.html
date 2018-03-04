@@ -54,11 +54,43 @@
    <script type="text/javascript" src="{{ url_for('static', filename='dist/ti.js') }}"></script>
 
 
+    <style>
+        body {
+            padding-top: 30px;
+        }
+        #main-banner {
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            height: 30px;
+            position: fixed;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #main-banner a {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        div.ti-header {
+            top: 30px;
+        }
+    </style>
 
 
 
 </head>
 <body>
+    <div id="main-banner">
+        The Depsy project
+        <a href="https://twitter.com/depsy_org/status/970376969782149120">has successfully concluded,</a>
+        and this website is no longer actively maintained.
+    </div>
 
    <div ng-include="'header/header.tpl.html'"></div>
    <div class="view-wrapper">
