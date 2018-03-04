@@ -1,4 +1,8 @@
 
+*the Depsy project has [successfully concluded,](https://twitter.com/depsy_org/status/970376969782149120)
+and is no longer being maintained. We're now working on a followup project to track software impact, 
+[funded by the Sloan Foundation.](http://blog.impactstory.org/collaborating-635k-grant-improve-credit-research-software/)*
+
 ## We need to value the software that powers science
 
 Today's cutting-edge science is built on an array of specialist research software. This research software is often as important as traditional scholarly papers--[but it's not treated that way when it comes to funding and tenure](http://sciencecodemanifesto.org/). There, the traditional publish-or-perish, show-me-the-Impact-Factor system still rules.
