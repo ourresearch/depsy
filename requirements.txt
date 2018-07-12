@@ -12,7 +12,7 @@ arrow==0.4.4
 click==4.1
 dpath==1.4.0
 futures==3.0.3
-gunicorn==17.5
+gunicorn==19.5.0
 python-igraph==0.7.1.post6
 itsdangerous==0.24
 lxml==3.4.4
@@ -21,7 +21,7 @@ nltk==3.0.5
 numpy==1.8.1
 pathlib==1.0.1
 psycopg2==2.4.6
-pycrypto==2.6.1
+pycrypto>2.6
 python-dateutil==2.4.2
 redis==2.10.3
 requests==2.4.3
