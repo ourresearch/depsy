@@ -7,7 +7,7 @@ Jinja2==2.7.1
 MarkupSafe==0.18
 PyJWT==1.4.0
 SQLAlchemy==1.0.8
-Werkzeug==0.9.4
+Werkzeug==0.15.3
 arrow==0.4.4
 click==4.1
 dpath==1.4.0
